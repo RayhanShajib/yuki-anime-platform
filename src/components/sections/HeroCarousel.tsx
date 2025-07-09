@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Play, Plus, VolumeX, Volume2 } from 'lucide-react';
-import { Anime } from '@/types/anime';
-import { cn, truncateText, formatRating } from '@/lib/utils';
+import { cn, formatRating, truncateText } from "@/lib/utils";
+import { Anime } from "@/types/anime";
+import { Play, Plus, Volume2, VolumeX } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface HeroCarouselProps {
   featuredAnime: Anime[];
@@ -43,7 +43,11 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             loop
             className="w-full h-full object-cover"
             poster={currentAnime.banner || currentAnime.poster}
-          >
+            playsInline
+            disablePictureInPicture
+            controls={false}
+            onTouchStart={(e) => e.preventDefault()}
+            onClick={(e) => e.preventDefault()}>
             <source src={currentAnime.trailer} type="video/mp4" />
           </video>
         ) : (
@@ -53,7 +57,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             className="w-full h-full object-cover"
           />
         )}
-        
+
         <div className="absolute inset-0 hero-gradient" />
       </div>
 
@@ -76,10 +80,9 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
             <div className="flex flex-wrap gap-2 mb-4">
               {currentAnime.genres.slice(0, 4).map((genre) => (
-                <span 
+                <span
                   key={genre}
-                  className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white"
-                >
+                  className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white">
                   {genre}
                 </span>
               ))}
@@ -89,12 +92,12 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               {truncateText(currentAnime.synopsis, 200)}
             </p>
 
-            <div className="flex items-center space-x-4 mb-6">
+            <div className="flex items-center space-x-4 gap-3.5 flex-wrap">
               <button className="flex items-center space-x-2 bg-white text-black px-8 py-3 rounded-lg hover:bg-white/90 transition-colors font-semibold">
                 <Play className="h-5 w-5" />
                 <span>Watch Now</span>
               </button>
-              
+
               <button className="flex items-center space-x-2 bg-gray-700/80 backdrop-blur-sm text-white px-8 py-3 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold">
                 <Plus className="h-5 w-5" />
                 <span>Add to List</span>
@@ -106,11 +109,14 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
       {currentAnime.trailer && (
         <div className="absolute bottom-4 right-4 z-20">
-          <button 
+          <button
             onClick={() => setIsMuted(!isMuted)}
-            className="p-3 bg-black/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors"
-          >
-            {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            className="p-3 bg-black/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors">
+            {isMuted ? (
+              <VolumeX className="h-4 w-4" />
+            ) : (
+              <Volume2 className="h-4 w-4" />
+            )}
           </button>
         </div>
       )}
@@ -122,10 +128,10 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               key={index}
               onClick={() => goToSlide(index)}
               className={cn(
-                'w-2 h-2 rounded-full transition-all duration-300',
-                index === currentIndex 
-                  ? 'bg-white scale-125' 
-                  : 'bg-white/50 hover:bg-white/75'
+                "w-2 h-2 rounded-full transition-all duration-300",
+                index === currentIndex
+                  ? "bg-white scale-125"
+                  : "bg-white/50 hover:bg-white/75"
               )}
             />
           ))}
