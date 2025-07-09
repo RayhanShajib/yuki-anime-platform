@@ -348,7 +348,8 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               {/* Trailer Section */}
               <div
                 className="relative w-full"
-                style={{ aspectRatio: "16/9", minHeight: "200px" }}>
+                style={{ aspectRatio: "16/9", minHeight: "200px" }}
+                onClick={(e) => e.stopPropagation()}>
                 <div className="absolute inset-0 bg-black rounded-t-2xl overflow-hidden">
                   {anime.trailer ? (
                     <iframe

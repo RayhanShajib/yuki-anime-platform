@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { TrendingUp, Clock, Calendar, Timer } from "lucide-react";
-import { Anime } from "@/types/anime";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { cn } from "@/lib/utils";
+import { Anime } from "@/types/anime";
+import { Calendar, Clock, Timer, TrendingUp } from "lucide-react";
+import { useState } from "react";
 
 interface TrendingSectionProps {
   trendingAnime: Anime[];
@@ -27,8 +27,11 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
   const filteredAnime = trendingAnime.slice(0, 10);
 
   return (
-    <section className="py-12 bg-gray-900/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-12 bg-gray-900/50 backdrop-blur-sm relative">
+      {/* Top blur gradient */}
+      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/60 to-transparent z-10 pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8 text-3xl font-bold text-white flex-wrap gap-5">
           <h2 className="text-3xl font-bold text-white flex items-center">

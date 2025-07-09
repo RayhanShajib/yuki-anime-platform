@@ -1,8 +1,15 @@
 "use client";
 
-import { cn, formatRating, truncateText } from "@/lib/utils";
+import { formatRating, truncateText } from "@/lib/utils";
 import { Anime } from "@/types/anime";
-import { Play, Plus, Volume2, VolumeX } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Plus,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface HeroCarouselProps {
@@ -26,14 +33,20 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
     return () => clearInterval(interval);
   }, [featuredAnime.length, isPlaying]);
 
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
+  const goToPrevious = () => {
+    setCurrentIndex(
+      (prev) => (prev - 1 + featuredAnime.length) % featuredAnime.length
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % featuredAnime.length);
   };
 
   if (!currentAnime) return null;
 
   return (
-    <div className="relative w-full h-[100vh] overflow-hidden">
+    <div className="relative w-full h-[100vh] overflow-hidden min-w-full">
       <div className="absolute inset-0">
         {currentAnime.trailer ? (
           <video
@@ -61,6 +74,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         <div className="absolute inset-0 hero-gradient" />
       </div>
 
+      {/* Main content */}
       <div className="relative z-10 h-full flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-7">
           <div className="max-w-2xl">
@@ -107,11 +121,32 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         </div>
       </div>
 
+      {/* Bottom blur gradient */}
+      <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-black via-black/80 to-transparent z-10 pointer-events-none" />
+
       {currentAnime.trailer && (
-        <div className="absolute bottom-4 right-4 z-20">
+        <div className="absolute bottom-7 right-4 z-20 flex flex-col space-y-2">
+          {/* Carousel Navigation Buttons */}
+          <div className="flex flex-col space-y-1">
+            <button
+              onClick={goToPrevious}
+              className="p-2 bg-gray-900/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors"
+              aria-label="Previous slide">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={goToNext}
+              className="p-2 bg-gray-900/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors"
+              aria-label="Next slide">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Mute/Unmute Button */}
           <button
             onClick={() => setIsMuted(!isMuted)}
-            className="p-3 bg-black/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors">
+            className="p-3 bg-gray-900/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors"
+            aria-label={isMuted ? "Unmute" : "Mute"}>
             {isMuted ? (
               <VolumeX className="h-4 w-4" />
             ) : (
@@ -120,23 +155,6 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
           </button>
         </div>
       )}
-
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
-        <div className="flex space-x-2">
-          {featuredAnime.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={cn(
-                "w-2 h-2 rounded-full transition-all duration-300",
-                index === currentIndex
-                  ? "bg-white scale-125"
-                  : "bg-white/50 hover:bg-white/75"
-              )}
-            />
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
