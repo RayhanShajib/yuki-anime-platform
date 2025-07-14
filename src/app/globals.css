@@ -217,11 +217,11 @@ html {
 
 
 @media screen and (max-width: 600px) {
-  .trending-anime-img{
+  .anime-img{
     width: 100% !important;
     height: 100% !important;
   }
-  .trending-anime-img img{
+  .anime-img img{
     width: 100% !important;
     height: 100% !important;
   }

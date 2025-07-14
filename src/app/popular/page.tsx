@@ -47,7 +47,7 @@ export default function PopularPage() {
           {/* Trending Banner */}
           <div className="mb-8 bg-gradient-to-r from-red-900/20 to-orange-900/20 rounded-lg p-3 border border-red-800/30">
             <div className="flex items-center space-x-4 flex-wrap gap-2.5">
-              <div className="flex-shrink-0 trending-anime-img">
+              <div className="flex-shrink-0 anime-img">
                 {filteredAnime[0]?.poster && (
                   <Image
                     src={filteredAnime[0].poster}
