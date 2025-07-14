@@ -226,3 +226,6 @@ html {
     height: 100% !important;
   }
 }
+:host(.media-document.video.mac) {
+min-width: 100% !important;
+}

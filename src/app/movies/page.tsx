@@ -1,86 +1,106 @@
-'use client';
-
-import { useState } from 'react';
-import { Navigation } from '@/components/layout/Navigation';
-import { AnimeCard } from '@/components/ui/AnimeCard';
-import { Film, Filter, Grid, List, Calendar, Star, Clock } from 'lucide-react';
-import { mockAnime } from '@/lib/mockData';
-import { cn } from '@/lib/utils';
+"use client";
+import { Navigation } from "@/components/layout/Navigation";
+import { FooterSection } from "@/components/sections/FooterSection";
+import { AnimeCard } from "@/components/ui/AnimeCard";
+import { mockAnime } from "@/lib/mockData";
+import { cn } from "@/lib/utils";
+import { Calendar, Clock, Grid, List, Star } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 
 const sortOptions = [
-  { key: 'latest', label: 'Latest Release' },
-  { key: 'rating', label: 'Highest Rated' },
-  { key: 'popularity', label: 'Most Popular' },
-  { key: 'title', label: 'Alphabetical' },
+  { key: "latest", label: "Latest Release" },
+  { key: "rating", label: "Highest Rated" },
+  { key: "popularity", label: "Most Popular" },
+  { key: "title", label: "Alphabetical" },
 ];
 
 const genreFilters = [
-  { key: 'all', label: 'All Genres' },
-  { key: 'action', label: 'Action' },
-  { key: 'adventure', label: 'Adventure' },
-  { key: 'drama', label: 'Drama' },
-  { key: 'fantasy', label: 'Fantasy' },
-  { key: 'romance', label: 'Romance' },
+  { key: "all", label: "All Genres" },
+  { key: "action", label: "Action" },
+  { key: "adventure", label: "Adventure" },
+  { key: "drama", label: "Drama" },
+  { key: "fantasy", label: "Fantasy" },
+  { key: "romance", label: "Romance" },
 ];
 
 export default function MoviesPage() {
-  const [sortBy, setSortBy] = useState('latest');
-  const [genreFilter, setGenreFilter] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState("latest");
+  const [genreFilter, setGenreFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showAll, setShowAll] = useState(false);
 
   // Filter only movies and apply sorting
-  const movieAnime = mockAnime.filter(anime => anime.type === 'movie');
-  
+  const movieAnime = mockAnime.filter((anime) => anime.type === "movie");
+
   const filteredMovies = movieAnime
-    .filter(anime => {
-      if (genreFilter === 'all') return true;
-      return anime.genres.some(genre => genre.toLowerCase().includes(genreFilter));
+    .filter((anime) => {
+      if (genreFilter === "all") return true;
+      return anime.genres.some((genre) =>
+        genre.toLowerCase().includes(genreFilter)
+      );
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case 'rating':
+        case "rating":
           return b.rating - a.rating;
-        case 'popularity':
+        case "popularity":
           return b.popularity - a.popularity;
-        case 'title':
+        case "title":
           return a.title.localeCompare(b.title);
-        case 'latest':
+        case "latest":
         default:
           return b.releaseYear - a.releaseYear;
       }
     });
 
+  // Movies to show (slice for view more/less)
+  const moviesToShow = filteredMovies.slice(
+    0,
+    showAll ? filteredMovies.length : 5
+  );
+
   return (
     <div className="min-h-screen bg-black">
       <Navigation />
-      
+
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-4 flex items-center">
-              <Film className="h-10 w-10 text-purple-500 mr-4" />
               Anime Movies
             </h1>
-            <p className="text-gray-400 text-lg">
-              Discover amazing anime films and cinematic experiences
-            </p>
           </div>
 
           {/* Featured Movie Banner */}
           <div className="mb-8 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-lg overflow-hidden border border-purple-800/30">
             <div className="flex flex-col md:flex-row">
               <div className="md:w-1/3">
-                <img
-                  src={filteredMovies[0]?.banner || filteredMovies[0]?.poster}
-                  alt={filteredMovies[0]?.title}
-                  className="w-full h-64 md:h-full object-cover"
-                />
+                {/* Use Next.js Image for optimized images */}
+                {filteredMovies[0]?.banner || filteredMovies[0]?.poster ? (
+                  <Image
+                    src={filteredMovies[0]?.banner || filteredMovies[0]?.poster}
+                    alt={filteredMovies[0]?.title || "Movie Banner"}
+                    width={600}
+                    height={400}
+                    className="w-full h-64 md:h-full object-cover"
+                    priority
+                  />
+                ) : (
+                  <div className="w-full h-64 md:h-full bg-gray-900 flex items-center justify-center text-gray-500">
+                    No Image
+                  </div>
+                )}
               </div>
               <div className="md:w-2/3 p-6 flex flex-col justify-center">
                 <div className="flex items-center space-x-2 mb-3">
-                  <span className="bg-purple-600 text-white px-3 py-1 rounded text-sm font-bold">FEATURED</span>
-                  <span className="bg-gray-700 text-white px-2 py-1 rounded text-xs">MOVIE</span>
+                  <span className="bg-purple-600 text-white px-3 py-1 rounded text-sm font-bold">
+                    FEATURED
+                  </span>
+                  <span className="bg-gray-700 text-white px-2 py-1 rounded text-xs">
+                    MOVIE
+                  </span>
                 </div>
                 <h2 className="text-3xl font-bold text-white mb-3">
                   {filteredMovies[0]?.title}
@@ -102,7 +122,7 @@ export default function MoviesPage() {
                     <span>2h 15m</span>
                   </div>
                 </div>
-                <div className="flex space-x-3">
+                <div className="flex space-x-3 flex-wrap gap-3">
                   <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors font-semibold">
                     Watch Now
                   </button>
@@ -118,21 +138,21 @@ export default function MoviesPage() {
           <div className="mb-8 space-y-4">
             <div className="flex flex-wrap items-center gap-4">
               {/* Sort Options */}
-              <div className="flex items-center space-x-2">
-                <Filter className="h-5 w-5 text-gray-400" />
-                <span className="text-gray-300 text-sm font-medium">Sort by:</span>
-                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-                  {sortOptions.map(option => (
+              <div className="flex items-center space-x-2 flex-wrap gap-2.5">
+                <span className="text-gray-300 text-sm font-medium">
+                  Sort by:
+                </span>
+                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+                  {sortOptions.map((option) => (
                     <button
                       key={option.key}
                       onClick={() => setSortBy(option.key)}
                       className={cn(
-                        'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
-                          ? 'bg-purple-600 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
+                          ? "bg-purple-600 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
                       {option.label}
                     </button>
                   ))}
@@ -140,20 +160,21 @@ export default function MoviesPage() {
               </div>
 
               {/* Genre Filter */}
-              <div className="flex items-center space-x-2">
-                <span className="text-gray-300 text-sm font-medium">Genre:</span>
-                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-                  {genreFilters.map(option => (
+              <div className="flex items-center space-x-2 flex-wrap gap-2.5">
+                <span className="text-gray-300 text-sm font-medium">
+                  Genre:
+                </span>
+                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+                  {genreFilters.map((option) => (
                     <button
                       key={option.key}
                       onClick={() => setGenreFilter(option.key)}
                       className={cn(
-                        'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         genreFilter === option.key
-                          ? 'bg-pink-600 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
+                          ? "bg-pink-600 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
                       {option.label}
                     </button>
                   ))}
@@ -161,29 +182,27 @@ export default function MoviesPage() {
               </div>
 
               {/* View Mode Toggle */}
-              <div className="flex items-center space-x-2 ml-auto">
+              <div className="flex items-center space-x-2 ml-auto mt-8 mb-3">
                 <span className="text-gray-300 text-sm font-medium">View:</span>
                 <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
                   <button
-                    onClick={() => setViewMode('grid')}
+                    onClick={() => setViewMode("grid")}
                     className={cn(
-                      'p-2 rounded-md transition-colors',
-                      viewMode === 'grid'
-                        ? 'bg-gray-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    )}
-                  >
+                      "p-2 rounded-md transition-colors",
+                      viewMode === "grid"
+                        ? "bg-gray-600 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-700"
+                    )}>
                     <Grid className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => setViewMode('list')}
+                    onClick={() => setViewMode("list")}
                     className={cn(
-                      'p-2 rounded-md transition-colors',
-                      viewMode === 'list'
-                        ? 'bg-gray-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    )}
-                  >
+                      "p-2 rounded-md transition-colors",
+                      viewMode === "list"
+                        ? "bg-gray-600 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-700"
+                    )}>
                     <List className="h-4 w-4" />
                   </button>
                 </div>
@@ -199,25 +218,39 @@ export default function MoviesPage() {
           </div>
 
           {/* Movies Grid/List */}
-          {viewMode === 'grid' ? (
+          {viewMode === "grid" ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {filteredMovies.map(movie => (
-                <AnimeCard key={movie.id} anime={movie} showPopup={true} />
+              {moviesToShow.map((anime) => (
+                <div key={anime.id} className="relative">
+                  <AnimeCard
+                    anime={anime}
+                    showPopup={true}
+                    className="transform transition-transform hover:scale-105"
+                  />
+                </div>
               ))}
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredMovies.map(movie => (
-                <div 
+              {moviesToShow.map((movie) => (
+                <div
                   key={movie.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors"
-                >
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
                   <div className="flex items-center space-x-4">
-                    <img
-                      src={movie.poster}
-                      alt={movie.title}
-                      className="w-16 h-24 object-cover rounded-lg flex-shrink-0"
-                    />
+                    {/* Use Next.js Image for optimized images */}
+                    {movie.poster ? (
+                      <Image
+                        src={movie.poster}
+                        alt={movie.title || "Movie Poster"}
+                        width={64}
+                        height={96}
+                        className="w-16 h-24 object-cover rounded-lg flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-24 bg-gray-900 flex items-center justify-center text-gray-500 rounded-lg flex-shrink-0">
+                        No Image
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -258,14 +291,19 @@ export default function MoviesPage() {
             </div>
           )}
 
-          {/* Load More */}
-          <div className="text-center mt-12">
-            <button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg transition-colors font-medium">
-              Load More Movies
-            </button>
-          </div>
+          {/* View More/View Less Button */}
+          {filteredMovies.length > 5 && (
+            <div className="flex justify-center mt-12">
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors cursor-pointer">
+                {showAll ? "View Less" : "View More"}
+              </button>
+            </div>
+          )}
         </div>
       </main>
+      <FooterSection />
     </div>
   );
 }

@@ -1,58 +1,65 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Navigation } from '@/components/layout/Navigation';
-import { AnimeCard } from '@/components/ui/AnimeCard';
-import { PlayCircle, Filter, Grid, List, Clock, Calendar } from 'lucide-react';
-import { mockAnime } from '@/lib/mockData';
-import { cn } from '@/lib/utils';
+import { Navigation } from "@/components/layout/Navigation";
+import { FooterSection } from "@/components/sections/FooterSection";
+import { AnimeCard } from "@/components/ui/AnimeCard";
+import { mockAnime } from "@/lib/mockData";
+import { cn } from "@/lib/utils";
+import { Grid, List } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 
 const sortOptions = [
-  { key: 'latest', label: 'Latest Episode' },
-  { key: 'popularity', label: 'Most Popular' },
-  { key: 'rating', label: 'Highest Rated' },
-  { key: 'title', label: 'Alphabetical' },
+  { key: "latest", label: "Latest Episode" },
+  { key: "popularity", label: "Most Popular" },
+  { key: "rating", label: "Highest Rated" },
+  { key: "title", label: "Alphabetical" },
 ];
 
 const typeFilters = [
-  { key: 'all', label: 'All Types' },
-  { key: 'series', label: 'TV Series' },
-  { key: 'ova', label: 'OVAs' },
+  { key: "all", label: "All Types" },
+  { key: "series", label: "TV Series" },
+  { key: "ova", label: "OVAs" },
 ];
 
 const genreFilters = [
-  { key: 'all', label: 'All Genres' },
-  { key: 'action', label: 'Action' },
-  { key: 'adventure', label: 'Adventure' },
-  { key: 'comedy', label: 'Comedy' },
-  { key: 'drama', label: 'Drama' },
-  { key: 'fantasy', label: 'Fantasy' },
+  { key: "all", label: "All Genres" },
+  { key: "action", label: "Action" },
+  { key: "adventure", label: "Adventure" },
+  { key: "comedy", label: "Comedy" },
+  { key: "drama", label: "Drama" },
+  { key: "fantasy", label: "Fantasy" },
 ];
 
 export default function OngoingPage() {
-  const [sortBy, setSortBy] = useState('latest');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [genreFilter, setGenreFilter] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState("latest");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [genreFilter, setGenreFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showAll, setShowAll] = useState(false);
 
   // Filter only ongoing anime
-  const ongoingAnime = mockAnime.filter(anime => anime.status === 'ongoing');
-  
+  const ongoingAnime = mockAnime.filter((anime) => anime.status === "ongoing");
+
   const filteredAnime = ongoingAnime
-    .filter(anime => {
-      if (typeFilter !== 'all' && anime.type !== typeFilter) return false;
-      if (genreFilter !== 'all' && !anime.genres.some(g => g.toLowerCase().includes(genreFilter))) return false;
+    .filter((anime) => {
+      if (typeFilter !== "all" && anime.type !== typeFilter) return false;
+      if (
+        genreFilter !== "all" &&
+        !anime.genres.some((g) => g.toLowerCase().includes(genreFilter))
+      )
+        return false;
       return true;
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case 'popularity':
+        case "popularity":
           return b.popularity - a.popularity;
-        case 'rating':
+        case "rating":
           return b.rating - a.rating;
-        case 'title':
+        case "title":
           return a.title.localeCompare(b.title);
-        case 'latest':
+        case "latest":
         default:
           return b.releaseYear - a.releaseYear;
       }
@@ -61,18 +68,14 @@ export default function OngoingPage() {
   return (
     <div className="min-h-screen bg-black">
       <Navigation />
-      
+
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-4 flex items-center">
-              <PlayCircle className="h-10 w-10 text-green-500 mr-4" />
               Currently Airing
             </h1>
-            <p className="text-gray-400 text-lg">
-              Stay up to date with anime series that are currently broadcasting
-            </p>
           </div>
 
           {/* Live Status Banner */}
@@ -96,18 +99,23 @@ export default function OngoingPage() {
           {/* Quick Stats */}
           <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-              <div className="text-2xl font-bold text-white">{filteredAnime.length}</div>
+              <div className="text-2xl font-bold text-white">
+                {filteredAnime.length}
+              </div>
               <div className="text-gray-400 text-sm">Ongoing Series</div>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
               <div className="text-2xl font-bold text-white">
-                {filteredAnime.filter(a => a.type === 'series').length}
+                {filteredAnime.filter((a) => a.type === "series").length}
               </div>
               <div className="text-gray-400 text-sm">TV Series</div>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
               <div className="text-2xl font-bold text-white">
-                {(filteredAnime.reduce((sum, a) => sum + a.rating, 0) / filteredAnime.length).toFixed(1)}
+                {(
+                  filteredAnime.reduce((sum, a) => sum + a.rating, 0) /
+                  filteredAnime.length
+                ).toFixed(1)}
               </div>
               <div className="text-gray-400 text-sm">Avg Rating</div>
             </div>
@@ -121,21 +129,21 @@ export default function OngoingPage() {
           <div className="mb-8 space-y-4">
             <div className="flex flex-wrap items-center gap-4">
               {/* Sort Options */}
-              <div className="flex items-center space-x-2">
-                <Filter className="h-5 w-5 text-gray-400" />
-                <span className="text-gray-300 text-sm font-medium">Sort by:</span>
-                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-                  {sortOptions.map(option => (
+              <div className="flex items-center space-x-2 flex-wrap gap-2.5">
+                <span className="text-gray-300 text-sm font-medium">
+                  Sort by:
+                </span>
+                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+                  {sortOptions.map((option) => (
                     <button
                       key={option.key}
                       onClick={() => setSortBy(option.key)}
                       className={cn(
-                        'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
-                          ? 'bg-green-600 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
+                          ? "bg-green-600 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
                       {option.label}
                     </button>
                   ))}
@@ -143,20 +151,19 @@ export default function OngoingPage() {
               </div>
 
               {/* Type Filter */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-wrap gap-2.5">
                 <span className="text-gray-300 text-sm font-medium">Type:</span>
-                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-                  {typeFilters.map(option => (
+                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+                  {typeFilters.map((option) => (
                     <button
                       key={option.key}
                       onClick={() => setTypeFilter(option.key)}
                       className={cn(
-                        'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         typeFilter === option.key
-                          ? 'bg-blue-600 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
+                          ? "bg-blue-600 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
                       {option.label}
                     </button>
                   ))}
@@ -164,20 +171,21 @@ export default function OngoingPage() {
               </div>
 
               {/* Genre Filter */}
-              <div className="flex items-center space-x-2">
-                <span className="text-gray-300 text-sm font-medium">Genre:</span>
-                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-                  {genreFilters.map(option => (
+              <div className="flex items-center space-x-2 flex-wrap gap-2.5">
+                <span className="text-gray-300 text-sm font-medium">
+                  Genre:
+                </span>
+                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+                  {genreFilters.map((option) => (
                     <button
                       key={option.key}
                       onClick={() => setGenreFilter(option.key)}
                       className={cn(
-                        'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         genreFilter === option.key
-                          ? 'bg-purple-600 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
+                          ? "bg-purple-600 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
                       {option.label}
                     </button>
                   ))}
@@ -185,29 +193,27 @@ export default function OngoingPage() {
               </div>
 
               {/* View Mode Toggle */}
-              <div className="flex items-center space-x-2 ml-auto">
+              <div className="flex items-center space-x-2 ml-auto mt-8 mb-3">
                 <span className="text-gray-300 text-sm font-medium">View:</span>
                 <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
                   <button
-                    onClick={() => setViewMode('grid')}
+                    onClick={() => setViewMode("grid")}
                     className={cn(
-                      'p-2 rounded-md transition-colors',
-                      viewMode === 'grid'
-                        ? 'bg-gray-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    )}
-                  >
+                      "p-2 rounded-md transition-colors",
+                      viewMode === "grid"
+                        ? "bg-gray-600 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-700"
+                    )}>
                     <Grid className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => setViewMode('list')}
+                    onClick={() => setViewMode("list")}
                     className={cn(
-                      'p-2 rounded-md transition-colors',
-                      viewMode === 'list'
-                        ? 'bg-gray-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    )}
-                  >
+                      "p-2 rounded-md transition-colors",
+                      viewMode === "list"
+                        ? "bg-gray-600 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-700"
+                    )}>
                     <List className="h-4 w-4" />
                   </button>
                 </div>
@@ -223,31 +229,40 @@ export default function OngoingPage() {
           </div>
 
           {/* Content Grid/List */}
-          {viewMode === 'grid' ? (
+          {viewMode === "grid" ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-              {filteredAnime.map(anime => (
-                <div key={anime.id} className="relative">
-                  {/* Live indicator */}
-                  <div className="absolute top-2 right-2 z-10 flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs font-bold">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                    <span className="text-white">ON AIR</span>
+              {filteredAnime
+                .slice(0, showAll ? filteredAnime.length : 5)
+                .map((anime) => (
+                  <div key={anime.id} className="relative">
+                    {/* Live indicator */}
+                    <div className="absolute top-11 left-2 z-10 flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs font-bold">
+                      <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                      <span className="text-white">ON AIR</span>
+                    </div>
+                    <AnimeCard
+                      anime={anime}
+                      showPopup={true}
+                      className="transform transition-transform hover:scale-105"
+                    />
                   </div>
-                  <AnimeCard anime={anime} showPopup={true} />
-                </div>
-              ))}
+                ))}
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredAnime.map(anime => (
-                <div 
+              {filteredAnime.map((anime) => (
+                <div
                   key={anime.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors"
-                >
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
                   <div className="flex items-center space-x-4">
-                    <img
+                    <Image
                       src={anime.poster}
                       alt={anime.title}
+                      width={64}
+                      height={96}
                       className="w-16 h-24 object-cover rounded-lg flex-shrink-0"
+                      style={{ width: "64px", height: "96px" }}
+                      unoptimized={true}
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
@@ -299,14 +314,19 @@ export default function OngoingPage() {
             </div>
           )}
 
-          {/* Load More */}
-          <div className="text-center mt-12">
-            <button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg transition-colors font-medium">
-              Load More Ongoing Anime
-            </button>
-          </div>
+          {/* View More/Less Button */}
+          {filteredAnime.length > 5 && (
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                {showAll ? "View Less" : "View More"}
+              </button>
+            </div>
+          )}
         </div>
       </main>
+      <FooterSection />
     </div>
   );
 }
