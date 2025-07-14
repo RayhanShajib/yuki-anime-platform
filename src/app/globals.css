@@ -214,3 +214,15 @@ html {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+
+@media screen and (max-width: 600px) {
+  .trending-anime-img{
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .trending-anime-img img{
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
