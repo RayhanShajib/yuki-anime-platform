@@ -1,45 +1,34 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Navigation } from '@/components/layout/Navigation';
-import { AnimeCard } from '@/components/ui/AnimeCard';
-import { Tags, Filter, Grid, List, Star, Calendar } from 'lucide-react';
-import { mockAnime } from '@/lib/mockData';
-import { cn } from '@/lib/utils';
+import { Navigation } from "@/components/layout/Navigation";
+import { FooterSection } from "@/components/sections/FooterSection";
+import { AnimeCard } from "@/components/ui/AnimeCard";
+import { mockAnime } from "@/lib/mockData";
+import { cn } from "@/lib/utils";
+import { Grid, List, Tags } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 
 const sortOptions = [
-  { key: 'popularity', label: 'Most Popular' },
-  { key: 'rating', label: 'Highest Rated' },
-  { key: 'latest', label: 'Latest Release' },
-  { key: 'title', label: 'Alphabetical' },
+  { key: "popularity", label: "Most Popular" },
+  { key: "rating", label: "Highest Rated" },
+  { key: "latest", label: "Latest Release" },
+  { key: "title", label: "Alphabetical" },
 ];
 
 const statusFilters = [
-  { key: 'all', label: 'All Status' },
-  { key: 'ongoing', label: 'Ongoing' },
-  { key: 'completed', label: 'Completed' },
-  { key: 'upcoming', label: 'Upcoming' },
+  { key: "all", label: "All Status" },
+  { key: "ongoing", label: "Ongoing" },
+  { key: "completed", label: "Completed" },
+  { key: "upcoming", label: "Upcoming" },
 ];
 
 const typeFilters = [
-  { key: 'all', label: 'All Types' },
-  { key: 'series', label: 'Series' },
-  { key: 'movie', label: 'Movies' },
-  { key: 'ova', label: 'OVAs' },
+  { key: "all", label: "All Types" },
+  { key: "series", label: "Series" },
+  { key: "movie", label: "Movies" },
+  { key: "ova", label: "OVAs" },
 ];
-
-const genreColors: { [key: string]: string } = {
-  action: 'text-red-500',
-  adventure: 'text-green-500',
-  comedy: 'text-yellow-500',
-  drama: 'text-purple-500',
-  fantasy: 'text-pink-500',
-  horror: 'text-gray-500',
-  mystery: 'text-indigo-500',
-  romance: 'text-rose-500',
-  'sci-fi': 'text-blue-500',
-  'slice of life': 'text-orange-500',
-};
 
 interface GenrePageProps {
   params: {
@@ -48,38 +37,39 @@ interface GenrePageProps {
 }
 
 export default function GenrePage({ params }: GenrePageProps) {
-  const [sortBy, setSortBy] = useState('popularity');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState("popularity");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showAll, setShowAll] = useState(false);
 
-  const genre = params.slug.replace(/-/g, ' ');
+  const genre = params.slug.replace(/-/g, " ");
   const genreTitle = genre.charAt(0).toUpperCase() + genre.slice(1);
-  const genreColor = genreColors[genre.toLowerCase()] || 'text-blue-500';
 
   // Filter anime by genre and apply other filters
   const filteredAnime = mockAnime
-    .filter(anime => {
-      const hasGenre = anime.genres.some(g => 
-        g.toLowerCase().includes(genre.toLowerCase()) || 
-        genre.toLowerCase().includes(g.toLowerCase())
+    .filter((anime) => {
+      const hasGenre = anime.genres.some(
+        (g) =>
+          g.toLowerCase().includes(genre.toLowerCase()) ||
+          genre.toLowerCase().includes(g.toLowerCase())
       );
       if (!hasGenre) return false;
 
-      if (statusFilter !== 'all' && anime.status !== statusFilter) return false;
-      if (typeFilter !== 'all' && anime.type !== typeFilter) return false;
+      if (statusFilter !== "all" && anime.status !== statusFilter) return false;
+      if (typeFilter !== "all" && anime.type !== typeFilter) return false;
 
       return true;
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case 'rating':
+        case "rating":
           return b.rating - a.rating;
-        case 'latest':
+        case "latest":
           return b.releaseYear - a.releaseYear;
-        case 'title':
+        case "title":
           return a.title.localeCompare(b.title);
-        case 'popularity':
+        case "popularity":
         default:
           return b.popularity - a.popularity;
       }
@@ -88,41 +78,43 @@ export default function GenrePage({ params }: GenrePageProps) {
   return (
     <div className="min-h-screen bg-black">
       <Navigation />
-      
+
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className={`text-4xl font-bold text-white mb-4 flex items-center`}>
-              <Tags className={`h-10 w-10 ${genreColor} mr-4`} />
+            <h1
+              className={`text-4xl font-bold text-white mb-4 flex items-center`}>
               {genreTitle} Anime
             </h1>
-            <p className="text-gray-400 text-lg">
-              Explore the best {genre.toLowerCase()} anime series and movies
-            </p>
           </div>
 
           {/* Genre Stats */}
           <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-              <div className="text-2xl font-bold text-white">{filteredAnime.length}</div>
+              <div className="text-2xl font-bold text-white">
+                {filteredAnime.length}
+              </div>
               <div className="text-gray-400 text-sm">Total Anime</div>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
               <div className="text-2xl font-bold text-white">
-                {filteredAnime.filter(a => a.status === 'ongoing').length}
+                {filteredAnime.filter((a) => a.status === "ongoing").length}
               </div>
               <div className="text-gray-400 text-sm">Currently Airing</div>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
               <div className="text-2xl font-bold text-white">
-                {(filteredAnime.reduce((sum, a) => sum + a.rating, 0) / filteredAnime.length).toFixed(1)}
+                {(
+                  filteredAnime.reduce((sum, a) => sum + a.rating, 0) /
+                  filteredAnime.length
+                ).toFixed(1)}
               </div>
               <div className="text-gray-400 text-sm">Average Rating</div>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
               <div className="text-2xl font-bold text-white">
-                {filteredAnime.filter(a => a.type === 'movie').length}
+                {filteredAnime.filter((a) => a.type === "movie").length}
               </div>
               <div className="text-gray-400 text-sm">Movies</div>
             </div>
@@ -132,21 +124,21 @@ export default function GenrePage({ params }: GenrePageProps) {
           <div className="mb-8 space-y-4">
             <div className="flex flex-wrap items-center gap-4">
               {/* Sort Options */}
-              <div className="flex items-center space-x-2">
-                <Filter className="h-5 w-5 text-gray-400" />
-                <span className="text-gray-300 text-sm font-medium">Sort by:</span>
-                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-                  {sortOptions.map(option => (
+              <div className="flex items-center space-x-2 flex-wrap gap-2.5">
+                <span className="text-gray-300 text-sm font-medium">
+                  Sort by:
+                </span>
+                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+                  {sortOptions.map((option) => (
                     <button
                       key={option.key}
                       onClick={() => setSortBy(option.key)}
                       className={cn(
-                        'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
                           ? `bg-red-600 text-white`
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
                       {option.label}
                     </button>
                   ))}
@@ -154,20 +146,21 @@ export default function GenrePage({ params }: GenrePageProps) {
               </div>
 
               {/* Status Filter */}
-              <div className="flex items-center space-x-2">
-                <span className="text-gray-300 text-sm font-medium">Status:</span>
-                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-                  {statusFilters.map(option => (
+              <div className="flex items-center space-x-2 flex-wrap gap-2.5">
+                <span className="text-gray-300 text-sm font-medium">
+                  Status:
+                </span>
+                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+                  {statusFilters.map((option) => (
                     <button
                       key={option.key}
                       onClick={() => setStatusFilter(option.key)}
                       className={cn(
-                        'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         statusFilter === option.key
-                          ? 'bg-blue-600 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
+                          ? "bg-blue-600 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
                       {option.label}
                     </button>
                   ))}
@@ -175,20 +168,19 @@ export default function GenrePage({ params }: GenrePageProps) {
               </div>
 
               {/* Type Filter */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-wrap gap-2.5">
                 <span className="text-gray-300 text-sm font-medium">Type:</span>
-                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-                  {typeFilters.map(option => (
+                <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+                  {typeFilters.map((option) => (
                     <button
                       key={option.key}
                       onClick={() => setTypeFilter(option.key)}
                       className={cn(
-                        'px-3 py-1 rounded-md text-sm font-medium transition-colors',
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         typeFilter === option.key
-                          ? 'bg-purple-600 text-white'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                      )}
-                    >
+                          ? "bg-purple-600 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
                       {option.label}
                     </button>
                   ))}
@@ -196,29 +188,27 @@ export default function GenrePage({ params }: GenrePageProps) {
               </div>
 
               {/* View Mode Toggle */}
-              <div className="flex items-center space-x-2 ml-auto">
+              <div className="flex items-center space-x-2 ml-auto mt-7 mb-3">
                 <span className="text-gray-300 text-sm font-medium">View:</span>
                 <div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
                   <button
-                    onClick={() => setViewMode('grid')}
+                    onClick={() => setViewMode("grid")}
                     className={cn(
-                      'p-2 rounded-md transition-colors',
-                      viewMode === 'grid'
-                        ? 'bg-gray-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    )}
-                  >
+                      "p-2 rounded-md transition-colors",
+                      viewMode === "grid"
+                        ? "bg-gray-600 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-700"
+                    )}>
                     <Grid className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => setViewMode('list')}
+                    onClick={() => setViewMode("list")}
                     className={cn(
-                      'p-2 rounded-md transition-colors',
-                      viewMode === 'list'
-                        ? 'bg-gray-600 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    )}
-                  >
+                      "p-2 rounded-md transition-colors",
+                      viewMode === "list"
+                        ? "bg-gray-600 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-700"
+                    )}>
                     <List className="h-4 w-4" />
                   </button>
                 </div>
@@ -235,24 +225,34 @@ export default function GenrePage({ params }: GenrePageProps) {
 
           {/* Content Grid/List */}
           {filteredAnime.length > 0 ? (
-            viewMode === 'grid' ? (
+            viewMode === "grid" ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-                {filteredAnime.map(anime => (
-                  <AnimeCard key={anime.id} anime={anime} showPopup={true} />
-                ))}
+                {filteredAnime
+                  .slice(0, showAll ? filteredAnime.length : 5)
+                  .map((anime) => (
+                    <div key={anime.id} className="relative">
+                      <AnimeCard
+                        anime={anime}
+                        showPopup={true}
+                        className="transform transition-transform hover:scale-105"
+                      />
+                    </div>
+                  ))}
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredAnime.map(anime => (
-                  <div 
+                {filteredAnime.map((anime) => (
+                  <div
                     key={anime.id}
-                    className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors"
-                  >
+                    className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
                     <div className="flex items-center space-x-4">
-                      <img
+                      <Image
                         src={anime.poster}
                         alt={anime.title}
+                        width={64}
+                        height={96}
                         className="w-16 h-24 object-cover rounded-lg flex-shrink-0"
+                        unoptimized
                       />
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-semibold text-white mb-1">
@@ -270,11 +270,15 @@ export default function GenrePage({ params }: GenrePageProps) {
                             {anime.type}
                           </span>
                           <span className="text-gray-400">•</span>
-                          <span className={cn(
-                            'font-medium capitalize',
-                            anime.status === 'ongoing' ? 'text-green-400' :
-                            anime.status === 'completed' ? 'text-blue-400' : 'text-yellow-400'
-                          )}>
+                          <span
+                            className={cn(
+                              "font-medium capitalize",
+                              anime.status === "ongoing"
+                                ? "text-green-400"
+                                : anime.status === "completed"
+                                ? "text-blue-400"
+                                : "text-yellow-400"
+                            )}>
                             {anime.status}
                           </span>
                           <span className="text-gray-400">•</span>
@@ -301,16 +305,19 @@ export default function GenrePage({ params }: GenrePageProps) {
             </div>
           )}
 
-          {/* Load More */}
-          {filteredAnime.length > 0 && (
-            <div className="text-center mt-12">
-              <button className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg transition-colors font-medium">
-                Load More {genreTitle} Anime
+          {/* View More/Less Button */}
+          {filteredAnime.length > 5 && (
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                {showAll ? "View Less" : "View More"}
               </button>
             </div>
           )}
         </div>
       </main>
+      <FooterSection/>
     </div>
   );
 }
