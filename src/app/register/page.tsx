@@ -25,7 +25,7 @@ export default function RegisterPage() {
   const passwordValid = formData.password.length >= 8;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-blue-900 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-blue-900 flex items-center justify-center px-4 py-10">
       <div className="max-w-md w-full space-y-8">
         {/* Logo */}
         <div className="text-center">
@@ -40,7 +40,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Registration Form */}
-        <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-lg border border-gray-700">
+        <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-gray-700">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Username Field */}
             <div>

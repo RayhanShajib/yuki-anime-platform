@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, User, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +19,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-blue-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-blue-900 flex items-center justify-center px-4 py-10">
       <div className="max-w-md w-full space-y-8">
         {/* Logo */}
         <div className="text-center">
@@ -34,7 +34,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Form */}
-        <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-lg border border-gray-700">
+        <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-gray-700">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
@@ -94,7 +94,7 @@ export default function LoginPage() {
             </div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-2.5">
               <div className="flex items-center">
                 <input
                   id="remember-me"
@@ -151,7 +151,7 @@ export default function LoginPage() {
         {/* Sign Up Link */}
         <div className="text-center">
           <p className="text-sm text-gray-400">
-            Don't have an account?{' '}
+            Don&#39;t have an account?{' '}
             <Link href="/register" className="text-blue-400 hover:text-blue-300 font-medium">
               Sign up for free
             </Link>
