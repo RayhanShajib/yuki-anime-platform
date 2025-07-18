@@ -62,12 +62,38 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={`transition-all duration-300 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    isScrolled
-                      ? "bg-gray-800/80"
-                      : "bg-slate-700/60"
+                    isScrolled ? "bg-gray-800/80" : "bg-slate-700/60"
                   }`}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && searchQuery.trim() !== "") {
+                      window.location.href = `/search?search=${encodeURIComponent(
+                        searchQuery
+                      )}`;
+                    }
+                  }}
                 />
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                {/* Filter Icon */}
+                <button
+                  type="button"
+                  className="absolute right-3 top-2.5 h-5 w-5 flex items-center justify-center text-gray-400 focus:outline-none cursor-pointer"
+                  title="Filter"
+                  onClick={() => {
+                    window.location.href = "/search";
+                  }}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-9 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 14.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"></path>
+                  </svg>
+                </button>
               </div>
             )}
           </div>
@@ -322,6 +348,13 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       ? "bg-gray-800/80 border border-gray-700/50"
                       : "bg-gray-800"
                   }`}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && searchQuery.trim() !== "") {
+                      window.location.href = `/search?search=${encodeURIComponent(
+                        searchQuery
+                      )}`;
+                    }
+                  }}
                 />
                 <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
               </div>

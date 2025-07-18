@@ -6,6 +6,7 @@ import { mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import "plyr-react/plyr.css";
 import React, { useMemo } from "react";
@@ -134,7 +135,7 @@ export default function WatchPage() {
                 <div
                   title="A young boy with a wounded heart begins a new life on a quiet island."
                   className="flex-shrink-0 smoothie w-full h-20 lg:h-28 hover:brightness-90 hover:scale-[.98]">
-                  <a
+                  <Link
                     className="group size-full z-0 flex bg-[#1e1e24] xl:bg-[#1e1e24] shadow-xl gap-1 md:gap-2 relative smoothie rounded-lg xl:rounded-2xl overflow-hidden"
                     href="/watch/143200/?ep=1">
                     <div className="h-full aspect-[15/9] relative flex-shrink-0 bg-white/5 rounded-lg xl:rounded-2xl overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
@@ -173,7 +174,7 @@ export default function WatchPage() {
                         Watch Now
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 </div>
                 {/* Add more episode cards here as needed */}
               </div>
