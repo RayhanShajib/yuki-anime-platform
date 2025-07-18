@@ -4,7 +4,14 @@ import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { mockAnime } from "@/lib/mockData";
-import { Bookmark, Link2, List, PlayCircle, User, Users } from "lucide-react";
+import {
+  Bookmark,
+  Link2,
+  List,
+  PlayCircle,
+  User,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -79,9 +86,10 @@ const tabs = [
   { key: "relations", label: "Relations", icon: Link2 },
 ];
 
-export default function AnimeInfoPage() {
+export default function RandomInfoPage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [episodeLayout, setEpisodeLayout] = useState("flex"); // "flex" or "grid"
+
   // Ensure mockAnime is imported and genres/status/type exist
   const filteredAnime = mockAnime;
 
@@ -472,40 +480,19 @@ export default function AnimeInfoPage() {
           )}
         </div>
 
-        <div className="w-full max-w-6xl mx-auto">
-          <div className="relative flex flex-col gap-4 md:gap-5 w-full  z-20 mx-auto my-5 mb-9 lg:my-8 lg:mb-12  md:px-2 xl:px-0 !select-none">
-            <div className="text-lg sm:text-xl lg:text-2xl font-medium lg:font-normal tracking-[0.015em] lg:tracking-normal 2xl:text-[1.6rem] font-popin items-center gap-2 flex px-2 ">
-              <a className="flex gap-2 items-center" href="/search">
-                <div className="h-6 md:h-8 rounded-md w-[.38rem] bg-purple-500 "></div>
-                You may also like
-                <span className="ml-auto md:m-0">
-                  <svg
-                    width="25"
-                    height="25"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-chevron-right">
-                    <path d="m9 18 6-6-6-6"></path>
-                  </svg>
-                </span>
-              </a>
-            </div>
+        <div className="mt-12">
+          <h1 className="text-2xl font-bold mb-4">Related Anime</h1>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-              {filteredAnime.map((anime) => (
-                <div key={anime.id} className="relative">
-                  <AnimeCard
-                    anime={anime}
-                    showPopup={true}
-                    className="transform transition-transform hover:scale-105"
-                  />
-                </div>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            {filteredAnime.map((anime) => (
+              <div key={anime.id} className="relative">
+                <AnimeCard
+                  anime={anime}
+                  showPopup={true}
+                  className="transform transition-transform hover:scale-105"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </main>

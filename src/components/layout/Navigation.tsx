@@ -98,7 +98,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             )}
           </div>
 
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             <Link
               href="/"
               className="text-white hover:text-blue-400 transition-colors">
@@ -198,6 +198,11 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               </div>
             </div>
 
+            <Link
+              href="/random"
+              className="text-white hover:text-blue-400 transition-colors">
+              Random
+            </Link>
             <Link
               href="/schedule"
               className="text-white hover:text-blue-400 transition-colors">
