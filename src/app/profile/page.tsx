@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { mockAnime } from "@/lib/mockData";
 import {
@@ -524,6 +525,7 @@ export default function ProfilePage() {
           )}
         </div>
       </main>
+      <FooterSection/>
     </div>
   );
 }

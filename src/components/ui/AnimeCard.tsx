@@ -253,21 +253,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 loading="lazy"
               />
 
-              <div
-                className={cn(
-                  "absolute inset-0 bg-black/60 flex flex-col items-center justify-end transition-opacity duration-300 p-3",
-                  isHovered ? "opacity-100" : "opacity-0"
-                )}>
-                <div className="text-center mb-4">
-                  <p className="text-gray-200 text-sm">
-                    {anime.type} • {anime.releaseYear}
-                  </p>
-                  <h3 className="text-white font-bold text-lg leading-tight mb-2">
-                    {truncateText(anime.title, 50)}
-                  </h3>
-                </div>
-                {/* <Play className="h-8 w-8 text-white" /> */}
-              </div>
+              {/* Removed hover effect for title, type, and year */}
 
               <div className="absolute top-2 right-2 flex items-center space-x-1 justify-between w-[90%]">
                 <div className="flex items-center space-x-1 bg-black/70 px-2 py-1 rounded">
@@ -301,6 +287,29 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               </div>
             </div>
           </Link>
+        </div>
+        {/* Bottom info bar: always visible, outside the card */}
+        <div className="w-full py-1 flex flex-col gap-1 mt-1">
+          <h3 className="text-white font-bold text-base leading-tight">
+            {truncateText(anime.title, 40)}
+          </h3>
+          <div className="flex items-center justify-between gap-2 mt-1">
+            <div className="flex items-center gap-2">
+              {anime.language?.includes("sub") && (
+                <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                  SUB
+                </span>
+              )}
+              {anime.language?.includes("dub") && (
+                <span className="bg-purple-600 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                  DUB
+                </span>
+              )}
+            </div>
+            <span className="text-gray-300 text-xs flex items-center gap-1">
+              Eps: {anime.totalEpisodes || "Unknown"}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -386,9 +395,9 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               </div>
 
               {/* Content Section */}
-              <div className="p-4 sm:p-6">
+              <div className="p-3">
                 {/* Title and Rating */}
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-tight">
                       {anime.title}
@@ -430,7 +439,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 </div>
 
                 {/* Description */}
-                <div className="mb-4 sm:mb-6">
+                <div className="mb-3">
                   <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
                     {anime.synopsis ||
                       "No description available for this anime."}
