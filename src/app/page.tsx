@@ -15,8 +15,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Navigation */}
-      <Navigation isLandingPage={false} />
+      {/* Navigation - transparent background on home page */}
+      <Navigation isLandingPage={true} />
 
       {/* Hero Carousel */}
       <HeroCarousel featuredAnime={featuredAnime} />
@@ -35,7 +35,7 @@ export default function Home() {
         <ScheduleSection />
 
         {/* Four-Section Content Grid */}
-        <section className="py-12 bg-gray-900/30">
+        <section className="py-12 bg-gray-900/30 grid-content">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Top Airing */}
@@ -62,7 +62,7 @@ export default function Home() {
                           {anime.title}
                         </h4>
                         <div className="flex items-center gap-2 mt-2">
-                          <p className="text-gray-400 text-xs">
+                          <p className="text-gray-300 text-xs">
                             Episode {anime.totalEpisodes || "?"}
                           </p>
                           •<p className="text-gray-200 text-sm">{anime.type}</p>
@@ -103,7 +103,7 @@ export default function Home() {
                             {anime.title}
                           </h4>
                           <div className="flex items-center gap-2 mt-2">
-                            <p className="text-gray-400 text-xs">
+                            <p className="text-gray-300 text-xs">
                               Episode {anime.totalEpisodes || "?"}
                             </p>
                             •
@@ -147,7 +147,7 @@ export default function Home() {
                             {anime.title}
                           </h4>
                           <div className="flex items-center gap-2 mt-2">
-                            <p className="text-gray-400 text-xs">
+                            <p className="text-gray-300 text-xs">
                               Episode {anime.totalEpisodes || "?"}
                             </p>
                             •
@@ -191,7 +191,7 @@ export default function Home() {
                             {anime.title}
                           </h4>
                           <div className="flex items-center gap-2 mt-2">
-                            <p className="text-gray-400 text-xs">
+                            <p className="text-gray-300 text-xs">
                               Episode {anime.totalEpisodes || "?"}
                             </p>
                             •

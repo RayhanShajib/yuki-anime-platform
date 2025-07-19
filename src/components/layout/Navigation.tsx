@@ -42,9 +42,11 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-black/90 backdrop-blur-md  shadow-lg"
-          : "bg-transparent"
+        isLandingPage
+          ? isScrolled
+            ? "bg-black/90 bg-navbar backdrop-blur-md shadow-lg"
+            : "bg-transparent"
+          : "bg-blue-600"
       }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -124,28 +126,28 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div
                 className={`absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ${
                   isScrolled
-                    ? "bg-gray-900/95 backdrop-blur-md border border-gray-700/50"
+                    ? "bg-gray-900/95 backdrop-blur-md border border-gray-700/50 bg-drop-down"
                     : "bg-gray-900"
                 }`}>
                 <div className="py-2">
                   <Link
                     href="/latest"
-                    className="block px-4 py-2 text-sm text-white hover:bg-gray-800">
+                    className="block px-4 py-2 text-sm text-white 800">
                     Latest
                   </Link>
                   <Link
                     href="/popular"
-                    className="block px-4 py-2 text-sm text-white hover:bg-gray-800">
+                    className="block px-4 py-2 text-sm text-white ">
                     Popular
                   </Link>
                   <Link
                     href="/ongoing"
-                    className="block px-4 py-2 text-sm text-white hover:bg-gray-800">
+                    className="block px-4 py-2 text-sm text-white ">
                     On Going
                   </Link>
                   <Link
                     href="/movies"
-                    className="block px-4 py-2 text-sm text-white hover:bg-gray-800">
+                    className="block px-4 py-2 text-sm text-white ">
                     Movies
                   </Link>
                 </div>
@@ -171,7 +173,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div
                 className={`absolute top-full left-0 mt-2 w-64 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ${
                   isScrolled
-                    ? "bg-gray-900/95 backdrop-blur-md border border-gray-700/50"
+                    ? "bg-gray-900/95 backdrop-blur-md border border-gray-700/50 bg-drop-down"
                     : "bg-gray-900"
                 }`}>
                 <div className="py-2 grid grid-cols-2 gap-1 p-4">
@@ -190,7 +192,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                     <Link
                       key={genre}
                       href={`/genre/${genre.toLowerCase()}`}
-                      className="block px-2 py-1 text-sm text-white hover:bg-gray-800 rounded">
+                      className="block px-1 py-1 text-sm text-white  rounded">
                       {genre}
                     </Link>
                   ))}
@@ -307,12 +309,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="text-white/90 hover:text-blue-400 transition-colors">
+                  className="text-white/90 login-btn hover:text-blue-400 transition-colors">
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg transition-colors">
+                  className="bg-blue-600 register-btn hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg transition-colors">
                   Register
                 </Link>
                 <button className="text-white/90 hover:text-blue-400 transition-colors relative">

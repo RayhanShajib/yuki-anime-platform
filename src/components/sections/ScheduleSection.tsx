@@ -23,7 +23,8 @@ const scheduleData = {
       episode: "Episode 12",
       episodeTitle: "The Final Battle",
       time: "16:05 JST",
-      poster: "https://m.media-amazon.com/images/M/MV5BMjlmZmI5MDctNDE2YS00YWE0LWE5ZWItZDBhYWQ0NTcxNWRhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_FMjpg_UX1000_.jpg",
+      poster:
+        "https://m.media-amazon.com/images/M/MV5BMjlmZmI5MDctNDE2YS00YWE0LWE5ZWItZDBhYWQ0NTcxNWRhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_FMjpg_UX1000_.jpg",
       isNew: true,
     },
     {
@@ -32,7 +33,8 @@ const scheduleData = {
       episode: "Episode 8",
       episodeTitle: "The Sound of Thunder",
       time: "23:15 JST",
-      poster: "https://m.media-amazon.com/images/M/MV5BODRmZDVmNzUtZDA4ZC00NjhkLWI2M2UtN2M0ZDIzNDcxYThjL2ltYWdlXkEyXkFqcGdeQXVyNTk0MzMzODA@._V1_FMjpg_UX1000_.jpg",
+      poster:
+        "https://m.media-amazon.com/images/M/MV5BODRmZDVmNzUtZDA4ZC00NjhkLWI2M2UtN2M0ZDIzNDcxYThjL2ltYWdlXkEyXkFqcGdeQXVyNTk0MzMzODA@._V1_FMjpg_UX1000_.jpg",
       isNew: true,
     },
   ],
@@ -78,7 +80,8 @@ const scheduleData = {
       episode: "Episode 13",
       episodeTitle: "The Devil Hunter",
       time: "24:00 JST",
-      poster: "https://m.media-amazon.com/images/M/MV5BODRmZDVmNzUtZDA4ZC00NjhkLWI2M2UtN2M0ZDIzNDcxYThjL2ltYWdlXkEyXkFqcGdeQXVyNTk0MzMzODA@._V1_FMjpg_UX1000_.jpg",
+      poster:
+        "https://m.media-amazon.com/images/M/MV5BODRmZDVmNzUtZDA4ZC00NjhkLWI2M2UtN2M0ZDIzNDcxYThjL2ltYWdlXkEyXkFqcGdeQXVyNTk0MzMzODA@._V1_FMjpg_UX1000_.jpg",
       isNew: true,
     },
   ],
@@ -91,7 +94,7 @@ export default function ScheduleSection() {
     scheduleData[activeDay as keyof typeof scheduleData] || [];
 
   return (
-    <div className="min-h-screen bg-gray-900/30">
+    <div className="bg-gray-900/30 bg-schedule-section">
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
@@ -147,16 +150,16 @@ export default function ScheduleSection() {
                           <h3 className="text-xl font-semibold text-white mb-1">
                             {anime.title}
                           </h3>
-                          <p className="text-blue-400 font-medium mb-1">
+                          <p className="text-blue-600 font-medium mb-1">
                             {anime.episode}
                             {anime.episodeTitle && (
-                              <span className="text-gray-400 font-normal">
+                              <span className="text-gray-300 font-normal">
                                 {" - "}
                                 {anime.episodeTitle}
                               </span>
                             )}
                           </p>
-                          <div className="flex items-center text-gray-400 text-sm">
+                          <div className="flex items-center text-gray-300 text-sm">
                             <Clock className="h-4 w-4 mr-1" />
                             <span>{anime.time}</span>
                           </div>

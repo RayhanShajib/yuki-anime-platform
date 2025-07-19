@@ -127,7 +127,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
       </div>
 
       {/* Bottom blur gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-black via-black/80 to-transparent z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-50 bg-gradient-to-t from-black via-black/80 to-transparent z-10 pointer-events-none" />
 
       {currentAnime.trailer && (
         <div className="absolute bottom-7 right-4 z-20 flex flex-col space-y-2">

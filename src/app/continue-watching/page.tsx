@@ -93,9 +93,6 @@ export default function ContinueWatchingPage() {
               <Play className="h-6 w-6 sm:h-8 sm:w-8 text-green-500 mr-3" />
               Continue Watching
             </h1>
-            <p className="text-gray-400 text-sm sm:text-base">
-              Pick up where you left off
-            </p>
           </div>
 
           {/* Search and Controls */}
@@ -109,7 +106,7 @@ export default function ContinueWatchingPage() {
                   placeholder="Search your watching list..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white/90 placeholder-gray-400 focus:outline-none focus:border-purple-500 text-sm sm:text-base"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white/90 placeholder-gray-400 focus:outline-none text-sm sm:text-base"
                 />
               </div>
 
@@ -123,7 +120,7 @@ export default function ContinueWatchingPage() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as SortBy)}
-                    className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 text-sm focus:outline-none focus:border-purple-500">
+                    className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 text-sm focus:outline-none">
                     <option value="lastWatched">Last Watched</option>
                     <option value="progress">Progress</option>
                     <option value="alphabetical">A-Z</option>
@@ -137,7 +134,7 @@ export default function ContinueWatchingPage() {
                     onClick={() => setViewMode("grid")}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[40px] ${
                       viewMode === "grid"
-                        ? "bg-purple-600 text-white/90"
+                        ? "bg-blue-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-600"
                     }`}>
                     <Grid3X3 className="h-4 w-4" />
@@ -147,7 +144,7 @@ export default function ContinueWatchingPage() {
                     onClick={() => setViewMode("list")}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[40px] ${
                       viewMode === "list"
-                        ? "bg-purple-600 text-white/90"
+                        ? "bg-blue-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-600"
                     }`}>
                     <List className="h-4 w-4" />
@@ -309,7 +306,7 @@ export default function ContinueWatchingPage() {
 
                         {/* Actions */}
                         <div className="flex items-center space-x-2 mx-auto sm:mx-0">
-                          <button className="bg-purple-600 hover:bg-purple-700 text-white/90 px-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[40px] flex items-center space-x-2">
+                          <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[40px] flex items-center space-x-2">
                             <Play className="h-4 w-4" />
                             <span>Continue</span>
                           </button>

@@ -21,7 +21,7 @@ export function LatestSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8 text-3xl font-bold text-white flex-wrap gap-5">
           <h2 className="text-3xl font-bold text-white flex items-center">
-            <Calendar className="h-8 w-8 text-green-500 mr-3" />
+            <Calendar className="h-8 w-8 text-blue-600 mr-3" />
             Latest Releases
           </h2>
 
@@ -31,7 +31,7 @@ export function LatestSection() {
               onClick={() => setSelectedLanguage("sub")}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 selectedLanguage === "sub"
-                  ? "bg-green-600 text-white/90"
+                  ? "bg-blue-600 text-white/90"
                   : "text-gray-300 hover:text-white"
               }`}>
               SUB
@@ -40,7 +40,7 @@ export function LatestSection() {
               onClick={() => setSelectedLanguage("dub")}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 selectedLanguage === "dub"
-                  ? "bg-green-600 text-white/90"
+                  ? "bg-blue-600 text-white/90"
                   : "text-gray-300 hover:text-white"
               }`}>
               DUB
@@ -49,7 +49,7 @@ export function LatestSection() {
               onClick={() => setSelectedLanguage("all")}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 selectedLanguage === "all"
-                  ? "bg-green-600 text-white/90"
+                  ? "bg-blue-600 text-white/90"
                   : "text-gray-300 hover:text-white"
               }`}>
               ALL
@@ -76,7 +76,7 @@ export function LatestSection() {
           <div className="flex justify-center mt-8">
             <button
               onClick={() => setShowAll(!showAll)}
-              className="px-6 py-3 bg-green-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors">
+              className="px-6 py-3 bg-blue-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors">
               {showAll ? "View Less" : "View More"}
             </button>
           </div>

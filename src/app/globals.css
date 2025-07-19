@@ -103,6 +103,29 @@ body,
 .light .text-purple-400{
   color: #111827 !important;
 }
+.light .bg-footer{
+  background: #1018284d !important;
+}
+.light .grid-content, .light .bg-schedule-section{
+  background: #fff !important;
+}
+.light .bg-navbar{
+  background-color: var(--color-blue-600) !important;
+}
+.light .register-btn, .light .login-btn{
+  background: #fff !important;
+  color: var(--color-blue-600) !important;
+}
+.light .login-btn{
+  background: #fff !important;
+  color: var(--color-blue-600) !important;
+  padding: 8px 13px;
+  border-radius: 10px;
+}
+.light .bg-drop-down{
+  background: #fff !important;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

@@ -4,7 +4,7 @@ import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { mockAnime } from "@/lib/mockData";
-import { Bookmark, Link2, List, PlayCircle, User, Users } from "lucide-react";
+import { Bookmark, Grid, Link2, List, PlayCircle, User, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -128,7 +128,7 @@ export default function AnimeInfoPage() {
             </h1>
             <span className="text-white font-normal mb-4">{anime.type}</span>
             <div className="flex gap-4 mt-4 mb-4">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white/90 font-semibold text-md shadow-lg transition">
+              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-600 text-white/90 font-semibold text-md shadow-lg transition">
                 <PlayCircle className="h-5 w-5" /> Watch Now
               </button>
               <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-md shadow-lg transition">
@@ -256,27 +256,18 @@ export default function AnimeInfoPage() {
                 </div>
                 <div className="hidden sm:flex gap-2 items-center">
                   <button
-                    className={`w-8 h-5 rounded-[5px] overflow-hidden smoothie bg-[#1e1e24] cursor-pointer ${
+                    className={`overflow-hidden smoothie bg-gray-600 text-white/90 p-1 rounded cursor-pointer ${
                       episodeLayout === "grid"
-                        ? "bg-purple-500"
-                        : "bg-[#1e1e24] hover:bg-purple-500"
+                        ? "bg-[#1e1e24]"
+                        : "bg-[#1e1e24]"
                     }`}
-                    onClick={() => setEpisodeLayout("grid")}></button>
+                    onClick={() => setEpisodeLayout("grid")}>
+                       <Grid className="h-4 w-4" />
+                    </button>
                   <button
-                    className={`flex flex-col justify-center items-center gap-[2px] h-[1.1rem] group cursor-pointer`}
+                    className={`flex flex-col justify-center items-center gap-[2px] group cursor-pointer bg-gray-600 text-white/90 p-1 rounded`}
                     onClick={() => setEpisodeLayout("flex")}>
-                    <span
-                      className={`w-8 h-1/2 rounded-sm overflow-hidden flex bg-[#1e1e24] brightness-150 ${
-                        episodeLayout === "flex"
-                          ? "bg-purple-500"
-                          : "bg-[#1e1e24] hover:bg-purple-500"
-                      }`}></span>
-                    <span
-                      className={`w-8 h-1/2 rounded-sm overflow-hidden flex bg-[#1e1e24] brightness-150 ${
-                        episodeLayout === "flex"
-                          ? "bg-purple-500"
-                          : "bg-[#1e1e24] hover:bg-purple-500"
-                      }`}></span>
+                    <List className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -476,7 +467,7 @@ export default function AnimeInfoPage() {
           <div className="relative flex flex-col gap-4 md:gap-5 w-full  z-20 mx-auto my-5 mb-9 lg:my-8 lg:mb-12  md:px-2 xl:px-0 !select-none">
             <div className="text-lg sm:text-xl lg:text-2xl font-medium lg:font-normal tracking-[0.015em] lg:tracking-normal 2xl:text-[1.6rem] font-popin items-center gap-2 flex px-2 ">
               <a className="flex gap-2 items-center" href="/search">
-                <div className="h-6 md:h-8 rounded-md w-[.38rem] bg-purple-500 "></div>
+                <div className="h-6 md:h-8 rounded-md w-[.38rem] bg-blue-600"></div>
                 <span className="text-white">You may also like</span>
                 <span className="ml-auto md:m-0 text-white">
                   <svg

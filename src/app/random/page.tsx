@@ -4,7 +4,7 @@ import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { mockAnime } from "@/lib/mockData";
-import { Bookmark, Link2, List, PlayCircle, User, Users } from "lucide-react";
+import { Bookmark, Grid, Link2, List, PlayCircle, User, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -129,7 +129,7 @@ export default function RandomInfoPage() {
             </h1>
             <span className="text-white font-normal mb-4">{anime.type}</span>
             <div className="flex gap-4 mt-4 mb-4">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white/90 font-semibold text-md shadow-lg transition">
+              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white/90 font-semibold text-md shadow-lg transition">
                 <PlayCircle className="h-5 w-5" /> Watch Now
               </button>
               <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-md shadow-lg transition">
@@ -278,28 +278,19 @@ export default function RandomInfoPage() {
                   </p>
                 </div>
                 <div className="hidden sm:flex gap-2 items-center">
-                  <button
-                    className={`w-8 h-5 rounded-[5px] overflow-hidden smoothie bg-[#1e1e24] cursor-pointer ${
+                   <button
+                    className={`overflow-hidden smoothie bg-gray-600 text-white/90 p-1 rounded cursor-pointer ${
                       episodeLayout === "grid"
-                        ? "bg-purple-500"
-                        : "bg-[#1e1e24] hover:bg-purple-500"
+                        ? "bg-[#1e1e24]"
+                        : "bg-[#1e1e24]"
                     }`}
-                    onClick={() => setEpisodeLayout("grid")}></button>
+                    onClick={() => setEpisodeLayout("grid")}>
+                       <Grid className="h-4 w-4" />
+                    </button>
                   <button
-                    className={`flex flex-col justify-center items-center gap-[2px] h-[1.1rem] group cursor-pointer`}
+                    className={`flex flex-col justify-center items-center gap-[2px] group cursor-pointer bg-gray-600 text-white/90 p-1 rounded`}
                     onClick={() => setEpisodeLayout("flex")}>
-                    <span
-                      className={`w-8 h-1/2 rounded-sm overflow-hidden flex bg-[#1e1e24] brightness-150 ${
-                        episodeLayout === "flex"
-                          ? "bg-purple-500"
-                          : "bg-[#1e1e24] hover:bg-purple-500"
-                      }`}></span>
-                    <span
-                      className={`w-8 h-1/2 rounded-sm overflow-hidden flex bg-[#1e1e24] brightness-150 ${
-                        episodeLayout === "flex"
-                          ? "bg-purple-500"
-                          : "bg-[#1e1e24] hover:bg-purple-500"
-                      }`}></span>
+                    <List className="h-4 w-4" />
                   </button>
                 </div>
               </div>

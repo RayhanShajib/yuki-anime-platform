@@ -1,9 +1,8 @@
 export function FooterSection() {
   return (
-    <footer className="bg-black border-t border-gray-800">
+    <footer className="bg-black bg-footer border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-7 py-8">
         <div className="flex">
-
           {/* <!-- Footer content area --> */}
           <div className="flex-1">
             {/* <!-- Main Footer Content --> */}
@@ -13,7 +12,7 @@ export function FooterSection() {
                 <div className="mb-4">
                   <h3 className="text-white text-lg font-semibold mb-2">
                     A-Z List
-                    <span className="text-gray-400 text-sm font-normal ml-2">
+                    <span className="text-gray-300 text-sm font-normal ml-2">
                       Searching anime order by alphabet name A to Z.
                     </span>
                   </h3>
@@ -112,12 +111,12 @@ export function FooterSection() {
               <div className="flex items-center space-x-6">
                 <a
                   href="#"
-                  className="text-gray-400 hover:text-white text-sm transition-colors">
+                  className="text-gray-300 hover:text-white text-sm transition-colors">
                   REQUEST
                 </a>
                 <a
                   href="contact.html"
-                  className="text-gray-400 hover:text-white text-sm transition-colors">
+                  className="text-gray-300 hover:text-white text-sm transition-colors">
                   CONTACT US
                 </a>
               </div>
@@ -127,7 +126,7 @@ export function FooterSection() {
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center pt-6 border-t border-gray-800 space-y-4 lg:space-y-0">
               {/* <!-- Left: Copyright and Legal --> */}
               <div className="flex-1">
-                <p className="text-gray-400 text-sm mb-2">
+                <p className="text-gray-300 text-sm mb-2">
                   Copyright ©Yuki. All Rights Reserved
                 </p>
                 <p className="text-gray-500 text-xs mb-3">

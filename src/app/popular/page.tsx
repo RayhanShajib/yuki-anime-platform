@@ -228,7 +228,7 @@ export default function PopularPage() {
             <div className="flex justify-center mt-8">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="px-6 py-3 bg-green-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                className="px-6 py-3 bg-blue-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors">
                 {showAll ? "View Less" : "View More"}
               </button>
             </div>
