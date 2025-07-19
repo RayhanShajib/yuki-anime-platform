@@ -71,7 +71,7 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <a href="#">
+                <a href="#" className="text-white">
                   <button>View more..</button>
                 </a>
               </div>
@@ -115,7 +115,7 @@ export default function Home() {
                       </div>
                     ))}
                 </div>
-                <a href="#">
+                <a href="#" className="text-white">
                   <button>View more..</button>
                 </a>
               </div>
@@ -159,7 +159,7 @@ export default function Home() {
                       </div>
                     ))}
                 </div>
-                <a href="#">
+                <a href="#" className="text-white">
                   <button>View more..</button>
                 </a>
               </div>
@@ -203,7 +203,7 @@ export default function Home() {
                       </div>
                     ))}
                 </div>
-                    <a href="#">
+                <a href="#" className="text-white">
                   <button>View more..</button>
                 </a>
               </div>

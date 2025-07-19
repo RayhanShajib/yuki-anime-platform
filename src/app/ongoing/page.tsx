@@ -89,7 +89,7 @@ export default function OngoingPage() {
                 <h3 className="text-xl font-bold text-white mb-1">
                   {filteredAnime.length} Currently Airing Series
                 </h3>
-                <p className="text-gray-400 text-sm">
+                <p className="text-white text-sm">
                   New episodes releasing weekly • Updated in real-time
                 </p>
               </div>
@@ -141,7 +141,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
-                          ? "bg-green-600 text-white"
+                          ? "bg-green-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -161,7 +161,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         typeFilter === option.key
-                          ? "bg-blue-600 text-white"
+                          ? "bg-blue-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -183,7 +183,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         genreFilter === option.key
-                          ? "bg-purple-600 text-white"
+                          ? "bg-purple-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -201,7 +201,7 @@ export default function OngoingPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "grid"
-                        ? "bg-gray-600 text-white"
+                        ? "bg-gray-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <Grid className="h-4 w-4" />
@@ -211,7 +211,7 @@ export default function OngoingPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "list"
-                        ? "bg-gray-600 text-white"
+                        ? "bg-gray-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <List className="h-4 w-4" />
@@ -273,7 +273,7 @@ export default function OngoingPage() {
                             </h3>
                             <div className="flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs font-bold">
                               <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                              <span className="text-white">LIVE</span>
+                              <span className="text-white/90">LIVE</span>
                             </div>
                           </div>
                           <p className="text-gray-400 text-sm mb-2 line-clamp-2">
@@ -299,10 +299,10 @@ export default function OngoingPage() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm transition-colors">
+                          <button className="bg-green-600 hover:bg-green-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
                             Watch
                           </button>
-                          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm transition-colors">
+                          <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded text-sm transition-colors">
                             Info
                           </button>
                         </div>

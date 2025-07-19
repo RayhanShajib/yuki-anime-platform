@@ -95,10 +95,10 @@ export default function MoviesPage() {
               </div>
               <div className="md:w-2/3 p-6 flex flex-col justify-center">
                 <div className="flex items-center space-x-2 mb-3">
-                  <span className="bg-purple-600 text-white px-3 py-1 rounded text-sm font-bold">
+                  <span className="bg-purple-600 text-white/90 px-3 py-1 rounded text-sm font-bold">
                     FEATURED
                   </span>
-                  <span className="bg-gray-700 text-white px-2 py-1 rounded text-xs">
+                  <span className="bg-gray-700 text-white/90 px-2 py-1 rounded text-xs">
                     MOVIE
                   </span>
                 </div>
@@ -108,7 +108,7 @@ export default function MoviesPage() {
                 <p className="text-gray-300 mb-4 leading-relaxed">
                   {filteredMovies[0]?.synopsis}
                 </p>
-                <div className="flex items-center space-x-4 text-sm text-gray-400 mb-4">
+                <div className="flex items-center space-x-4 text-sm text-gray-300 mb-4">
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-4 w-4" />
                     <span>{filteredMovies[0]?.releaseYear}</span>
@@ -123,10 +123,10 @@ export default function MoviesPage() {
                   </div>
                 </div>
                 <div className="flex space-x-3 flex-wrap gap-3">
-                  <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors font-semibold">
+                  <button className="bg-purple-600 hover:bg-purple-700 text-white/90 px-6 py-2 rounded-lg transition-colors font-semibold">
                     Watch Now
                   </button>
-                  <button className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors">
+                  <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-6 py-2 rounded-lg transition-colors">
                     More Info
                   </button>
                 </div>
@@ -150,7 +150,7 @@ export default function MoviesPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
-                          ? "bg-purple-600 text-white"
+                          ? "bg-purple-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -172,7 +172,7 @@ export default function MoviesPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         genreFilter === option.key
-                          ? "bg-pink-600 text-white"
+                          ? "bg-pink-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -190,7 +190,7 @@ export default function MoviesPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "grid"
-                        ? "bg-gray-600 text-white"
+                        ? "bg-gray-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <Grid className="h-4 w-4" />
@@ -200,7 +200,7 @@ export default function MoviesPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "list"
-                        ? "bg-gray-600 text-white"
+                        ? "bg-gray-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <List className="h-4 w-4" />
@@ -235,7 +235,7 @@ export default function MoviesPage() {
               {moviesToShow.map((movie) => (
                 <div
                   key={movie.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors cursor-pointer">
                   <div className="flex items-center space-x-4">
                     {/* Use Next.js Image for optimized images */}
                     {movie.poster ? (
@@ -276,10 +276,10 @@ export default function MoviesPage() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded text-sm transition-colors">
+                          <button className="bg-purple-600 hover:bg-purple-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
                             Watch
                           </button>
-                          <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm transition-colors">
+                          <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded text-sm transition-colors">
                             Info
                           </button>
                         </div>
@@ -296,7 +296,7 @@ export default function MoviesPage() {
             <div className="flex justify-center mt-12">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors cursor-pointer">
+                className="px-6 py-3 bg-green-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors cursor-pointer">
                 {showAll ? "View Less" : "View More"}
               </button>
             </div>

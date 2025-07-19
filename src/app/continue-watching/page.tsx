@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { mockAnime } from "@/lib/mockData";
 import {
@@ -16,10 +17,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 // Mock data for continue watching with progress
-const continueWatchingData = mockAnime.slice(0, 12).map((anime, index) => ({
+const continueWatchingData = mockAnime.slice(0, 12).map((anime) => ({
   ...anime,
-  currentEpisode: Math.floor(Math.random() * (anime.episodes || 24)) + 1,
-  totalEpisodes: anime.episodes || 24,
+  currentEpisode: Math.floor(Math.random() * (Number(anime.episodes) || 24)) + 1,
+  totalEpisodes: typeof anime.episodes === "number" ? anime.episodes : Array.isArray(anime.episodes) ? anime.episodes.length : 24,
   lastWatched: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
   progress: Math.random() * 100,
   timeLeft: Math.floor(Math.random() * 25) + 5, // minutes left in current episode
@@ -33,7 +34,6 @@ export default function ContinueWatchingPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [sortBy, setSortBy] = useState<SortBy>("lastWatched");
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
   const [filteredData, setFilteredData] = useState(continueWatchingData);
 
   // Filter and sort data
@@ -109,7 +109,7 @@ export default function ContinueWatchingPage() {
                   placeholder="Search your watching list..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 text-sm sm:text-base"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white/90 placeholder-gray-400 focus:outline-none focus:border-purple-500 text-sm sm:text-base"
                 />
               </div>
 
@@ -123,7 +123,7 @@ export default function ContinueWatchingPage() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as SortBy)}
-                    className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-500">
+                    className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 text-sm focus:outline-none focus:border-purple-500">
                     <option value="lastWatched">Last Watched</option>
                     <option value="progress">Progress</option>
                     <option value="alphabetical">A-Z</option>
@@ -137,7 +137,7 @@ export default function ContinueWatchingPage() {
                     onClick={() => setViewMode("grid")}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[40px] ${
                       viewMode === "grid"
-                        ? "bg-purple-600 text-white"
+                        ? "bg-purple-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-600"
                     }`}>
                     <Grid3X3 className="h-4 w-4" />
@@ -147,7 +147,7 @@ export default function ContinueWatchingPage() {
                     onClick={() => setViewMode("list")}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[40px] ${
                       viewMode === "list"
-                        ? "bg-purple-600 text-white"
+                        ? "bg-purple-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-600"
                     }`}>
                     <List className="h-4 w-4" />
@@ -255,7 +255,7 @@ export default function ContinueWatchingPage() {
                     <div
                       key={anime.id}
                       className="bg-gray-800/50 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center p-3 sm:p-4 space-y-3 sm:space-y-0 sm:space-x-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center p-3 sm:p-4 space-y-3 sm:space-y-0 sm:space-x-4 gap-3.5 cursor-pointer">
                         {/* Poster */}
                         <div className="relative flex-shrink-0 mx-auto sm:mx-0">
                           <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-lg overflow-hidden">
@@ -281,8 +281,8 @@ export default function ContinueWatchingPage() {
                             {anime.title}
                           </h3>
                           <p className="text-gray-400 text-xs sm:text-sm mb-2">
-                            Episode {anime.currentEpisode} of{" "}
-                            {anime.totalEpisodes} • {Array.isArray(anime.genres) ? anime.genres.join(", ") : anime.genres}
+                            Episode {Array.isArray(anime.currentEpisode) ? anime.currentEpisode.length : anime.currentEpisode} of{" "}
+                            {Array.isArray(anime.totalEpisodes) ? anime.totalEpisodes.length : anime.totalEpisodes} • {Array.isArray(anime.genres) ? anime.genres.join(", ") : anime.genres}
                           </p>
 
                           {/* Progress Bar */}
@@ -309,11 +309,11 @@ export default function ContinueWatchingPage() {
 
                         {/* Actions */}
                         <div className="flex items-center space-x-2 mx-auto sm:mx-0">
-                          <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[40px] flex items-center space-x-2">
+                          <button className="bg-purple-600 hover:bg-purple-700 text-white/90 px-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[40px] flex items-center space-x-2">
                             <Play className="h-4 w-4" />
                             <span>Continue</span>
                           </button>
-                          <button className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center">
+                          <button className="bg-gray-700 hover:bg-gray-600 text-white/90 p-2 rounded-lg transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center">
                             <MoreVertical className="h-4 w-4" />
                           </button>
                         </div>
@@ -326,6 +326,8 @@ export default function ContinueWatchingPage() {
           )}
         </div>
       </main>
+
+      <FooterSection/>
     </div>
   );
 }

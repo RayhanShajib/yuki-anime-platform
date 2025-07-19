@@ -256,7 +256,7 @@ export default function SearchPage() {
                 </button>
                 <button
                   type="button"
-                  className="px-10 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 cursor-pointer"
+                  className="px-10 py-2 rounded-lg bg-green-600 text-white/90 font-medium hover:bg-green-700 cursor-pointer"
                   onClick={handleApplyFilters}>
                   Filter
                 </button>

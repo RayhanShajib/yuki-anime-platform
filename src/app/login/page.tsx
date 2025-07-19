@@ -25,9 +25,9 @@ export default function LoginPage() {
         <div className="text-center">
           <Link href="/" className="inline-flex items-center space-x-2">
             <div className="text-4xl font-bold text-blue-500">雪</div>
-            <span className="text-2xl font-semibold text-white">Yuki</span>
+            <span className="text-2xl font-semibold text-white/90">Yuki</span>
           </Link>
-          <h2 className="mt-6 text-3xl font-bold text-white">Welcome back</h2>
+          <h2 className="mt-6 text-3xl font-bold text-white/90">Welcome back</h2>
           <p className="mt-2 text-sm text-gray-400">
             Sign in to continue watching your favorite anime
           </p>
@@ -38,7 +38,7 @@ export default function LoginPage() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
                 Email address
               </label>
               <div className="relative">
@@ -61,7 +61,7 @@ export default function LoginPage() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -104,7 +104,7 @@ export default function LoginPage() {
                   onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 bg-gray-700 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
                   Remember me
                 </label>
               </div>
@@ -119,7 +119,7 @@ export default function LoginPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             >
               Sign in
             </button>
@@ -132,16 +132,16 @@ export default function LoginPage() {
                 <div className="w-full border-t border-gray-600" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-800 text-gray-400">Or continue with</span>
+                <span className="px-2 bg-gray-800 text-white">Or continue with</span>
               </div>
             </div>
 
             {/* Social Login */}
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-300 hover:bg-gray-600 transition-colors">
+              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-400 hover:bg-gray-600 transition-colors">
                 <span>Google</span>
               </button>
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-300 hover:bg-gray-600 transition-colors">
+              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-400 hover:bg-gray-600 transition-colors">
                 <span>Discord</span>
               </button>
             </div>

@@ -31,9 +31,9 @@ export default function RegisterPage() {
         <div className="text-center">
           <Link href="/" className="inline-flex items-center space-x-2">
             <div className="text-4xl font-bold text-blue-500">雪</div>
-            <span className="text-2xl font-semibold text-white">Yuki</span>
+            <span className="text-2xl font-semibold text-white/90">Yuki</span>
           </Link>
-          <h2 className="mt-6 text-3xl font-bold text-white">Create your account</h2>
+          <h2 className="mt-6 text-3xl font-bold text-white/90">Create your account</h2>
           <p className="mt-2 text-sm text-gray-400">
             Join thousands of anime fans on Yuki
           </p>
@@ -44,7 +44,7 @@ export default function RegisterPage() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Username Field */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-400 mb-2">
                 Username
               </label>
               <div className="relative">
@@ -59,7 +59,7 @@ export default function RegisterPage() {
                   required
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full pl-10 pr-3 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-3 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white/90 placeholder-gray-400 focus:outline-none focus:border-transparent"
                   placeholder="Choose a username"
                 />
               </div>
@@ -67,7 +67,7 @@ export default function RegisterPage() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
                 Email address
               </label>
               <div className="relative">
@@ -82,7 +82,7 @@ export default function RegisterPage() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-3 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-3 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white/90 focus:outline-none placeholder-gray-400  focus:border-transparent"
                   placeholder="Enter your email"
                 />
               </div>
@@ -90,7 +90,7 @@ export default function RegisterPage() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -105,7 +105,7 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white/90 focus:outline-none placeholder-gray-400 "
                   placeholder="Create a password"
                 />
                 <button
@@ -132,7 +132,7 @@ export default function RegisterPage() {
 
             {/* Confirm Password Field */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-400 mb-2">
                 Confirm Password
               </label>
               <div className="relative">
@@ -147,7 +147,7 @@ export default function RegisterPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white/90 placeholder-gray-400 focus:outline-none focus:border-transparent"
                   placeholder="Confirm your password"
                 />
                 <button
@@ -182,7 +182,7 @@ export default function RegisterPage() {
                 onChange={(e) => setFormData({ ...formData, agreeToTerms: e.target.checked })}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 bg-gray-700 rounded"
               />
-              <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-300">
+              <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-400">
                 I agree to the{' '}
                 <Link href="/terms" className="text-blue-400 hover:text-blue-300">
                   Terms of Service
@@ -198,7 +198,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={!formData.agreeToTerms || !passwordValid || !passwordsMatch}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create account
             </button>
@@ -211,16 +211,16 @@ export default function RegisterPage() {
                 <div className="w-full border-t border-gray-600" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-800 text-gray-400">Or continue with</span>
+                <span className="px-2 bg-gray-800 text-white">Or continue with</span>
               </div>
             </div>
 
             {/* Social Login */}
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-300 hover:bg-gray-600 transition-colors">
+              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-400 hover:bg-gray-600 transition-colors">
                 <span>Google</span>
               </button>
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-300 hover:bg-gray-600 transition-colors">
+              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-400 hover:bg-gray-600 transition-colors">
                 <span>Discord</span>
               </button>
             </div>

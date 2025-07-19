@@ -50,7 +50,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2">
             <div className="text-2xl font-bold text-blue-500">雪</div>
-            <span className="text-xl font-semibold text-white">Yuki</span>
+            <span className="text-xl font-semibold text-white/90">Yuki</span>
           </Link>
 
           <div className="flex items-center space-x-4">
@@ -61,7 +61,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   placeholder="Search anime..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`transition-all duration-300 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`transition-all duration-300 text-white/90 placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none ${
                     isScrolled ? "bg-gray-800/80" : "bg-slate-700/60"
                   }`}
                   onKeyDown={(e) => {
@@ -101,12 +101,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           <div className="hidden md:flex items-center space-x-6">
             <Link
               href="/"
-              className="text-white hover:text-blue-400 transition-colors">
+              className="text-white/90 hover:text-blue-400 transition-colors">
               Home
             </Link>
 
             <div className="relative group">
-              <button className="text-white hover:text-blue-400 transition-colors flex items-center space-x-1">
+              <button className="text-white/90 hover:text-blue-400 transition-colors flex items-center space-x-1">
                 <span>Browse</span>
                 <svg
                   className="w-4 h-4"
@@ -153,7 +153,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             </div>
 
             <div className="relative group">
-              <button className="text-white hover:text-blue-400 transition-colors flex items-center space-x-1">
+              <button className="text-white/90 hover:text-blue-400 transition-colors flex items-center space-x-1">
                 <span>Genre</span>
                 <svg
                   className="w-4 h-4"
@@ -200,12 +200,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
             <Link
               href="/random"
-              className="text-white hover:text-blue-400 transition-colors">
+              className="text-white/90 hover:text-blue-400 transition-colors">
               Random
             </Link>
             <Link
               href="/schedule"
-              className="text-white hover:text-blue-400 transition-colors">
+              className="text-white/90 hover:text-blue-400 transition-colors">
               Schedule
             </Link>
           </div>
@@ -213,7 +213,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           <div className="flex items-center space-x-4">
             <button
               onClick={toggleTheme}
-              className="text-white hover:text-blue-400 transition-colors"
+              className="text-white/90 hover:text-blue-400 transition-colors"
               title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
               {theme === "dark" ? (
                 <Sun className="h-5 w-5" />
@@ -222,12 +222,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               )}
             </button>
 
-            <button className="text-white hover:text-blue-400 transition-colors">
+            <button className="text-white/90 hover:text-blue-400 transition-colors">
               <Globe className="h-5 w-5" />
             </button>
 
             {isLoggedIn && (
-              <button className="text-white hover:text-blue-400 transition-colors relative">
+              <button className="text-white/90 hover:text-blue-400 transition-colors relative">
                 <Bell className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs"></span>
               </button>
@@ -307,15 +307,15 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="text-white hover:text-blue-400 transition-colors">
+                  className="text-white/90 hover:text-blue-400 transition-colors">
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                  className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg transition-colors">
                   Register
                 </Link>
-                <button className="text-white hover:text-blue-400 transition-colors relative">
+                <button className="text-white/90 hover:text-blue-400 transition-colors relative">
                   <Bell className="h-5 w-5" />
                   <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs"></span>
                 </button>

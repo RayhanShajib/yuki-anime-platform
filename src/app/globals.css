@@ -82,7 +82,27 @@ body,
 .light .border-gray-700 {
   border-color: #d1d5db !important;
 }
-
+.light .blur-gradient{
+  display: none;
+}
+.light .text-gray-300{
+  color: #0a0a0a !important;
+}
+.light .text-gray-200{
+  color: #6b7280 !important;
+}
+.light .text-gray-400{
+  color: #fff !important;
+}
+.light .text-blue-400{
+  color: #fff !important;
+}
+.light .text-red-400{
+  color: #111827 !important;
+}
+.light .text-purple-400{
+  color: #111827 !important;
+}
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -189,7 +209,9 @@ html {
 .btn-secondary:hover {
   background-color: #4b5563;
 }
-
+button{
+  cursor: pointer;
+}
 /* Line clamp utilities */
 .line-clamp-3 {
   display: -webkit-box;

@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { latestAnime } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
@@ -74,9 +75,9 @@ export default function LatestPage() {
                       key={option.key}
                       onClick={() => setLanguageFilter(option.key)}
                       className={cn(
-                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         languageFilter === option.key
-                          ? "bg-green-600 text-white"
+                          ? "bg-green-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -94,9 +95,9 @@ export default function LatestPage() {
                       key={option.key}
                       onClick={() => setTimeFilter(option.key)}
                       className={cn(
-                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         timeFilter === option.key
-                          ? "bg-blue-600 text-white"
+                          ? "bg-blue-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -114,9 +115,9 @@ export default function LatestPage() {
                       key={option.key}
                       onClick={() => setTypeFilter(option.key)}
                       className={cn(
-                        "px-3 py-1 rounded-md text-sm font-medium transition-colors",
+                        "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         typeFilter === option.key
-                          ? "bg-purple-600 text-white"
+                          ? "bg-purple-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -132,9 +133,9 @@ export default function LatestPage() {
                   <button
                     onClick={() => setViewMode("grid")}
                     className={cn(
-                      "p-2 rounded-md transition-colors",
+                      "p-2 rounded-md transition-colors cursor-pointer",
                       viewMode === "grid"
-                        ? "bg-gray-600 text-white"
+                        ? "bg-gray-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <Grid className="h-4 w-4" />
@@ -142,9 +143,9 @@ export default function LatestPage() {
                   <button
                     onClick={() => setViewMode("list")}
                     className={cn(
-                      "p-2 rounded-md transition-colors",
+                      "p-2 rounded-md transition-colors cursor-pointer",
                       viewMode === "list"
-                        ? "bg-gray-600 text-white"
+                        ? "bg-gray-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <List className="h-4 w-4" />
@@ -181,7 +182,7 @@ export default function LatestPage() {
               {filteredAnime.map((anime) => (
                 <div
                   key={anime.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors cursor-pointer">
                   <div className="flex items-center space-x-4">
                     <Image
                       src={anime.poster || "/fallback-poster.png"}
@@ -217,12 +218,12 @@ export default function LatestPage() {
                         </div>
                         <div className="flex space-x-1">
                           {anime.language.includes("sub") && (
-                            <span className="px-2 py-1 bg-green-600 text-white text-xs font-bold rounded">
+                            <span className="px-2 py-1 bg-green-600 text-white/90 text-xs font-bold rounded">
                               SUB
                             </span>
                           )}
                           {anime.language.includes("dub") && (
-                            <span className="px-2 py-1 bg-orange-600 text-white text-xs font-bold rounded">
+                            <span className="px-2 py-1 bg-orange-600 text-white/90 text-xs font-bold rounded">
                               DUB
                             </span>
                           )}
@@ -240,13 +241,14 @@ export default function LatestPage() {
             <div className="flex justify-center mt-8">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                className="px-6 py-3 bg-green-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors cursor-pointer">
                 {showAll ? "View Less" : "View More"}
               </button>
             </div>
           )}
         </div>
       </main>
+      <FooterSection/>
     </div>
   );
 }

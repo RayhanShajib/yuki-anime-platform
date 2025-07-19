@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { formatRating, truncateText } from "@/lib/utils";
 import { Anime } from "@/types/anime";
 import {
@@ -64,10 +66,13 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             <source src={currentAnime.trailer} type="video/mp4" />
           </video>
         ) : (
-          <img
+          <Image
             src={currentAnime.banner || currentAnime.poster}
             alt={currentAnime.title}
+            fill
             className="w-full h-full object-cover"
+            sizes="100vw"
+            priority
           />
         )}
 
@@ -78,7 +83,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
       <div className="relative z-10 h-full flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-7">
           <div className="max-w-2xl">
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 animate-fadeIn">
+            <h1 className="text-3xl md:text-5xl font-bold text-white/90 mb-4 animate-fadeIn">
               {currentAnime.title}
             </h1>
 
@@ -96,7 +101,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               {currentAnime.genres.slice(0, 4).map((genre) => (
                 <span
                   key={genre}
-                  className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white">
+                  className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white/90">
                   {genre}
                 </span>
               ))}
@@ -107,12 +112,12 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             </p>
 
             <div className="flex items-center space-x-4 gap-3.5 flex-wrap">
-              <button className="flex items-center space-x-2 bg-white text-black px-8 py-3 rounded-lg hover:bg-white/90 transition-colors font-semibold">
+              <button className="flex items-center space-x-2 bg-white text-black px-8 py-3 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer">
                 <Play className="h-5 w-5" />
                 <span>Watch Now</span>
               </button>
 
-              <button className="flex items-center space-x-2 bg-gray-700/80 backdrop-blur-sm text-white px-8 py-3 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold">
+              <button className="flex items-center space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-8 py-3 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer">
                 <Plus className="h-5 w-5" />
                 <span>Add to List</span>
               </button>
@@ -130,13 +135,13 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
           <div className="flex flex-col space-y-1">
             <button
               onClick={goToPrevious}
-              className="p-2 bg-gray-900/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors"
+              className="p-2 bg-gray-900/50 backdrop-blur-sm text-white/90 rounded-full hover:bg-black/70 transition-colors cursor-pointer"
               aria-label="Previous slide">
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={goToNext}
-              className="p-2 bg-gray-900/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors"
+              className="p-2 bg-gray-900/50 backdrop-blur-sm text-white/90 rounded-full hover:bg-black/70 transition-colors cursor-pointer"
               aria-label="Next slide">
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -145,7 +150,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
           {/* Mute/Unmute Button */}
           <button
             onClick={() => setIsMuted(!isMuted)}
-            className="p-3 bg-gray-900/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors"
+            className="p-3 bg-gray-900/50 backdrop-blur-sm text-white/90 rounded-full hover:bg-black/70 transition-colors cursor-pointer"
             aria-label={isMuted ? "Unmute" : "Mute"}>
             {isMuted ? (
               <VolumeX className="h-4 w-4" />

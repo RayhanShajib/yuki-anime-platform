@@ -100,7 +100,7 @@ export default function ProfileEditPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
               <Link
                 href="/profile"
-                className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors touch-manipulation">
+                className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors touch-manipulation">
                 <ArrowLeft className="h-5 w-5" />
                 <span className="text-sm sm:text-base">Back to Profile</span>
               </Link>
@@ -113,7 +113,7 @@ export default function ProfileEditPage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white px-4 sm:px-6 py-3 sm:py-2 rounded-lg transition-colors w-full sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
+              className="flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white/90 px-4 sm:px-6 py-3 sm:py-2 rounded-lg transition-colors w-full sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
               <Save className="h-4 w-4" />
               <span>{isSaving ? "Saving..." : "Save Changes"}</span>
             </button>
@@ -158,7 +158,7 @@ export default function ProfileEditPage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`flex items-center justify-center space-x-2 px-3 sm:px-4 py-3 sm:py-2 rounded-md text-sm font-medium transition-colors min-h-[48px] touch-manipulation ${
                     activeTab === tab.key
-                      ? "bg-purple-600 text-white"
+                      ? "bg-purple-600 text-white/90"
                       : "text-gray-300 hover:text-white hover:bg-gray-700"
                   }`}>
                   <Icon className="h-4 w-4" />
@@ -198,7 +198,7 @@ export default function ProfileEditPage() {
                       Upload a new profile picture. Recommended size is 400x400
                       pixels.
                     </p>
-                    <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded-lg transition-colors">
                       Choose File
                     </button>
                   </div>
@@ -223,7 +223,7 @@ export default function ProfileEditPage() {
                         onChange={(e) =>
                           handleInputChange("username", e.target.value)
                         }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -240,7 +240,7 @@ export default function ProfileEditPage() {
                         onChange={(e) =>
                           handleInputChange("email", e.target.value)
                         }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -257,7 +257,7 @@ export default function ProfileEditPage() {
                         onChange={(e) =>
                           handleInputChange("birthday", e.target.value)
                         }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -271,7 +271,7 @@ export default function ProfileEditPage() {
                       onChange={(e) =>
                         handleInputChange("gender", e.target.value)
                       }
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
                       <option value="prefer-not-to-say">
                         Prefer not to say
                       </option>
@@ -294,7 +294,7 @@ export default function ProfileEditPage() {
                           handleInputChange("location", e.target.value)
                         }
                         placeholder="City, Country"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -312,7 +312,7 @@ export default function ProfileEditPage() {
                           handleInputChange("website", e.target.value)
                         }
                         placeholder="https://your-website.com"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -327,7 +327,7 @@ export default function ProfileEditPage() {
                     onChange={(e) => handleInputChange("bio", e.target.value)}
                     rows={4}
                     placeholder="Tell us about yourself and your anime interests..."
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500 resize-none"
+                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500 resize-none"
                   />
                   <p className="text-gray-400 text-sm mt-2">
                     {userData.bio.length}/500 characters
@@ -358,7 +358,7 @@ export default function ProfileEditPage() {
                           )
                         }
                         placeholder="username"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -380,7 +380,7 @@ export default function ProfileEditPage() {
                           )
                         }
                         placeholder="username"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -402,7 +402,7 @@ export default function ProfileEditPage() {
                           )
                         }
                         placeholder="username"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -432,7 +432,7 @@ export default function ProfileEditPage() {
                           "preferences"
                         )
                       }
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
                       <option value="public">Public - Anyone can view</option>
                       <option value="friends">Friends Only</option>
                       <option value="private">Private - Only me</option>

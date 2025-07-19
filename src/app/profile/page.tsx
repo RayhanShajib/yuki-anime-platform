@@ -30,35 +30,8 @@ const userData = {
   totalWatched: 156,
   totalHours: 3892,
   favoriteGenres: ["Action", "Adventure", "Drama"],
-  level: 42,
   exp: 8750,
   nextLevelExp: 10000,
-  badges: [
-    {
-      id: 1,
-      name: "Binge Watcher",
-      icon: "🍿",
-      description: "Watched 10 episodes in one day",
-    },
-    {
-      id: 2,
-      name: "Genre Explorer",
-      icon: "🗺️",
-      description: "Watched anime from 15+ genres",
-    },
-    {
-      id: 3,
-      name: "Early Bird",
-      icon: "🌅",
-      description: "Watched 50+ ongoing series",
-    },
-    {
-      id: 4,
-      name: "Completionist",
-      icon: "✅",
-      description: "Completed 100+ anime series",
-    },
-  ],
   stats: {
     episodesWatched: 3247,
     minutesWatched: 233640,
@@ -81,7 +54,6 @@ const userLists = {
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("overview");
 
-  const levelProgress = (userData.exp / userData.nextLevelExp) * 100;
 
   return (
     <div className="min-h-screen bg-black">
@@ -104,9 +76,6 @@ export default function ProfilePage() {
                     priority
                   />
                 </div>
-                <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-purple-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-xs sm:text-sm">
-                  {userData.level}
-                </div>
               </div>
 
               {/* User Info */}
@@ -117,9 +86,9 @@ export default function ProfilePage() {
                   </h1>
                   <Link
                     href="/profile/edit"
-                    className="flex items-center justify-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 sm:py-2 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-0">
+                    className="flex items-center justify-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-3 sm:py-2 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-0">
                     <Edit3 className="h-4 w-4" />
-                    <span>Edit Profile</span>
+                    <span className="text-white/90">Edit Profile</span>
                   </Link>
                 </div>
 
@@ -148,35 +117,11 @@ export default function ProfilePage() {
                       Avg Rating
                     </div>
                   </div>
-                  <div className="text-center bg-gray-800/30 rounded-lg p-3 sm:p-4">
-                    <div className="text-xl sm:text-2xl font-bold text-yellow-400">
-                      {userData.badges.length}
-                    </div>
-                    <div className="text-gray-400 text-xs sm:text-sm">
-                      Badges
-                    </div>
-                  </div>
                 </div>
 
-                {/* Level Progress */}
-                <div className="mb-4">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-300">
-                      Level {userData.level}
-                    </span>
-                    <span className="text-gray-400">
-                      {userData.exp} / {userData.nextLevelExp} XP
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-3">
-                    <div
-                      className="bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all duration-300"
-                      style={{ width: `${levelProgress}%` }}></div>
-                  </div>
-                </div>
 
                 {/* Join Date */}
-                <div className="flex items-center space-x-2 text-gray-400">
+                <div className="flex items-center space-x-2 text-gray-300">
                   <Calendar className="h-4 w-4" />
                   <span>
                     Member since{" "}
@@ -238,7 +183,7 @@ export default function ProfilePage() {
                     onClick={() => setActiveTab(tab.key)}
                     className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-3 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap min-h-[44px] sm:min-h-0 ${
                       activeTab === tab.key
-                        ? "bg-purple-600 text-white"
+                        ? "bg-purple-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     }`}>
                     <Icon className="h-4 w-4 flex-shrink-0" />
@@ -253,30 +198,7 @@ export default function ProfilePage() {
           {/* Tab Content */}
           {activeTab === "overview" && (
             <div className="space-y-8">
-              {/* Badges */}
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <Trophy className="h-6 w-6 text-yellow-500 mr-3" />
-                  Achievements
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {userData.badges.map((badge) => (
-                    <div
-                      key={badge.id}
-                      className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 hover:border-yellow-500/50 transition-colors min-h-[120px] flex flex-col">
-                      <div className="text-3xl sm:text-4xl mb-2">
-                        {badge.icon}
-                      </div>
-                      <h3 className="font-semibold text-white mb-1 text-sm sm:text-base">
-                        {badge.name}
-                      </h3>
-                      <p className="text-gray-400 text-xs sm:text-sm flex-1">
-                        {badge.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+
 
               {/* Recently Watched */}
               <div>

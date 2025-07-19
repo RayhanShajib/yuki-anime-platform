@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { trendingAnime } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
@@ -60,9 +61,6 @@ export default function PopularPage() {
               </div>
               <div>
                 <div className="flex items-center space-x-2 mb-2 flex-wrap">
-                  <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">
-                    #1
-                  </span>
                   <span className="text-red-400 font-semibold">
                     TRENDING NOW
                   </span>
@@ -70,7 +68,7 @@ export default function PopularPage() {
                 <h3 className="text-xl font-bold text-white mb-1">
                   {filteredAnime[0]?.title}
                 </h3>
-                <p className="text-gray-400 text-sm">
+                <p className="text-white text-sm">
                   {filteredAnime[0]?.popularity.toLocaleString()} views this
                   week
                 </p>
@@ -94,7 +92,7 @@ export default function PopularPage() {
                       className={cn(
                         "flex items-center space-x-2 px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         timeFilter === option.key
-                          ? "bg-red-600 text-white"
+                          ? "bg-red-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.icon}
@@ -115,7 +113,7 @@ export default function PopularPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         typeFilter === option.key
-                          ? "bg-purple-600 text-white"
+                          ? "bg-purple-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -133,7 +131,7 @@ export default function PopularPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "grid"
-                        ? "bg-gray-600 text-white"
+                        ? "bg-gray-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <Grid className="h-4 w-4" />
@@ -143,7 +141,7 @@ export default function PopularPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "list"
-                        ? "bg-gray-600 text-white"
+                        ? "bg-gray-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <List className="h-4 w-4" />
@@ -165,14 +163,9 @@ export default function PopularPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
               {filteredAnime
                 .slice(0, showAll ? filteredAnime.length : 5)
-                .map((anime, index) => (
+                .map((anime) => (
                   <div key={anime.id} className="relative">
-                    {/* Ranking Badge */}
-                    <div className="absolute -top-2 -left-2 z-20 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-sm">
-                        {index + 1}
-                      </span>
-                    </div>
+
                     <AnimeCard
                       anime={anime}
                       showPopup={true}
@@ -183,18 +176,11 @@ export default function PopularPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredAnime.map((anime, index) => (
+              {filteredAnime.map((anime) => (
                 <div
                   key={anime.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors cursor-pointer">
                   <div className="flex items-center space-x-4">
-                    {/* Ranking */}
-                    <div className="flex-shrink-0 w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">
-                        #{index + 1}
-                      </span>
-                    </div>
-
                     {anime.poster && (
                       <Image
                         src={anime.poster}
@@ -242,13 +228,14 @@ export default function PopularPage() {
             <div className="flex justify-center mt-8">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                className="px-6 py-3 bg-green-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors">
                 {showAll ? "View Less" : "View More"}
               </button>
             </div>
           )}
         </div>
       </main>
+      <FooterSection/>
     </div>
   );
 }

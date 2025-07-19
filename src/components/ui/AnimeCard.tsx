@@ -258,7 +258,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               <div className="absolute top-2 right-2 flex items-center space-x-1 justify-between w-[90%]">
                 <div className="flex items-center space-x-1 bg-black/70 px-2 py-1 rounded">
                   <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                  <span className="text-white text-xs font-semibold">
+                  <span className="text-white/90 text-xs font-semibold">
                     {formatRating(anime.rating)}
                   </span>
                 </div>
@@ -275,11 +275,11 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                     onClick={handleInfoClick}>
-                    <Info className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
+                    <Info className="h-4 w-4 lg:h-5 lg:w-5 text-white/90" />
                   </button>
 
                   {showTooltip && (
-                    <div className="absolute top-full right-0 mt-1 bg-black/90 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                    <div className="absolute top-full right-0 mt-1 bg-black/90 text-white/90 text-xs px-2 py-1 rounded whitespace-nowrap z-10">
                       More info
                     </div>
                   )}
@@ -296,12 +296,12 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
           <div className="flex items-center justify-between gap-2 mt-1">
             <div className="flex items-center gap-2">
               {anime.language?.includes("sub") && (
-                <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
                   SUB
                 </span>
               )}
               {anime.language?.includes("dub") && (
-                <span className="bg-purple-600 text-white px-2 py-0.5 rounded-full text-xs font-medium">
+                <span className="bg-purple-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
                   DUB
                 </span>
               )}
@@ -389,7 +389,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                     onClick={handleClosePopup}
                     className="absolute top-2 right-2 sm:bottom-4 sm:right-4 sm:top-auto bg-black/70 hover:bg-black/90 p-2 rounded-full transition-colors z-10"
                     aria-label="Close">
-                    <X className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    <X className="h-5 w-5 sm:h-6 sm:w-6 text-white/90" />
                   </button>
                 </div>
               </div>
@@ -404,10 +404,10 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                     </h2>
                     <div className="mb-3">
                       <div className="flex flex-wrap gap-2">
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center space-x-1">
+                        <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center space-x-1">
                           <span>SUB</span>
                         </button>
-                        <button className="bg-purple-600 hover:bg-purple-700 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center space-x-1">
+                        <button className="bg-purple-600 hover:bg-purple-700 text-white/90 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center space-x-1">
                           <span>DUB</span>
                         </button>
                         <div className="space-y-1 text-xs sm:text-sm text-gray-400">
@@ -424,7 +424,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                           anime.genres.map((genre, index) => (
                             <span
                               key={index}
-                              className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs">
+                              className="bg-gray-700 text-white/90 px-2 py-1 rounded-full text-xs">
                               {genre}
                             </span>
                           ))
@@ -450,13 +450,13 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <Link
                     href={`/anime/${anime.id}/${animeSlug}`}
-                    className="bg-red-600 hover:bg-red-700 text-white p-2 sm:p-3 rounded-full font-semibold flex items-center space-x-2 transition-colors"
+                    className="bg-red-600 hover:bg-red-700 text-white/90 p-2 sm:p-3 rounded-full font-semibold flex items-center space-x-2 transition-colors"
                     onClick={handleClosePopup}>
                     <Play className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Link>
 
                   <button
-                    className="bg-gray-700 hover:bg-gray-600 text-white p-2 sm:p-3 rounded-full transition-colors"
+                    className="bg-gray-700 hover:bg-gray-600 text-white/90 p-2 sm:p-3 rounded-full transition-colors"
                     title="Add to Bookmarks"
                     onClick={(e) => e.stopPropagation()}>
                     <svg
@@ -474,7 +474,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                   </button>
 
                   <button
-                    className="bg-gray-700 hover:bg-gray-600 text-white p-2 sm:p-3 rounded-full transition-colors"
+                    className="bg-gray-700 hover:bg-gray-600 text-white/90 p-2 sm:p-3 rounded-full transition-colors"
                     title="More Info"
                     onClick={(e) => e.stopPropagation()}>
                     <Info className="h-4 w-4 sm:h-5 sm:w-5" />

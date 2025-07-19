@@ -27,9 +27,9 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
   const filteredAnime = trendingAnime.slice(0, 10);
 
   return (
-    <section className="py-12 bg-gray-900/50 backdrop-blur-sm relative">
+    <section className="py-12 backdrop-blur-sm relative">
       {/* Top blur gradient */}
-      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/60 to-transparent z-10 pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black via-black/60 to-transparent z-10 pointer-events-none blur-gradient" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
         {/* Section Header */}
@@ -46,9 +46,9 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
                 key={filter.key}
                 onClick={() => setActiveFilter(filter.key)}
                 className={cn(
-                  "flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                  "flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                   activeFilter === filter.key
-                    ? "bg-blue-600 text-white shadow-lg"
+                    ? "bg-blue-600 text-white/90 shadow-lg"
                     : "text-gray-300 hover:text-white hover:bg-gray-700"
                 )}>
                 {filter.icon}

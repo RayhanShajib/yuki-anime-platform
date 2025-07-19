@@ -118,7 +118,7 @@ export default function SchedulePage() {
                   className={cn(
                     "flex-shrink-0 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200",
                     activeDay === day.key
-                      ? "bg-blue-600 text-white shadow-lg"
+                      ? "bg-blue-600 text-white/90 shadow-lg"
                       : "text-gray-300 hover:text-white hover:bg-gray-700"
                   )}>
                   <div className="text-center">
@@ -136,7 +136,7 @@ export default function SchedulePage() {
               currentSchedule.map((anime) => (
                 <div
                   key={anime.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-2 sm:p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-2 sm:p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors cursor-pointer">
                   <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
                     {/* Poster */}
                     <div className="flex-shrink-0 anime-img">
@@ -182,7 +182,7 @@ export default function SchedulePage() {
                         {/* Actions */}
                         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
                           {anime.isNew && (
-                            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">
+                            <span className="bg-green-600 text-white/90 px-2 py-1 rounded text-xs font-bold">
                               NEW
                             </span>
                           )}

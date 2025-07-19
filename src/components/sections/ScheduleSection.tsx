@@ -107,9 +107,9 @@ export default function ScheduleSection() {
                   key={day.key}
                   onClick={() => setActiveDay(day.key)}
                   className={cn(
-                    "flex-shrink-0 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200",
+                    "flex-shrink-0 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                     activeDay === day.key
-                      ? "bg-blue-600 text-white shadow-lg"
+                      ? "bg-blue-600 text-white/90 shadow-lg"
                       : "text-gray-300 hover:text-white hover:bg-gray-700"
                   )}>
                   <div className="text-center">
@@ -170,12 +170,12 @@ export default function ScheduleSection() {
                             </span>
                           )} */}
                           <button
-                            className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-full transition-colors"
+                            className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-full transition-colors cursor-pointer"
                             title="Set reminder">
                             <Bell className="h-5 w-5" />
                           </button>
                           <button
-                            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors"
+                            className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
                             title="Add to watchlist">
                             <BookOpen className="h-5 w-5" />
                           </button>

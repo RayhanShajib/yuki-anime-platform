@@ -29,27 +29,27 @@ export function LatestSection() {
           <div className="flex items-center space-x-2 bg-gray-800 rounded-lg p-1">
             <button
               onClick={() => setSelectedLanguage("sub")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 selectedLanguage === "sub"
-                  ? "bg-green-600 text-white"
+                  ? "bg-green-600 text-white/90"
                   : "text-gray-300 hover:text-white"
               }`}>
               SUB
             </button>
             <button
               onClick={() => setSelectedLanguage("dub")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 selectedLanguage === "dub"
-                  ? "bg-green-600 text-white"
+                  ? "bg-green-600 text-white/90"
                   : "text-gray-300 hover:text-white"
               }`}>
               DUB
             </button>
             <button
               onClick={() => setSelectedLanguage("all")}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                 selectedLanguage === "all"
-                  ? "bg-green-600 text-white"
+                  ? "bg-green-600 text-white/90"
                   : "text-gray-300 hover:text-white"
               }`}>
               ALL
@@ -76,7 +76,7 @@ export function LatestSection() {
           <div className="flex justify-center mt-8">
             <button
               onClick={() => setShowAll(!showAll)}
-              className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+              className="px-6 py-3 bg-green-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors">
               {showAll ? "View Less" : "View More"}
             </button>
           </div>
