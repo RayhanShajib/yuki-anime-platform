@@ -2,9 +2,7 @@ export function FooterSection() {
   return (
     <footer className="bg-black bg-footer border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-7 py-8">
-        <div className="flex">
-          {/* <!-- Footer content area --> */}
-          <div className="flex-1">
+        <div className="flex flex-col">
             {/* <!-- Main Footer Content --> */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-6 lg:space-y-0">
               {/* <!-- Left Side: A-Z List --> */}
@@ -226,7 +224,6 @@ export function FooterSection() {
                 </div>
               </div>
             </div>
-          </div>
 
           {/* <!-- 0.8" margin from right edge --> */}
           <div className="w-20"></div>
