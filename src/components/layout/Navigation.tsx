@@ -27,6 +27,9 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileBrowseOpen, setMobileBrowseOpen] = useState(false);
+  const [mobileGenresOpen, setMobileGenresOpen] = useState(false);
+  const [isMobileMenuClosing, setIsMobileMenuClosing] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -46,7 +49,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           ? isScrolled
             ? "bg-black/90 bg-navbar backdrop-blur-md shadow-lg"
             : "bg-transparent"
-          : "bg-blue-600"
+          : "bg-navbar"
       }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -55,52 +58,50 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             <span className="text-xl font-semibold text-white/90">Yuki</span>
           </Link>
 
-          <div className="flex items-center space-x-4">
-            {!isLandingPage && (
-              <div className="relative lg:block">
-                <input
-                  type="text"
-                  placeholder="Search anime..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`transition-all duration-300 text-white/90 placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none ${
-                    isScrolled ? "bg-gray-800/80" : "bg-slate-700/60"
-                  }`}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && searchQuery.trim() !== "") {
-                      window.location.href = `/search?search=${encodeURIComponent(
-                        searchQuery
-                      )}`;
-                    }
-                  }}
-                />
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                {/* Filter Icon */}
-                <button
-                  type="button"
-                  className="absolute right-3 top-2.5 h-5 w-5 flex items-center justify-center text-gray-400 focus:outline-none cursor-pointer"
-                  title="Filter"
-                  onClick={() => {
-                    window.location.href = "/search";
-                  }}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-9 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 14.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"></path>
-                  </svg>
-                </button>
-              </div>
-            )}
+          <div className="hidden xl:flex items-center space-x-4">
+            <div className="relative lg:block">
+              <input
+                type="text"
+                placeholder="Search anime..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`transition-all duration-300 text-white/90 placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none ${
+                  isScrolled ? "bg-gray-800/80" : "bg-slate-700/60"
+                }`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchQuery.trim() !== "") {
+                    window.location.href = `/search?search=${encodeURIComponent(
+                      searchQuery
+                    )}`;
+                  }
+                }}
+              />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              {/* Filter Icon */}
+              <button
+                type="button"
+                className="absolute right-3 top-2.5 h-5 w-5 flex items-center justify-center text-gray-400 focus:outline-none cursor-pointer"
+                title="Filter"
+                onClick={() => {
+                  window.location.href = "/search";
+                }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-9 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 14.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"></path>
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden xl:flex items-center space-x-6">
             <Link
               href="/"
               className="text-white/90 hover:text-blue-400 transition-colors">
@@ -192,7 +193,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                     <Link
                       key={genre}
                       href={`/genre/${genre.toLowerCase()}`}
-                      className="block px-1 py-1 text-sm text-white  rounded">
+                      className="block px-1 py-1 text-sm text-white rounded">
                       {genre}
                     </Link>
                   ))}
@@ -264,19 +265,19 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                         href="/profile/edit"
                         className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-800">
                         <Settings className="h-4 w-4 mr-3" />
-                        ✏️ Edit Profile
+                        Edit Profile
                       </Link>
                       <Link
                         href="/continue-watching"
                         className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-800">
                         <Play className="h-4 w-4 mr-3" />
-                        ⏯️ Continue Watching
+                        Continue Watching
                       </Link>
                       <Link
                         href="/bookmarks"
                         className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-800">
                         <BookOpen className="h-4 w-4 mr-3" />
-                        💖 Bookmarks
+                        Bookmarks
                       </Link>
                       <Link
                         href="/notifications"
@@ -288,7 +289,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                         href="/import-export"
                         className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-800">
                         <Settings className="h-4 w-4 mr-3" />
-                        📥📤 Import/Export
+                        Import/Export
                       </Link>
                       <Link
                         href="/settings"
@@ -299,7 +300,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       <hr className="my-2 border-gray-700" />
                       <button className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-gray-800">
                         <LogOut className="h-4 w-4 mr-3" />
-                        🚪 Logout
+                        Logout
                       </button>
                     </div>
                   </div>
@@ -309,12 +310,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="text-white/90 login-btn hover:text-blue-400 transition-colors">
+                  className="hidden xl:flex text-white/90 login-btn hover:text-blue-400 transition-colors">
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-blue-600 register-btn hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg transition-colors">
+                  className="hidden xl:flex bg-blue-600 register-btn hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg transition-colors">
                   Register
                 </Link>
                 <button className="text-white/90 hover:text-blue-400 transition-colors relative">
@@ -325,181 +326,318 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             )}
 
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden text-white hover:text-blue-400 transition-colors">
-              <Menu className="h-6 w-6" />
+              onClick={() => {
+                if (isMobileMenuOpen) {
+                  setIsMobileMenuClosing(true);
+                  setTimeout(() => {
+                    setIsMobileMenuOpen(false);
+                    setIsMobileMenuClosing(false);
+                  }, 600); // match animation duration
+                } else {
+                  setIsMobileMenuOpen(true);
+                }
+              }}
+              className="xl:hidden text-white/90 hover:text-blue-400 transition-colors">
+              {isMobileMenuOpen || isMobileMenuClosing ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
+      {(isMobileMenuOpen || isMobileMenuClosing) && (
         <div
-          className={`md:hidden border-t transition-all duration-300 ${
-            isScrolled
-              ? "bg-black/95 backdrop-blur-md border-gray-700/50"
-              : "bg-black/95 border-gray-800"
-          }`}>
-          <div className="px-4 py-4 space-y-4">
-            {/* Search Bar on Mobile */}
-            {!isLandingPage && (
-              <div className="relative mb-4">
-                <input
-                  type="text"
-                  placeholder="Search anime..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`transition-all duration-300 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    isScrolled
-                      ? "bg-gray-800/80 border border-gray-700/50"
-                      : "bg-gray-800"
-                  }`}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && searchQuery.trim() !== "") {
-                      window.location.href = `/search?search=${encodeURIComponent(
-                        searchQuery
-                      )}`;
-                    }
-                  }}
-                />
-                <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
-              </div>
-            )}
+          className={`xl:hidden fixed top-0 left-0 h-[100vh] w-64 transform
+            ${
+              isMobileMenuClosing
+                ? "animate-navbar-slide-out"
+                : "animate-navbar-slide-in"
+            }
+            ${
+              isScrolled
+                ? "bg-black/95 backdrop-blur-md bg-navbar h-[100vh]"
+                : "bg-navbar h-[100vh]"
+            }`}>
+          {/* Navbar Slide-in Animation */}
+          <style jsx>{`
+            @keyframes navbar-slide-in {
+              0% {
+                transform: translateX(-100%);
+                opacity: 0.5;
+              }
+              60% {
+                transform: translateX(0%);
+                opacity: 0.9;
+              }
+              100% {
+                transform: translateX(0);
+                opacity: 1;
+              }
+            }
+            @keyframes navbar-slide-out {
+              0% {
+                transform: translateX(0);
+                opacity: 1;
+              }
+              40% {
+                transform: translateX(0%);
+                opacity: 0.9;
+              }
+              100% {
+                transform: translateX(-100%);
+                opacity: 0.5;
+              }
+            }
+            .animate-navbar-slide-in {
+              animation: navbar-slide-in 0.6s cubic-bezier(0.4, 0.2, 0.2, 1)
+                forwards;
+            }
+            .animate-navbar-slide-out {
+              animation: navbar-slide-out 0.6s cubic-bezier(0.4, 0.2, 0.2, 1)
+                forwards;
+            }
+          `}</style>
+          <div className="px-4 py-4 space-y-4 h-full overflow-y-auto">
+            <div className="relative mb-4">
+              <input
+                type="text"
+                placeholder="Search anime..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`transition-all duration-300 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-3 w-full focus:outline-none ${
+                  isScrolled
+                    ? "bg-gray-800/80 border border-gray-700/50"
+                    : "bg-gray-800"
+                }`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchQuery.trim() !== "") {
+                    window.location.href = `/search?search=${encodeURIComponent(
+                      searchQuery
+                    )}`;
+                    setIsMobileMenuOpen(false);
+                  }
+                }}
+              />
+              <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+              {/* Filter Icon */}
+              <button
+                type="button"
+                className="absolute right-3 top-3.5 h-5 w-5 flex items-center justify-center text-gray-400 focus:outline-none cursor-pointer"
+                title="Filter"
+                onClick={() => {
+                  window.location.href = "/search";
+                }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-9 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 14.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"></path>
+                </svg>
+              </button>
+            </div>
 
             {/* Navigation Links */}
             <div className="space-y-2">
               <Link
                 href="/"
-                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white/90 hover:text-blue-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
-                🏠 Home
+                Home
               </Link>
 
-              {/* Browse Section */}
+              {/* Browse Section with Dropdown */}
               <div className="space-y-1">
-                <div className="text-gray-300 font-medium text-sm uppercase tracking-wide mb-2">
-                  Browse
-                </div>
-                <Link
-                  href="/latest"
-                  className="block text-white hover:text-blue-400 transition-colors py-2 pl-4"
-                  onClick={() => setIsMobileMenuOpen(false)}>
-                  📅 Latest
-                </Link>
-                <Link
-                  href="/popular"
-                  className="block text-white hover:text-blue-400 transition-colors py-2 pl-4"
-                  onClick={() => setIsMobileMenuOpen(false)}>
-                  🔥 Popular
-                </Link>
-                <Link
-                  href="/ongoing"
-                  className="block text-white hover:text-blue-400 transition-colors py-2 pl-4"
-                  onClick={() => setIsMobileMenuOpen(false)}>
-                  📺 On Going
-                </Link>
-                <Link
-                  href="/movies"
-                  className="block text-white hover:text-blue-400 transition-colors py-2 pl-4"
-                  onClick={() => setIsMobileMenuOpen(false)}>
-                  🎬 Movies
-                </Link>
-              </div>
-
-              {/* Genres Section */}
-              <div className="space-y-1">
-                <div className="text-gray-300 font-medium text-sm uppercase tracking-wide mb-2 mt-4">
-                  Genres
-                </div>
-                <div className="grid grid-cols-2 gap-2 pl-4">
-                  {[
-                    "Action",
-                    "Adventure",
-                    "Comedy",
-                    "Drama",
-                    "Fantasy",
-                    "Horror",
-                    "Mystery",
-                    "Romance",
-                    "Sci-Fi",
-                    "Slice of Life",
-                  ].map((genre) => (
+                <button
+                  type="button"
+                  className="w-full flex justify-between items-center text-white/90 font-medium text-sm uppercase tracking-wide mb-2 focus:outline-none"
+                  onClick={() => setMobileBrowseOpen((prev) => !prev)}
+                  aria-expanded={mobileBrowseOpen}>
+                  <span>Browse</span>
+                  <svg
+                    className={`w-4 h-4 transform transition-transform ${
+                      mobileBrowseOpen ? "rotate-180" : "rotate-0"
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {mobileBrowseOpen && (
+                  <div className="pl-4">
                     <Link
-                      key={genre}
-                      href={`/genre/${genre.toLowerCase()}`}
-                      className="block text-white hover:text-blue-400 transition-colors py-1 text-sm"
+                      href="/latest"
+                      className="block text-white/90 hover:text-blue-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
-                      {genre}
+                      Latest
                     </Link>
-                  ))}
-                </div>
+                    <Link
+                      href="/popular"
+                      className="block text-white/90 hover:text-blue-400 transition-colors py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}>
+                      Popular
+                    </Link>
+                    <Link
+                      href="/ongoing"
+                      className="block text-white/90 hover:text-blue-400 transition-colors py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}>
+                      On Going
+                    </Link>
+                    <Link
+                      href="/movies"
+                      className="block text-white/90 hover:text-blue-400 transition-colors py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}>
+                      Movies
+                    </Link>
+                  </div>
+                )}
               </div>
 
+              {/* Genres Section with Dropdown */}
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  className="w-full flex justify-between items-center text-white/90 font-medium text-sm uppercase tracking-wide mb-2 mt-4 focus:outline-none"
+                  onClick={() => setMobileGenresOpen((prev) => !prev)}
+                  aria-expanded={mobileGenresOpen}>
+                  <span>Genres</span>
+                  <svg
+                    className={`w-4 h-4 transform transition-transform ${
+                      mobileGenresOpen ? "rotate-180" : "rotate-0"
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {mobileGenresOpen && (
+                  <div className="grid grid-cols-2 gap-2 pl-4">
+                    {[
+                      "Action",
+                      "Adventure",
+                      "Comedy",
+                      "Drama",
+                      "Fantasy",
+                      "Horror",
+                      "Mystery",
+                      "Romance",
+                      "Sci-Fi",
+                      "Slice of Life",
+                    ].map((genre) => (
+                      <Link
+                        key={genre}
+                        href={`/genre/${genre.toLowerCase()}`}
+                        className="block text-white/90 hover:text-blue-400 transition-colors py-1 text-sm"
+                        onClick={() => setIsMobileMenuOpen(false)}>
+                        {genre}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <Link
+                href="/random"
+                className="block text-white/90 hover:text-blue-400 transition-colors py-2 text-lg"
+                onClick={() => setIsMobileMenuOpen(false)}>
+                Random
+              </Link>
               <Link
                 href="/schedule"
-                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white/90 hover:text-blue-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
-                📅 Schedule
+                Schedule
               </Link>
             </div>
 
             {/* User Menu on Mobile */}
             {isLoggedIn && (
               <div className="border-t border-gray-700 pt-4 mt-4">
-                <div className="space-y-2">
+                <div>
                   <Link
                     href="/profile"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <User className="h-5 w-5 mr-3" />
-                    👤 Profile
+                    Profile
                   </Link>
                   <Link
                     href="/profile/edit"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
-                    ✏️ Edit Profile
+                    Edit Profile
                   </Link>
                   <Link
                     href="/continue-watching"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Play className="h-5 w-5 mr-3" />
-                    ⏯️ Continue Watching
+                    Continue Watching
                   </Link>
                   <Link
                     href="/bookmarks"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <BookOpen className="h-5 w-5 mr-3" />
-                    💖 Bookmarks
+                    Bookmarks
                   </Link>
                   <Link
                     href="/notifications"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Bell className="h-5 w-5 mr-3" />
-                    🔔 Notifications
+                    Notifications
                   </Link>
                   <Link
                     href="/import-export"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
-                    📥📤 Import/Export
+                    Import/Export
                   </Link>
                   <Link
                     href="/settings"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
-                    ⚙️ Settings
+                    Settings
                   </Link>
-                  <button className="flex items-center w-full text-white hover:text-blue-400 transition-colors py-2">
+                  <button className="flex items-center w-full text-white/90 hover:text-blue-400 transition-colors py-2">
                     <LogOut className="h-5 w-5 mr-3" />
-                    🚪 Logout
+                    Logout
                   </button>
                 </div>
               </div>
@@ -507,19 +645,19 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
             {/* Login/Register for non-logged users */}
             {!isLoggedIn && (
-              <div className="border-t border-gray-700 pt-4 mt-4">
+              <div>
                 <div className="space-y-3">
                   <Link
                     href="/login"
-                    className="block text-center text-white hover:text-blue-400 transition-colors py-3 border border-gray-600 rounded-lg"
+                    className="block text-white/90 hover:text-blue-400 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}>
-                    🔐 Login
+                    Login
                   </Link>
                   <Link
                     href="/register"
-                    className="block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-colors"
+                    className="block register-btn text-center bg-blue-600 hover:bg-blue-700 text-white/90 py-3 rounded-lg transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}>
-                    📝 Register
+                    Register
                   </Link>
                 </div>
               </div>

@@ -6,7 +6,6 @@ import { mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import "plyr-react/plyr.css";
 import React, { useMemo } from "react";
@@ -92,9 +91,9 @@ export default function WatchPage() {
     <div className="min-h-screen bg-black flex flex-col">
       <Navigation />
       <main className="mt-[120px]">
-        <div className="flex justify-between max-w-6xl m-auto">
-          <div className="w-full sm:px-6  bg-gray-900 rounded-lg shadow-lg">
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-4 text-center">
+        <div className="flex justify-between max-w-6xl m-auto gap-[30px]">
+          <div className="w-full sm:px-6 bg-gray-900 rounded-lg shadow-lg">
+            <h1 className="text-xl md:text-xl font-bold text-white mb-3 mt-2">
               {anime?.title || "Anime Player"}
             </h1>
             <div className="aspect-video w-full rounded-lg overflow-hidden mb-6">
@@ -113,70 +112,13 @@ export default function WatchPage() {
                 }}
               />
             </div>
-            {anime && (
-              <div className="text-gray-300 text-center">
-                <p className="mb-2">{anime.synopsis}</p>
-                <div className="flex flex-wrap justify-center gap-2 text-sm">
-                  {anime.genres?.map((g) => (
-                    <span
-                      key={g}
-                      className="bg-gray-800 px-3 py-1 rounded-full text-green-400">
-                      {g}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
-          <div>
+          <div className="sm:px-6 bg-gray-900 rounded-lg shadow-lg">
             <div>
+              <h3>Episodes</h3>
               <div className="flex flex-wrap w-full max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1">
-                {/* Example episode card, repeat or map as needed */}
-                <div
-                  title="A young boy with a wounded heart begins a new life on a quiet island."
-                  className="flex-shrink-0 smoothie w-full h-20 lg:h-28 hover:brightness-90 hover:scale-[.98]">
-                  <Link
-                    className="group size-full z-0 flex bg-[#1e1e24] xl:bg-[#1e1e24] shadow-xl gap-1 md:gap-2 relative smoothie rounded-lg xl:rounded-2xl overflow-hidden"
-                    href="/watch/143200/?ep=1">
-                    <div className="h-full aspect-[15/9] relative flex-shrink-0 bg-white/5 rounded-lg xl:rounded-2xl overflow-hidden shadow-[4px_0px_5px_0px_rgba(0,0,0,0.3)]">
-                      <Image
-                        alt="Episode 1 screencap"
-                        src="https://artworks.thetvdb.com/banners/v4/episode/10567249/screencap/67e405990e772.jpg"
-                        fill
-                        className="brightness-95 aspect-video object-cover smoothie"
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          color: "transparent",
-                        }}
-                        sizes="(max-width: 768px) 100vw, 720px"
-                        priority
-                      />
-                      <span className="px-[.4rem] py-[.15rem] max-w-full text-xs xl:text-sm flex-grow text-white bg-black/60 rounded-md font-medium tracking-wide absolute bottom-1 left-1 sm:left-[.4rem] smoothie">
-                        Ep 1
-                      </span>
-                    </div>
-                    <div className="mobile !italic flex-grow flex flex-col gap-1 lg:gap-2 p-2 py-3 lg:my-auto">
-                      <span className="tracking-wider !leading-tight line-clamp-1 text-sm sm:text-base text-gray-100 font-medium">
-                        Welcome to Torishirojima Island
-                      </span>
-                      <span className="!leading-snug w-full line-clamp-2 my-auto text-xs sm:text-sm lg:text-base text-gray-200 font-light tracking-wider">
-                        A young boy with a wounded heart begins a new life on a
-                        quiet island.
-                      </span>
-                    </div>
-                    <div className="hidden !italic z-10 text-white !tracking-wide py-1 px-2 flex-col bg-black/70 opacity-0 group-hover:opacity-100 absolute size-full smoothie">
-                      <div className="brightness-110 text-xs sm:text-sm !leading-snug line-clamp-3 lg:line-clamp-4 w-full">
-                        A young boy with a wounded heart begins a new life on a
-                        quiet island.
-                      </div>
-                      <div className="ml-auto mt-auto font-medium hover:underline brightness-125 hover:text-[var(--pinkk)] text-sm lg:text-base">
-                        Watch Now
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-                {/* Add more episode cards here as needed */}
+              
+                
               </div>
             </div>
           </div>
@@ -202,7 +144,7 @@ export default function WatchPage() {
                 data-jp="WIND BREAKER Season 2">
                 Wind Breaker Season 2
               </h1>
-              <small className="al-title text-gray-400 block mb-2">
+              <small className="al-title text-gray-300 block mb-2">
                 Wind Breaker Season 2; WIND BREAKER Season 2; Winbre; WBK
               </small>
               <div className="info flex gap-4 mb-2 text-sm text-gray-300">
@@ -241,7 +183,7 @@ export default function WatchPage() {
                 shortcomings and receiving help from his upperclassmen will be
                 necessary to preserve the peace in Makochi.
               </div>
-              <div className="detail grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-400 text-sm mb-2">
+              <div className="detail grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300 text-sm mb-2">
                 <div>
                   Country: <span className="text-green-400">Japan</span>
                 </div>

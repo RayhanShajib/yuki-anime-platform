@@ -58,7 +58,6 @@ body,
 .light .bg-black {
   background-color: #ffffff !important;
 }
-
 .light .bg-gray-900 {
   background-color: #f3f4f6 !important;
 }
@@ -111,6 +110,9 @@ body,
 }
 .light .bg-navbar{
   background-color: var(--color-blue-600) !important;
+}
+.dark .bg-navbar{
+  background-color: #000 !important;
 }
 .light .register-btn, .light .login-btn{
   background: #fff !important;
@@ -282,3 +284,8 @@ min-width: 100% !important;
   bottom: -2px;
   left: 0;
 }
+
+
+
+
+
