@@ -2,7 +2,8 @@
 
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
-import { mockAnime } from "@/lib/mockData";
+import { AnimeCard } from "@/components/ui/AnimeCard";
+import { latestAnime, mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -20,21 +21,24 @@ export default function WatchPage() {
     [animeId]
   );
 
-  // For demo, use the trailer as the video source
-  const videoSrc =
+  // --- Episode Selection State ---
+  const [selectedEpisode, setSelectedEpisode] = React.useState(1);
+  // For demo, all episodes use the trailer
+  const episodeVideoSrc =
     anime?.trailer || "https://www.w3schools.com/html/mov_bbb.mp4";
-
   const plyrSource = {
     type: "video" as const,
     sources: [
       {
-        src: videoSrc,
+        src: episodeVideoSrc,
         type: "video/mp4",
         size: 720,
       },
     ],
     poster: anime?.banner || anime?.poster,
-    title: anime?.title,
+    title: anime?.title
+      ? `${anime.title} - Episode ${selectedEpisode}`
+      : `Episode ${selectedEpisode}`,
   };
 
   // --- Comments System State ---
@@ -90,9 +94,9 @@ export default function WatchPage() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <Navigation />
-      <main className="mt-[120px]">
-        <div className="flex justify-between max-w-6xl m-auto gap-[30px]">
-          <div className="w-full sm:px-6 bg-gray-900 rounded-lg shadow-lg">
+      <main className="mt-[100px]">
+        <div className="flex justify-between max-w-7xl media-watch m-auto gap-[30px] px-4 sm:px-6 lg:px-8 py-8">
+          <div className="w-full px-6 bg-gray-900 rounded-lg shadow-lg">
             <h1 className="text-xl md:text-xl font-bold text-white mb-3 mt-2">
               {anime?.title || "Anime Player"}
             </h1>
@@ -112,19 +116,97 @@ export default function WatchPage() {
                 }}
               />
             </div>
-          </div>
-          <div className="sm:px-6 bg-gray-900 rounded-lg shadow-lg">
-            <div>
-              <h3>Episodes</h3>
-              <div className="flex flex-wrap w-full max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1">
-              
-                
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <p className="text-lg text-white">You are watching Episode 5</p>
               </div>
+            </div>
+            <div className="flex space-x-4 mb-3.5">
+              {/* Season Cards with Hover Effect */}
+              {[
+                {
+                  season: 1,
+                  eps: 13,
+                  img: "https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg",
+                },
+                {
+                  season: 2,
+                  eps: 12,
+                  img: "https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg",
+                },
+              ].map((s) => (
+                <div key={s.season} className="relative text-center group">
+                  <div className="w-32 h-20 bg-gray-700 mb-2 overflow-hidden rounded-lg relative cursor-pointer">
+                    <Image
+                      src={s.img}
+                      alt={`Season ${s.season}`}
+                      width={128}
+                      height={80}
+                      className="w-full h-full object-cover transition duration-300 group-hover:brightness-75"
+                      style={{ objectFit: "cover" }}
+                    />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/70">
+                      <span className="text-white/90 text-lg font-bold">
+                        Season {s.season}
+                      </span>
+                      <span className="text-orange-400 text-md mt-1">
+                        {s.eps} Eps
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="p-6 bg-gray-900 rounded-lg shadow-lg">
+            <h3 className="mb-3 text-white text-md font-semibold">Episodes</h3>
+            <div className="flex items-center mb-4">
+              <select className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center">
+                <option>001-012</option>
+              </select>
+            </div>
+            <div
+              className="flex flex-wrap max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 grid-episodes"
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+              {/* Episodes List */}
+              {[1, 2, 3, 4, 5].map((ep) => (
+                <div
+                  key={ep}
+                  className={`relative group w-32 h-20 sm:w-36 sm:h-24 lg:w-40 lg:h-28 rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 ${
+                    selectedEpisode === ep
+                      ? "border-green-400"
+                      : "border-transparent"
+                  }`}
+                  onClick={() => setSelectedEpisode(ep)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Play Episode ${ep}`}>
+                  <Image
+                    src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
+                    alt={`Episode ${ep}`}
+                    fill
+                    className="object-cover transition duration-300 group-hover:brightness-75"
+                  />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60">
+                    <span className="text-white text-sm font-semibold">
+                      Episode {ep}
+                    </span>
+                    <span className="text-green-400 text-xs mt-1">
+                      {anime?.title || "Wind Breaker S2"}
+                    </span>
+                  </div>
+                  {selectedEpisode === ep && (
+                    <div className="absolute top-2 right-2 bg-green-400 text-xs px-2 py-1 rounded text-black font-bold">
+                      Playing
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
         {/* --- Extra Anime Info Section --- */}
-        <section className="entity-section w-full max-w-6xl mx-auto mt-6">
+        <section className="entity-section w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
           <div className="poster-wrap flex flex-col md:flex-row items-center md:items-start">
             <div className="poster flex justify-center items-center">
               <Image
@@ -231,8 +313,23 @@ export default function WatchPage() {
             </div>
           </div>
         </section>
+        {/* Recommended Section */}
+        <div className=" w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Recommended</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            {latestAnime.slice(0, 6).map((anime) => (
+              <div key={anime.id} className="relative">
+                <AnimeCard
+                  anime={anime}
+                  showPopup={true}
+                  className="transform transition-transform hover:scale-105"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
         {/* --- Comments Section --- */}
-        <section className="comments-section w-full max-w-6xl mx-auto mt-8">
+        <section className="comments-section w-full max-w-7xl mx-auto mt-8 mb-8 px-4 sm:px-6 lg:px-8 py-8">
           <h2 className="text-xl font-bold text-white mb-4">Comments</h2>
           <div className="comments-tabs flex gap-4 mb-4">
             <button

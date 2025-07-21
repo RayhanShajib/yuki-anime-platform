@@ -81,50 +81,52 @@ body,
 .light .border-gray-700 {
   border-color: #d1d5db !important;
 }
-.light .blur-gradient{
+.light .blur-gradient {
   display: none;
 }
-.light .text-gray-300{
+.light .text-gray-300 {
   color: #0a0a0a !important;
 }
-.light .text-gray-200{
+.light .text-gray-200 {
   color: #6b7280 !important;
 }
-.light .text-gray-400{
+.light .text-gray-400 {
   color: #fff !important;
 }
-.light .text-blue-400{
+.light .text-blue-400 {
   color: #fff !important;
 }
-.light .text-red-400{
+.light .text-red-400 {
   color: #111827 !important;
 }
-.light .text-purple-400{
+.light .text-purple-400 {
   color: #111827 !important;
 }
-.light .bg-footer{
+.light .bg-footer {
   background: #1018284d !important;
 }
-.light .grid-content, .light .bg-schedule-section{
+.light .grid-content,
+.light .bg-schedule-section {
   background: #fff !important;
 }
-.light .bg-navbar{
+.light .bg-navbar {
   background-color: var(--color-blue-600) !important;
 }
-.dark .bg-navbar{
+.dark .bg-navbar {
   background-color: #000 !important;
 }
-.light .register-btn, .light .login-btn{
+.light .register-btn,
+.light .login-btn {
   background: #fff !important;
   color: var(--color-blue-600) !important;
 }
-.light .login-btn{
+.light .login-btn {
   background: #fff !important;
   color: var(--color-blue-600) !important;
   padding: 8px 13px;
   border-radius: 10px;
 }
-.light .bg-drop-down{
+.light .bg-drop-down {
   background: #fff !important;
 }
 
@@ -234,7 +236,7 @@ html {
 .btn-secondary:hover {
   background-color: #4b5563;
 }
-button{
+button {
   cursor: pointer;
 }
 /* Line clamp utilities */
@@ -262,30 +264,38 @@ button{
   overflow: hidden;
 }
 
-
 @media screen and (max-width: 600px) {
-  .anime-img{
+  .anime-img {
     width: 100% !important;
     height: 100% !important;
   }
-  .anime-img img{
+  .anime-img img {
     width: 100% !important;
     height: 100% !important;
+  }
+  .media-watch {
+    flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 998px) {
+  .grid-episodes {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media screen and (max-width: 600px) {
+  .grid-episodes {
+    display: flex !important;
+    flex-wrap: wrap !important;
   }
 }
 :host(.media-document.video.mac) {
-min-width: 100% !important;
+  min-width: 100% !important;
 }
 .info-grad {
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg,#fff0 -22%,#000000f3);
+  background: linear-gradient(180deg, #fff0 -22%, #000000f3);
   position: absolute;
   bottom: -2px;
   left: 0;
 }
-
-
-
-
-
