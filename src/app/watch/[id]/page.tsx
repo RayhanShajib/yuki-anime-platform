@@ -3,6 +3,7 @@
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
+import VideoPlayer from "@/components/ui/VideoPlayer";
 import { latestAnime, mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
 import dynamic from "next/dynamic";
@@ -101,20 +102,7 @@ export default function WatchPage() {
               {anime?.title || "Anime Player"}
             </h1>
             <div className="aspect-video w-full rounded-lg overflow-hidden mb-6">
-              <Plyr
-                source={plyrSource}
-                options={{
-                  controls: [
-                    "play",
-                    "progress",
-                    "current-time",
-                    "mute",
-                    "volume",
-                    "settings",
-                    "fullscreen",
-                  ],
-                }}
-              />
+              <VideoPlayer />
             </div>
             <div className="flex justify-between items-center mb-4">
               <div>

@@ -299,3 +299,29 @@ button {
   bottom: -2px;
   left: 0;
 }
+
+
+
+.artplayer-app {
+  border-radius: 8px;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+.art-control {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border-top: none;
+}
+
+.art-control .art-play {
+  font-size: 24px;
+}
+
+.art-progress-inner {
+  height: 4px !important;
+  border-radius: 2px;
+  background-color: #555;
+}
+
+.art-video-player .art-icon {
+  filter: brightness(1.3);
+}
