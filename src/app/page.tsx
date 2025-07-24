@@ -27,7 +27,7 @@ export default function Home() {
       <Navigation isLandingPage={true} />
 
       {/* Hero Carousel */}
-      <HeroCarousel featuredAnime={featured} />
+      <HeroCarousel featuredAnime={featuredAnime} />
 
       {/* Main Content */}
       <main className="relative z-10">
