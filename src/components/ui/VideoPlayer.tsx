@@ -88,9 +88,6 @@ const VideoPlayer = () => {
                 fontSize: '12px',
                 fontWeight: 'bold',
                 padding: '0 8px',
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: '4px',
-                border: '1px solid rgba(255,255,255,0.2)'
               },
               click: function () {
                 // Toggle captions
@@ -118,8 +115,7 @@ const VideoPlayer = () => {
           }
           
           .art-controls {
-            background: linear-gradient(transparent, rgba(0,0,0,0.8)) !important;
-            padding: 8px 12px !important;
+            
           }
           
           .art-control {
@@ -153,7 +149,6 @@ const VideoPlayer = () => {
           }
           
           .art-volume-slider {
-            background: rgba(255,255,255,0.3) !important;
           }
           
           .art-volume-handle {
