@@ -9,6 +9,14 @@ import { AnimeTooltip } from "@/components/ui/AnimeTooltip";
 import { featuredAnime, latestAnime, trendingAnime } from "@/lib/mockData";
 import Image from "next/image";
 
+import { pageApi } from "@/lib/api/pageApi";
+
+// Home page API data
+const homeData = await pageApi.getHomePageData();
+const featured = homeData.spotlight;
+const latest = homeData.latest;
+const trending = homeData.trending;
+
 export default function Home() {
   // Mock continue watching data - in real app this would come from user's watch history
   const continueWatching: never[] = []; // Empty for new users
@@ -19,7 +27,7 @@ export default function Home() {
       <Navigation isLandingPage={true} />
 
       {/* Hero Carousel */}
-      <HeroCarousel featuredAnime={featuredAnime} />
+      <HeroCarousel featuredAnime={featured} />
 
       {/* Main Content */}
       <main className="relative z-10">

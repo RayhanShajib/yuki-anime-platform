@@ -125,3 +125,144 @@ export interface SearchFilters {
   sortBy?: 'popularity' | 'rating' | 'release_date' | 'title';
   sortOrder?: 'asc' | 'desc';
 }
+
+
+// Core reusable types
+export interface Title {
+  romaji: string;
+  english: string;
+}
+
+export type AnimeStatus = 'Ongoing' | 'Completed';
+export type AnimeType = 'TV Series' | 'Movie' | 'OVA' | 'Special';
+
+export interface AnimeEpisodes {
+  sub: number;
+  dub: number;
+}
+
+// Core anime card used across most pages
+export interface AnimeCard {
+  id: number;
+  title: Title;
+  description: string;
+  bannerImage: string;
+  trailer: string;
+  genres: string[];
+  rating: number;
+  releaseDate: string;
+  format: AnimeType;
+  thumbnail: string;
+  episodes: AnimeEpisodes;
+  status: AnimeStatus;
+}
+
+// Home Page
+export interface HomePageResponse {
+  spotlight: AnimeCard[];
+  trending: {
+    day: AnimeCard[];
+    week: AnimeCard[];
+    month: AnimeCard[];
+  };
+  latest: {
+    sub: AnimeCard[];
+    dub: AnimeCard[];
+  };
+  schedule: ScheduleAnime[];
+  popular: AnimeCard[];
+  favorites: AnimeCard[];
+  airing: AnimeCard[];
+  completed: AnimeCard[];
+}
+
+// Schedule
+export interface ScheduleAnime {
+  id: number;
+  airingAt: number;
+  title: Title;
+  genres: string[];
+  episode: number;
+  episodes: number;
+  thumbnail: string;
+  description: string;
+}
+
+// Anime Info Page
+export interface AnimeInfoPage {
+  id: number;
+  title: Title;
+  releaseDate: string;
+  type: AnimeType;
+  thumbnail: string;
+  trailer: string;
+  overview: {
+    description: string;
+    episodes: number;
+    reviews: number;
+    rating: number;
+    status: AnimeStatus;
+    genres: string[];
+    duration: number;
+    synonyms: string[];
+  };
+  episodes: {
+    sub: {
+      count: number;
+      data: EpisodeSummary[];
+    };
+    dub: {
+      count: number;
+      data: EpisodeSummary[];
+    };
+  };
+  characters: CharacterWithVoice[];
+  relations: {
+    related: RelatedAnime[];
+    adaptations: RelatedAnime[];
+  };
+  recommandations: AnimeCard[];
+}
+
+// Episode summary used in info page
+export interface EpisodeSummary {
+  id: number;
+  title: Title;
+  description: string;
+  thumbnail: string;
+  duration: number;
+  episodeNumber: number;
+}
+
+// Character & voice actor
+export interface CharacterWithVoice {
+  id: number;
+  character: {
+    name: string;
+    image: string;
+  };
+  voiceactor: {
+    name: string;
+    image: string;
+  };
+}
+
+// Relations (related/anime adaptations)
+export interface RelatedAnime {
+  id: number;
+  title: Title;
+  type: string;
+  thumbnail: string;
+}
+
+// Used for Random Page
+export interface RandomAnime {
+  id: number;
+  title: Title;
+}
+
+// Shared type for pages like Latest, Popular, Trending, Ongoing
+export type AnimeListResponse = AnimeCard[];
+
+// Shared type for schedule page
+export type SchedulePageResponse = ScheduleAnime[];

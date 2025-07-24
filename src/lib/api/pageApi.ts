@@ -28,7 +28,7 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
 export const pageApi = {
   // Home Page - Featured, Trending, Latest, Schedule
   getHomePageData: cache(async () => {
-    const [featured, trending, latest, schedule] = await Promise.all([
+    const [spotlight, trending, latest, schedule] = await Promise.all([
       fetchFromApi('/spotlight/'),
       fetchFromApi('/trending/'),
       fetchFromApi('/latest/'),
@@ -36,7 +36,7 @@ export const pageApi = {
     ]);
 
     return {
-      featured,
+      spotlight,
       trending,
       latest,
       schedule,
