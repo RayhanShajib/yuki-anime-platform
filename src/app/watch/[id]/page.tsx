@@ -44,13 +44,13 @@ export default function WatchPage() {
   // --- Comments System State ---
   const [comments, setComments] = React.useState([
     {
-      user: "Rayhan",
+      user: "JohnDoe",
       text: "This season is amazing! The animation is top notch.",
       time: "2 hours ago",
       type: "Best",
     },
     {
-      user: "Sajib",
+      user: "JaneSmith",
       text: "Just finished episode 1, can't wait for more!",
       time: "Just now",
       type: "New",
