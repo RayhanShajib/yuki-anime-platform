@@ -77,6 +77,8 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         )}
 
         <div className="absolute inset-0 hero-gradient" />
+        {/* Left blur gradient */}
+        <div className="absolute left-0 top-0 bottom-0 w-110 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* Main content */}
