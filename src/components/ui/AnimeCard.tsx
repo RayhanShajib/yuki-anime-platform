@@ -295,20 +295,21 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
           </h3>
           <div className="flex items-center justify-between gap-2 mt-1">
             <div className="flex items-center gap-2">
-              {anime.language?.includes("sub") && (
+              <>
                 <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
-                  SUB
+                  SUB{" "}
+                  {typeof anime.subEpisodes === "number"
+                    ? anime.subEpisodes
+                    : 0}
                 </span>
-              )}
-              {anime.language?.includes("dub") && (
                 <span className="bg-purple-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
-                  DUB
+                  DUB{" "}
+                  {typeof anime.dubEpisodes === "number"
+                    ? anime.dubEpisodes
+                    : 0}
                 </span>
-              )}
+              </>
             </div>
-            <span className="text-gray-300 text-xs flex items-center gap-1">
-              Eps: {anime.totalEpisodes || "Unknown"}
-            </span>
           </div>
         </div>
       </div>
@@ -404,18 +405,20 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                     </h2>
                     <div className="mb-3">
                       <div className="flex flex-wrap gap-2">
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center space-x-1">
-                          <span>SUB</span>
-                        </button>
-                        <button className="bg-purple-600 hover:bg-purple-700 text-white/90 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium transition-colors flex items-center space-x-1">
-                          <span>DUB</span>
-                        </button>
-                        <div className="space-y-1 text-xs sm:text-sm text-gray-400">
-                          <p>
-                            <span className="text-white">Episodes:</span>{" "}
-                            {anime.totalEpisodes || "Unknown"}
-                          </p>
-                        </div>
+                        <>
+                          <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
+                            SUB{" "}
+                            {typeof anime.subEpisodes === "number"
+                              ? anime.subEpisodes
+                              : 0}
+                          </span>
+                          <span className="bg-purple-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
+                            DUB{" "}
+                            {typeof anime.dubEpisodes === "number"
+                              ? anime.dubEpisodes
+                              : 0}
+                          </span>
+                        </>
                       </div>
                     </div>
                     <div>

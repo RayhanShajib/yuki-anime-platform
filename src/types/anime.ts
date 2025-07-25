@@ -12,6 +12,8 @@ export interface Anime {
   status: 'ongoing' | 'completed' | 'upcoming';
   type: 'series' | 'movie' | 'ova' | 'special';
   totalEpisodes?: number;
+  subEpisodes?: number;
+  dubEpisodes?: number;
   rating: number;
   popularity: number;
   language: ('sub' | 'dub')[];

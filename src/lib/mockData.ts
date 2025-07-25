@@ -13,6 +13,8 @@ export const mockAnime: Anime[] = [
       "https://via.placeholder.com/1920x1080/1a1a1a/white?text=AOT+Banner",
     trailer: "https://www.w3schools.com/html/mov_bbb.mp4",
     genres: ["Action", "Drama", "Fantasy", "Military"],
+    subEpisodes: 20,
+    dubEpisodes: 12,
     studio: "Studio Mappa",
     releaseYear: 2023,
     status: "completed",
@@ -43,6 +45,8 @@ export const mockAnime: Anime[] = [
     rating: 8.7,
     popularity: 89000,
     language: ["sub", "dub"],
+    subEpisodes: 30,
+    dubEpisodes: 22,
   },
   {
     id: "3",
@@ -64,6 +68,8 @@ export const mockAnime: Anime[] = [
     rating: 8.6,
     popularity: 85000,
     language: ["sub", "dub"],
+    subEpisodes: 10,
+    dubEpisodes: 42,
   },
   {
     id: "4",
@@ -81,10 +87,12 @@ export const mockAnime: Anime[] = [
     releaseYear: 2001,
     status: "completed",
     type: "movie",
-    totalEpisodes: 1,
     rating: 9.3,
     popularity: 120000,
     language: ["sub", "dub"],
+    subEpisodes: 20,
+    dubEpisodes: 12,
+    totalEpisodes: 20,
   },
   {
     id: "5",
@@ -106,6 +114,8 @@ export const mockAnime: Anime[] = [
     rating: 8.4,
     popularity: 95000,
     language: ["dub"],
+    subEpisodes: 36,
+    dubEpisodes: 19,
   },
   {
     id: "6",
@@ -127,6 +137,8 @@ export const mockAnime: Anime[] = [
     rating: 8.4,
     popularity: 88000,
     language: ["sub"],
+    subEpisodes: 40,
+    dubEpisodes: 17,
   },
   {
     id: "7",
@@ -147,6 +159,8 @@ export const mockAnime: Anime[] = [
     rating: 8.0,
     popularity: 75000,
     language: ["sub"],
+    subEpisodes: 20,
+    dubEpisodes: 12,
   },
   {
     id: "8",
@@ -168,6 +182,8 @@ export const mockAnime: Anime[] = [
     rating: 8.0,
     popularity: 70000,
     language: ["dub"],
+    subEpisodes: 20,
+    dubEpisodes: 12,
   },
   {
     id: "9",
@@ -189,6 +205,8 @@ export const mockAnime: Anime[] = [
     rating: 7.5,
     popularity: 82000,
     language: ["dub"],
+    subEpisodes: 50,
+    dubEpisodes: 12,
   },
   {
     id: "10",
@@ -210,6 +228,8 @@ export const mockAnime: Anime[] = [
     rating: 8.2,
     popularity: 92000,
     language: ["dub"],
+    subEpisodes: 20,
+    dubEpisodes: 32,
   },
 ];
 
