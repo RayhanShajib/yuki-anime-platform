@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, Clock, Bell, BookOpen } from "lucide-react";
+import { Calendar, Clock, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -172,11 +172,6 @@ export default function ScheduleSection() {
                               NEW
                             </span>
                           )} */}
-                          <button
-                            className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-full transition-colors cursor-pointer"
-                            title="Set reminder">
-                            <Bell className="h-5 w-5" />
-                          </button>
                           <button
                             className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
                             title="Add to watchlist">

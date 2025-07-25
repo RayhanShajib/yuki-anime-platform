@@ -3,7 +3,7 @@
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { cn } from "@/lib/utils";
-import { Bell, BookOpen, Calendar, Clock } from "lucide-react";
+import { BookOpen, Calendar, Clock } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -186,11 +186,6 @@ export default function SchedulePage() {
                               NEW
                             </span>
                           )}
-                          <button
-                            className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-full transition-colors"
-                            title="Set reminder">
-                            <Bell className="h-5 w-5" />
-                          </button>
                           <button
                             className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors"
                             title="Add to watchlist">

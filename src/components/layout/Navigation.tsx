@@ -318,10 +318,14 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   className="hidden xl:flex bg-blue-600 register-btn hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg transition-colors">
                   Register
                 </Link>
-                <button className="text-white/90 hover:text-blue-400 transition-colors relative">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs"></span>
-                </button>
+                <Link
+                  href="/notifications"
+                  className="text-white/90 hover:text-blue-400 transition-colors relative">
+                  <Bell className="h-5.5 w-5.5" />
+                  <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-red-500 rounded-full text-xs flex justify-center items-center">
+                    3
+                  </span>
+                </Link>
               </div>
             )}
 
