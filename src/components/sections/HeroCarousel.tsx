@@ -83,8 +83,8 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
       {/* Main content */}
       <div className="relative z-10 h-full flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-7">
-          <div className="max-w-2xl">
+        <div className="max-w-7xl m-auto px-4 sm:px-6 lg:px-8 w-full pt-7">
+          <div className="max-w-2xl mt-[100px]">
             <h1 className="text-3xl md:text-5xl font-bold text-white/90 mb-4 animate-fadeIn">
               {currentAnime.title}
             </h1>
@@ -129,7 +129,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
       </div>
 
       {/* Bottom blur gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-50 bg-gradient-to-t from-black via-black/80 to-transparent z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-70 bg-gradient-to-t from-black via-black/80 to-transparent z-0 pointer-events-none" />
 
       {currentAnime.trailer && (
         <div className="absolute bottom-7 right-4 z-20 flex flex-col space-y-2">

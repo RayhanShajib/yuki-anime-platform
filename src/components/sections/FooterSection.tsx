@@ -219,7 +219,7 @@ export function FooterSection() {
                   </i>
                   <span className="text-xl font-bold flex items-center gap-2">
                     <span className="text-white">雪</span>{" "}
-                    <span className="text-green-400">Yuki</span>
+                    <span className="text-blue-600">Yuki</span>
                   </span>
                 </div>
               </div>

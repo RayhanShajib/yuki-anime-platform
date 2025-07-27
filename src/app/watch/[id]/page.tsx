@@ -6,6 +6,7 @@ import { AnimeCard } from "@/components/ui/AnimeCard";
 import VideoPlayer from "@/components/ui/VideoPlayer";
 import { latestAnime, mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
+import { Grid, List } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -24,6 +25,10 @@ export default function WatchPage() {
 
   // --- Episode Selection State ---
   const [selectedEpisode, setSelectedEpisode] = React.useState(1);
+  // --- Episode List/Grid Toggle State ---
+  const [isListView, setIsListView] = React.useState(false);
+  // --- Server Selection State ---
+  const [selectedServer, setSelectedServer] = React.useState(1);
   // For demo, all episodes use the trailer
   const episodeVideoSrc =
     anime?.trailer || "https://www.w3schools.com/html/mov_bbb.mp4";
@@ -104,12 +109,41 @@ export default function WatchPage() {
             <div className="aspect-video w-full rounded-lg overflow-hidden mb-6">
               <VideoPlayer />
             </div>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <div>
                 <p className="text-lg text-white">You are watching Episode 5</p>
+                <p className="text-sm text-gray-500 mt-3">
+                  If the current server is not working, please try switching{" "}
+                  <br /> to other servers.
+                </p>
+              </div>
+              {/* Server Selection Buttons */}
+              <div className="flex gap-4 justify-center items-center">
+                <button
+                  className={
+                    `px-3 py-1 rounded font-normal shadow transition ` +
+                    (selectedServer === 1
+                      ? "bg-blue-600 text-white/90 hover:bg-blue-700"
+                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
+                  }
+                  onClick={() => setSelectedServer(1)}>
+                  Server 1
+                </button>
+                <button
+                  className={
+                    `px-3 py-1 rounded font-normal shadow transition ` +
+                    (selectedServer === 2
+                      ? "bg-blue-700 text-white/90"
+                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
+                  }
+                  onClick={() => setSelectedServer(2)}>
+                  Server 2
+                </button>
               </div>
             </div>
-            <div className="flex space-x-4 mb-3.5">
+           <div>
+            <h3 className="text-white text-xl font-semibold">Seasons</h3>
+             <div className="flex space-x-4 mb-3.5 mt-4.5">
               {/* Season Cards with Hover Effect */}
               {[
                 {
@@ -137,7 +171,7 @@ export default function WatchPage() {
                       <span className="text-white/90 text-lg font-bold">
                         Season {s.season}
                       </span>
-                      <span className="text-orange-400 text-md mt-1">
+                      <span className="text-blue-600 text-md mt-1">
                         {s.eps} Eps
                       </span>
                     </div>
@@ -145,46 +179,108 @@ export default function WatchPage() {
                 </div>
               ))}
             </div>
+           </div>
           </div>
-          <div className="p-6 bg-gray-900 rounded-lg shadow-lg">
-            <h3 className="mb-3 text-white text-md font-semibold">Episodes</h3>
+          <div className="w-full p-6 bg-gray-900 rounded-lg shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white text-md font-semibold">Episodes</h3>
+              <div className="flex flex-wrap gap-2">
+                <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer">
+                  SUB 12
+                </span>
+                <span className="bg-purple-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer">
+                  DUB 20
+                </span>
+              </div>
+            </div>
             <div className="flex items-center mb-4">
-              <select className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center">
+              <select className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center cursor-pointer">
                 <option>001-012</option>
               </select>
+              {/* List/Grid Toggle Icon */}
+              <button
+                type="button"
+                className="ml-2 p-2 rounded bg-gray-700 hover:bg-gray-800 focus:outline-none"
+                aria-label={
+                  isListView ? "Switch to grid view" : "Switch to list view"
+                }
+                onClick={() => setIsListView((prev) => !prev)}>
+                {/* Simple SVG icon for list/grid toggle */}
+                {isListView ? (
+                  <List className="h-4 w-4" />
+                ) : (
+                  <Grid className="h-4 w-4" />
+                )}
+              </button>
             </div>
             <div
-              className="flex flex-wrap max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 grid-episodes"
-              style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+              className={
+                isListView
+                  ? "flex flex-col max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 list-episodes"
+                  : "flex flex-wrap max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 grid-episodes"
+              }
+              style={
+                isListView
+                  ? { display: "block" }
+                  : { display: "grid", gridTemplateColumns: "1fr 1fr" }
+              }>
               {/* Episodes List */}
               {[1, 2, 3, 4, 5].map((ep) => (
                 <div
                   key={ep}
-                  className={`relative group w-32 h-20 sm:w-36 sm:h-24 lg:w-40 lg:h-28 rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 ${
-                    selectedEpisode === ep
-                      ? "border-green-400"
-                      : "border-transparent"
-                  }`}
+                  className={
+                    isListView
+                      ? `relative group flex items-center w-full rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 mb-2 ${
+                          selectedEpisode === ep
+                            ? "border-blue-600"
+                            : "border-transparent"
+                        }`
+                      : `relative group w-32 h-20 sm:w-36 sm:h-24 lg:w-40 lg:h-28 rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 ${
+                          selectedEpisode === ep
+                            ? "border-blue-600"
+                            : "border-transparent"
+                        }`
+                  }
                   onClick={() => setSelectedEpisode(ep)}
                   tabIndex={0}
                   role="button"
                   aria-label={`Play Episode ${ep}`}>
-                  <Image
-                    src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
-                    alt={`Episode ${ep}`}
-                    fill
-                    className="object-cover transition duration-300 group-hover:brightness-75"
-                  />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60">
-                    <span className="text-white text-sm font-semibold">
-                      Episode {ep}
-                    </span>
-                    <span className="text-green-400 text-xs mt-1">
-                      {anime?.title || "Wind Breaker S2"}
-                    </span>
+                  {!isListView && (
+                    <Image
+                      src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
+                      alt={`Episode ${ep}`}
+                      fill
+                      className="object-cover transition duration-300 group-hover:brightness-75"
+                    />
+                  )}
+                  <div
+                    className={
+                      isListView
+                        ? "flex flex-col justify-center px-6 py-2 bg-transparent"
+                        : "absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60"
+                    }>
+                    {isListView ? (
+                      <div className="flex items-center gap-4">
+                        <span className="text-white text-sm font-semibold">
+                          {ep}
+                        </span>
+                        <span className="text-blue-600 text-md mt-1">
+                          {anime?.title || "Wind Breaker S2"}
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        <span className="text-white/90 text-sm font-semibold">
+                          Episode {ep}
+                        </span>
+                        <span className="text-blue-600 text-md">
+                          {anime?.title || "Wind Breaker S2"}
+                        </span>
+                      </>
+                    )}
                   </div>
                   {selectedEpisode === ep && (
-                    <div className="absolute top-2 right-2 bg-green-400 text-xs px-2 py-1 rounded text-black font-bold">
+                    <div className="absolute top-1.5 right-2 bg-blue-600 text-xs px-2 py-1 rounded font-bold text-white/90">
                       Playing
                     </div>
                   )}
@@ -217,21 +313,12 @@ export default function WatchPage() {
               <small className="al-title text-gray-300 block mb-2">
                 Wind Breaker Season 2; WIND BREAKER Season 2; Winbre; WBK
               </small>
-              <div className="info flex gap-4 mb-2 text-sm text-gray-300">
-                <span className="rating bg-gray-800 px-2 py-1 rounded">
-                  PG 13
+              <div className="info flex gap-4 mb-2 text-sm text-gray-300 items-center">
+                <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer">
+                  SUB 12
                 </span>
-                <span className="sub flex items-center gap-1">
-                  <svg className="w-4 h-4 inline">
-                    <use href="#sub"></use>
-                  </svg>
-                  12
-                </span>
-                <span className="dub flex items-center gap-1">
-                  <svg className="w-4 h-4 inline">
-                    <use href="#dub"></use>
-                  </svg>
-                  12
+                <span className="bg-purple-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer">
+                  DUB 20
                 </span>
                 <span>
                   <b>TV</b>
@@ -255,11 +342,11 @@ export default function WatchPage() {
               </div>
               <div className="detail grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300 text-sm mb-2">
                 <div>
-                  Country: <span className="text-green-400">Japan</span>
+                  Country: <span className="text-blue-600">Japan</span>
                 </div>
                 <div>
                   Genres:{" "}
-                  <span className="text-green-400">
+                  <span className="text-blue-600">
                     Comedy, School, Action, Drama
                   </span>
                 </div>
@@ -288,11 +375,11 @@ export default function WatchPage() {
                   </span>
                 </div>
                 <div>
-                  Studios: <span className="text-green-400">CloverWorks</span>
+                  Studios: <span className="text-blue-600">CloverWorks</span>
                 </div>
                 <div>
                   Producers:{" "}
-                  <span className="text-green-400">
+                  <span className="text-blue-600">
                     Aniplex, Kodansha, Mainichi Broadcasting System, Aiming,
                     Tohan Corporation
                   </span>
@@ -301,6 +388,21 @@ export default function WatchPage() {
             </div>
           </div>
         </section>
+        {/* Relations Section */}
+        <div className=" w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            {latestAnime.slice(0, 6).map((anime) => (
+              <div key={anime.id} className="relative">
+                <AnimeCard
+                  anime={anime}
+                  showPopup={true}
+                  className="transform transition-transform hover:scale-105"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
         {/* Recommended Section */}
         <div className=" w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
           <h2 className="text-2xl font-bold text-white mb-6">Recommended</h2>
@@ -316,6 +418,7 @@ export default function WatchPage() {
             ))}
           </div>
         </div>
+
         {/* --- Comments Section --- */}
         <section className="comments-section w-full max-w-7xl mx-auto mt-8 mb-8 px-4 sm:px-6 lg:px-8 py-8">
           <h2 className="text-xl font-bold text-white mb-4">Comments</h2>
@@ -323,7 +426,7 @@ export default function WatchPage() {
             <button
               className={`tab px-4 py-2 rounded bg-gray-800 ${
                 selectedTab === "Best"
-                  ? "text-green-400 font-semibold"
+                  ? "text-blue-600 font-semibold"
                   : "text-gray-400"
               }`}
               onClick={() => setSelectedTab("Best")}>
@@ -332,7 +435,7 @@ export default function WatchPage() {
             <button
               className={`tab px-4 py-2 rounded bg-gray-800 ${
                 selectedTab === "New"
-                  ? "text-green-400 font-semibold"
+                  ? "text-blue-600 font-semibold"
                   : "text-gray-400"
               }`}
               onClick={() => setSelectedTab("New")}>
@@ -341,7 +444,7 @@ export default function WatchPage() {
             <button
               className={`tab px-4 py-2 rounded bg-gray-800 ${
                 selectedTab === "Oldest"
-                  ? "text-green-400 font-semibold"
+                  ? "text-blue-600 font-semibold"
                   : "text-gray-400"
               }`}
               onClick={() => setSelectedTab("Oldest")}>
@@ -359,7 +462,7 @@ export default function WatchPage() {
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-green-500 text-white rounded font-semibold">
+              className="px-4 py-2 bg-blue-600 text-white/90 rounded font-semibold">
               Post
             </button>
           </form>
@@ -372,9 +475,7 @@ export default function WatchPage() {
                 key={idx}
                 className="comment bg-gray-900 p-4 rounded-lg shadow">
                 <div className="flex items-center mb-2">
-                  <span className="font-bold text-green-400 mr-2">
-                    {c.user}
-                  </span>
+                  <span className="font-bold text-blue-600 mr-2">{c.user}</span>
                   <span className="text-xs text-gray-500">{c.time}</span>
                 </div>
                 <p className="text-gray-300">{c.text}</p>

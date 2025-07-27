@@ -288,6 +288,13 @@ button {
     flex-wrap: wrap !important;
   }
 }
+/* @media screen and (min-width: 1350px) {
+  .max-w-7xl {
+    margin-left: 3.5rem !important;
+    margin-right: 3.5rem !important;
+    max-width: none !important;
+  }
+} */
 :host(.media-document.video.mac) {
   min-width: 100% !important;
 }
@@ -299,4 +306,3 @@ button {
   bottom: -2px;
   left: 0;
 }
-
