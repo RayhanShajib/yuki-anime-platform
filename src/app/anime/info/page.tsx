@@ -4,7 +4,16 @@ import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { mockAnime } from "@/lib/mockData";
-import { Bookmark, Grid, Link2, List, PlayCircle, User, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Bookmark,
+  Grid,
+  Link2,
+  List,
+  PlayCircle,
+  User,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -141,18 +150,19 @@ export default function AnimeInfoPage() {
         {/* Info & Tabs */}
         <div className="flex-1 w-full md:w-2/3 lg:w-3/4 mt-12">
           {/* Tabs */}
-          <div className="mb-8">
-            <div className="flex space-x-2 overflow-x-auto scrollbar-hide gap-8">
+          <div className="mb-6">
+            <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
               {tabs.map((tab) => {
                 return (
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`flex items-center text-base font-medium transition-colors whitespace-nowrap cursor-pointer${
+                    className={cn(
+                      "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                       activeTab === tab.key
-                        ? "text-white border-b-2 border-purple-500"
-                        : "text-gray-300 hover:text-white border-b-2 border-transparent"
-                    }`}>
+                        ? "bg-blue-600 text-white/90"
+                        : "text-gray-300 hover:text-white hover:bg-gray-700"
+                    )}>
                     <span className="text-white">{tab.label}</span>
                   </button>
                 );
@@ -182,15 +192,23 @@ export default function AnimeInfoPage() {
               {/* Anime Info Section */}
               <div className="w-full flex flex-wrap h-auto !tracking-wider">
                 <div className="w-full sm:w-1/2 shrink-0 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2 text-nowrap">
-                  <span className="font-medium shrink-0 text-gray-300">Type</span>
-                  <span className="text-sm font-light capitalize text-gray-300">anime</span>
+                  <span className="font-medium shrink-0 text-gray-300">
+                    Type
+                  </span>
+                  <span className="text-sm font-light capitalize text-gray-300">
+                    anime
+                  </span>
                 </div>
                 <div className="w-full sm:w-1/2 shrink-0 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2 text-nowrap">
-                  <span className="font-medium shrink-0 text-gray-300">Episodes</span>
+                  <span className="font-medium shrink-0 text-gray-300">
+                    Episodes
+                  </span>
                   <span className="text-sm font-light text-gray-300">26</span>
                 </div>
                 <div className="w-full sm:w-1/2 shrink-0 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2 text-nowrap">
-                  <span className="font-medium shrink-0 text-gray-300">Season</span>
+                  <span className="font-medium shrink-0 text-gray-300">
+                    Season
+                  </span>
                   <a
                     className="text-sm font-light text-gray-300"
                     href="/catalog?season=SPRING&amp;year=2025">
@@ -198,16 +216,28 @@ export default function AnimeInfoPage() {
                   </a>
                 </div>
                 <div className="w-full sm:w-1/2 shrink-0 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2 text-nowrap">
-                  <span className="font-medium shrink-0 text-gray-300">Rating</span>
-                  <span className="text-sm text-end font-light text-gray-300">69</span>
+                  <span className="font-medium shrink-0 text-gray-300">
+                    Rating
+                  </span>
+                  <span className="text-sm text-end font-light text-gray-300">
+                    69
+                  </span>
                 </div>
                 <div className="w-full sm:w-1/2 shrink-0 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2 text-nowrap">
-                  <span className="font-medium shrink-0 text-gray-300">Duration</span>
-                  <span className="text-sm text-end font-light text-gray-300">24m</span>
+                  <span className="font-medium shrink-0 text-gray-300">
+                    Duration
+                  </span>
+                  <span className="text-sm text-end font-light text-gray-300">
+                    24m
+                  </span>
                 </div>
                 <div className="w-full sm:w-1/2 shrink-0 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2 text-nowrap">
-                  <span className="font-medium shrink-0 text-gray-300">Status</span>
-                  <span className="text-sm text-end font-light text-gray-300">RELEASING</span>
+                  <span className="font-medium shrink-0 text-gray-300">
+                    Status
+                  </span>
+                  <span className="text-sm text-end font-light text-gray-300">
+                    RELEASING
+                  </span>
                 </div>
                 <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
                   <span className="font-medium text-gray-300">Format</span>
@@ -218,7 +248,9 @@ export default function AnimeInfoPage() {
                   </a>
                 </div>
                 <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
-                  <span className="font-medium shrink-0 text-gray-300">Synonyms</span>
+                  <span className="font-medium shrink-0 text-gray-300">
+                    Synonyms
+                  </span>
                   <span className="!text-sm text-end font-light flex-grow text-gray-300">
                     サマポケ , サマーポケッツ , Samapoke
                   </span>
@@ -257,13 +289,11 @@ export default function AnimeInfoPage() {
                 <div className="hidden sm:flex gap-2 items-center">
                   <button
                     className={`overflow-hidden smoothie bg-gray-600 text-white/90 p-1 rounded cursor-pointer ${
-                      episodeLayout === "grid"
-                        ? "bg-[#1e1e24]"
-                        : "bg-[#1e1e24]"
+                      episodeLayout === "grid" ? "bg-[#1e1e24]" : "bg-[#1e1e24]"
                     }`}
                     onClick={() => setEpisodeLayout("grid")}>
-                       <Grid className="h-4 w-4" />
-                    </button>
+                    <Grid className="h-4 w-4" />
+                  </button>
                   <button
                     className={`flex flex-col justify-center items-center gap-[2px] group cursor-pointer bg-gray-600 text-white/90 p-1 rounded`}
                     onClick={() => setEpisodeLayout("flex")}>
@@ -420,7 +450,7 @@ export default function AnimeInfoPage() {
                     <div className="flex mt-0 w-full">
                       <span className="tracking-wider flex font-semibold pl-1 h-8 lg:text-lg relative uppercase w-fit text-gray-300">
                         SUMMARY
-                        <span className="h-[.13rem] absolute left-1 shrink-0 bottom-[.1rem] mx-auto bg-purple-500 w-[calc(100%-.25rem)] smoothie"></span>
+                        <span className="h-[.13rem] absolute left-1 shrink-0 bottom-[.1rem] mx-auto bg-blue-600 w-[calc(100%-.25rem)] smoothie"></span>
                       </span>
                     </div>
                     <div className="w-full flex overflow-y-auto flex-wrap relative">
@@ -441,7 +471,7 @@ export default function AnimeInfoPage() {
                             />
                           </div>
                           <div className="flex flex-col flex-grow items-center p-2 pl-1">
-                            <div className="w-full text-sm text-purple-500 !leading-tight font-bold brightness-105">
+                            <div className="w-full text-sm text-blue-600 !leading-tight font-bold brightness-105">
                               SUMMARY
                             </div>
                             <div className="w-full tracking-wide !leading-tight text-sm md:text-[.95rem] my-auto text-white/90 font-medium line-clamp-1 md:line-clamp-2">
