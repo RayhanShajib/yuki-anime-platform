@@ -24,11 +24,8 @@ const typeFilters = [
   { key: "ova", label: "OVAs" },
 ];
 
-interface GenrePageProps {
-  params: { slug: string };
-}
-
-export default function GenrePage(props: GenrePageProps) {
+// Correct type for Next.js App Router page props
+export default function GenrePage(props: { params: { slug: string } }) {
   const { params } = props;
   const seasonOptions = ["Summer", "Spring", "Winter", "Fall"];
   // Temporary filter states for UI
