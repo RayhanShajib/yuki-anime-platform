@@ -23,9 +23,11 @@ const typeFilters = [
   { key: "movie", label: "Movies" },
   { key: "ova", label: "OVAs" },
 ];
-
+interface PageProps {
+  params: { slug: string }
+}
 // Correct type for Next.js App Router page props
-export default function GenrePage(props: { params: { slug: string } }) {
+export default function GenrePage({ params }: PageProps) {
   const { params } = props;
   const seasonOptions = ["Summer", "Spring", "Winter", "Fall"];
   // Temporary filter states for UI
