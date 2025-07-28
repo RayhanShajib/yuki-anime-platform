@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { mockAnime, trendingAnime } from "@/lib/mockData";
+import { trendingAnime } from "@/lib/mockData";
 import { ArrowUpRight, ArrowDownRight, User, Film, List, AlertTriangle, FileText, MessageCircle, Search } from "lucide-react";
 
 // Mock data for dashboard

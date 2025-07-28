@@ -1,4 +1,4 @@
-import { ApiResponse, PaginatedResponse, AnimeBase, AnimeDetailed } from '@/types/api';
+// import { ApiResponse, PaginatedResponse, AnimeBase, AnimeDetailed } from '@/types/api';
 import { cache } from 'react';
 
 // Base fetch function

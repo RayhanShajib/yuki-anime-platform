@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { User, Film, Settings, BarChart2, LogOut, Layers, List, Tag, MessageCircle, Bell, Grid, Users, FileText } from "lucide-react";
+import { Film, Settings, BarChart2, LogOut, List, Tag, MessageCircle, Bell, Grid, Users, FileText } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

@@ -21,7 +21,7 @@ interface HeroCarouselProps {
 export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying] = useState(true);
 
   const currentAnime = featuredAnime[currentIndex];
 

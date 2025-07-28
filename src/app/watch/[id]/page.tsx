@@ -7,13 +7,10 @@ import VideoPlayer from "@/components/ui/VideoPlayer";
 import { latestAnime, mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
 import { Grid, List } from "lucide-react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import "plyr-react/plyr.css";
 import React, { useMemo } from "react";
-
-const Plyr = dynamic(() => import("plyr-react"), { ssr: false });
 
 export default function WatchPage() {
   const params = useParams();
@@ -29,23 +26,6 @@ export default function WatchPage() {
   const [isListView, setIsListView] = React.useState(false);
   // --- Server Selection State ---
   const [selectedServer, setSelectedServer] = React.useState(1);
-  // For demo, all episodes use the trailer
-  const episodeVideoSrc =
-    anime?.trailer || "https://www.w3schools.com/html/mov_bbb.mp4";
-  const plyrSource = {
-    type: "video" as const,
-    sources: [
-      {
-        src: episodeVideoSrc,
-        type: "video/mp4",
-        size: 720,
-      },
-    ],
-    poster: anime?.banner || anime?.poster,
-    title: anime?.title
-      ? `${anime.title} - Episode ${selectedEpisode}`
-      : `Episode ${selectedEpisode}`,
-  };
 
   // --- Comments System State ---
   const [comments, setComments] = React.useState([

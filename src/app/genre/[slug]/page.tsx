@@ -38,10 +38,10 @@ export default function GenrePage({ params }: GenrePageProps) {
   const [tempStatus, setTempStatus] = useState("all");
   // Actual filter states used for filtering
   const [selectedSeason, setSelectedSeason] = useState("all");
-  const [sortBy, setSortBy] = useState("popularity");
+  const [sortBy] = useState("popularity");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode] = useState<"grid" | "list">("grid");
   const [showAll, setShowAll] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("all");
@@ -248,6 +248,7 @@ export default function GenrePage({ params }: GenrePageProps) {
                   className="px-10 py-2 rounded-lg bg-green-600 text-white/90 font-medium hover:bg-green-700 cursor-pointer"
                   onClick={() => {
                     setSelectedGenre(tempGenre);
+                    console.log(selectedGenre);
                     setTypeFilter(tempType);
                     setStatusFilter(tempStatus);
                     const params = new URLSearchParams();

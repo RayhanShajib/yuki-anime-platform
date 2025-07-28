@@ -77,7 +77,7 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-export function getImageUrl(path: string, size: 'small' | 'medium' | 'large' = 'medium'): string {
+export function getImageUrl(path: string): string {
   // This would normally integrate with your image CDN
   return path; // Placeholder implementation
 }
