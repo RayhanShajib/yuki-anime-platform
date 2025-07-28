@@ -339,7 +339,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               popupPosition === "left" &&
                 "absolute right-full top-0 mr-4 w-[400px]",
               popupPosition === "center" &&
-                "fixed top-[25%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[400px] max-w-[400px] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto sm:m-4",
+                "fixed top-[8%] left-1/2 bottom-0 m-auto transform -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[400px] max-w-[400px] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto sm:m-4 flex justify-center items-center",
               // Animation states
               isAnimating
                 ? "opacity-100 scale-100 translate-y-0"
