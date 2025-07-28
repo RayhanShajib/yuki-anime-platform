@@ -63,12 +63,19 @@ export default function ProfileEditPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const handleInputChange = (field: string, value: any, category?: string) => {
+  const handleInputChange = (
+    field: string,
+    value: string | boolean,
+    category?: string
+  ) => {
     if (category) {
       setUserData((prev) => ({
         ...prev,
         [category]: {
-          ...(prev[category as keyof typeof prev] as Record<string, any>),
+          ...(prev[category as keyof typeof prev] as Record<
+            string,
+            string | boolean
+          >),
           [field]: value,
         },
       }));
