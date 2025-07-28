@@ -23,11 +23,9 @@ const typeFilters = [
   { key: "movie", label: "Movies" },
   { key: "ova", label: "OVAs" },
 ];
-interface PageProps {
-  params: { slug: string }
-}
+
 // Correct type for Next.js App Router page props
-export default function GenrePage({ params }: PageProps) {
+export default function GenrePage() {
   const seasonOptions = ["Summer", "Spring", "Winter", "Fall"];
   // Temporary filter states for UI
   const [tempGenre, setTempGenre] = useState("all");
@@ -94,8 +92,9 @@ export default function GenrePage({ params }: PageProps) {
     "Other",
   ];
 
-  const genre = params.slug.replace(/-/g, " ");
-  const genreTitle = genre.charAt(0).toUpperCase() + genre.slice(1);
+  // No params, use a default genre or static value
+  const genre = "all";
+  const genreTitle = "All";
 
   // Filter anime by genre and apply other filters
   const filteredAnime = mockAnime
