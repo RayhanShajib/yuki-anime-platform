@@ -7,7 +7,7 @@ import { mockAnime } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 import { Tags } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const statusFilters = [
@@ -27,6 +27,8 @@ const typeFilters = [
 // Correct type for Next.js App Router page props
 export default function GenrePage() {
   const seasonOptions = ["Summer", "Spring", "Winter", "Fall"];
+  const params = useParams();
+  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
   // Temporary filter states for UI
   const [tempGenre, setTempGenre] = useState("all");
   const [tempType, setTempType] = useState("all");
@@ -92,9 +94,8 @@ export default function GenrePage() {
     "Other",
   ];
 
-  // No params, use a default genre or static value
-  const genre = "all";
-  const genreTitle = "All";
+  const genre = slug ? slug.replace(/-/g, " ") : "";
+  const genreTitle = genre.charAt(0).toUpperCase() + genre.slice(1);
 
   // Filter anime by genre and apply other filters
   const filteredAnime = mockAnime

@@ -69,7 +69,9 @@ import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SearchPage() {
+import { Suspense } from "react";
+
+function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -84,7 +86,6 @@ export default function SearchPage() {
   const [pendingLanguage, setPendingLanguage] = useState<string[]>([]);
   const [pendingSeason, setPendingSeason] = useState("all");
   const [showAdvanced, setShowAdvanced] = useState(false);
-
 
   // Applied filter states (from URL)
   const [appliedFilters, setAppliedFilters] = useState({
@@ -380,16 +381,15 @@ export default function SearchPage() {
           {filteredAnime.length > 0 ? (
             /* Always show grid view, since viewMode is removed */
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-              {filteredAnime
-                .map((anime) => (
-                  <div key={anime.id} className="relative">
-                    <AnimeCard
-                      anime={anime}
-                      showPopup={true}
-                      className="transform transition-transform hover:scale-105"
-                    />
-                  </div>
-                ))}
+              {filteredAnime.map((anime) => (
+                <div key={anime.id} className="relative">
+                  <AnimeCard
+                    anime={anime}
+                    showPopup={true}
+                    className="transform transition-transform hover:scale-105"
+                  />
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-12">
@@ -407,5 +407,13 @@ export default function SearchPage() {
       </main>
       <FooterSection />
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="text-white p-8">Loading...</div>}>
+      <SearchPageContent />
+    </Suspense>
   );
 }
