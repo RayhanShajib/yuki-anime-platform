@@ -1,8 +1,39 @@
+
 import React, { useEffect, useRef } from 'react';
 
+declare global {
+  interface Window {
+    Artplayer?: {
+      new (options: Record<string, unknown>): ArtplayerInstance;
+    };
+    Hls?: {
+      isSupported: () => boolean;
+      new (): HlsInstance;
+    };
+  }
+}
+
+interface ArtplayerInstance {
+  destroy: () => void;
+  controls?: {
+    add?: (control: Record<string, unknown>) => void;
+  };
+  pip?: boolean;
+  seek?: number;
+  currentTime?: number;
+  subtitle?: {
+    show?: boolean;
+  };
+}
+
+interface HlsInstance {
+  loadSource: (url: string) => void;
+  attachMedia: (video: HTMLVideoElement) => void;
+}
+
 const VideoPlayer = () => {
-  const artRef = useRef(null);
-  const playerRef = useRef(null);
+  const artRef = useRef<HTMLDivElement | null>(null);
+  const playerRef = useRef<ArtplayerInstance | null>(null);
 
   useEffect(() => {
     // Load Artplayer CSS
@@ -15,6 +46,7 @@ const VideoPlayer = () => {
 
     // Load Artplayer JS
     const script = document.createElement('script');
+
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/artplayer/5.1.1/artplayer.js';
     script.onload = () => {
       if (artRef.current && window.Artplayer) {
@@ -61,9 +93,11 @@ const VideoPlayer = () => {
                   html: 'Display',
                   tooltip: 'Show',
                   switch: true,
-                  onSwitch: function (item) {
+                  onSwitch: function (item: { tooltip: string; switch: boolean }) {
                     item.tooltip = item.switch ? 'Hide' : 'Show';
-                    art.subtitle.show = !item.switch;
+                    if (playerRef.current && playerRef.current.subtitle) {
+                      playerRef.current.subtitle.show = !item.switch;
+                    }
                     return !item.switch;
                   },
                 },
@@ -74,7 +108,9 @@ const VideoPlayer = () => {
               icon: '<svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg>',
               tooltip: 'Picture in Picture',
               click: function () {
-                playerRef.current.pip = !playerRef.current.pip;
+                if (playerRef.current) {
+                  playerRef.current.pip = !playerRef.current.pip;
+                }
               },
             },
           ],
@@ -96,7 +132,7 @@ const VideoPlayer = () => {
             },
           ],
           customType: {
-            m3u8: function (video, url) {
+            m3u8: function (video: HTMLVideoElement, url: string) {
               if (window.Hls && window.Hls.isSupported()) {
                 const hls = new window.Hls();
                 hls.loadSource(url);
@@ -211,7 +247,7 @@ const VideoPlayer = () => {
         document.head.appendChild(style);
 
         // Add skip buttons
-        if (playerRef.current) {
+        if (playerRef.current && playerRef.current.controls && typeof playerRef.current.controls.add === 'function') {
           // Skip backward 10s
           playerRef.current.controls.add({
             position: 'right',
@@ -219,7 +255,9 @@ const VideoPlayer = () => {
             tooltip: 'Skip backward 10s',
             style: { position: 'relative' },
             click: function () {
-              playerRef.current.seek = playerRef.current.currentTime - 10;
+              if (playerRef.current) {
+                playerRef.current.seek = (playerRef.current.currentTime ?? 0) - 10;
+              }
             },
           });
 
@@ -230,7 +268,9 @@ const VideoPlayer = () => {
             tooltip: 'Skip forward 10s',
             style: { position: 'relative' },
             click: function () {
-              playerRef.current.seek = playerRef.current.currentTime + 10;
+              if (playerRef.current) {
+                playerRef.current.seek = (playerRef.current.currentTime ?? 0) + 10;
+              }
             },
           });
         }
@@ -239,7 +279,7 @@ const VideoPlayer = () => {
     document.head.appendChild(script);
 
     return () => {
-      if (playerRef.current) {
+      if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         playerRef.current.destroy();
       }
     };
