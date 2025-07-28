@@ -28,7 +28,6 @@ interface PageProps {
 }
 // Correct type for Next.js App Router page props
 export default function GenrePage({ params }: PageProps) {
-  const { params } = props;
   const seasonOptions = ["Summer", "Spring", "Winter", "Fall"];
   // Temporary filter states for UI
   const [tempGenre, setTempGenre] = useState("all");
