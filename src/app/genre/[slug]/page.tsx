@@ -24,7 +24,12 @@ const typeFilters = [
   { key: "ova", label: "OVAs" },
 ];
 
-export default function GenrePage({ params }: { params: { slug: string } }) {
+interface GenrePageProps {
+  params: { slug: string };
+}
+
+export default function GenrePage(props: GenrePageProps) {
+  const { params } = props;
   const seasonOptions = ["Summer", "Spring", "Winter", "Fall"];
   // Temporary filter states for UI
   const [tempGenre, setTempGenre] = useState("all");
