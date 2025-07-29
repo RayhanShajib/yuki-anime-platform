@@ -24,6 +24,48 @@ export default function WatchPage() {
   const [selectedEpisode, setSelectedEpisode] = React.useState(1);
   // --- Episode List/Grid Toggle State ---
   const [isListView, setIsListView] = React.useState(false);
+
+  // --- Episode Search State ---
+  const [searchQuery, setSearchQuery] = React.useState("");
+
+  // --- Episodes Data (mock, replace with real data if available) ---
+  type Episode = { ep: number; title: string };
+
+  // Define a type for the possible episode structure in anime.episodes
+  type AnimeEpisode = {
+    ep?: number;
+    number?: number;
+    title?: string;
+  };
+
+  const episodes = useMemo<Episode[]>(() => {
+    // If anime.episodes exists, use it; otherwise, use a mock array
+    if (anime && Array.isArray(anime.episodes)) {
+      // Map or cast anime.episodes to the correct shape if necessary
+      return anime.episodes.map((ep: AnimeEpisode) => ({
+        ep: ep.ep ?? ep.number ?? 0,
+        title: ep.title ?? `Episode ${ep.ep ?? ep.number ?? ""}`,
+      }));
+    }
+    // Example mock data
+    return [
+      { ep: 1, title: "The Beginning" },
+      { ep: 2, title: "A New Challenge" },
+      { ep: 3, title: "Allies and Enemies" },
+      { ep: 4, title: "Turning Point" },
+      { ep: 5, title: "Climax" },
+      { ep: 6, title: "Resolution" },
+    ];
+  }, [anime]);
+
+  // --- Filtered Episodes ---
+  const filteredEpisodes = useMemo(() => {
+    if (!searchQuery.trim()) return episodes;
+    const q = searchQuery.trim().toLowerCase();
+    return episodes.filter(
+      (ep) => ep.title.toLowerCase().includes(q) || String(ep.ep).includes(q)
+    );
+  }, [episodes, searchQuery]);
   // --- Server Selection State ---
   const [selectedServer, setSelectedServer] = React.useState(1);
 
@@ -121,61 +163,62 @@ export default function WatchPage() {
                 </button>
               </div>
             </div>
-           <div>
-            <h3 className="text-white text-xl font-semibold">Seasons</h3>
-             <div className="flex space-x-4 mb-3.5 mt-4.5">
-              {/* Season Cards with Hover Effect */}
-              {[
-                {
-                  season: 1,
-                  eps: 13,
-                  img: "https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg",
-                },
-                {
-                  season: 2,
-                  eps: 12,
-                  img: "https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg",
-                },
-              ].map((s) => (
-                <div key={s.season} className="relative text-center group">
-                  <div className="w-32 h-20 bg-gray-700 mb-2 overflow-hidden rounded-lg relative cursor-pointer">
-                    <Image
-                      src={s.img}
-                      alt={`Season ${s.season}`}
-                      width={128}
-                      height={80}
-                      className="w-full h-full object-cover transition duration-300 group-hover:brightness-75"
-                      style={{ objectFit: "cover" }}
-                    />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/70">
-                      <span className="text-white/90 text-lg font-bold">
-                        Season {s.season}
-                      </span>
-                      <span className="text-blue-600 text-md mt-1">
-                        {s.eps} Eps
-                      </span>
+            <div>
+              <h3 className="text-white text-xl font-semibold">Seasons</h3>
+              <div className="flex space-x-4 mb-3.5 mt-4.5">
+                {/* Season Cards with Hover Effect */}
+                {[
+                  {
+                    season: 1,
+                    eps: 13,
+                    img: "https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg",
+                  },
+                  {
+                    season: 2,
+                    eps: 12,
+                    img: "https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg",
+                  },
+                ].map((s) => (
+                  <div key={s.season} className="relative text-center group">
+                    <div className="w-32 h-20 bg-gray-700 mb-2 overflow-hidden rounded-lg relative cursor-pointer">
+                      <Image
+                        src={s.img}
+                        alt={`Season ${s.season}`}
+                        width={128}
+                        height={80}
+                        className="w-full h-full object-cover transition duration-300 group-hover:brightness-75"
+                        style={{ objectFit: "cover" }}
+                      />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/70">
+                        <span className="text-white/90 text-lg font-bold">
+                          Season {s.season}
+                        </span>
+                        <span className="text-blue-600 text-md mt-1">
+                          {s.eps} Eps
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-           </div>
-          </div>
-          <div className="w-full p-6 bg-gray-900 rounded-lg shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white text-md font-semibold">Episodes</h3>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer">
-                  SUB 12
-                </span>
-                <span className="bg-purple-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer">
-                  DUB 20
-                </span>
+                ))}
               </div>
             </div>
+          </div>
+          <div className="w-full p-6 bg-gray-900 rounded-lg shadow-lg">
+            <div className="flex items-center justify-between mb-4 gap-2">
+              <h3 className="text-white text-md font-semibold">Episodes</h3>
+              <input
+                type="text"
+                placeholder="Search episode..."
+                className="bg-gray-700 text-white/90 p-2 rounded-md w-48 text-sm focus:outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ minWidth: 120 }}
+              />
+            </div>
             <div className="flex items-center mb-4">
-              <select className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center cursor-pointer">
-                <option>001-012</option>
+              <select className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center cursor-pointer focus:outline-none">
+                <option>SUB 12</option>
+                <option>DUB 20</option>
               </select>
               {/* List/Grid Toggle Icon */}
               <button
@@ -196,8 +239,8 @@ export default function WatchPage() {
             <div
               className={
                 isListView
-                  ? "flex flex-col max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 list-episodes"
-                  : "flex flex-wrap max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 grid-episodes"
+                  ? "flex flex-col max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[36rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 list-episodes"
+                  : "flex flex-wrap max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 grid-episodes rayhan"
               }
               style={
                 isListView
@@ -205,7 +248,7 @@ export default function WatchPage() {
                   : { display: "grid", gridTemplateColumns: "1fr 1fr" }
               }>
               {/* Episodes List */}
-              {[1, 2, 3, 4, 5].map((ep) => (
+              {filteredEpisodes.map(({ ep, title }) => (
                 <div
                   key={ep}
                   className={
@@ -225,40 +268,41 @@ export default function WatchPage() {
                   tabIndex={0}
                   role="button"
                   aria-label={`Play Episode ${ep}`}>
-                  {!isListView && (
-                    <Image
-                      src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
-                      alt={`Episode ${ep}`}
-                      fill
-                      className="object-cover transition duration-300 group-hover:brightness-75"
-                    />
-                  )}
-                  <div
-                    className={
-                      isListView
-                        ? "flex flex-col justify-center px-6 py-2 bg-transparent"
-                        : "absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60"
-                    }>
-                    {isListView ? (
-                      <div className="flex items-center gap-4">
+                  {isListView ? (
+                    <>
+                      <div className="w-29 h-23 flex-shrink-0 rounded overflow-hidden relative">
+                        <Image
+                          src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
+                          alt={`Episode ${ep}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col justify-center px-4 py-2 bg-transparent">
                         <span className="text-white text-sm font-semibold">
-                          {ep}
+                          Ep {ep}
                         </span>
                         <span className="text-blue-600 text-md mt-1">
-                          {anime?.title || "Wind Breaker S2"}
+                          {title}
                         </span>
                       </div>
-                    ) : (
-                      <>
+                    </>
+                  ) : (
+                    <>
+                      <Image
+                        src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
+                        alt={`Episode ${ep}`}
+                        fill
+                        className="object-cover transition duration-300 group-hover:brightness-75"
+                      />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60">
                         <span className="text-white/90 text-sm font-semibold">
                           Episode {ep}
                         </span>
-                        <span className="text-blue-600 text-md">
-                          {anime?.title || "Wind Breaker S2"}
-                        </span>
-                      </>
-                    )}
-                  </div>
+                        <span className="text-blue-600 text-md">{title}</span>
+                      </div>
+                    </>
+                  )}
                   {selectedEpisode === ep && (
                     <div className="absolute top-1.5 right-2 bg-blue-600 text-xs px-2 py-1 rounded font-bold text-white/90">
                       Playing
