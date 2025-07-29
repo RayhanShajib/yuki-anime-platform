@@ -306,3 +306,6 @@ button {
   bottom: -2px;
   left: 0;
 }
+video controls{
+  display: none;
+}

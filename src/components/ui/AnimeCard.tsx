@@ -25,7 +25,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
-
+  console.log(showTooltip);
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -277,12 +277,6 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                     onClick={handleInfoClick}>
                     <Info className="h-4 w-4 lg:h-5 lg:w-5 text-white/90" />
                   </button>
-
-                  {showTooltip && (
-                    <div className="absolute top-full right-0 mt-1 bg-black/90 text-white/90 text-xs px-2 py-1 rounded whitespace-nowrap z-10">
-                      More info
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -362,17 +356,19 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 onClick={(e) => e.stopPropagation()}>
                 <div className="absolute inset-0 bg-black rounded-t-2xl overflow-hidden">
                   {anime.trailer ? (
-                    <iframe
+                    <video
                       src={anime.trailer}
                       title={`${anime.title} Trailer`}
-                      className="w-full h-full absolute inset-0 border-0"
+                      className="w-full h-full absolute inset-0 object-cover rounded-t-2xl"
                       style={{
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
                       }}
-                      allowFullScreen
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-800">
