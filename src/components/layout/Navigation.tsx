@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
+import { NotificationDropdown } from "../ui/NotificationDropdown";
 interface NavigationProps {
   isLandingPage?: boolean;
 }
@@ -26,6 +26,60 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  type Notification = {
+    id: number;
+    text: string;
+    date: string;
+    time: string;
+    type: "Anime" | "Community";
+  };
+
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: 1,
+      text: "New episode released for One Piece!",
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      type: "Anime",
+    },
+    {
+      id: 2,
+      text: "Your post received a new comment.",
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      type: "Community",
+    },
+    {
+      id: 3,
+      text: "Attack on Titan finale airs this week!",
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      type: "Anime",
+    },
+    {
+      id: 4,
+      text: "You have a new follower in the community.",
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      type: "Community",
+    },
+  ]);
+  const handleRemoveNotif = (id: number) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileBrowseOpen, setMobileBrowseOpen] = useState(false);
   const [mobileGenresOpen, setMobileGenresOpen] = useState(false);
@@ -229,13 +283,6 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <Globe className="h-5 w-5" />
             </button>
 
-            {isLoggedIn && (
-              <button className="text-white/90 hover:text-blue-400 transition-colors relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs"></span>
-              </button>
-            )}
-
             {isLoggedIn ? (
               <div className="relative">
                 <button
@@ -318,14 +365,27 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   className="hidden xl:flex bg-blue-600 register-btn hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg transition-colors">
                   Register
                 </Link>
-                <Link
-                  href="/notifications"
-                  className="text-white/90 hover:text-blue-400 transition-colors relative">
-                  <Bell className="h-5.5 w-5.5" />
-                  <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-red-500 rounded-full text-xs flex justify-center items-center">
-                    3
-                  </span>
-                </Link>
+                {/* Notification Icon and Dropdown */}
+                <div className="relative">
+                  <button
+                    className="text-white/90 transition-colors relative"
+                    onClick={() => setIsNotifOpen((prev) => !prev)}
+                    title="Notifications">
+                    <Bell className="h-5.5 w-5.5" />
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-red-500 rounded-full text-xs flex items-center justify-center">
+                        {notifications.length}
+                      </span>
+                    )}
+                  </button>
+                  {isNotifOpen && (
+                    <NotificationDropdown
+                      notifications={notifications}
+                      onRemove={handleRemoveNotif}
+                      onClose={() => setIsNotifOpen(false)}
+                    />
+                  )}
+                </div>
               </div>
             )}
 
