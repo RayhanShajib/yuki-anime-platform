@@ -103,13 +103,13 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           ? isScrolled
             ? "bg-black/90 bg-navbar backdrop-blur-md shadow-lg"
             : "bg-transparent"
-          : "bg-navbar"
+          : "bg-navbar shadow-lg"
       }`}>
       <div className="w-full px-4 sm:px-6 lg:px-10">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2">
             <div className="text-2xl font-bold text-blue-500">雪</div>
-            <span className="text-xl font-semibold text-white/90">Yuki</span>
+            <span className="text-xl font-semibold text-white">Yuki</span>
           </Link>
 
           <div className="hidden xl:flex items-center space-x-4">
@@ -119,7 +119,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 placeholder="Search anime..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`transition-all duration-300 text-white/90 placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none ${
+                className={`transition-all duration-300 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none ${
                   isScrolled ? "bg-gray-800/80" : "bg-slate-700/60"
                 }`}
                 onKeyDown={(e) => {
@@ -158,12 +158,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           <div className="hidden xl:flex items-center space-x-6">
             <Link
               href="/"
-              className="text-white/90 hover:text-blue-400 transition-colors">
+              className="text-white hover:text-blue-400 transition-colors">
               Home
             </Link>
 
             <div className="relative group">
-              <button className="text-white/90 hover:text-blue-400 transition-colors flex items-center space-x-1">
+              <button className="text-white hover:text-blue-400 transition-colors flex items-center space-x-1">
                 <span>Browse</span>
                 <svg
                   className="w-4 h-4"
@@ -210,7 +210,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             </div>
 
             <div className="relative group">
-              <button className="text-white/90 hover:text-blue-400 transition-colors flex items-center space-x-1">
+              <button className="text-white hover:text-blue-400 transition-colors flex items-center space-x-1">
                 <span>Genre</span>
                 <svg
                   className="w-4 h-4"
@@ -257,12 +257,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
             <Link
               href="/random"
-              className="text-white/90 hover:text-blue-400 transition-colors">
+              className="text-white hover:text-blue-400 transition-colors">
               Random
             </Link>
             <Link
               href="/schedule"
-              className="text-white/90 hover:text-blue-400 transition-colors">
+              className="text-white hover:text-blue-400 transition-colors">
               Schedule
             </Link>
           </div>
@@ -270,7 +270,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           <div className="flex items-center space-x-4">
             <button
               onClick={toggleTheme}
-              className="text-white/90 hover:text-blue-400 transition-colors"
+              className="text-white hover:text-blue-400 transition-colors"
               title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
               {theme === "dark" ? (
                 <Sun className="h-5 w-5" />
@@ -279,7 +279,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               )}
             </button>
 
-            <button className="text-white/90 hover:text-blue-400 transition-colors">
+            <button className="text-white hover:text-blue-400 transition-colors">
               <Globe className="h-5 w-5" />
             </button>
 
@@ -357,7 +357,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="hidden xl:flex text-white/90 login-btn hover:text-blue-400 transition-colors">
+                  className="hidden xl:flex text-white login-btn hover:text-blue-400 transition-colors">
                   Login
                 </Link>
                 <Link
@@ -368,12 +368,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 {/* Notification Icon and Dropdown */}
                 <div className="relative">
                   <button
-                    className="text-white/90 transition-colors relative"
+                    className="text-white transition-colors relative"
                     onClick={() => setIsNotifOpen((prev) => !prev)}
                     title="Notifications">
                     <Bell className="h-5.5 w-5.5" />
                     {notifications.length > 0 && (
-                      <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-red-500 rounded-full text-xs flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-red-500 rounded-full text-xs flex items-center justify-center text-white/90">
                         {notifications.length}
                       </span>
                     )}
@@ -401,7 +401,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   setIsMobileMenuOpen(true);
                 }
               }}
-              className="xl:hidden text-white/90 hover:text-blue-400 transition-colors">
+              className="xl:hidden text-white hover:text-blue-400 transition-colors">
               {isMobileMenuOpen || isMobileMenuClosing ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -526,7 +526,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             <div className="space-y-2">
               <Link
                 href="/"
-                className="block text-white/90 hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
                 Home
               </Link>
@@ -535,7 +535,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="space-y-1">
                 <button
                   type="button"
-                  className="w-full flex justify-between items-center text-white/90 font-medium text-sm uppercase tracking-wide mb-2 focus:outline-none"
+                  className="w-full flex justify-between items-center text-white font-medium text-sm uppercase tracking-wide mb-2 focus:outline-none"
                   onClick={() => setMobileBrowseOpen((prev) => !prev)}
                   aria-expanded={mobileBrowseOpen}>
                   <span>Browse</span>
@@ -558,25 +558,25 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   <div className="pl-4">
                     <Link
                       href="/latest"
-                      className="block text-white/90 hover:text-blue-400 transition-colors py-2"
+                      className="block text-white hover:text-blue-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       Latest
                     </Link>
                     <Link
                       href="/popular"
-                      className="block text-white/90 hover:text-blue-400 transition-colors py-2"
+                      className="block text-white hover:text-blue-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       Popular
                     </Link>
                     <Link
                       href="/ongoing"
-                      className="block text-white/90 hover:text-blue-400 transition-colors py-2"
+                      className="block text-white hover:text-blue-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       On Going
                     </Link>
                     <Link
                       href="/movies"
-                      className="block text-white/90 hover:text-blue-400 transition-colors py-2"
+                      className="block text-white hover:text-blue-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       Movies
                     </Link>
@@ -588,7 +588,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="space-y-1">
                 <button
                   type="button"
-                  className="w-full flex justify-between items-center text-white/90 font-medium text-sm uppercase tracking-wide mb-2 mt-4 focus:outline-none"
+                  className="w-full flex justify-between items-center text-white font-medium text-sm uppercase tracking-wide mb-2 mt-4 focus:outline-none"
                   onClick={() => setMobileGenresOpen((prev) => !prev)}
                   aria-expanded={mobileGenresOpen}>
                   <span>Genres</span>
@@ -624,7 +624,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       <Link
                         key={genre}
                         href={`/genre/${genre.toLowerCase()}`}
-                        className="block text-white/90 hover:text-blue-400 transition-colors py-1 text-sm"
+                        className="block text-white hover:text-blue-400 transition-colors py-1 text-sm"
                         onClick={() => setIsMobileMenuOpen(false)}>
                         {genre}
                       </Link>
@@ -634,13 +634,13 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               </div>
               <Link
                 href="/random"
-                className="block text-white/90 hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
                 Random
               </Link>
               <Link
                 href="/schedule"
-                className="block text-white/90 hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
                 Schedule
               </Link>
@@ -652,54 +652,54 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 <div>
                   <Link
                     href="/profile"
-                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <User className="h-5 w-5 mr-3" />
                     Profile
                   </Link>
                   <Link
                     href="/profile/edit"
-                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
                     Edit Profile
                   </Link>
                   <Link
                     href="/continue-watching"
-                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Play className="h-5 w-5 mr-3" />
                     Continue Watching
                   </Link>
                   <Link
                     href="/bookmarks"
-                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <BookOpen className="h-5 w-5 mr-3" />
                     Bookmarks
                   </Link>
                   <Link
                     href="/notifications"
-                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Bell className="h-5 w-5 mr-3" />
                     Notifications
                   </Link>
                   <Link
                     href="/import-export"
-                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
                     Import/Export
                   </Link>
                   <Link
                     href="/settings"
-                    className="flex items-center text-white/90 hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
                     Settings
                   </Link>
-                  <button className="flex items-center w-full text-white/90 hover:text-blue-400 transition-colors py-2">
+                  <button className="flex items-center w-full text-white hover:text-blue-400 transition-colors py-2">
                     <LogOut className="h-5 w-5 mr-3" />
                     Logout
                   </button>
@@ -713,7 +713,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 <div className="space-y-3">
                   <Link
                     href="/login"
-                    className="block text-white/90 hover:text-blue-400 transition-colors"
+                    className="block text-white hover:text-blue-400 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     Login
                   </Link>
