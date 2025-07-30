@@ -105,7 +105,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             : "bg-transparent"
           : "bg-navbar shadow-lg"
       }`}>
-      <div className="w-full px-4 sm:px-6 lg:px-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2">
             <div className="text-2xl font-bold text-blue-500">雪</div>

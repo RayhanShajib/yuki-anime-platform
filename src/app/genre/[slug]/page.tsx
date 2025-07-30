@@ -242,7 +242,7 @@ export default function GenrePage() {
                 </button>
                 <button
                   type="button"
-                  className="px-10 py-2 rounded-lg bg-green-600 text-white/90 font-medium hover:bg-green-700 cursor-pointer"
+                  className="px-10 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer"
                   onClick={() => {
                     setSelectedGenre(tempGenre);
                     console.log(selectedGenre);

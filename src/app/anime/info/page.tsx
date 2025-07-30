@@ -115,7 +115,7 @@ export default function AnimeInfoPage() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-10 xl:-mt-[150px] w-full">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-10 xl:-mt-[150px] w-full">
         <div className="flex flex-col md:flex-row items-end gap-8 w-full">
           {/* Poster */}
           <div className="flex justify-center md:justify-start">

@@ -18,7 +18,7 @@ export function LatestSection() {
 
   return (
     <section className="py-12">
-      <div className="w-full px-4 sm:px-6 lg:px-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8 text-3xl font-bold text-white flex-wrap gap-5">
           <h2 className="text-3xl font-bold text-white flex items-center">
             <Calendar className="h-8 w-8 text-blue-600 mr-3" />
@@ -61,13 +61,13 @@ export function LatestSection() {
           {filteredAnime
             .slice(0, showAll ? filteredAnime.length : 5)
             .map((anime) => (
-            <div key={anime.id} className="relative">
-              <AnimeCard
-                anime={anime}
-                showPopup={true}
-                className="transform transition-transform hover:scale-105"
-              />
-            </div>
+              <div key={anime.id} className="relative">
+                <AnimeCard
+                  anime={anime}
+                  showPopup={true}
+                  className="transform transition-transform hover:scale-105"
+                />
+              </div>
             ))}
         </div>
 
