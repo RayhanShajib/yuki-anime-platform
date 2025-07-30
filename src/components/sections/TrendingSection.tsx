@@ -31,7 +31,7 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
       {/* Top blur gradient */}
       <div className="absolute top-0 left-0 right-0 h-30 bg-gradient-to-b from-black via-black/60 to-transparent z-10 pointer-events-none blur-gradient" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+      <div className="w-full px-4 sm:px-6 lg:px-10 relative z-20">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8 text-3xl font-bold text-white flex-wrap gap-5">
           <h2 className="text-3xl font-bold text-white flex items-center">

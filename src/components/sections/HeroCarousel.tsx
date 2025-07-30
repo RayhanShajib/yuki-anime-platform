@@ -83,7 +83,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
       {/* Main content */}
       <div className="relative z-10 h-full flex items-center">
-        <div className="max-w-7xl m-auto px-4 sm:px-6 lg:px-8 w-full pt-7">
+        <div className="px-4 sm:px-6 lg:px-20 w-full pt-7">
           <div className="max-w-2xl mt-[100px]">
             <h1 className="text-3xl md:text-5xl font-bold text-white/90 mb-4 animate-fadeIn">
               {currentAnime.title}

@@ -1,7 +1,7 @@
 export function FooterSection() {
   return (
     <footer className="bg-black bg-footer border-t border-gray-800">
-      <div className="max-w-7xl mx-auto px-7 py-8">
+      <div className="w-full px-4 sm:px-6 lg:px-10 py-8">
         <div className="flex flex-col">
           {/* <!-- Main Footer Content --> */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-6 lg:space-y-0 gap-5">

@@ -44,7 +44,7 @@ export default function Home() {
 
         {/* Four-Section Content Grid */}
         <section className="py-12 bg-gray-900/30 grid-content">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="w-full px-4 sm:px-6 lg:px-10">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Top Airing */}
               <div className="rounded-lg">
