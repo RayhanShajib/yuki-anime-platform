@@ -100,7 +100,7 @@ export default function AnimeInfoPage() {
       <Navigation />
       {/* Trailer Background */}
       <div className="w-full h-[27rem] relative overflow-hidden">
-        <div className="absolute top-0 left-0 trailer size-full object-cover pointer-events-none object-center">
+        <div className="absolute top-0 h-[100vh] min-w-full trailer size-full object-cover pointer-events-none object-center">
           <div className="w-full h-full">
             <iframe
               src={anime.trailer}
@@ -112,10 +112,13 @@ export default function AnimeInfoPage() {
           </div>
         </div>
         <div className="info-grad z-0"></div>
+        <div className="absolute inset-0 hero-gradient" />
+        {/* Left blur gradient */}
+        <div className="absolute left-0 top-0 bottom-0 w-110 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-10 xl:-mt-[150px] w-full">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 xl:-mt-[150px] w-full">
         <div className="flex flex-col md:flex-row items-end gap-8 w-full">
           {/* Poster */}
           <div className="flex justify-center md:justify-start">
@@ -147,7 +150,8 @@ export default function AnimeInfoPage() {
             </div>
           </div>
         </div>
-
+        {/* Bottom blur gradient */}
+        <div className="absolute bottom-0 left-0 right-0 h-70 bg-gradient-to-t from-black via-black/80 to-transparent z-0 pointer-events-none" />
         {/* Info & Tabs */}
         <div className="flex-1 w-full mt-12">
           {/* Tabs */}
@@ -433,7 +437,7 @@ export default function AnimeInfoPage() {
           )}
         </div>
 
-        <div className="w-full max-w-6xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto">
           <div className="relative flex flex-col gap-4 md:gap-5 w-full z-20 mx-auto my-5 mb-9 lg:my-8 lg:mb-12 md:px-2 xl:px-0 !select-none">
             <div className="text-lg sm:text-xl lg:text-2xl font-medium lg:font-normal tracking-[0.015em] lg:tracking-normal 2xl:text-[1.6rem] font-popin items-center gap-2 flex px-2">
               <a className="flex gap-2 items-center" href="/search">
