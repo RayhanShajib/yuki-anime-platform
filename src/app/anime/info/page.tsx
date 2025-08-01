@@ -99,8 +99,8 @@ export default function AnimeInfoPage() {
     <div className="relative bg-black overflow-hidden">
       <Navigation />
       {/* Trailer Background */}
-      <div className="w-full h-[27rem] relative overflow-hidden">
-        <div className="absolute top-0 h-[100vh] min-w-full trailer size-full object-cover pointer-events-none object-center">
+      <div className="w-full h-[27rem] relative overflow-hidden min-w-full ">
+        <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center">
           <div className="w-full h-full">
             <iframe
               src={anime.trailer}
@@ -118,7 +118,7 @@ export default function AnimeInfoPage() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 xl:-mt-[150px] w-full">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 xl:-mt-[200px] w-full">
         <div className="flex flex-col md:flex-row items-end gap-8 w-full">
           {/* Poster */}
           <div className="flex justify-center md:justify-start">
