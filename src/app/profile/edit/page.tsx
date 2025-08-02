@@ -3,7 +3,6 @@
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import {
-  AlertCircle,
   ArrowLeft,
   Calendar,
   Camera,
@@ -46,14 +45,6 @@ const initialUserData = {
     showActivity: true,
     showFavorites: true,
     showStats: true,
-  },
-  notifications: {
-    emailUpdates: true,
-    newEpisodes: true,
-    recommendations: false,
-    friendRequests: true,
-    comments: true,
-    reviews: false,
   },
 };
 
@@ -120,7 +111,7 @@ export default function ProfileEditPage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white/90 px-4 sm:px-6 py-3 sm:py-2 rounded-lg transition-colors w-full sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
+              className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white/90 px-4 sm:px-6 py-3 sm:py-2 rounded-lg transition-colors w-full sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
               <Save className="h-4 w-4" />
               <span>{isSaving ? "Saving..." : "Save Changes"}</span>
             </button>
@@ -151,12 +142,6 @@ export default function ProfileEditPage() {
                 shortLabel: "Privacy",
                 icon: Eye,
               },
-              {
-                key: "notifications",
-                label: "Notifications",
-                shortLabel: "Notifs",
-                icon: AlertCircle,
-              },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -165,7 +150,7 @@ export default function ProfileEditPage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`flex items-center justify-center space-x-2 px-3 sm:px-4 py-3 sm:py-2 rounded-md text-sm font-medium transition-colors min-h-[48px] touch-manipulation ${
                     activeTab === tab.key
-                      ? "bg-purple-600 text-white/90"
+                      ? "bg-blue-600 text-white/90"
                       : "text-gray-300 hover:text-white hover:bg-gray-700"
                   }`}>
                   <Icon className="h-4 w-4" />
@@ -186,7 +171,7 @@ export default function ProfileEditPage() {
                 </h2>
                 <div className="flex items-center space-x-6">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full border-4 border-purple-500 overflow-hidden">
+                    <div className="w-24 h-24 rounded-full border-4 border-blue-500 overflow-hidden">
                       <Image
                         src={userData.avatar}
                         alt="Profile"
@@ -479,84 +464,6 @@ export default function ProfileEditPage() {
                       </label>
                     ))}
                   </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "notifications" && (
-            <div className="space-y-8">
-              {/* Email Notifications */}
-              <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
-                <h2 className="text-xl font-bold text-white mb-6">
-                  Email Notifications
-                </h2>
-                <div className="space-y-4">
-                  {[
-                    {
-                      key: "emailUpdates",
-                      label: "Weekly Digest",
-                      description:
-                        "Get a weekly summary of new anime and episodes",
-                    },
-                    {
-                      key: "newEpisodes",
-                      label: "New Episodes",
-                      description:
-                        "Notify when new episodes of your watching list are available",
-                    },
-                    {
-                      key: "recommendations",
-                      label: "Recommendations",
-                      description: "Get personalized anime recommendations",
-                    },
-                    {
-                      key: "friendRequests",
-                      label: "Friend Requests",
-                      description:
-                        "Notify when someone sends you a friend request",
-                    },
-                    {
-                      key: "comments",
-                      label: "Comments",
-                      description:
-                        "Notify when someone comments on your reviews or posts",
-                    },
-                    {
-                      key: "reviews",
-                      label: "Review Updates",
-                      description: "Notify about reviews on anime in your list",
-                    },
-                  ].map((setting) => (
-                    <div
-                      key={setting.key}
-                      className="flex items-start space-x-3">
-                      <input
-                        type="checkbox"
-                        checked={
-                          userData.notifications[
-                            setting.key as keyof typeof userData.notifications
-                          ]
-                        }
-                        onChange={(e) =>
-                          handleInputChange(
-                            setting.key,
-                            e.target.checked,
-                            "notifications"
-                          )
-                        }
-                        className="form-checkbox h-5 w-5 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500 mt-1"
-                      />
-                      <div>
-                        <label className="text-gray-300 font-medium cursor-pointer">
-                          {setting.label}
-                        </label>
-                        <p className="text-gray-400 text-sm">
-                          {setting.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>

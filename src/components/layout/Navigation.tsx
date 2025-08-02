@@ -379,11 +379,13 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                     )}
                   </button>
                   {isNotifOpen && (
-                    <NotificationDropdown
-                      notifications={notifications}
-                      onRemove={handleRemoveNotif}
-                      onClose={() => setIsNotifOpen(false)}
-                    />
+                    <div className="absolute right-0 mt-4 w-80">
+                      <NotificationDropdown
+                        notifications={notifications}
+                        onRemove={handleRemoveNotif}
+                        onClose={() => setIsNotifOpen(false)}
+                      />
+                    </div>
                   )}
                 </div>
               </div>
