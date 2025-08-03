@@ -7,12 +7,15 @@ import { NotificationDropdown } from "@/components/ui/NotificationDropdown";
 
 import { mockAnime } from "@/lib/mockData";
 import {
+  Bell,
   Bookmark,
   Calendar,
   ChevronRight,
   Clock,
   Edit3,
+  Import,
   PlayCircle,
+  Settings,
   User,
 } from "lucide-react";
 import Image from "next/image";
@@ -102,6 +105,7 @@ export default function ProfilePage() {
   const handleRemoveNotif = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
+  
   // State for Hide your profile activities
   const [hideActivities, setHideActivities] = useState<"yes" | "no">("no");
   // State for Hide your bookmarks
@@ -111,6 +115,7 @@ export default function ProfilePage() {
   const [importExportMode, setImportExportMode] = useState<
     "import" | "export" | "autosync"
   >("import");
+
   return (
     <div className="min-h-screen bg-black">
       <Navigation />
@@ -191,19 +196,19 @@ export default function ProfilePage() {
                   key: "notifications",
                   label: "Notifications",
                   shortLabel: "notifications",
-                  icon: Bookmark,
+                  icon: Bell,
                 },
                 {
                   key: "settings",
                   label: "Settings",
                   shortLabel: "settings",
-                  icon: Bookmark,
+                  icon: Settings,
                 },
                 {
                   key: "importexport",
                   label: "Import/Export",
                   shortLabel: "importexport",
-                  icon: Bookmark,
+                  icon: Import,
                 },
               ].map((tab) => {
                 const Icon = tab.icon;
@@ -226,26 +231,26 @@ export default function ProfilePage() {
           </div>
 
           {activeTab === "importexport" && (
-            <div className="bg-[#0d1628] text-white min-h-screen p-10 rounded-md">
+            <div className="bg-[#0d1628] text-white/90 min-h-screen p-10 rounded-md">
               <div className="mx-auto">
-                <h2 className="text-xl font-semibold mb-6">Import/Export</h2>
+                <h2 className="text-xl font-semibold mb-6 text-white/90">Import/Export</h2>
                 <div className="flex gap-3 mb-6">
                   <button
-                    className={`bg-[#2b354a] text-white px-4 py-2 rounded-md font-medium ${
+                    className={`bg-[#2b354a] text-white/90 px-4 py-2 rounded-md font-medium ${
                       importExportMode === "import" ? "" : "opacity-60"
                     }`}
                     onClick={() => setImportExportMode("import")}>
                     Import
                   </button>
                   <button
-                    className={`bg-[#1a2438] text-white px-4 py-2 rounded-md font-medium ${
+                    className={`bg-[#1a2438] text-white/90 px-4 py-2 rounded-md font-medium ${
                       importExportMode === "export" ? "" : "opacity-60"
                     }`}
                     onClick={() => setImportExportMode("export")}>
                     Export
                   </button>
                   <button
-                    className={`bg-[#1a2438] text-white px-4 py-2 rounded-md font-medium ${
+                    className={`bg-[#1a2438] text-white/90 px-4 py-2 rounded-md font-medium ${
                       importExportMode === "autosync" ? "" : "opacity-60"
                     }`}
                     onClick={() => setImportExportMode("autosync")}>
@@ -255,7 +260,7 @@ export default function ProfilePage() {
                 {importExportMode === "import" && (
                   <div>
                     {/* ...existing import content... */}
-                    <div className="bg-[#2b354a] p-4 rounded-md text-sm text-gray-300 mb-6">
+                    <div className="bg-[#2b354a] p-4 rounded-md text-sm text-gray-400 mb-6">
                       <p>
                         Import your anime list from MAL (MyAnimeList) or AL
                         (Anilist):
@@ -355,7 +360,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
                     </div>
-                    <button className="bg-blue-600 text-white px-6 py-2 rounded-md font-medium w-full mt-7">
+                    <button className="bg-blue-600 text-white/90 px-6 py-2 rounded-md font-medium w-full mt-7">
                       Import
                     </button>
                   </div>
@@ -363,7 +368,7 @@ export default function ProfilePage() {
                 {importExportMode === "export" && (
                   <div>
                     {/* Export content */}
-                    <div className="bg-[#2b354a] p-4 rounded-md text-sm text-gray-300 mb-6">
+                    <div className="bg-[#2b354a] p-4 rounded-md text-sm text-gray-400 mb-6">
                       <p>
                         Export your anime list. Choose a format and download
                         your data.
@@ -413,13 +418,13 @@ export default function ProfilePage() {
                 {importExportMode === "autosync" && (
                   <div>
                     {/* Only Auto Sync content and Grant Permission button */}
-                    <div className="bg-[#2b354a] p-4 rounded-md text-sm text-gray-300">
+                    <div className="bg-[#2b354a] p-4 rounded-md text-sm text-gray-400">
                       <h3 className="text-lg font-semibold mb-2">Auto Sync</h3>
                       <p className="mb-4">
                         Automatically sync your anime list with supported
                         platforms.
                       </p>
-                      <button className="bg-blue-600 text-white px-6 py-2 rounded-md font-medium">
+                      <button className="bg-blue-600 text-white/90 px-6 py-2 rounded-md font-medium">
                         Grant Permission
                       </button>
                     </div>
@@ -440,7 +445,7 @@ export default function ProfilePage() {
                     Preferred language for anime titles
                   </p>
                 </div>
-                <select className="bg-[#2e3a52] text-white p-2 rounded-md w-full focus:outline-none">
+                <select className="bg-[#2e3a52] text-white/90 p-2 rounded-md w-full focus:outline-none">
                   <option>English</option>
                 </select>
 
@@ -450,7 +455,7 @@ export default function ProfilePage() {
                     Preferred audio language
                   </p>
                 </div>
-                <select className="bg-[#2e3a52] text-white p-2 rounded-md w-full focus:outline-none">
+                <select className="bg-[#2e3a52] text-white/90 p-2 rounded-md w-full focus:outline-none">
                   <option>Sub</option>
                   <option>Dub</option>
                 </select>
@@ -464,7 +469,7 @@ export default function ProfilePage() {
                 <input
                   type="number"
                   value="10"
-                  className="bg-[#2e3a52] text-white p-2 rounded-md w-full focus:outline-none"
+                  className="bg-[#2e3a52] text-white/90 p-2 rounded-md w-full focus:outline-none"
                 />
 
                 <div>
@@ -473,7 +478,7 @@ export default function ProfilePage() {
                     Number of anime to show per page
                   </p>
                 </div>
-                <select className="bg-[#2e3a52] text-white p-2 rounded-md w-full focus:outline-none">
+                <select className="bg-[#2e3a52] text-white/90 p-2 rounded-md w-full focus:outline-none">
                   <option>25</option>
                   <option>50</option>
                   <option>100</option>
@@ -487,14 +492,14 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    className={`px-4 py-2 rounded-md text-white ${
+                    className={`px-4 py-2 rounded-md text-white/90 ${
                       hideBookmarks === "no" ? "bg-blue-600" : "bg-[#3b465b]"
                     }`}
                     onClick={() => setHideBookmarks("no")}>
                     No
                   </button>
                   <button
-                    className={`px-4 py-2 rounded-md text-white ${
+                    className={`px-4 py-2 rounded-md text-white/90 ${
                       hideBookmarks === "yes" ? "bg-blue-600" : "bg-[#3b465b]"
                     }`}
                     onClick={() => setHideBookmarks("yes")}>
@@ -510,14 +515,14 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    className={`px-4 py-2 rounded-md text-white ${
+                    className={`px-4 py-2 rounded-md text-white/90 ${
                       hideActivities === "no" ? "bg-blue-600" : "bg-[#3b465b]"
                     }`}
                     onClick={() => setHideActivities("no")}>
                     No
                   </button>
                   <button
-                    className={`px-4 py-2 rounded-md text-white ${
+                    className={`px-4 py-2 rounded-md text-white/90 ${
                       hideActivities === "yes" ? "bg-blue-600" : "bg-[#3b465b]"
                     }`}
                     onClick={() => setHideActivities("yes")}>
@@ -526,7 +531,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-md text-center">
+              <button className="w-full bg-blue-600 hover:bg-blue-500 text-white/90 font-semibold py-3 rounded-md text-center">
                 Save Changes
               </button>
             </div>
@@ -552,49 +557,49 @@ export default function ProfilePage() {
 
                   {/* <!-- Activity Items --> */}
                   <div className="space-y-3">
-                    <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2">
-                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                       <span className="text-sm text-gray-400">
                         3 minutes ago
                       </span>
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold text-white/90">
                         xs9yj7to4
                       </span>
                       <span className="text-sm text-gray-400">watched</span>
-                      <a href="#" className="text-blue-400 hover:underline">
+                      <a href="#" className="text-blue-500 hover:underline">
                         EP 1134
                       </a>
-                      <span className="text-sm text-white">of One Piece</span>
+                      <span className="text-sm text-white/90">of One Piece</span>
                     </div>
 
-                    <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2">
-                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                       <span className="text-sm text-gray-400">
                         26 minutes ago
                       </span>
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold text-white/90">
                         xs9yj7to4
                       </span>
                       <span className="text-sm text-gray-400">watched</span>
-                      <a href="#" className="text-blue-400 hover:underline">
+                      <a href="#" className="text-blue-500 hover:underline">
                         EP 13
                       </a>
-                      <span className="text-sm text-white">of LAZARUS</span>
+                      <span className="text-sm text-white/90">of LAZARUS</span>
                     </div>
 
-                    <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2">
-                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                       <span className="text-sm text-gray-400">
                         26 minutes ago
                       </span>
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold text-white/90">
                         xs9yj7to4
                       </span>
                       <span className="text-sm text-gray-400">watched</span>
-                      <a href="#" className="text-blue-400 hover:underline">
+                      <a href="#" className="text-blue-500 hover:underline">
                         EP 12
                       </a>
-                      <span className="text-sm text-white">
+                      <span className="text-sm text-white/90">
                         of Shirohiyo - Reincarnated as a Neglected Noble:
                       </span>
                     </div>
@@ -632,7 +637,7 @@ export default function ProfilePage() {
                           <span className="bg-purple-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
                             DUB 12
                           </span>
-                          <span className="text-sm text-gray-300">TV</span>
+                          <span className="text-sm text-gray-400">TV</span>
                         </div>
                       </div>
                     </div>
