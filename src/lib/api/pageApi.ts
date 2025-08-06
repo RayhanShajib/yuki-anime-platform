@@ -1,4 +1,3 @@
-// import { ApiResponse, PaginatedResponse, AnimeBase, AnimeDetailed } from '@/types/api';
 import { cache } from 'react';
 
 // Base fetch function
@@ -28,19 +27,19 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
 export const pageApi = {
   // Home Page - Featured, Trending, Latest, Schedule
   getHomePageData: cache(async () => {
-    const [spotlight, trending, latest, schedule] = await Promise.all([
-      fetchFromApi('/spotlight/'),
-      fetchFromApi('/trending/'),
-      fetchFromApi('/latest/'),
-      fetchFromApi('/schedule/'),
-    ]);
-
-    return {
-      spotlight,
-      trending,
-      latest,
-      schedule,
-    };
+    const homeData = await fetchFromApi('/home-agg/')
+        .then(data => {
+          // Ensure all required fields are present
+          if (!data || !data.airing || !data.trending || !data.latest || !data.completed || !data.spotlight || !data.favourite) {
+            throw new Error('Invalid home page data structure');
+          }
+          return data;
+        })
+        .catch(error => {
+          console.error('Error fetching home page data:', error);
+          throw new Error('Failed to fetch home page data');
+        });
+    return homeData;
   }),
 
   // Popular Page - with filters

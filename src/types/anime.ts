@@ -143,52 +143,78 @@ export interface AnimeEpisodes {
   dub: number;
 }
 
-// Core anime card used across most pages
+// Anime card
 export interface AnimeCard {
+  id: number;
+  title: string;
+  title_japanese: string;
+  background_banner: string;
+  sub_total: number;
+  dub_total: number;
+  raw_total: number;
+  ep_id: number;
+  number_of_episodes: number;
+  synopsis: string;
+  image: string;
+  genre: string[];
+  airing: boolean;
+  anime_type: string;
+  trailer_yt_id: string;
+}
+
+// Spotlight anime
+export interface SpotlightAnime {
   id: number;
   title: Title;
   description: string;
-  bannerImage: string;
+  banner: string;
   trailer: string;
-  genres: string[];
-  rating: number;
-  releaseDate: string;
-  format: AnimeType;
-  thumbnail: string;
-  episodes: AnimeEpisodes;
-  status: AnimeStatus;
+  genre: string[];
+  released_date: string;
+  type: AnimeType;
+}
+// Trending anime
+export interface TrendingAnime extends AnimeCard {
+}
+// Latest anime
+export interface LatestAnime extends Anime {
+}
+// Popular anime
+export interface PopularAnime extends AnimeCard {
+}
+// Favorites anime
+export interface FavoritesAnime extends AnimeCard {
+}
+// Completed anime
+export interface CompletedAnime extends AnimeCard {
+}
+// Schedule
+export interface ScheduleAnime extends AnimeCard {
+}
+// Airing anime
+export interface AiringAnime extends AnimeCard {
 }
 
 // Home Page
 export interface HomePageResponse {
-  spotlight: AnimeCard[];
+  spotlight: SpotlightAnime[];
   trending: {
-    day: AnimeCard[];
-    week: AnimeCard[];
-    month: AnimeCard[];
+    day: TrendingAnime[];
+    week: TrendingAnime[];
+    month: TrendingAnime[];
   };
   latest: {
-    sub: AnimeCard[];
-    dub: AnimeCard[];
+    sub: LatestAnime[];
+    dub: LatestAnime[];
   };
   schedule: ScheduleAnime[];
-  popular: AnimeCard[];
-  favorites: AnimeCard[];
-  airing: AnimeCard[];
-  completed: AnimeCard[];
+  popular: PopularAnime[];
+  favorites: FavoritesAnime[];
+  airing: AiringAnime[];
+  completed: CompletedAnime[];
 }
 
-// Schedule
-export interface ScheduleAnime {
-  id: number;
-  airingAt: number;
-  title: Title;
-  genres: string[];
-  episode: number;
-  episodes: number;
-  thumbnail: string;
-  description: string;
-}
+
 
 // Anime Info Page
 export interface AnimeInfoPage {
