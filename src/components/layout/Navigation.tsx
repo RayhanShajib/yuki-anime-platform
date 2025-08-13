@@ -147,6 +147,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   stroke="currentColor">
                   <path
                     stroke-linecap="round"
+                    strokeLinecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 14.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"></path>
@@ -645,6 +646,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
                 Schedule
+              </Link>
+              <Link
+                href="/contact"
+                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
+                onClick={() => setIsMobileMenuOpen(false)}>
+                Contact
               </Link>
             </div>
 

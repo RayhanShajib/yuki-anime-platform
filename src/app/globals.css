@@ -239,6 +239,7 @@ html {
 button {
   cursor: pointer;
 }
+
 /* Line clamp utilities */
 .line-clamp-3 {
   display: -webkit-box;
@@ -275,6 +276,16 @@ button {
   }
   .media-watch {
     flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 700px) {
+  .footer-section {
+    text-align: center;
+  }
+  .footer-content-center {
+    display: flex;
+    justify-content: center;
+    margin: auto;
   }
 }
 @media screen and (max-width: 998px) {
