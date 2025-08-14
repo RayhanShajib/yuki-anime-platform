@@ -81,12 +81,12 @@ const anime = {
 };
 
 const tabs = [
-  { key: "overview", label: "Overview", icon: User },
+  { key: "Synopsis", label: "Synopsis", icon: User },
   { key: "episodes", label: "Episodes", icon: List },
 ];
 
 export default function AnimeInfoPage() {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("Synopsis");
   const [episodeLayout, setEpisodeLayout] = useState("flex"); // "flex" or "grid"
   const [audioType, setAudioType] = useState("sub"); // "sub" or "dub"
   const filteredAnime = mockAnime;
@@ -99,7 +99,7 @@ export default function AnimeInfoPage() {
     <div className="relative bg-black overflow-hidden">
       <Navigation />
       {/* Trailer Background */}
-      <div className="w-full h-[27rem] relative overflow-hidden min-w-full ">
+      <div className="w-full h-[24rem] relative overflow-hidden min-w-full info-page-content">
         <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center">
           <div className="w-full h-full">
             <iframe
@@ -119,9 +119,9 @@ export default function AnimeInfoPage() {
 
       {/* Main Content */}
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 xl:-mt-[200px] w-full">
-        <div className="flex flex-col md:flex-row items-end gap-8 w-full">
+        <div className="flex flex-col md:flex-row md:items-end items-start gap-8 w-full">
           {/* Poster */}
-          <div className="flex justify-center md:justify-start">
+          <div className="flex justify-start">
             <div className="relative rounded-xl overflow-hidden shadow-2xl">
               <Image
                 src={anime.poster}
@@ -174,10 +174,10 @@ export default function AnimeInfoPage() {
           </div>
 
           {/* Tab Content (no animation) */}
-          {activeTab === "overview" && (
+          {activeTab === "Synopsis" && (
             <div className="space-y-6 md:space-y-0 md:flex md:gap-8">
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-white mb-2">Overview</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Synopsis</h2>
                 <p className="text-gray-300 text-lg mb-4">
                   {anime.description}
                 </p>
@@ -196,7 +196,7 @@ export default function AnimeInfoPage() {
                   </div>
                 </div>
                 {/* Anime Info Section */}
-                <div className="w-full flex flex-wrap h-auto !tracking-wider">
+                <div className="w-full flex flex-wrap h-auto !tracking-wider mt-5">
                   <div className="w-full sm:w-1/2 shrink-0 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2 text-nowrap">
                     <span className="font-medium shrink-0 text-gray-300">
                       Episodes
@@ -240,18 +240,20 @@ export default function AnimeInfoPage() {
                   <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
                     <span className="font-medium text-gray-300">Genres</span>
                     <span className="text-sm text-end font-light">
-                      <button className="hover:text-white text-gray-300 tracking-wide !leading-normal">
+                      <Link href={"/search"} className="hover:text-white text-gray-300 tracking-wide !leading-normal">
                         Drama
-                      </button>
-                      <button className="hover:text-white tracking-wide !leading-normal text-gray-300">
+                      </Link>
+                      <Link href={"/search"} className="hover:text-white tracking-wide !leading-normal text-gray-300">
                         , Romance
-                      </button>
-                      <button className="hover:text-white tracking-wide !leading-normal text-gray-300">
-                        , Slice of Life
-                      </button>
-                      <button className="hover:text-white tracking-wide !leading-normal text-gray-300">
-                        , Supernatural
-                      </button>
+                      </Link>
+                    </span>
+                  </div>
+                  <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
+                    <span className="font-medium text-gray-300">Studios</span>
+                    <span className="text-sm text-end font-light">
+                      <Link href={"/search"} className="hover:text-white text-gray-300 tracking-wide !leading-normal">
+                        Drama
+                      </Link>
                     </span>
                   </div>
                 </div>

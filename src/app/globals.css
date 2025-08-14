@@ -296,6 +296,9 @@ button {
   .carousel-content {
     margin-top: 100px !important;
   }
+  .info-page-content{
+    height: 15rem;
+  }
 }
 @media screen and (max-width: 998px) {
   .grid-episodes {
