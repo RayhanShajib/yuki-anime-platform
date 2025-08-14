@@ -95,7 +95,7 @@ export default function MoviesPage() {
               </div>
               <div className="md:w-2/3 p-6 flex flex-col justify-center">
                 <div className="flex items-center space-x-2 mb-3">
-                  <span className="bg-purple-600 text-white/90 px-3 py-1 rounded text-sm font-bold">
+                  <span className="bg-blue-600 text-white/90 px-3 py-1 rounded text-sm font-bold">
                     FEATURED
                   </span>
                   <span className="bg-gray-700 text-white/90 px-2 py-1 rounded text-xs">
@@ -123,7 +123,7 @@ export default function MoviesPage() {
                   </div>
                 </div>
                 <div className="flex space-x-3 flex-wrap gap-3">
-                  <button className="bg-purple-600 hover:bg-purple-700 text-white/90 px-6 py-2 rounded-lg transition-colors font-semibold">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-6 py-2 rounded-lg transition-colors font-semibold">
                     Watch Now
                   </button>
                   <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-6 py-2 rounded-lg transition-colors">
@@ -150,7 +150,7 @@ export default function MoviesPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
-                          ? "bg-purple-600 text-white/90"
+                          ? "bg-blue-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -172,7 +172,7 @@ export default function MoviesPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         genreFilter === option.key
-                          ? "bg-pink-600 text-white/90"
+                          ? "bg-blue-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -252,7 +252,7 @@ export default function MoviesPage() {
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between flex-wrap gap-2.5">
                         <div className="flex-1">
                           <h3 className="text-lg font-semibold text-white mb-1">
                             {movie.title}
@@ -260,7 +260,7 @@ export default function MoviesPage() {
                           <p className="text-gray-400 text-sm mb-2 line-clamp-2">
                             {movie.synopsis}
                           </p>
-                          <div className="flex items-center space-x-4 text-sm">
+                          <div className="flex items-center space-x-3 text-sm">
                             <span className="text-blue-400">
                               {movie.releaseYear}
                             </span>
@@ -276,7 +276,7 @@ export default function MoviesPage() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <button className="bg-purple-600 hover:bg-purple-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
+                          <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
                             Watch
                           </button>
                           <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded text-sm transition-colors">

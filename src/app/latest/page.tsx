@@ -77,7 +77,7 @@ export default function LatestPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         languageFilter === option.key
-                          ? "bg-green-600 text-white/90"
+                          ? "bg-blue-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -117,7 +117,7 @@ export default function LatestPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         typeFilter === option.key
-                          ? "bg-purple-600 text-white/90"
+                          ? "bg-blue-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -203,7 +203,7 @@ export default function LatestPage() {
                       <p className="text-gray-400 text-sm mb-2 line-clamp-2">
                         {anime.synopsis}
                       </p>
-                      <div className="flex items-center space-x-4 text-sm">
+                      <div className="flex items-center gap-3 text-sm flex-wrap">
                         <span className="text-blue-400">
                           {anime.releaseYear}
                         </span>
@@ -248,7 +248,7 @@ export default function LatestPage() {
           )}
         </div>
       </main>
-      <FooterSection/>
+      <FooterSection />
     </div>
   );
 }

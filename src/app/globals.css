@@ -287,6 +287,15 @@ button {
     justify-content: center;
     margin: auto;
   }
+  .carousel{
+    height: 100% !important;
+  }
+  .carousel-control{
+    display: none !important;
+  }
+  .carousel-content{
+    margin-top: 100px !important;
+  }
 }
 @media screen and (max-width: 998px) {
   .grid-episodes {

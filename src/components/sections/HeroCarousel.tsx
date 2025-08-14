@@ -48,7 +48,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   if (!currentAnime) return null;
 
   return (
-    <div className="relative w-full h-[100vh] overflow-hidden min-w-full">
+    <div className="relative w-full h-[100vh] carousel overflow-hidden min-w-full">
       <div className="absolute inset-0">
         {currentAnime.trailer ? (
           <video
@@ -78,14 +78,14 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
         <div className="absolute inset-0 hero-gradient" />
         {/* Left blur gradient */}
-        <div className="absolute left-0 top-0 bottom-0 w-110 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-150 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* Main content */}
       <div className="relative z-10 h-full flex items-center">
         <div className="max-w-7xl m-auto px-4 sm:px-6 lg:px-8 w-full pt-7">
-          <div className="max-w-2xl mt-[100px]">
-            <h1 className="text-3xl md:text-5xl font-bold text-white/90 mb-4 animate-fadeIn">
+          <div className="max-w-2xl mt-[250px] carousel-content">
+            <h1 className="text-2xl md:text-4xl font-bold text-white/90 mb-4 animate-fadeIn">
               {currentAnime.title}
             </h1>
 
@@ -109,18 +109,18 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               ))}
             </div>
 
-            <p className="text-lg text-white/90 mb-5 leading-relaxed">
+            <p className="text-md text-white/90 mb-4 leading-relaxed">
               {truncateText(currentAnime.synopsis, 200)}
             </p>
 
             <div className="flex items-center space-x-4 gap-3.5 flex-wrap">
-              <button className="flex items-center space-x-2 bg-white text-black px-8 py-3 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer">
-                <Play className="h-5 w-5" />
+              <button className="flex items-center space-x-2 bg-white text-black px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer">
+                <Play className="h-4 w-4" />
                 <span>Watch Now</span>
               </button>
 
-              <button className="flex items-center space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-8 py-3 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer">
-                <Plus className="h-5 w-5" />
+              <button className="flex items-center space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-4 py-2 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer">
+                <Plus className="h-4 w-4" />
                 <span>Add to List</span>
               </button>
             </div>
@@ -129,10 +129,10 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
       </div>
 
       {/* Bottom blur gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-70 bg-gradient-to-t from-black via-black/80 to-transparent z-0 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-90 bg-gradient-to-t from-black via-black/80 to-transparent z-0 pointer-events-none" />
 
       {currentAnime.trailer && (
-        <div className="absolute bottom-7 right-4 z-20 flex flex-col space-y-2">
+        <div className="absolute bottom-7 right-4 z-20 flex flex-col space-y-2 carousel-control">
           {/* Carousel Navigation Buttons */}
           <div className="flex flex-col space-y-1">
             <button

@@ -82,8 +82,8 @@ export default function OngoingPage() {
           <div className="mb-8 bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-lg p-6 border border-green-800/30">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-green-400 font-semibold">LIVE</span>
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                <span className="text-blue-400 font-semibold">LIVE</span>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white mb-1">
@@ -141,7 +141,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
-                          ? "bg-green-600 text-white/90"
+                          ? "bg-blue-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -183,7 +183,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         genreFilter === option.key
-                          ? "bg-purple-600 text-white/90"
+                          ? "bg-blue-600 text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -235,11 +235,6 @@ export default function OngoingPage() {
                 .slice(0, showAll ? filteredAnime.length : 5)
                 .map((anime) => (
                   <div key={anime.id} className="relative">
-                    {/* Live indicator */}
-                    <div className="absolute top-11 left-2 z-10 flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs font-bold">
-                      <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                      <span className="text-white">ON AIR</span>
-                    </div>
                     <AnimeCard
                       anime={anime}
                       showPopup={true}
@@ -265,7 +260,7 @@ export default function OngoingPage() {
                       unoptimized={true}
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between flex-wrap gap-2.5">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
                             <h3 className="text-lg font-semibold text-white">
@@ -279,7 +274,7 @@ export default function OngoingPage() {
                           <p className="text-gray-400 text-sm mb-2 line-clamp-2">
                             {anime.synopsis}
                           </p>
-                          <div className="flex items-center space-x-4 text-sm">
+                          <div className="flex items-center space-x-3 text-sm flex-wrap">
                             <span className="text-blue-400">
                               {anime.releaseYear}
                             </span>
@@ -299,7 +294,7 @@ export default function OngoingPage() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <button className="bg-green-600 hover:bg-green-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
+                          <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
                             Watch
                           </button>
                           <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded text-sm transition-colors">

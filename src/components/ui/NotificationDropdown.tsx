@@ -20,7 +20,7 @@ export function NotificationDropdown({
 }: NotificationDropdownProps) {
   const [selectedType, setSelectedType] = useState<"Anime" | "Community">(
     "Anime"
-  );
+  ); 
   const dropdownRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
