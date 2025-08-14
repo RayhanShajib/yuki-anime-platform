@@ -97,6 +97,10 @@ function SearchPageContent() {
   const [pendingStudio, setPendingStudio] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
   // Applied filter states (from URL)
   const [appliedFilters, setAppliedFilters] = useState({
     search: "",
@@ -140,6 +144,9 @@ function SearchPageContent() {
     setPendingSeason(params.season || "all");
     setPendingSort(params.sort || "popularity");
     setPendingStudio(params.studio || "");
+
+    // Reset to page 1 when URL changes (filters change)
+    setCurrentPage(1);
   }, [searchParams]);
 
   // Handle Filter button click
@@ -158,6 +165,10 @@ function SearchPageContent() {
     if (pendingSeason !== "all") params.set("season", pendingSeason);
     if (pendingSort !== "popularity") params.set("sort", pendingSort);
     if (pendingStudio) params.set("studio", pendingStudio);
+
+    // Reset to page 1 when applying new filters
+    setCurrentPage(1);
+
     router.replace(`/search?${params.toString()}`);
   };
 
@@ -229,6 +240,66 @@ function SearchPageContent() {
           return b.popularity - a.popularity;
       }
     });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredAnime.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentAnime = filteredAnime.slice(startIndex, endIndex);
+
+  // Pagination handlers
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
+  };
+
+  const handleFirstPage = () => {
+    handlePageChange(1);
+  };
+
+  const handleLastPage = () => {
+    handlePageChange(totalPages);
+  };
+
+  // Generate pagination numbers
+  const generatePageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 6;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      const halfVisible = Math.floor(maxVisiblePages / 2);
+      let startPage = Math.max(1, currentPage - halfVisible);
+      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+      if (endPage - startPage < maxVisiblePages - 1) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+
+    return pages;
+  };
+
+  const pageNumbers = generatePageNumbers();
 
   return (
     <div className="min-h-screen bg-black">
@@ -313,7 +384,7 @@ function SearchPageContent() {
                 </button>
                 <button
                   type="button"
-                  className="px-10 py-2 rounded-lg bg-green-600 text-white/90 font-medium hover:bg-green-700 cursor-pointer"
+                  className="px-10 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer"
                   onClick={handleApplyFilters}>
                   Filter
                 </button>
@@ -448,18 +519,133 @@ function SearchPageContent() {
           </div>
           {/* Content Grid/List */}
           {filteredAnime.length > 0 ? (
-            /* Always show grid view, since viewMode is removed */
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-              {filteredAnime.map((anime) => (
-                <div key={anime.id} className="relative">
-                  <AnimeCard
-                    anime={anime}
-                    showPopup={true}
-                    className="transform transition-transform hover:scale-105"
-                  />
+            <>
+              {/* Always show grid view, since viewMode is removed */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+                {currentAnime.map((anime) => (
+                  <div key={anime.id} className="relative">
+                    <AnimeCard
+                      anime={anime}
+                      showPopup={true}
+                      className="transform transition-transform hover:scale-105"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center mt-8 gap-2">
+                  {/* Double Previous Arrow */}
+                  <button
+                    onClick={handleFirstPage}
+                    disabled={currentPage === 1}
+                    className={`p-2 rounded-lg ${
+                      currentPage === 1
+                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-700 text-white hover:bg-gray-600"
+                    }`}
+                    aria-label="First page">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* Previous Arrow */}
+                  {currentPage > 1 && (
+                    <button
+                      onClick={handlePreviousPage}
+                      className="p-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600"
+                      aria-label="Previous page">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* Page Numbers */}
+                  {pageNumbers.map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`px-4 py-2 rounded-lg font-medium ${
+                        currentPage === pageNum
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-700 text-white hover:bg-gray-600"
+                      }`}>
+                      {pageNum}
+                    </button>
+                  ))}
+
+                  {/* Next Arrow */}
+                  {currentPage < totalPages && (
+                    <button
+                      onClick={handleNextPage}
+                      className="p-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600"
+                      aria-label="Next page">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  )}
+
+                  {/* Double Next Arrow */}
+                  <button
+                    onClick={handleLastPage}
+                    disabled={currentPage === totalPages}
+                    className={`p-2 rounded-lg ${
+                      currentPage === totalPages
+                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-700 text-white hover:bg-gray-600"
+                    }`}
+                    aria-label="Last page">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-12">
               <Tags className="h-16 w-16 text-gray-600 mx-auto mb-4" />

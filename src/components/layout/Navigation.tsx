@@ -15,7 +15,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NotificationDropdown } from "../ui/NotificationDropdown";
 interface NavigationProps {
   isLandingPage?: boolean;
@@ -86,6 +86,30 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [isMobileMenuClosing, setIsMobileMenuClosing] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
+  // Ref for mobile menu
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    if (!(isMobileMenuOpen || isMobileMenuClosing)) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsMobileMenuClosing(true);
+        setTimeout(() => {
+          setIsMobileMenuOpen(false);
+          setIsMobileMenuClosing(false);
+        }, 600);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobileMenuOpen, isMobileMenuClosing]);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -146,10 +170,9 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path
-                    stroke-linecap="round"
                     strokeLinecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A1 1 0 0013 14.414V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.586a1 1 0 00-.293-.707L2.293 6.707A1 1 0 012 6V4z"></path>
                 </svg>
               </button>
@@ -430,6 +453,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       {/* Mobile Menu */}
       {(isMobileMenuOpen || isMobileMenuClosing) && (
         <div
+          ref={mobileMenuRef}
           className={`xl:hidden fixed top-0 left-0 h-[100vh] w-64 transform
             ${
               isMobileMenuClosing

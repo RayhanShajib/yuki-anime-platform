@@ -70,7 +70,6 @@ export function LatestSection() {
               </div>
             ))}
         </div>
-
         {/* View More/Less Button */}
         {filteredAnime.length > 5 && (
           <div className="flex justify-center mt-8">

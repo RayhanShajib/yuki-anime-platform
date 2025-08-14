@@ -39,7 +39,9 @@ export default function GenrePage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [viewMode] = useState<"grid" | "list">("grid");
-  const [showAll, setShowAll] = useState(false);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("all");
   const [selectedRating, setSelectedRating] = useState("all");
@@ -125,6 +127,13 @@ export default function GenrePage() {
           return b.popularity - a.popularity;
       }
     });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAnime.length / itemsPerPage);
+  const paginatedAnime = filteredAnime.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="min-h-screen bg-black">
@@ -396,10 +405,9 @@ export default function GenrePage() {
           {/* Content Grid/List */}
           {filteredAnime.length > 0 ? (
             viewMode === "grid" ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-                {filteredAnime
-                  .slice(0, showAll ? filteredAnime.length : 5)
-                  .map((anime) => (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+                  {paginatedAnime.map((anime) => (
                     <div key={anime.id} className="relative">
                       <AnimeCard
                         anime={anime}
@@ -408,60 +416,175 @@ export default function GenrePage() {
                       />
                     </div>
                   ))}
-              </div>
+                </div>
+                {/* Pagination - always visible */}
+                <div className="flex justify-center items-center mt-8 gap-2">
+                  {/* Double Previous Arrow */}
+                  {currentPage > 1 && (
+                    <button
+                      onClick={() => setCurrentPage(1)}
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      aria-label="First Page">
+                      &#171;
+                    </button>
+                  )}
+                  {/* Previous Arrow */}
+                  {currentPage > 1 && (
+                    <button
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      aria-label="Previous Page">
+                      &lt;
+                    </button>
+                  )}
+                  {/* Dynamic Page Numbers */}
+                  {[...Array(totalPages)].map((_, idx) => {
+                    const pageNum = idx + 1;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={cn(
+                          "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
+                          currentPage === pageNum
+                            ? "bg-blue-600 text-white/90"
+                            : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
+                        )}>
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  {/* Next Arrow */}
+                  {currentPage < totalPages && (
+                    <button
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      aria-label="Next Page">
+                      &gt;
+                    </button>
+                  )}
+                  {/* Double Next Arrow */}
+                  {currentPage < totalPages && (
+                    <button
+                      onClick={() => setCurrentPage(totalPages)}
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      aria-label="Last Page">
+                      &#187;
+                    </button>
+                  )}
+                </div>
+              </>
             ) : (
-              <div className="space-y-4">
-                {filteredAnime.map((anime) => (
-                  <div
-                    key={anime.id}
-                    className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
-                    <div className="flex items-center space-x-4">
-                      <Image
-                        src={anime.poster}
-                        alt={anime.title}
-                        width={64}
-                        height={96}
-                        className="w-16 h-24 object-cover rounded-lg flex-shrink-0"
-                        unoptimized
-                      />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-white mb-1">
-                          {anime.title}
-                        </h3>
-                        <p className="text-gray-400 text-sm mb-2 line-clamp-2">
-                          {anime.synopsis}
-                        </p>
-                        <div className="flex items-center space-x-4 text-sm">
-                          <span className="text-blue-400">
-                            {anime.releaseYear}
-                          </span>
-                          <span className="text-gray-400">•</span>
-                          <span className="text-gray-400 capitalize">
-                            {anime.type}
-                          </span>
-                          <span className="text-gray-400">•</span>
-                          <span
-                            className={cn(
-                              "font-medium capitalize",
-                              anime.status === "ongoing"
-                                ? "text-green-400"
-                                : anime.status === "completed"
-                                ? "text-blue-400"
-                                : "text-yellow-400"
-                            )}>
-                            {anime.status}
-                          </span>
-                          <span className="text-gray-400">•</span>
-                          <div className="flex items-center space-x-1">
-                            <span className="text-yellow-400">⭐</span>
-                            <span className="text-white">{anime.rating}</span>
+              <>
+                <div className="space-y-4">
+                  {paginatedAnime.map((anime) => (
+                    <div
+                      key={anime.id}
+                      className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors">
+                      <div className="flex items-center space-x-4">
+                        <Image
+                          src={anime.poster}
+                          alt={anime.title}
+                          width={64}
+                          height={96}
+                          className="w-16 h-24 object-cover rounded-lg flex-shrink-0"
+                          unoptimized
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-white mb-1">
+                            {anime.title}
+                          </h3>
+                          <p className="text-gray-400 text-sm mb-2 line-clamp-2">
+                            {anime.synopsis}
+                          </p>
+                          <div className="flex items-center space-x-4 text-sm">
+                            <span className="text-blue-400">
+                              {anime.releaseYear}
+                            </span>
+                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-400 capitalize">
+                              {anime.type}
+                            </span>
+                            <span className="text-gray-400">•</span>
+                            <span
+                              className={cn(
+                                "font-medium capitalize",
+                                anime.status === "ongoing"
+                                  ? "text-green-400"
+                                  : anime.status === "completed"
+                                  ? "text-blue-400"
+                                  : "text-yellow-400"
+                              )}>
+                              {anime.status}
+                            </span>
+                            <span className="text-gray-400">•</span>
+                            <div className="flex items-center space-x-1">
+                              <span className="text-yellow-400">⭐</span>
+                              <span className="text-white">{anime.rating}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+                {/* Pagination - always visible */}
+                <div className="flex justify-center items-center mt-8 gap-2">
+                  {/* Double Previous Arrow */}
+                  {currentPage > 1 && (
+                    <button
+                      onClick={() => setCurrentPage(1)}
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      aria-label="First Page">
+                      &#171;
+                    </button>
+                  )}
+                  {/* Previous Arrow */}
+                  {currentPage > 1 && (
+                    <button
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      aria-label="Previous Page">
+                      &lt;
+                    </button>
+                  )}
+                  {/* Dynamic Page Numbers */}
+                  {[...Array(totalPages)].map((_, idx) => {
+                    const pageNum = idx + 1;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={cn(
+                          "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
+                          currentPage === pageNum
+                            ? "bg-blue-600 text-white/90"
+                            : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
+                        )}>
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  {/* Next Arrow */}
+                  {currentPage < totalPages && (
+                    <button
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      aria-label="Next Page">
+                      &gt;
+                    </button>
+                  )}
+                  {/* Double Next Arrow */}
+                  {currentPage < totalPages && (
+                    <button
+                      onClick={() => setCurrentPage(totalPages)}
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      aria-label="Last Page">
+                      &#187;
+                    </button>
+                  )}
+                </div>
+              </>
             )
           ) : (
             <div className="text-center py-12">
@@ -476,15 +599,7 @@ export default function GenrePage() {
           )}
 
           {/* View More/Less Button */}
-          {filteredAnime.length > 5 && (
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={() => setShowAll(!showAll)}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
-                {showAll ? "View Less" : "View More"}
-              </button>
-            </div>
-          )}
+          {/* ...pagination replaces view more/less... */}
         </div>
       </main>
       <FooterSection />

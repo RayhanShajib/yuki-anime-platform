@@ -240,10 +240,15 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
         className={cn("relative group", className)}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onClick={handleCardClick}>
-        <div className="relative overflow-hidden rounded-xl bg-gray-800 transition-all duration-300 hover-scale slider">
+        onClick={handleCardClick}
+        suppressHydrationWarning={true}>
+        <div
+          className="relative overflow-hidden rounded-xl bg-gray-800 transition-all duration-300 hover-scale slider"
+          suppressHydrationWarning={true}>
           <Link href={`/anime/${anime.id}/${animeSlug}`}>
-            <div className="relative aspect-[2/3]">
+            <div
+              className="relative aspect-[2/3]"
+              suppressHydrationWarning={true}>
               <Image
                 src={anime.poster}
                 alt={anime.title}
@@ -255,8 +260,12 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
 
               {/* Removed hover effect for title, type, and year */}
 
-              <div className="absolute top-2 right-2 flex items-center space-x-1 justify-between w-[90%]">
-                <div className="flex items-center space-x-1 bg-black/70 px-2 py-1 rounded">
+              <div
+                className="absolute top-2 right-2 flex items-center space-x-1 justify-between w-[90%]"
+                suppressHydrationWarning={true}>
+                <div
+                  className="flex items-center space-x-1 bg-black/70 px-2 py-1 rounded"
+                  suppressHydrationWarning={true}>
                   <Star className="h-3 w-3 text-yellow-400 fill-current" />
                   <span className="text-white/90 text-xs font-semibold">
                     {formatRating(anime.rating)}
@@ -264,7 +273,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 </div>
 
                 {/* Info button - Always visible on mobile/tablet, hover on desktop */}
-                <div className="relative">
+                <div className="relative" suppressHydrationWarning={true}>
                   <button
                     className={cn(
                       "bg-black/70 p-2 rounded-full hover:bg-black/90 transition-all duration-300",
@@ -283,12 +292,18 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
           </Link>
         </div>
         {/* Bottom info bar: always visible, outside the card */}
-        <div className="w-full py-1 flex flex-col gap-1 mt-1">
+        <div
+          className="w-full py-1 flex flex-col gap-1 mt-1"
+          suppressHydrationWarning={true}>
           <h3 className="text-white font-bold text-base leading-tight">
             {truncateText(anime.title, 40)}
           </h3>
-          <div className="flex items-center justify-between gap-2 mt-1">
-            <div className="flex items-center gap-2">
+          <div
+            className="flex items-center justify-between gap-2 mt-1"
+            suppressHydrationWarning={true}>
+            <div
+              className="flex items-center gap-2"
+              suppressHydrationWarning={true}>
               <>
                 <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
                   SUB{" "}

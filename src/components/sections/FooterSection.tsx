@@ -8,13 +8,17 @@ export function FooterSection() {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   return (
     <footer className="bg-black bg-footer border-t border-gray-800">
-      <div className="max-w-7xl mx-auto px-7 py-8 footer-section">
-        <div className="flex flex-col">
+      <div
+        className="max-w-7xl mx-auto px-7 py-8 footer-section"
+        suppressHydrationWarning={true}>
+        <div className="flex flex-col" suppressHydrationWarning={true}>
           {/* <!-- Main Footer Content --> */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-6 lg:space-y-0 gap-5 mb-5">
+          <div
+            className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-6 lg:space-y-0 gap-5 mb-5"
+            suppressHydrationWarning={true}>
             {/* <!-- Left Side: A-Z List --> */}
-            <div className="flex-1">
-              <div className="mb-4">
+            <div className="flex-1" suppressHydrationWarning={true}>
+              <div className="mb-4" suppressHydrationWarning={true}>
                 <h3 className="text-white text-lg font-semibold mb-2">
                   A-Z List
                   <span className="text-gray-300 text-sm font-normal ml-2">
@@ -24,7 +28,9 @@ export function FooterSection() {
               </div>
 
               {/* <!-- Alphabet Navigation --> */}
-              <div className="flex flex-wrap gap-2 footer-content-center">
+              <div
+                className="flex flex-wrap gap-2 footer-content-center"
+                suppressHydrationWarning={true}>
                 <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
                   All
                 </button>
@@ -113,7 +119,9 @@ export function FooterSection() {
             </div>
 
             {/* <!-- Right Side: Links --> */}
-            <div className="flex items-center space-x-6 footer-content-center">
+            <div
+              className="flex items-center space-x-6 footer-content-center"
+              suppressHydrationWarning={true}>
               <button
                 onClick={() => setIsRequestModalOpen(true)}
                 className="text-gray-300 hover:text-white text-sm transition-colors">
@@ -128,9 +136,11 @@ export function FooterSection() {
           </div>
 
           {/* <!-- Bottom Section --> */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center pt-6 border-t border-gray-800 space-y-4 lg:space-y-0">
+          <div
+            className="flex flex-col lg:flex-row justify-between items-start lg:items-center pt-6 border-t border-gray-800 space-y-4 lg:space-y-0"
+            suppressHydrationWarning={true}>
             {/* <!-- Left: Copyright and Legal --> */}
-            <div className="flex-1">
+            <div className="flex-1" suppressHydrationWarning={true}>
               <p className="text-gray-300 text-sm mb-2">
                 Copyright ©Yuki. All Rights Reserved
               </p>
@@ -138,15 +148,23 @@ export function FooterSection() {
                 This site does not store any files on its server. All contents
                 are provided by non-affiliated third parties.
               </p>
-              <div className="flex items-center space-x-4 footer-content-center">
+              <div
+                className="flex items-center space-x-4 footer-content-center"
+                suppressHydrationWarning={true}>
                 <span className="text-gray-500 text-xs">Socials:</span>
-                <div className="flex items-center space-x-3"></div>
+                <div
+                  className="flex items-center space-x-3"
+                  suppressHydrationWarning={true}></div>
               </div>
             </div>
 
             {/* <!-- Right: Logo --> */}
-            <div className="flex items-center footer-content-center">
-              <div className="flex items-center space-x-2">
+            <div
+              className="flex items-center footer-content-center"
+              suppressHydrationWarning={true}>
+              <div
+                className="flex items-center space-x-2"
+                suppressHydrationWarning={true}>
                 <i className="text-primary-light text-xl" data-fa-i2svg="">
                   <svg
                     className="svg-inline--fa fa-play"
@@ -172,7 +190,7 @@ export function FooterSection() {
           </div>
 
           {/* <!-- 0.8" margin from right edge --> */}
-          <div className="w-20"></div>
+          <div className="w-20" suppressHydrationWarning={true}></div>
         </div>
       </div>
 

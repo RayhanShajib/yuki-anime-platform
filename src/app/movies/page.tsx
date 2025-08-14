@@ -28,7 +28,9 @@ export default function MoviesPage() {
   const [sortBy, setSortBy] = useState("latest");
   const [genreFilter, setGenreFilter] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [showAll, setShowAll] = useState(false);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   // Filter only movies and apply sorting
   const movieAnime = mockAnime.filter((anime) => anime.type === "movie");
@@ -54,10 +56,11 @@ export default function MoviesPage() {
       }
     });
 
-  // Movies to show (slice for view more/less)
+  // Pagination logic
+  const totalPages = Math.ceil(filteredMovies.length / itemsPerPage);
   const moviesToShow = filteredMovies.slice(
-    0,
-    showAll ? filteredMovies.length : 5
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   return (
@@ -219,88 +222,198 @@ export default function MoviesPage() {
 
           {/* Movies Grid/List */}
           {viewMode === "grid" ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {moviesToShow.map((anime) => (
-                <div key={anime.id} className="relative">
-                  <AnimeCard
-                    anime={anime}
-                    showPopup={true}
-                    className="transform transition-transform hover:scale-105"
-                  />
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                {moviesToShow.map((anime) => (
+                  <div key={anime.id} className="relative">
+                    <AnimeCard
+                      anime={anime}
+                      showPopup={true}
+                      className="transform transition-transform hover:scale-105"
+                    />
+                  </div>
+                ))}
+              </div>
+              {/* Pagination - always visible */}
+              <div className="flex justify-center items-center mt-8 gap-2">
+                {/* Double Previous Arrow */}
+                {currentPage > 1 && (
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    aria-label="First Page">
+                    &#171;
+                  </button>
+                )}
+                {/* Previous Arrow */}
+                {currentPage > 1 && (
+                  <button
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    aria-label="Previous Page">
+                    &lt;
+                  </button>
+                )}
+                {/* Dynamic Page Numbers */}
+                {[...Array(totalPages)].map((_, idx) => {
+                  const pageNum = idx + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={cn(
+                        "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
+                        currentPage === pageNum
+                          ? "bg-blue-600 text-white/90"
+                          : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                {/* Next Arrow */}
+                {currentPage < totalPages && (
+                  <button
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    aria-label="Next Page">
+                    &gt;
+                  </button>
+                )}
+                {/* Double Next Arrow */}
+                {currentPage < totalPages && (
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    aria-label="Last Page">
+                    &#187;
+                  </button>
+                )}
+              </div>
+            </>
           ) : (
-            <div className="space-y-4">
-              {moviesToShow.map((movie) => (
-                <div
-                  key={movie.id}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors cursor-pointer">
-                  <div className="flex items-center space-x-4">
-                    {/* Use Next.js Image for optimized images */}
-                    {movie.poster ? (
-                      <Image
-                        src={movie.poster}
-                        alt={movie.title || "Movie Poster"}
-                        width={64}
-                        height={96}
-                        className="w-16 h-24 object-cover rounded-lg flex-shrink-0"
-                      />
-                    ) : (
-                      <div className="w-16 h-24 bg-gray-900 flex items-center justify-center text-gray-500 rounded-lg flex-shrink-0">
-                        No Image
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between flex-wrap gap-2.5">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-white mb-1">
-                            {movie.title}
-                          </h3>
-                          <p className="text-gray-400 text-sm mb-2 line-clamp-2">
-                            {movie.synopsis}
-                          </p>
-                          <div className="flex items-center space-x-3 text-sm">
-                            <span className="text-blue-400">
-                              {movie.releaseYear}
-                            </span>
-                            <span className="text-gray-400">•</span>
-                            <span className="text-purple-400 font-medium">
-                              {movie.studio}
-                            </span>
-                            <span className="text-gray-400">•</span>
-                            <div className="flex items-center space-x-1">
-                              <span className="text-yellow-400">⭐</span>
-                              <span className="text-white">{movie.rating}</span>
+            <>
+              <div className="space-y-4">
+                {moviesToShow.map((movie) => (
+                  <div
+                    key={movie.id}
+                    className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 border border-gray-700 hover:bg-gray-800/70 transition-colors cursor-pointer">
+                    <div className="flex items-center space-x-4">
+                      {/* Use Next.js Image for optimized images */}
+                      {movie.poster ? (
+                        <Image
+                          src={movie.poster}
+                          alt={movie.title || "Movie Poster"}
+                          width={64}
+                          height={96}
+                          className="w-16 h-24 object-cover rounded-lg flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-16 h-24 bg-gray-900 flex items-center justify-center text-gray-500 rounded-lg flex-shrink-0">
+                          No Image
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between flex-wrap gap-2.5">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-white mb-1">
+                              {movie.title}
+                            </h3>
+                            <p className="text-gray-400 text-sm mb-2 line-clamp-2">
+                              {movie.synopsis}
+                            </p>
+                            <div className="flex items-center space-x-3 text-sm">
+                              <span className="text-blue-400">
+                                {movie.releaseYear}
+                              </span>
+                              <span className="text-gray-400">•</span>
+                              <span className="text-purple-400 font-medium">
+                                {movie.studio}
+                              </span>
+                              <span className="text-gray-400">•</span>
+                              <div className="flex items-center space-x-1">
+                                <span className="text-yellow-400">⭐</span>
+                                <span className="text-white">
+                                  {movie.rating}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
-                            Watch
-                          </button>
-                          <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded text-sm transition-colors">
-                            Info
-                          </button>
+                          <div className="flex space-x-2">
+                            <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
+                              Watch
+                            </button>
+                            <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded text-sm transition-colors">
+                              Info
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+              {/* Pagination - always visible */}
+              <div className="flex justify-center items-center mt-8 gap-2">
+                {/* Double Previous Arrow */}
+                {currentPage > 1 && (
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    aria-label="First Page">
+                    &#171;
+                  </button>
+                )}
+                {/* Previous Arrow */}
+                {currentPage > 1 && (
+                  <button
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    aria-label="Previous Page">
+                    &lt;
+                  </button>
+                )}
+                {/* Dynamic Page Numbers */}
+                {[...Array(totalPages)].map((_, idx) => {
+                  const pageNum = idx + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={cn(
+                        "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
+                        currentPage === pageNum
+                          ? "bg-blue-600 text-white/90"
+                          : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                {/* Next Arrow */}
+                {currentPage < totalPages && (
+                  <button
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    aria-label="Next Page">
+                    &gt;
+                  </button>
+                )}
+                {/* Double Next Arrow */}
+                {currentPage < totalPages && (
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    aria-label="Last Page">
+                    &#187;
+                  </button>
+                )}
+              </div>
+            </>
           )}
 
           {/* View More/View Less Button */}
-          {filteredMovies.length > 5 && (
-            <div className="flex justify-center mt-12">
-              <button
-                onClick={() => setShowAll(!showAll)}
-                className="px-6 py-3 bg-blue-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors cursor-pointer">
-                {showAll ? "View Less" : "View More"}
-              </button>
-            </div>
-          )}
+          {/* ...pagination replaces view more/less... */}
         </div>
       </main>
       <FooterSection />
