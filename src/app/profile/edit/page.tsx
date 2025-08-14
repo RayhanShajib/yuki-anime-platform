@@ -5,8 +5,6 @@ import { FooterSection } from "@/components/sections/FooterSection";
 import {
   ArrowLeft,
   Calendar,
-  Camera,
-  Eye,
   Github,
   Globe,
   Instagram,
@@ -136,12 +134,6 @@ export default function ProfileEditPage() {
                 shortLabel: "Profile",
                 icon: User,
               },
-              {
-                key: "privacy",
-                label: "Privacy",
-                shortLabel: "Privacy",
-                icon: Eye,
-              },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -181,16 +173,16 @@ export default function ProfileEditPage() {
                         priority
                       />
                     </div>
-                    <button className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                      <Camera className="h-6 w-6 text-white" />
-                    </button>
                   </div>
                   <div className="flex-1">
                     <p className="text-gray-300 mb-4">
                       Upload a new profile picture. Recommended size is 400x400
                       pixels.
                     </p>
-                    <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded-lg transition-colors">
+                    <button
+                      className="bg-gray-700 text-white/90 px-4 py-2 rounded-lg transition-colors opacity-60"
+                      style={{ cursor: "not-allowed" }}
+                      disabled>
                       Choose File
                     </button>
                   </div>
@@ -397,72 +389,6 @@ export default function ProfileEditPage() {
                         className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "privacy" && (
-            <div className="space-y-8">
-              {/* Profile Visibility */}
-              <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
-                <h2 className="text-xl font-bold text-white mb-6">
-                  Profile Visibility
-                </h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Profile Visibility
-                    </label>
-                    <select
-                      value={userData.preferences.profileVisibility}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "profileVisibility",
-                          e.target.value,
-                          "preferences"
-                        )
-                      }
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
-                      <option value="public">Public - Anyone can view</option>
-                      <option value="friends">Friends Only</option>
-                      <option value="private">Private - Only me</option>
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    {[
-                      { key: "showEmail", label: "Show Email" },
-                      { key: "showBirthday", label: "Show Birthday" },
-                      { key: "showLocation", label: "Show Location" },
-                      { key: "allowMessages", label: "Allow Messages" },
-                      { key: "showActivity", label: "Show Activity" },
-                      { key: "showFavorites", label: "Show Favorites" },
-                      { key: "showStats", label: "Show Statistics" },
-                    ].map((setting) => (
-                      <label
-                        key={setting.key}
-                        className="flex items-center space-x-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(
-                            userData.preferences[
-                              setting.key as keyof typeof userData.preferences
-                            ]
-                          )}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setting.key,
-                              e.target.checked,
-                              "preferences"
-                            )
-                          }
-                          className="form-checkbox h-5 w-5 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
-                        />
-                        <span className="text-gray-300">{setting.label}</span>
-                      </label>
-                    ))}
                   </div>
                 </div>
               </div>

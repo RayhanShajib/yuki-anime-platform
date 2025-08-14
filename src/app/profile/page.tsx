@@ -171,8 +171,8 @@ export default function ProfilePage() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="bg-gray-800 rounded-lg p-1 mb-6 sm:mb-8">
-            <div className="flex space-x-1 overflow-x-auto scrollbar-hide">
+          <div className="flex justify-center mb-6 sm:mb-8">
+            <div className="flex p-1 flex-wrap bg-gray-800 rounded-lg space-x-1 overflow-x-auto scrollbar-hide">
               {[
                 {
                   key: "overview",
@@ -216,7 +216,7 @@ export default function ProfilePage() {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-3 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap min-h-[44px] sm:min-h-0 ${
+                    className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-2 py-2 sm:py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap min-h-[44px] sm:min-h-0 ${
                       activeTab === tab.key
                         ? "bg-blue-600 text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
@@ -548,7 +548,7 @@ export default function ProfilePage() {
           {/* Tab Content */}
           {activeTab === "overview" && (
             <div className="space-y-8">
-              <div className="flex gap-4 flex-wrap justify-between">
+              <div className="flex gap-8 flex-wrap justify-center">
                 {/* <!-- Activities Card --> */}
                 <div className="bg-[#131c31] p-5 rounded-lg w-full max-w-3xl border border-[#1d2a47]">
                   <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
