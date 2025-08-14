@@ -64,6 +64,14 @@ const languageOptions = [
   "Other",
 ];
 const seasonOptions = ["all", "Summer", "Spring", "Winter", "Fall"];
+const sortOptions = [
+  { key: "popularity", label: "Trending" },
+  { key: "updated", label: "Updated Date" },
+  { key: "release", label: "Release Date" },
+  { key: "title", label: "A to Z" },
+  { key: "end", label: "End Date" },
+  { key: "views", label: "Total Views" },
+];
 
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
@@ -85,6 +93,8 @@ function SearchPageContent() {
   const [pendingCountry, setPendingCountry] = useState<string[]>([]);
   const [pendingLanguage, setPendingLanguage] = useState<string[]>([]);
   const [pendingSeason, setPendingSeason] = useState("all");
+  const [pendingSort, setPendingSort] = useState("popularity");
+  const [pendingStudio, setPendingStudio] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Applied filter states (from URL)
@@ -98,6 +108,8 @@ function SearchPageContent() {
     country: [] as string[],
     language: [] as string[],
     season: "all",
+    sort: "popularity",
+    studio: "",
   });
 
   // Sync applied filters from URL on mount or URL change
@@ -113,6 +125,8 @@ function SearchPageContent() {
       country: params.country ? (params.country.split(",") as string[]) : [],
       language: params.language ? (params.language.split(",") as string[]) : [],
       season: params.season || "all",
+      sort: params.sort || "popularity",
+      studio: params.studio || "",
     });
     // Also update pending states so UI reflects URL
     setPendingSearchTerm(params.search || "");
@@ -124,6 +138,8 @@ function SearchPageContent() {
     setPendingCountry(params.country ? params.country.split(",") : []);
     setPendingLanguage(params.language ? params.language.split(",") : []);
     setPendingSeason(params.season || "all");
+    setPendingSort(params.sort || "popularity");
+    setPendingStudio(params.studio || "");
   }, [searchParams]);
 
   // Handle Filter button click
@@ -140,6 +156,8 @@ function SearchPageContent() {
     if (pendingLanguage.length > 0 && !pendingLanguage.includes("all"))
       params.set("language", pendingLanguage.join(","));
     if (pendingSeason !== "all") params.set("season", pendingSeason);
+    if (pendingSort !== "popularity") params.set("sort", pendingSort);
+    if (pendingStudio) params.set("studio", pendingStudio);
     router.replace(`/search?${params.toString()}`);
   };
 
@@ -180,10 +198,37 @@ function SearchPageContent() {
         )
       )
         return false;
+      if (
+        appliedFilters.studio &&
+        (!anime.studio ||
+          !anime.studio
+            .toLowerCase()
+            .includes(appliedFilters.studio.toLowerCase()))
+      )
+        return false;
       // Remove country, language, and season filter logic since mockAnime does not have these properties
       return true;
     })
-    .sort((a, b) => b.popularity - a.popularity);
+    .sort((a, b) => {
+      switch (appliedFilters.sort) {
+        case "title":
+          return a.title.localeCompare(b.title);
+        case "release":
+          return b.releaseYear - a.releaseYear;
+        case "updated":
+          // Assuming we have an updatedAt field, fallback to popularity for now
+          return b.popularity - a.popularity;
+        case "end":
+          // Assuming we have an endDate field, fallback to popularity for now
+          return b.popularity - a.popularity;
+        case "views":
+          // Assuming we have a views field, fallback to popularity for now
+          return b.popularity - a.popularity;
+        case "popularity":
+        default:
+          return b.popularity - a.popularity;
+      }
+    });
 
   return (
     <div className="min-h-screen bg-black">
@@ -229,6 +274,17 @@ function SearchPageContent() {
                 onChange={(e) => setPendingStatus(e.target.value)}
                 className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
                 {statusFilters.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {/* Sort Dropdown */}
+              <select
+                value={pendingSort}
+                onChange={(e) => setPendingSort(e.target.value)}
+                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
+                {sortOptions.map((option) => (
                   <option key={option.key} value={option.key}>
                     {option.label}
                   </option>
@@ -313,6 +369,19 @@ function SearchPageContent() {
                           ))}
                         </select>
                       </div>
+                    </div>
+                    {/* Studio Input Field */}
+                    <div className="mt-4">
+                      <label className="block text-gray-300 text-md mb-1">
+                        Studio
+                      </label>
+                      <input
+                        type="text"
+                        value={pendingStudio}
+                        onChange={(e) => setPendingStudio(e.target.value)}
+                        placeholder="Enter studio name"
+                        className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700"
+                      />
                     </div>
                     {/* Country Checkbox */}
                     <div className="mt-4">
