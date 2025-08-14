@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { RequestModal } from "../modals/RequestModal";
 
 export function FooterSection() {
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   return (
     <footer className="bg-black bg-footer border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-7 py-8 footer-section">
@@ -109,11 +114,11 @@ export function FooterSection() {
 
             {/* <!-- Right Side: Links --> */}
             <div className="flex items-center space-x-6 footer-content-center">
-              <a
-                href="#"
+              <button
+                onClick={() => setIsRequestModalOpen(true)}
                 className="text-gray-300 hover:text-white text-sm transition-colors">
                 REQUEST
-              </a>
+              </button>
               <Link
                 href="/contact"
                 className="text-gray-300 hover:text-white text-sm transition-colors">
@@ -170,6 +175,12 @@ export function FooterSection() {
           <div className="w-20"></div>
         </div>
       </div>
+
+      {/* Request Modal */}
+      <RequestModal
+        open={isRequestModalOpen}
+        onOpenChange={setIsRequestModalOpen}
+      />
     </footer>
   );
 }
