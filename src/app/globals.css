@@ -264,6 +264,10 @@ button {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.slick-slide {
+  width: 170px !important;
+  padding: 10px !important;
+}
 
 @media screen and (max-width: 600px) {
   .anime-img {

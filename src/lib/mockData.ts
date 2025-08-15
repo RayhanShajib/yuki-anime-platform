@@ -631,5 +631,5 @@ export const mockAnime: Anime[] = [
 ];
 
 export const featuredAnime = mockAnime.slice(0, 5);
-export const trendingAnime = mockAnime.slice(2, 8);
-export const latestAnime = mockAnime.slice(1, 7);
+export const trendingAnime = mockAnime.slice(0, 10);
+export const latestAnime = mockAnime.slice(0, 10);

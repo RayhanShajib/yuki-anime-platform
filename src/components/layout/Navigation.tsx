@@ -26,7 +26,8 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn] = useState(false);
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+
   type Notification = {
     id: number;
     text: string;
@@ -88,6 +89,8 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
   // Ref for mobile menu
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  // Ref for notification dropdown
+  const notificationRef = useRef<HTMLDivElement>(null);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -109,6 +112,23 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isMobileMenuOpen, isMobileMenuClosing]);
+
+  // Close notification dropdown when clicking outside
+  useEffect(() => {
+    if (!showNotification) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setShowNotification(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotification]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -390,10 +410,10 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   Register
                 </Link>
                 {/* Notification Icon and Dropdown */}
-                <div className="relative">
+                <div className="relative" ref={notificationRef}>
                   <button
                     className="text-white transition-colors relative"
-                    onClick={() => setIsNotifOpen((prev) => !prev)}
+                    onClick={() => setShowNotification(!showNotification)}
                     title="Notifications">
                     <Bell className="h-5.5 w-5.5" />
                     {notifications.length > 0 && (
@@ -402,12 +422,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       </span>
                     )}
                   </button>
-                  {isNotifOpen && (
-                    <div className="absolute right-0 mt-4 w-80">
+                  {showNotification && (
+                    <div className="pt-2 mt-2 absolute top-full right-0 z-50 w-[min(80vw,350px)]">
                       <NotificationDropdown
                         notifications={notifications}
                         onRemove={handleRemoveNotif}
-                        onClose={() => setIsNotifOpen(false)}
+                        onClose={() => setShowNotification(true)}
                       />
                     </div>
                   )}

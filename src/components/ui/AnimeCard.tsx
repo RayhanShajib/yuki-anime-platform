@@ -243,7 +243,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
         onClick={handleCardClick}
         suppressHydrationWarning={true}>
         <div
-          className="relative overflow-hidden rounded-xl bg-gray-800 transition-all duration-300 hover-scale slider"
+          className="relative overflow-hidden rounded-xl bg-gray-800 transition-all duration-300 group-hover:scale-95 slider"
           suppressHydrationWarning={true}>
           <Link href={`/anime/${anime.id}/${animeSlug}`}>
             <div
@@ -326,21 +326,10 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
       {/* Popup Modal */}
       {showPopup && (
         <>
-          {/* Backdrop for center positioning */}
-          {popupPosition === "center" && (
-            <div
-              className={cn(
-                "fixed inset-0 bg-black/60 z-40 transition-opacity duration-300 backdrop-blur-sm",
-                isAnimating ? "opacity-100" : "opacity-0"
-              )}
-              onClick={handleClosePopup}
-            />
-          )}
-
           <div
             ref={popupRef}
             className={cn(
-              "bg-transparent rounded-xl shadow-2xl overflow-hidden z-50",
+              "bg-transparent rounded-xl shadow-2xl overflow-visible z-[9999]",
               "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
               // Smart positioning based on available space
               popupPosition === "right" &&
@@ -348,7 +337,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               popupPosition === "left" &&
                 "absolute right-full top-0 mr-4 w-[400px]",
               popupPosition === "center" &&
-                "fixed top-[8%] left-1/2 bottom-0 m-auto transform -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[400px] max-w-[400px] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto sm:m-4 flex justify-center items-center",
+                "fixed top-[8%] left-1/2 bottom-0 m-auto transform -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[400px] max-w-[400px] max-h-[95vh] sm:max-h-[90vh] sm:m-4 flex justify-center items-center z-[9999]",
               // Animation states
               isAnimating
                 ? "opacity-100 scale-100 translate-y-0"
