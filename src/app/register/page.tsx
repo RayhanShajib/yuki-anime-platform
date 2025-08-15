@@ -33,7 +33,7 @@ export default function RegisterPage() {
             <div className="text-4xl font-bold text-blue-500">雪</div>
             <span className="text-2xl font-semibold text-white/90">Yuki</span>
           </Link>
-          <h2 className="mt-6 text-3xl font-bold text-white/90">Create your account</h2>
+          <h2 className="mt-6 text-3xl font-bold text-white/90 txt-heading">Create your account</h2>
           <p className="mt-2 text-sm text-gray-400">
             Join thousands of anime fans on Yuki
           </p>
@@ -204,27 +204,6 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-600" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-800 text-white">Or continue with</span>
-              </div>
-            </div>
-
-            {/* Social Login */}
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-400 hover:bg-gray-600 transition-colors">
-                <span>Google</span>
-              </button>
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-sm font-medium text-gray-400 hover:bg-gray-600 transition-colors">
-                <span>Discord</span>
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Sign In Link */}
