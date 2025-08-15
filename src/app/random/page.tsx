@@ -81,12 +81,12 @@ const anime = {
 };
 
 const tabs = [
-  { key: "overview", label: "Overview", icon: User },
+  { key: "Synopsis", label: "Synopsis", icon: User },
   { key: "episodes", label: "Episodes", icon: List },
 ];
 
 export default function AnimeInfoPage() {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("Synopsis");
   const [episodeLayout, setEpisodeLayout] = useState("flex"); // "flex" or "grid"
   const [audioType, setAudioType] = useState("sub"); // "sub" or "dub"
   const filteredAnime = mockAnime;
@@ -99,8 +99,8 @@ export default function AnimeInfoPage() {
     <div className="relative bg-black overflow-hidden">
       <Navigation />
       {/* Trailer Background */}
-      <div className="w-full h-[27rem] relative overflow-hidden">
-        <div className="absolute top-0 left-0 trailer size-full object-cover pointer-events-none object-center">
+      <div className="w-full h-[24rem] relative overflow-hidden min-w-full info-page-content">
+        <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center">
           <div className="w-full h-full">
             <iframe
               src={anime.trailer}
@@ -112,13 +112,16 @@ export default function AnimeInfoPage() {
           </div>
         </div>
         <div className="info-grad z-0"></div>
+        <div className="absolute inset-0 hero-gradient" />
+        {/* Left blur gradient */}
+        <div className="absolute left-0 top-0 bottom-0 w-110 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-10 xl:-mt-[150px] w-full">
-        <div className="flex flex-col md:flex-row items-end gap-8 w-full">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 xl:-mt-[200px] w-full">
+        <div className="flex flex-col md:flex-row md:items-end items-start gap-8 w-full">
           {/* Poster */}
-          <div className="flex justify-center md:justify-start">
+          <div className="flex justify-start">
             <div className="relative rounded-xl overflow-hidden shadow-2xl">
               <Image
                 src={anime.poster}
@@ -137,7 +140,7 @@ export default function AnimeInfoPage() {
               {anime.title}
             </h1>
             <span className="text-white font-normal mb-4">{anime.type}</span>
-            <div className="flex gap-4 mt-4 mb-4">
+            <div className="flex gap-4 mt-4 mb-4 flex-wrap">
               <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-600 text-white/90 font-semibold text-md shadow-lg transition">
                 <PlayCircle className="h-5 w-5" /> Watch Now
               </button>
@@ -147,7 +150,8 @@ export default function AnimeInfoPage() {
             </div>
           </div>
         </div>
-
+        {/* Bottom blur gradient */}
+        <div className="absolute bottom-0 left-0 right-0 h-70 bg-gradient-to-t from-black via-black/80 to-transparent z-0 pointer-events-none" />
         {/* Info & Tabs */}
         <div className="flex-1 w-full mt-12">
           {/* Tabs */}
@@ -170,10 +174,10 @@ export default function AnimeInfoPage() {
           </div>
 
           {/* Tab Content (no animation) */}
-          {activeTab === "overview" && (
+          {activeTab === "Synopsis" && (
             <div className="space-y-6 md:space-y-0 md:flex md:gap-8">
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-white mb-2">Overview</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Synopsis</h2>
                 <p className="text-gray-300 text-lg mb-4">
                   {anime.description}
                 </p>
@@ -192,7 +196,7 @@ export default function AnimeInfoPage() {
                   </div>
                 </div>
                 {/* Anime Info Section */}
-                <div className="w-full flex flex-wrap h-auto !tracking-wider">
+                <div className="w-full flex flex-wrap h-auto !tracking-wider mt-5">
                   <div className="w-full sm:w-1/2 shrink-0 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2 text-nowrap">
                     <span className="font-medium shrink-0 text-gray-300">
                       Episodes
@@ -236,18 +240,20 @@ export default function AnimeInfoPage() {
                   <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
                     <span className="font-medium text-gray-300">Genres</span>
                     <span className="text-sm text-end font-light">
-                      <button className="hover:text-white text-gray-300 tracking-wide !leading-normal">
+                      <Link href={"/search"} className="hover:text-white text-gray-300 tracking-wide !leading-normal">
                         Drama
-                      </button>
-                      <button className="hover:text-white tracking-wide !leading-normal text-gray-300">
+                      </Link>
+                      <Link href={"/search"} className="hover:text-white tracking-wide !leading-normal text-gray-300">
                         , Romance
-                      </button>
-                      <button className="hover:text-white tracking-wide !leading-normal text-gray-300">
-                        , Slice of Life
-                      </button>
-                      <button className="hover:text-white tracking-wide !leading-normal text-gray-300">
-                        , Supernatural
-                      </button>
+                      </Link>
+                    </span>
+                  </div>
+                  <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
+                    <span className="font-medium text-gray-300">Studios</span>
+                    <span className="text-sm text-end font-light">
+                      <Link href={"/search"} className="hover:text-white text-gray-300 tracking-wide !leading-normal">
+                        Drama
+                      </Link>
                     </span>
                   </div>
                 </div>
@@ -433,19 +439,40 @@ export default function AnimeInfoPage() {
           )}
         </div>
 
-        <div className="mt-12">
-          <h1 className="text-2xl font-bold mb-4 text-white">Related Anime</h1>
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="relative flex flex-col gap-4 md:gap-5 w-full z-20 mx-auto my-5 mb-9 lg:my-8 lg:mb-12 md:px-2 xl:px-0 !select-none">
+            <div className="text-lg sm:text-xl lg:text-2xl font-medium lg:font-normal tracking-[0.015em] lg:tracking-normal 2xl:text-[1.6rem] font-popin items-center gap-2 flex px-2">
+              <a className="flex gap-2 items-center" href="/search">
+                <div className="h-6 md:h-8 rounded-md w-[.38rem] bg-blue-600"></div>
+                <span className="text-white">You may also like</span>
+                <span className="ml-auto md:m-0 text-white">
+                  <svg
+                    width="25"
+                    height="25"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-chevron-right">
+                    <path d="m9 18 6-6-6-6"></path>
+                  </svg>
+                </span>
+              </a>
+            </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-            {filteredAnime.map((anime) => (
-              <div key={anime.id} className="relative">
-                <AnimeCard
-                  anime={anime}
-                  showPopup={true}
-                  className="transform transition-transform hover:scale-105"
-                />
-              </div>
-            ))}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+              {filteredAnime.map((anime) => (
+                <div key={anime.id} className="relative">
+                  <AnimeCard
+                    anime={anime}
+                    showPopup={true}
+                    className="transform transition-transform hover:scale-105"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </main>

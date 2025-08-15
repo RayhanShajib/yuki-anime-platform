@@ -300,7 +300,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             </div>
 
             <Link
-              href="/random"
+              href="/anime/info"
               className="text-white hover:text-blue-400 transition-colors">
               Random
             </Link>

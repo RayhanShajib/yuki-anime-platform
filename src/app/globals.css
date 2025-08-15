@@ -281,6 +281,12 @@ button {
   .media-watch {
     flex-wrap: wrap;
   }
+  .txt-heading{
+    font-size: 26px !important;
+  }
+  .txt-para{
+    font-size: 18px !important;
+  }
 }
 @media screen and (max-width: 700px) {
   .footer-section {

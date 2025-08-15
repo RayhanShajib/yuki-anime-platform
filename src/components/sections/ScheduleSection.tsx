@@ -98,19 +98,19 @@ export default function ScheduleSection() {
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <h1 className="text-4xl font-bold text-white mb-4 flex items-center">
+          <h1 className="text-4xl font-bold text-white mb-4 flex items-center txt-heading">
             Estimated Schedule
           </h1>
 
           {/* Day Navigation */}
           <div className="mt-9 mb-6 flex justify-center">
-            <div className="flex space-x-1 bg-gray-800 rounded-xl p-2 overflow-x-auto">
+            <div className="flex space-x-1 bg-gray-800 rounded-xl p-2 overflow-x-auto flex-wrap">
               {daysOfWeek.map((day) => (
                 <button
                   key={day.key}
                   onClick={() => setActiveDay(day.key)}
                   className={cn(
-                    "flex-shrink-0 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
+                    "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                     activeDay === day.key
                       ? "bg-blue-600 text-white/90 shadow-lg"
                       : "text-gray-300 hover:text-white hover:bg-gray-700"
