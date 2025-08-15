@@ -8,6 +8,7 @@ import { latestAnime, mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
 import { Grid, List } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import "plyr-react/plyr.css";
 import React, { useMemo } from "react";
@@ -122,9 +123,9 @@ export default function WatchPage() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <Navigation />
-      <main className="mt-[100px]">
-        <div className="flex justify-between max-w-7xl media-watch m-auto gap-[30px] px-4 sm:px-6 lg:px-8 py-8">
-          <div className="w-full px-6 bg-gray-900 rounded-lg shadow-lg">
+      <main className="mt-[80px]">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[30px] px-4 sm:px-6 lg:px-8 py-8">
+          <div className="w-full px-4 bg-gray-900 rounded-lg shadow-lg">
             <h1 className="text-xl md:text-xl font-bold text-white mb-3 mt-2">
               {anime?.title || "Anime Player"}
             </h1>
@@ -165,7 +166,7 @@ export default function WatchPage() {
             </div>
             <div>
               <h3 className="text-white text-xl font-semibold">Seasons</h3>
-              <div className="flex space-x-4 mb-3.5 mt-4.5">
+              <div className="flex space-x-4 mb-3.5 mt-4.5 flex-wrap">
                 {/* Season Cards with Hover Effect */}
                 {[
                   {
@@ -204,7 +205,7 @@ export default function WatchPage() {
             </div>
           </div>
           <div className="w-full p-6 bg-gray-900 rounded-lg shadow-lg">
-            <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
               <h3 className="text-white text-md font-semibold">Episodes</h3>
               <input
                 type="text"
@@ -215,7 +216,22 @@ export default function WatchPage() {
                 style={{ minWidth: 120 }}
               />
             </div>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-4 gap-2.5">
+              {/* Dynamic Range Selector */}
+              <select className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center cursor-pointer focus:outline-none">
+                {Array.from(
+                  { length: Math.ceil(episodes.length / 100) },
+                  (_, i) => {
+                    const start = i * 100 + 1;
+                    const end = Math.min((i + 1) * 100, episodes.length);
+                    return (
+                      <option
+                        key={i}
+                        value={`${start}-${end}`}>{`${start}-${end}`}</option>
+                    );
+                  }
+                )}
+              </select>
               <select className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center cursor-pointer focus:outline-none">
                 <option>SUB 12</option>
                 <option>DUB 20</option>
@@ -223,7 +239,7 @@ export default function WatchPage() {
               {/* List/Grid Toggle Icon */}
               <button
                 type="button"
-                className="ml-2 p-2 rounded bg-gray-700 hover:bg-gray-800 focus:outline-none"
+                className="p-2 rounded bg-gray-700 hover:bg-gray-800 focus:outline-none"
                 aria-label={
                   isListView ? "Switch to grid view" : "Switch to list view"
                 }
@@ -240,13 +256,9 @@ export default function WatchPage() {
               className={
                 isListView
                   ? "flex flex-col max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[36rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 list-episodes"
-                  : "flex flex-wrap max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 grid-episodes rayhan"
+                  : "grid-cols-2 sm:grid-cols-4 md:grid-cols-3 max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-2 lg:gap-2 px-1 grid-episodes"
               }
-              style={
-                isListView
-                  ? { display: "block" }
-                  : { display: "grid", gridTemplateColumns: "1fr 1fr" }
-              }>
+              style={isListView ? { display: "block" } : { display: "grid" }}>
               {/* Episodes List */}
               {filteredEpisodes.map(({ ep, title }) => (
                 <div
@@ -258,7 +270,7 @@ export default function WatchPage() {
                             ? "border-blue-600"
                             : "border-transparent"
                         }`
-                      : `relative group w-32 h-20 sm:w-36 sm:h-24 lg:w-40 lg:h-28 rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 ${
+                      : `relative group h-20 w-full rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 ${
                           selectedEpisode === ep
                             ? "border-blue-600"
                             : "border-transparent"
@@ -270,7 +282,7 @@ export default function WatchPage() {
                   aria-label={`Play Episode ${ep}`}>
                   {isListView ? (
                     <>
-                      <div className="w-29 h-23 flex-shrink-0 rounded overflow-hidden relative">
+                      <div className="w-22 h-17 flex-shrink-0 rounded overflow-hidden relative">
                         <Image
                           src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
                           alt={`Episode ${ep}`}
@@ -299,7 +311,9 @@ export default function WatchPage() {
                         <span className="text-white/90 text-sm font-semibold">
                           Episode {ep}
                         </span>
-                        <span className="text-blue-600 text-md">{title}</span>
+                        <span className="text-blue-600 text-sm text-center">
+                          {title}
+                        </span>
                       </div>
                     </>
                   )}
@@ -370,9 +384,12 @@ export default function WatchPage() {
                 </div>
                 <div>
                   Genres:{" "}
-                  <span className="text-blue-600">
-                    Comedy, School, Action, Drama
-                  </span>
+                  <Link href={"/search"} className="text-blue-600">
+                    Comedy,
+                  </Link>
+                  <Link href={"/search"} className="text-blue-600">
+                   Action
+                  </Link>
                 </div>
                 <div>
                   Premiered: <span>Spring 2025</span>
@@ -399,7 +416,7 @@ export default function WatchPage() {
                   </span>
                 </div>
                 <div>
-                  Studios: <span className="text-blue-600">CloverWorks</span>
+                  Studios: <Link href={"/search"} className="text-blue-600">CloverWorks</Link>
                 </div>
                 <div>
                   Producers:{" "}
@@ -446,7 +463,7 @@ export default function WatchPage() {
         {/* --- Comments Section --- */}
         <section className="comments-section w-full max-w-7xl mx-auto mt-8 mb-8 px-4 sm:px-6 lg:px-8 py-8">
           <h2 className="text-xl font-bold text-white mb-4">Comments</h2>
-          <div className="comments-tabs flex gap-4 mb-4">
+          <div className="comments-tabs flex gap-4 mb-4 flex-wrap">
             <button
               className={`tab px-4 py-2 rounded bg-gray-800 ${
                 selectedTab === "Best"

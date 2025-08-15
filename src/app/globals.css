@@ -300,17 +300,7 @@ button {
     height: 15rem;
   }
 }
-@media screen and (max-width: 998px) {
-  .grid-episodes {
-    grid-template-columns: 1fr !important;
-  }
-}
-@media screen and (max-width: 600px) {
-  .grid-episodes {
-    display: flex !important;
-    flex-wrap: wrap !important;
-  }
-}
+
 /* @media screen and (min-width: 1350px) {
   .max-w-7xl {
     margin-left: 3.5rem !important;
