@@ -9,14 +9,14 @@ export interface Anime {
   genres: string[];
   studio: string;
   releaseYear: number;
-  status: 'ongoing' | 'completed' | 'upcoming';
-  type: 'series' | 'movie' | 'ova' | 'special';
+  status: "ongoing" | "completed" | "upcoming";
+  type: "series" | "movie" | "ova" | "special";
   totalEpisodes?: number;
   subEpisodes?: number;
   dubEpisodes?: number;
   rating: number;
   popularity: number;
-  language: ('sub' | 'dub')[];
+  language: ("sub" | "dub")[];
   malId?: string;
   anilistId?: string;
   episodes?: Episode[];
@@ -39,14 +39,14 @@ export interface Episode {
 export interface VideoSource {
   quality: string;
   url: string;
-  type: 'hls' | 'mp4';
+  type: "hls" | "mp4";
 }
 
 export interface Character {
   id: string;
   name: string;
   image: string;
-  role: 'main' | 'supporting' | 'background';
+  role: "main" | "supporting" | "background";
   voiceActors?: VoiceActor[];
 }
 
@@ -61,7 +61,7 @@ export interface AnimeRelation {
   id: string;
   title: string;
   poster: string;
-  relation: 'sequel' | 'prequel' | 'side_story' | 'alternative' | 'spin_off';
+  relation: "sequel" | "prequel" | "side_story" | "alternative" | "spin_off";
 }
 
 export interface UserProgress {
@@ -85,7 +85,7 @@ export interface User {
 }
 
 export interface UserPreferences {
-  theme: 'dark' | 'light';
+  theme: "dark" | "light";
   language: string;
   autoplay: boolean;
   quality: string;
@@ -101,7 +101,7 @@ export interface AnimeRequest {
   animeName: string;
   malLink?: string;
   additionalDetails?: string;
-  status: 'pending' | 'under_review' | 'approved' | 'completed' | 'rejected';
+  status: "pending" | "under_review" | "approved" | "completed" | "rejected";
   submittedAt: string;
   updatedAt: string;
 }
@@ -109,7 +109,7 @@ export interface AnimeRequest {
 export interface Notification {
   id: string;
   userId: string;
-  type: 'anime' | 'community';
+  type: "anime" | "community";
   title: string;
   message: string;
   read: boolean;
@@ -119,15 +119,14 @@ export interface Notification {
 
 export interface SearchFilters {
   genres?: string[];
-  type?: 'series' | 'movie' | 'ova' | 'special';
-  status?: 'ongoing' | 'completed' | 'upcoming';
+  type?: "series" | "movie" | "ova" | "special";
+  status?: "ongoing" | "completed" | "upcoming";
   year?: number;
-  language?: 'sub' | 'dub';
+  language?: "sub" | "dub";
   rating?: [number, number];
-  sortBy?: 'popularity' | 'rating' | 'release_date' | 'title';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "popularity" | "rating" | "release_date" | "title";
+  sortOrder?: "asc" | "desc";
 }
-
 
 // Core reusable types
 export interface Title {
@@ -135,8 +134,8 @@ export interface Title {
   english: string;
 }
 
-export type AnimeStatus = 'Ongoing' | 'Completed';
-export type AnimeType = 'TV Series' | 'Movie' | 'OVA' | 'Special';
+export type AnimeStatus = "Ongoing" | "Completed";
+export type AnimeType = "TV Series" | "Movie" | "OVA" | "Special";
 
 export interface AnimeEpisodes {
   sub: number;
@@ -174,26 +173,25 @@ export interface SpotlightAnime {
   type: AnimeType;
 }
 // Trending anime
-export interface TrendingAnime extends AnimeCard {
-}
+export type TrendingAnime = AnimeCard;
+
 // Latest anime
-export interface LatestAnime extends Anime {
-}
+export type LatestAnime = Anime;
+
 // Popular anime
-export interface PopularAnime extends AnimeCard {
-}
+export type PopularAnime = AnimeCard;
+
 // Favorites anime
-export interface FavoritesAnime extends AnimeCard {
-}
+export type FavoritesAnime = AnimeCard;
+
 // Completed anime
-export interface CompletedAnime extends AnimeCard {
-}
+export type CompletedAnime = AnimeCard;
+
 // Schedule
-export interface ScheduleAnime extends AnimeCard {
-}
+export type ScheduleAnime = AnimeCard;
+
 // Airing anime
-export interface AiringAnime extends AnimeCard {
-}
+export type AiringAnime = AnimeCard;
 
 // Home Page
 export interface HomePageResponse {
@@ -213,8 +211,6 @@ export interface HomePageResponse {
   airing: AiringAnime[];
   completed: CompletedAnime[];
 }
-
-
 
 // Anime Info Page
 export interface AnimeInfoPage {

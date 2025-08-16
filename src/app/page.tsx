@@ -11,15 +11,8 @@ import Image from "next/image";
 
 // import { pageApi } from "@/lib/api/pageApi";
 
-// Home page API data
+// Home page API data will be fetched here when API is ready
 // const homeData = await pageApi.getHomePageData();
-// const featured = homeData.spotlight;
-// const latest = homeData.latest;
-// const trending = homeData.trending;
-// const completed = homeData.completed;
-// const popular = homeData.popular;
-// const favorites = homeData.favorites;
-// const airing = homeData.airing;
 
 export default function Home() {
   // Mock continue watching data - in real app this would come from user's watch history

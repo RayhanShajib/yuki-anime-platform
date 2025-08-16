@@ -70,7 +70,8 @@ export default function ContinueWatchingPage() {
     setFilteredData(filtered);
   }, [searchQuery, sortBy]);
 
-  const getProgressColor = (progress: number) => {
+  const getProgressColor = () => {
+    // TODO: Implement progress-based color logic
     // if (progress < 30) return "bg-red-500";
     // if (progress < 70) return "bg-yellow-500";
     return "bg-blue-600";
@@ -203,9 +204,7 @@ export default function ContinueWatchingPage() {
                         {/* Progress Bar */}
                         <div className="w-full bg-gray-700 rounded-full h-1 mb-2">
                           <div
-                            className={`h-1 rounded-full transition-all duration-300 ${getProgressColor(
-                              anime.progress
-                            )}`}
+                            className={`h-1 rounded-full transition-all duration-300 ${getProgressColor()}`}
                             style={{ width: `${anime.progress}%` }}
                           />
                         </div>
@@ -251,9 +250,7 @@ export default function ContinueWatchingPage() {
                           {/* Progress Bar */}
                           <div className="w-full bg-gray-700 rounded-full h-1 mb-2">
                             <div
-                              className={`h-1 rounded-full transition-all duration-300 ${getProgressColor(
-                                anime.progress
-                              )}`}
+                              className={`h-1 rounded-full transition-all duration-300 ${getProgressColor()}`}
                               style={{ width: `${anime.progress}%` }}
                             />
                           </div>
