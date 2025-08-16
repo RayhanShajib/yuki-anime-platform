@@ -19,8 +19,14 @@ import { useEffect, useState } from "react";
 // Mock data for continue watching with progress
 const continueWatchingData = mockAnime.slice(0, 12).map((anime) => ({
   ...anime,
-  currentEpisode: Math.floor(Math.random() * (Number(anime.episodes) || 24)) + 1,
-  totalEpisodes: typeof anime.episodes === "number" ? anime.episodes : Array.isArray(anime.episodes) ? anime.episodes.length : 24,
+  currentEpisode:
+    Math.floor(Math.random() * (Number(anime.episodes) || 24)) + 1,
+  totalEpisodes:
+    typeof anime.episodes === "number"
+      ? anime.episodes
+      : Array.isArray(anime.episodes)
+      ? anime.episodes.length
+      : 24,
   lastWatched: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
   progress: Math.random() * 100,
   timeLeft: Math.floor(Math.random() * 25) + 5, // minutes left in current episode
@@ -64,21 +70,10 @@ export default function ContinueWatchingPage() {
     setFilteredData(filtered);
   }, [searchQuery, sortBy]);
 
-  const formatLastWatched = (date: Date) => {
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    if (days === 0) return "Today";
-    if (days === 1) return "Yesterday";
-    if (days < 7) return `${days} days ago`;
-    return date.toLocaleDateString();
-  };
-
   const getProgressColor = (progress: number) => {
-    if (progress < 30) return "bg-red-500";
-    if (progress < 70) return "bg-yellow-500";
-    return "bg-green-500";
+    // if (progress < 30) return "bg-red-500";
+    // if (progress < 70) return "bg-yellow-500";
+    return "bg-blue-600";
   };
 
   return (
@@ -90,7 +85,6 @@ export default function ContinueWatchingPage() {
           {/* Header */}
           <div className="mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center">
-              <Play className="h-6 w-6 sm:h-8 sm:w-8 text-green-500 mr-3" />
               Continue Watching
             </h1>
           </div>
@@ -193,51 +187,27 @@ export default function ContinueWatchingPage() {
             <>
               {/* Grid View */}
               {viewMode === "grid" && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2 sm:gap-3 lg:gap-7">
                   {filteredData.map((anime) => (
                     <div key={anime.id} className="relative group">
-                      {/* New Episode Badge */}
-                      {anime.isNewEpisode && (
-                        <div className="absolute top-2 left-2 z-10 bg-green-600 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                          NEW
-                        </div>
-                      )}
-
                       <AnimeCard anime={anime} showPopup={true} />
 
                       {/* Progress Info */}
-                      <div className="mt-2 bg-gray-800/50 rounded-lg p-2 sm:p-3">
+                      <div className="mt-2 rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-xs sm:text-sm text-gray-300">
-                            Ep{" "}
-                            {Array.isArray(anime.currentEpisode)
-                              ? anime.currentEpisode.length
-                              : anime.currentEpisode}
-                            /
-                            {Array.isArray(anime.totalEpisodes)
-                              ? anime.totalEpisodes.length
-                              : anime.totalEpisodes}
-                          </span>
-                          <span className="text-xs text-gray-400">
-                            {formatLastWatched(anime.lastWatched)}
+                            20:00/50:00
                           </span>
                         </div>
 
                         {/* Progress Bar */}
-                        <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                        <div className="w-full bg-gray-700 rounded-full h-1 mb-2">
                           <div
-                            className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(
+                            className={`h-1 rounded-full transition-all duration-300 ${getProgressColor(
                               anime.progress
                             )}`}
                             style={{ width: `${anime.progress}%` }}
                           />
-                        </div>
-
-                        <div className="flex items-center justify-between text-xs text-gray-400">
-                          <span>{Math.round(anime.progress)}% complete</span>
-                          {anime.timeLeft && (
-                            <span>{anime.timeLeft}m left</span>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -265,47 +235,32 @@ export default function ContinueWatchingPage() {
                               priority
                             />
                           </div>
-                          {anime.isNewEpisode && (
-                            <div className="absolute -top-1 -right-1 bg-green-600 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                              NEW
-                            </div>
-                          )}
                         </div>
 
                         {/* Info */}
-                        <div className="flex-1 min-w-0 text-center sm:text-left">
+                        <div className="flex-1 min-w-0 text-center sm:text-left w-full">
                           <h3 className="text-white font-semibold text-sm sm:text-base truncate mb-1">
                             {anime.title}
                           </h3>
-                          <p className="text-gray-400 text-xs sm:text-sm mb-2">
-                            Episode {Array.isArray(anime.currentEpisode) ? anime.currentEpisode.length : anime.currentEpisode} of{" "}
-                            {Array.isArray(anime.totalEpisodes) ? anime.totalEpisodes.length : anime.totalEpisodes} • {Array.isArray(anime.genres) ? anime.genres.join(", ") : anime.genres}
-                          </p>
 
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs sm:text-sm text-gray-300">
+                              20:00/50:00
+                            </span>
+                          </div>
                           {/* Progress Bar */}
-                          <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                          <div className="w-full bg-gray-700 rounded-full h-1 mb-2">
                             <div
-                              className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(
+                              className={`h-1 rounded-full transition-all duration-300 ${getProgressColor(
                                 anime.progress
                               )}`}
                               style={{ width: `${anime.progress}%` }}
                             />
                           </div>
-
-                          <div className="flex flex-col sm:flex-row items-center sm:justify-between text-xs text-gray-400 space-y-1 sm:space-y-0">
-                            <span>{Math.round(anime.progress)}% complete</span>
-                            <span>
-                              Last watched{" "}
-                              {formatLastWatched(anime.lastWatched)}
-                            </span>
-                            {anime.timeLeft && (
-                              <span>{anime.timeLeft} minutes left</span>
-                            )}
-                          </div>
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center space-x-2 mx-auto sm:mx-0">
+                        <div className="flex items-center space-x-2 mx-auto sm:mx-0 flex-wrap gap-2.5">
                           <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[40px] flex items-center space-x-2">
                             <Play className="h-4 w-4" />
                             <span>Continue</span>
@@ -324,7 +279,7 @@ export default function ContinueWatchingPage() {
         </div>
       </main>
 
-      <FooterSection/>
+      <FooterSection />
     </div>
   );
 }

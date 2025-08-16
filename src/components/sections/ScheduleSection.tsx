@@ -147,10 +147,10 @@ export default function ScheduleSection() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="text-xl font-semibold text-white mb-1">
+                          <h3 className="text-xl font-semibold text-white mb-1 txt-heading">
                             {anime.title}
                           </h3>
-                          <p className="text-blue-600 font-medium mb-1">
+                          <p className="text-blue-600 font-medium mb-1 txt-para">
                             {anime.episode}
                             {anime.episodeTitle && (
                               <span className="text-gray-300 font-normal">

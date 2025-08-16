@@ -125,7 +125,7 @@ export default function WatchPage() {
       <Navigation />
       <main className="mt-[80px]">
         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[30px] px-4 sm:px-6 lg:px-8 py-8">
-          <div className="w-full px-4 bg-gray-900 rounded-lg shadow-lg">
+          <div className="w-full px-4 bg-gray-900/40 rounded-lg shadow-lg">
             <h1 className="text-xl md:text-xl font-bold text-white mb-3 mt-2">
               {anime?.title || "Anime Player"}
             </h1>
@@ -204,7 +204,7 @@ export default function WatchPage() {
               </div>
             </div>
           </div>
-          <div className="w-full p-6 bg-gray-900 rounded-lg shadow-lg">
+          <div className="w-full p-6 bg-gray-900/40 rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
               <h3 className="text-white text-md font-semibold">Episodes</h3>
               <input

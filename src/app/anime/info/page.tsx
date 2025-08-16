@@ -100,7 +100,8 @@ export default function AnimeInfoPage() {
       <Navigation />
       {/* Trailer Background */}
       <div className="w-full h-[24rem] relative overflow-hidden min-w-full info-page-content">
-        <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center">
+        {/* Trailer background with blur for mobile */}
+        <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center trailer-blur-bg">
           <div className="w-full h-full">
             <iframe
               src={anime.trailer}
@@ -118,8 +119,8 @@ export default function AnimeInfoPage() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 xl:-mt-[200px] w-full">
-        <div className="flex flex-col md:flex-row md:items-end items-start gap-8 w-full">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 xl:-mt-[200px] w-full info-page-main-content">
+        <div className="flex flex-col md:flex-row md:items-end items-start gap-8 w-full info-poster-content info-blur-bg ">
           {/* Poster */}
           <div className="flex justify-start">
             <div className="relative rounded-xl overflow-hidden shadow-2xl">
@@ -140,7 +141,7 @@ export default function AnimeInfoPage() {
               {anime.title}
             </h1>
             <span className="text-white font-normal mb-4">{anime.type}</span>
-            <div className="flex gap-4 mt-4 mb-4">
+            <div className="flex gap-4 mt-4 mb-4 flex-wrap info-buttons">
               <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-600 text-white/90 font-semibold text-md shadow-lg transition">
                 <PlayCircle className="h-5 w-5" /> Watch Now
               </button>
@@ -240,10 +241,14 @@ export default function AnimeInfoPage() {
                   <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
                     <span className="font-medium text-gray-300">Genres</span>
                     <span className="text-sm text-end font-light">
-                      <Link href={"/search"} className="hover:text-white text-gray-300 tracking-wide !leading-normal">
+                      <Link
+                        href={"/search"}
+                        className="hover:text-white text-gray-300 tracking-wide !leading-normal">
                         Drama
                       </Link>
-                      <Link href={"/search"} className="hover:text-white tracking-wide !leading-normal text-gray-300">
+                      <Link
+                        href={"/search"}
+                        className="hover:text-white tracking-wide !leading-normal text-gray-300">
                         , Romance
                       </Link>
                     </span>
@@ -251,7 +256,9 @@ export default function AnimeInfoPage() {
                   <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
                     <span className="font-medium text-gray-300">Studios</span>
                     <span className="text-sm text-end font-light">
-                      <Link href={"/search"} className="hover:text-white text-gray-300 tracking-wide !leading-normal">
+                      <Link
+                        href={"/search"}
+                        className="hover:text-white text-gray-300 tracking-wide !leading-normal">
                         Drama
                       </Link>
                     </span>
@@ -476,6 +483,22 @@ export default function AnimeInfoPage() {
           </div>
         </div>
       </main>
+      <style jsx>{`
+        @media (max-width: 600px) {
+          .trailer-blur-bg {
+            filter: blur(32px);
+            transition: filter 0.3s;
+          }
+          .info-blur-bg {
+            position: relative;
+          }
+
+          .info-blur-bg > * {
+            position: relative;
+            z-index: 1;
+          }
+        }
+      `}</style>
       <FooterSection />
     </div>
   );

@@ -102,7 +102,7 @@ export function ContinueWatchingSection({
                       <span>Episode {item.progress.episodeNumber}</span>
                       <span>{Math.round(progressPercentage)}% watched</span>
                     </div>
-
+                    
                     {/* Time Remaining */}
                     <div className="mt-2 text-xs text-gray-500">
                       {progressPercentage < 90 ? (

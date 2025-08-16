@@ -84,17 +84,17 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
       {/* Main content */}
       <div className="relative z-10 h-full flex items-center">
         <div className="max-w-7xl m-auto px-4 sm:px-6 lg:px-8 w-full pt-7">
-          <div className="max-w-2xl mt-[250px] carousel-content">
-            <h1 className="text-2xl md:text-4xl font-bold text-white/90 mb-4 animate-fadeIn">
+          <div className="max-w-2xl mt-[300px] carousel-content">
+            <h1 className="text-2xl md:text-4xl font-bold text-white/90 mb-4 animate-fadeIn txt-heading">
               {currentAnime.title}
             </h1>
 
             <div className="flex items-center space-x-4 mb-4 text-white/80">
-              <span className="flex items-center">
+              <span className="flex items-center txt-para">
                 ⭐ {formatRating(currentAnime.rating)}
               </span>
-              <span>{currentAnime.releaseYear}</span>
-              <span className="px-2 py-1 bg-blue-600 rounded text-xs font-semibold">
+              <span className="txt-para">{currentAnime.releaseYear}</span>
+              <span className="px-2 py-1 bg-blue-600 rounded text-xs font-semibold txt-para">
                 {currentAnime.type.toUpperCase()}
               </span>
             </div>
@@ -103,13 +103,13 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               {currentAnime.genres.slice(0, 4).map((genre) => (
                 <span
                   key={genre}
-                  className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white/90">
+                  className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white/90 txt-para">
                   {genre}
                 </span>
               ))}
             </div>
 
-            <p className="text-md text-white/90 mb-4 leading-relaxed">
+            <p className="text-md text-white/90 mb-4 leading-relaxed txt-para">
               {truncateText(currentAnime.synopsis, 200)}
             </p>
 

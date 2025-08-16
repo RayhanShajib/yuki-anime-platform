@@ -281,11 +281,14 @@ button {
   .media-watch {
     flex-wrap: wrap;
   }
-  .txt-heading{
-    font-size: 26px !important;
+  .info-poster-content{
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
   }
-  .txt-para{
-    font-size: 18px !important;
+  .info-buttons{
+    justify-content: center;
   }
 }
 @media screen and (max-width: 700px) {
@@ -297,18 +300,25 @@ button {
     justify-content: center;
     margin: auto;
   }
-  .carousel {
-    height: 100% !important;
-  }
-  .carousel-control {
-    display: none !important;
-  }
   .carousel-content {
     margin-top: 100px !important;
   }
   .info-page-content {
-    height: 15rem;
+    height: 30rem;
   }
+  .info-page-main-content{
+    margin-top: -350px !important;
+  }
+  .info-grad{
+    display: none !important;
+  }
+  .txt-heading{
+    font-size: 20px !important;
+  }
+  .txt-para{
+    font-size: 15px !important;
+  }
+
 }
 
 /* @media screen and (min-width: 1350px) {
