@@ -1,5 +1,4 @@
-
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 declare global {
   interface Window {
@@ -38,22 +37,25 @@ const VideoPlayer = () => {
   useEffect(() => {
     // Load Artplayer CSS
     if (!document.querySelector('link[href*="artplayer"]')) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/artplayer/5.1.1/artplayer.css';
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href =
+        "https://cdnjs.cloudflare.com/ajax/libs/artplayer/5.1.1/artplayer.css";
       document.head.appendChild(link);
     }
 
     // Load Artplayer JS
-    const script = document.createElement('script');
+    const script = document.createElement("script");
 
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/artplayer/5.1.1/artplayer.js';
+    script.src =
+      "https://cdnjs.cloudflare.com/ajax/libs/artplayer/5.1.1/artplayer.js";
     script.onload = () => {
       if (artRef.current && window.Artplayer) {
         playerRef.current = new window.Artplayer({
           container: artRef.current,
-          url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-          poster: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg',
+          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          poster:
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
           volume: 0.7,
           isLive: false,
           muted: false,
@@ -76,25 +78,28 @@ const VideoPlayer = () => {
           playsInline: true,
           autoPlayback: true,
           airplay: true,
-          theme: '#f39c12',
-          lang: 'en',
-          whitelist: ['*'],
+          theme: "#f39c12",
+          lang: "en",
+          whitelist: ["*"],
           moreVideoAttr: {
-            crossOrigin: 'anonymous',
+            crossOrigin: "anonymous",
           },
           settings: [
             {
               width: 200,
-              html: 'Subtitle',
-              tooltip: 'Subtitle',
+              html: "Subtitle",
+              tooltip: "Subtitle",
               icon: '<svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 12h4v2H4v-2zm10 6H4v-2h10v2zm6 0h-4v-2h4v2zm0-4H10v-2h10v2z"/></svg>',
               selector: [
                 {
-                  html: 'Display',
-                  tooltip: 'Show',
+                  html: "Display",
+                  tooltip: "Show",
                   switch: true,
-                  onSwitch: function (item: { tooltip: string; switch: boolean }) {
-                    item.tooltip = item.switch ? 'Hide' : 'Show';
+                  onSwitch: function (item: {
+                    tooltip: string;
+                    switch: boolean;
+                  }) {
+                    item.tooltip = item.switch ? "Hide" : "Show";
                     if (playerRef.current && playerRef.current.subtitle) {
                       playerRef.current.subtitle.show = !item.switch;
                     }
@@ -104,9 +109,9 @@ const VideoPlayer = () => {
               ],
             },
             {
-              html: 'PIP Mode',
+              html: "PIP Mode",
               icon: '<svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg>',
-              tooltip: 'Picture in Picture',
+              tooltip: "Picture in Picture",
               click: function () {
                 if (playerRef.current) {
                   playerRef.current.pip = !playerRef.current.pip;
@@ -116,18 +121,18 @@ const VideoPlayer = () => {
           ],
           controls: [
             {
-              position: 'right',
-              html: 'CC',
-              tooltip: 'Closed Captions',
+              position: "right",
+              html: "CC",
+              tooltip: "Closed Captions",
               style: {
-                color: '#fff',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                padding: '0 8px',
+                color: "#fff",
+                fontSize: "12px",
+                fontWeight: "bold",
+                padding: "0 8px",
               },
               click: function () {
                 // Toggle captions
-                console.log('CC clicked');
+                console.log("CC clicked");
               },
             },
           ],
@@ -143,7 +148,7 @@ const VideoPlayer = () => {
         });
 
         // Custom styling to match your screenshot
-        const style = document.createElement('style');
+        const style = document.createElement("style");
         style.textContent = `
           .art-video-player {
             background: #000;
@@ -247,29 +252,35 @@ const VideoPlayer = () => {
         document.head.appendChild(style);
 
         // Add skip buttons
-        if (playerRef.current && playerRef.current.controls && typeof playerRef.current.controls.add === 'function') {
+        if (
+          playerRef.current &&
+          playerRef.current.controls &&
+          typeof playerRef.current.controls.add === "function"
+        ) {
           // Skip backward 10s
           playerRef.current.controls.add({
-            position: 'right',
+            position: "right",
             html: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>',
-            tooltip: 'Skip backward 10s',
-            style: { position: 'relative' },
+            tooltip: "Skip backward 10s",
+            style: { position: "relative" },
             click: function () {
               if (playerRef.current) {
-                playerRef.current.seek = (playerRef.current.currentTime ?? 0) - 10;
+                playerRef.current.seek =
+                  (playerRef.current.currentTime ?? 0) - 10;
               }
             },
           });
 
-          // Skip forward 10s  
+          // Skip forward 10s
           playerRef.current.controls.add({
-            position: 'right',
+            position: "right",
             html: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/></svg>',
-            tooltip: 'Skip forward 10s',
-            style: { position: 'relative' },
+            tooltip: "Skip forward 10s",
+            style: { position: "relative" },
             click: function () {
               if (playerRef.current) {
-                playerRef.current.seek = (playerRef.current.currentTime ?? 0) + 10;
+                playerRef.current.seek =
+                  (playerRef.current.currentTime ?? 0) + 10;
               }
             },
           });
@@ -279,7 +290,10 @@ const VideoPlayer = () => {
     document.head.appendChild(script);
 
     return () => {
-      if (playerRef.current && typeof playerRef.current.destroy === 'function') {
+      if (
+        playerRef.current &&
+        typeof playerRef.current.destroy === "function"
+      ) {
         playerRef.current.destroy();
       }
     };
@@ -287,12 +301,12 @@ const VideoPlayer = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div 
-        ref={artRef} 
-        className="w-full h-auto"
-        style={{ aspectRatio: '16/9', minHeight: '400px' }}
+      <div
+        ref={artRef}
+        className="w-full h-auto aspect-video min-h-full sm:min-h-[300px] md:min-h-[400px] rounded-lg overflow-hidden"
+        style={{ width: "100%" }}
       />
-      
+
       <div className="mt-4 text-gray-300">
         <h2 className="text-lg font-semibold mb-2">Artplayer Features:</h2>
         <ul className="list-disc list-inside space-y-1">

@@ -3,6 +3,7 @@
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
+import IframeVideoPlayer from "@/components/ui/IframeVideoPlayer";
 import VideoPlayer from "@/components/ui/VideoPlayer";
 import { latestAnime, mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
@@ -130,7 +131,11 @@ export default function WatchPage() {
               {anime?.title || "Anime Player"}
             </h1>
             <div className="aspect-video w-full rounded-lg overflow-hidden mb-6">
-              <VideoPlayer />
+              {selectedServer === 1 || selectedServer === 3 ? (
+                <VideoPlayer />
+              ) : (
+                <IframeVideoPlayer src="https://www.youtube.com/embed/dQw4w9WgXcQ" />
+              )}
             </div>
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <div>
@@ -141,7 +146,7 @@ export default function WatchPage() {
                 </p>
               </div>
               {/* Server Selection Buttons */}
-              <div className="flex gap-4 justify-center items-center">
+              <div className="flex gap-4 justify-center items-center flex-wrap">
                 <button
                   className={
                     `px-3 py-1 rounded font-normal shadow transition ` +
@@ -161,6 +166,26 @@ export default function WatchPage() {
                   }
                   onClick={() => setSelectedServer(2)}>
                   Server 2
+                </button>
+                <button
+                  className={
+                    `px-3 py-1 rounded font-normal shadow transition ` +
+                    (selectedServer === 3
+                      ? "bg-blue-600 text-white/90 hover:bg-blue-700"
+                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
+                  }
+                  onClick={() => setSelectedServer(3)}>
+                  Server 3
+                </button>
+                <button
+                  className={
+                    `px-3 py-1 rounded font-normal shadow transition ` +
+                    (selectedServer === 4
+                      ? "bg-blue-700 text-white/90"
+                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
+                  }
+                  onClick={() => setSelectedServer(4)}>
+                  Server 4
                 </button>
               </div>
             </div>
@@ -388,7 +413,7 @@ export default function WatchPage() {
                     Comedy,
                   </Link>
                   <Link href={"/search"} className="text-blue-600">
-                   Action
+                    Action
                   </Link>
                 </div>
                 <div>
@@ -416,7 +441,10 @@ export default function WatchPage() {
                   </span>
                 </div>
                 <div>
-                  Studios: <Link href={"/search"} className="text-blue-600">CloverWorks</Link>
+                  Studios:{" "}
+                  <Link href={"/search"} className="text-blue-600">
+                    CloverWorks
+                  </Link>
                 </div>
                 <div>
                   Producers:{" "}
