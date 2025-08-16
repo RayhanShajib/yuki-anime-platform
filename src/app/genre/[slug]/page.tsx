@@ -16,7 +16,14 @@ const statusFilters = [
   { key: "completed", label: "Completed" },
   { key: "upcoming", label: "Upcoming" },
 ];
-
+const sortOptions = [
+  { key: "popularity", label: "Trending" },
+  { key: "updated", label: "Updated Date" },
+  { key: "release", label: "Release Date" },
+  { key: "title", label: "A to Z" },
+  { key: "end", label: "End Date" },
+  { key: "views", label: "Total Views" },
+];
 const typeFilters = [
   { key: "all", label: "All Types" },
   { key: "series", label: "Series" },
@@ -43,11 +50,13 @@ export default function GenrePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGenre, setSelectedGenre] = useState("all");
+  // Removed unused selectedGenre state
   const [selectedRating, setSelectedRating] = useState("all");
   const [selectedYear, setSelectedYear] = useState("all");
   const [selectedCountry, setSelectedCountry] = useState<string[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<string[]>([]);
+  const [pendingStudio, setPendingStudio] = useState("");
+  const [pendingSort, setPendingSort] = useState("popularity");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const router = useRouter();
 
@@ -122,6 +131,9 @@ export default function GenrePage() {
           return b.releaseYear - a.releaseYear;
         case "title":
           return a.title.localeCompare(b.title);
+        case "updated":
+          // Assuming we have an updatedAt field, fallback to popularity for now
+          return b.popularity - a.popularity;
         case "popularity":
         default:
           return b.popularity - a.popularity;
@@ -159,14 +171,14 @@ export default function GenrePage() {
           </div>
           {/* Advanced Filter Section */}
           <div className="mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 relative">
+            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-4 relative">
               {/* Search Bar */}
               <input
                 type="text"
                 placeholder="Search anime..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="md:w-64 px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none w-full"
+                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none w-full"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && searchTerm.trim() !== "") {
                     const params = new URLSearchParams();
@@ -228,12 +240,23 @@ export default function GenrePage() {
                   </option>
                 ))}
               </select>
+              {/* Sort Dropdown */}
+              <select
+                value={pendingSort}
+                onChange={(e) => setPendingSort(e.target.value)}
+                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
+                {sortOptions.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
               {/* Filter Icon & Button (relative container) */}
               <div className="flex items-center gap-2 relative">
                 <button
                   type="button"
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 w-full cursor-pointer"
+                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer"
                   aria-label="Show advanced filters">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -251,10 +274,8 @@ export default function GenrePage() {
                 </button>
                 <button
                   type="button"
-                  className="px-10 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer"
+                  className="px-6 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer"
                   onClick={() => {
-                    setSelectedGenre(tempGenre);
-                    console.log(selectedGenre);
                     setTypeFilter(tempType);
                     setStatusFilter(tempStatus);
                     const params = new URLSearchParams();
@@ -278,6 +299,8 @@ export default function GenrePage() {
                     if (tempStatus !== "all")
                       params.append("status", tempStatus);
                     if (tempType !== "all") params.append("type", tempType);
+                    if (pendingSort !== "popularity")
+                      params.append("sort", pendingSort);
                     if (searchTerm.trim() !== "")
                       params.append("search", searchTerm);
                     router.push(`/search?${params.toString()}`);
@@ -336,6 +359,19 @@ export default function GenrePage() {
                           ))}
                         </select>
                       </div>
+                    </div>
+                    {/* Studio Input Field */}
+                    <div className="mt-4">
+                      <label className="block text-gray-300 text-md mb-1">
+                        Studio
+                      </label>
+                      <input
+                        type="text"
+                        value={pendingStudio}
+                        onChange={(e) => setPendingStudio(e.target.value)}
+                        placeholder="Enter studio name"
+                        className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700"
+                      />
                     </div>
                     {/* Country Checkbox */}
                     <div className="mt-4">

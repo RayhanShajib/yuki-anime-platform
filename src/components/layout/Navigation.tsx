@@ -308,7 +308,6 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           </div>
 
           <div className="flex items-center space-x-4">
-
             <button className="text-white hover:text-blue-400 transition-colors">
               <Globe className="h-5 w-5" />
             </button>
@@ -466,39 +465,23 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 ? "animate-navbar-slide-out"
                 : "animate-navbar-slide-in"
             }
-            ${
-              isScrolled
-                ? "bg-black/95 backdrop-blur-md bg-navbar h-[100vh]"
-                : "bg-navbar h-[100vh]"
-            }`}>
+            bg-black h-[100vh]`}>
           {/* Navbar Slide-in Animation */}
           <style jsx>{`
             @keyframes navbar-slide-in {
               0% {
                 transform: translateX(-100%);
-                opacity: 0.5;
-              }
-              60% {
-                transform: translateX(0%);
-                opacity: 0.9;
               }
               100% {
                 transform: translateX(0);
-                opacity: 1;
               }
             }
             @keyframes navbar-slide-out {
               0% {
                 transform: translateX(0);
-                opacity: 1;
-              }
-              40% {
-                transform: translateX(0%);
-                opacity: 0.9;
               }
               100% {
                 transform: translateX(-100%);
-                opacity: 0.5;
               }
             }
             .animate-navbar-slide-in {

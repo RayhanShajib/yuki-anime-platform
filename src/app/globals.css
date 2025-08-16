@@ -40,6 +40,9 @@ body,
   color: #ededed;
 }
 
+.dark .bg-navbar {
+  background-color: #000 !important;
+}
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {

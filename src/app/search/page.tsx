@@ -306,16 +306,18 @@ function SearchPageContent() {
       <Navigation />
       <main className="pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-4xl font-bold text-white mb-8 txt-heading">Search</h1>
+          <h1 className="text-4xl font-bold text-white mb-8 txt-heading">
+            Search
+          </h1>
           <div className="mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 relative">
+            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-4 relative">
               {/* Search Bar */}
               <input
                 type="text"
                 placeholder="Search anime..."
                 value={pendingSearchTerm}
                 onChange={(e) => setPendingSearchTerm(e.target.value)}
-                className="md:w-64 px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none w-full"
+                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none w-full"
               />
               {/* Type Dropdown */}
               <select
@@ -366,7 +368,7 @@ function SearchPageContent() {
                 <button
                   type="button"
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 w-full cursor-pointer"
+                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer flex justify-center"
                   aria-label="Show advanced filters">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -384,7 +386,7 @@ function SearchPageContent() {
                 </button>
                 <button
                   type="button"
-                  className="px-10 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer"
+                  className="px-6 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer"
                   onClick={handleApplyFilters}>
                   Filter
                 </button>
