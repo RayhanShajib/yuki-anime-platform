@@ -1,17 +1,14 @@
 "use client";
 
-import { useTheme } from "@/lib/ThemeContext";
 import {
   Bell,
   BookOpen,
   Globe,
   LogOut,
   Menu,
-  Moon,
   Play,
   Search,
   Settings,
-  Sun,
   User,
 } from "lucide-react";
 import Link from "next/link";
@@ -85,7 +82,6 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [mobileBrowseOpen, setMobileBrowseOpen] = useState(false);
   const [mobileGenresOpen, setMobileGenresOpen] = useState(false);
   const [isMobileMenuClosing, setIsMobileMenuClosing] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   // Ref for mobile menu
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -312,16 +308,6 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           </div>
 
           <div className="flex items-center space-x-4">
-            <button
-              onClick={toggleTheme}
-              className="text-white hover:text-blue-400 transition-colors"
-              title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </button>
 
             <button className="text-white hover:text-blue-400 transition-colors">
               <Globe className="h-5 w-5" />
