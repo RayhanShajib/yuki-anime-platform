@@ -30,7 +30,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % featuredAnime.length);
-    }, 8000);
+    }, 60000); // 60 seconds (slower)
 
     return () => clearInterval(interval);
   }, [featuredAnime.length, isPlaying]);
@@ -77,8 +77,6 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         )}
 
         <div className="absolute inset-0 hero-gradient" />
-        {/* Left blur gradient - responsive width */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 md:w-40 lg:w-150 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* Main content */}
@@ -105,7 +103,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               {currentAnime.genres.slice(0, 4).map((genre) => (
                 <span
                   key={genre}
-                  className="px-2 sm:px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs sm:text-sm text-white/90 txt-para">
+                  className="px-2 sm:px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs sm:text-sm text-white/90 txt-small">
                   {genre}
                 </span>
               ))}
@@ -131,8 +129,22 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         </div>
       </div>
 
-      {/* Bottom blur gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-20 sm:h-32 md:h-40 lg:h-90 bg-gradient-to-t from-black via-black/80 to-transparent z-0 pointer-events-none" />
+      {/* Overlay gradient: strong black only at left-bottom and right-top corners, rest transparent */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 0% 100%, rgb(0 0 0) 0%, rgb(0 0 0) 20%, rgb(0 0 0 / 0%) 40%), radial-gradient(circle at 100% 0%, rgba(0, 0, 0, 1) 0%, rgb(0 0 0 / 0%) 20%, rgba(0, 0, 0, 0) 40%)",
+        }}></div>
+
+      {/* Strong black full-width bottom gradient overlay */}
+      <div
+        className="absolute bottom-0 left-0 w-full h-10 md:h-15 lg:h-15 xl:h-15 z-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0) 100%)",
+        }}
+      />
 
       {currentAnime.trailer && (
         <div className="absolute bottom-4 sm:bottom-6 md:bottom-7 right-2 sm:right-3 md:right-4 z-20 flex flex-col space-y-1 sm:space-y-2 carousel-control">

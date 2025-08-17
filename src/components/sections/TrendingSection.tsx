@@ -77,8 +77,7 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
 
   return (
     <section className="py-12 backdrop-blur-sm relative">
-      {/* Top blur gradient */}
-      <div className="absolute top-0 left-0 right-0 h-30 bg-gradient-to-b from-black via-black/60 to-transparent z-10 pointer-events-none blur-gradient" />
+
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
         {/* Section Header */}
