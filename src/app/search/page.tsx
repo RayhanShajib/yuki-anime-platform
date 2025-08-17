@@ -114,6 +114,7 @@ function SearchPageContent() {
     season: "all",
     sort: "popularity",
     studio: "",
+    alpha: ""
   });
 
   // Sync applied filters from URL on mount or URL change
@@ -131,6 +132,7 @@ function SearchPageContent() {
       season: params.season || "all",
       sort: params.sort || "popularity",
       studio: params.studio || "",
+      alpha: params.alpha || ""
     });
     // Also update pending states so UI reflects URL
     setPendingSearchTerm(params.search || "");
@@ -175,6 +177,14 @@ function SearchPageContent() {
   // Filtering logic (use appliedFilters)
   const filteredAnime = mockAnime
     .filter((anime) => {
+      // Alphabet filter
+      if (appliedFilters.alpha && appliedFilters.alpha !== "") {
+        if (appliedFilters.alpha === "0-9") {
+          if (!anime.title || !/^[0-9]/.test(anime.title)) return false;
+        } else {
+          if (!anime.title || anime.title[0].toUpperCase() !== appliedFilters.alpha.toUpperCase()) return false;
+        }
+      }
       if (
         appliedFilters.search &&
         !anime.title.toLowerCase().includes(appliedFilters.search.toLowerCase())
@@ -529,7 +539,6 @@ function SearchPageContent() {
                     <AnimeCard
                       anime={anime}
                       showPopup={true}
-                      className="transform transition-transform hover:scale-105"
                     />
                   </div>
                 ))}

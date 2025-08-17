@@ -6,6 +6,41 @@ import { RequestModal } from "../modals/RequestModal";
 
 export function FooterSection() {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+
+  const alphabetItems = [
+    "All",
+    "0-9",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z",
+  ];
+
+  const getAlphabetLink = (letter: string) => {
+    return letter === "All" ? "/search" : `/search?alpha=${letter}`;
+  };
   return (
     <footer className="bg-black bg-footer border-t border-gray-800">
       <div
@@ -31,90 +66,14 @@ export function FooterSection() {
               <div
                 className="flex flex-wrap gap-2 footer-content-center"
                 suppressHydrationWarning={true}>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  All
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  0-9
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  A
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  B
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  C
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  D
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  E
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  F
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  G
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  H
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  I
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  J
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  K
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  L
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  M
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  N
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  O
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  P
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  Q
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  R
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  S
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  T
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  U
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  V
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  W
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  X
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  Y
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
-                  Z
-                </button>
+                {alphabetItems.map((letter) => (
+                  <Link
+                    key={letter}
+                    href={getAlphabetLink(letter)}
+                    className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                    {letter}
+                  </Link>
+                ))}
               </div>
             </div>
 
