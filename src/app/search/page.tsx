@@ -533,7 +533,7 @@ function SearchPageContent() {
           {filteredAnime.length > 0 ? (
             <>
               {/* Always show grid view, since viewMode is removed */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
                 {currentAnime.map((anime) => (
                   <div key={anime.id} className="relative">
                     <AnimeCard

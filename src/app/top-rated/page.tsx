@@ -159,7 +159,7 @@ export default function TopRated() {
 
           {/* Content Grid/List */}
           {viewMode === "grid" ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
               {filteredAnime
                 .slice(0, showAll ? filteredAnime.length : 5)
                 .map((anime) => (
@@ -167,7 +167,6 @@ export default function TopRated() {
                     <AnimeCard
                       anime={anime}
                       showPopup={true}
-                      className="transform transition-transform hover:scale-105"
                     />
                   </div>
                 ))}

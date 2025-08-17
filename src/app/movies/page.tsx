@@ -223,13 +223,12 @@ export default function MoviesPage() {
           {/* Movies Grid/List */}
           {viewMode === "grid" ? (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
                 {moviesToShow.map((anime) => (
                   <div key={anime.id} className="relative">
                     <AnimeCard
                       anime={anime}
                       showPopup={true}
-                      className="transform transition-transform hover:scale-105"
                     />
                   </div>
                 ))}

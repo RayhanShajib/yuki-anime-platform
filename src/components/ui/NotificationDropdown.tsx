@@ -43,12 +43,12 @@ export function NotificationDropdown({
       ref={dropdownRef}
       className="w-full bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-md shadow-lg z-50">
       <div className="py-2 px-2 max-h-96 overflow-y-auto">
-        <div className="font-semibold text-white/90 px-2 pb-2 flex items-center justify-between text-lg ">
+        <div className="font-semibold text-white/90 px-2 pb-2 flex items-center justify-between text-lg txt-para">
           <span>Notifications</span>
         </div>
         <div className="flex py-1 px-2 gap-2.5">
           <button
-            className={`px-2 py-1 rounded text-md font-medium transition-colors w-[150px] ${
+            className={`px-2 py-1 rounded text-md font-medium transition-colors w-[150px] txt-small ${
               selectedType === "Anime"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
@@ -57,7 +57,7 @@ export function NotificationDropdown({
             Anime
           </button>
           <button
-            className={`px-2 py-1 rounded text-md font-medium transition-colors w-[150px] ${
+            className={`px-2 py-1 rounded text-md font-medium transition-colors w-[150px] txt-small ${
               selectedType === "Community"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
@@ -76,13 +76,13 @@ export function NotificationDropdown({
               key={notif.id}
               className="flex items-center justify-between px-2 py-2 hover:bg-gray-800 rounded transition-colors group">
               <div>
-                <div className="text-white/90 text-sm">{notif.text}</div>
+                <div className="text-white/90 text-sm txt-small">{notif.text}</div>
                 <div className="text-xs text-gray-400 mt-1">
                   {notif.date} {notif.time}
                 </div>
               </div>
               <button
-                className="ml-2 text-gray-400 hover:text-red-500 transition-colors"
+                className="ml-2 text-gray-400 hover:text-red-500 transition-colors txt-small"
                 title="Remove notification"
                 onClick={() => onRemove(notif.id)}>
                 <svg

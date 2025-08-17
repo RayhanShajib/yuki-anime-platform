@@ -111,7 +111,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               ))}
             </div>
 
-            <p className="text-sm sm:text-md text-white/90 mb-3 sm:mb-4 leading-relaxed txt-para line-clamp-3 sm:line-clamp-4 md:line-clamp-none">
+            <p className="text-sm sm:text-md text-white/90 mb-3 sm:mb-4 leading-relaxed txt-small line-clamp-3 sm:line-clamp-4 md:line-clamp-none">
               {truncateText(currentAnime.synopsis, 200)}
             </p>
 

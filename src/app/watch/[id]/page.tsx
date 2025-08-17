@@ -460,13 +460,12 @@ export default function WatchPage() {
         {/* Relations Section */}
         <div className=" w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
           <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-5">
             {latestAnime.slice(0, 6).map((anime) => (
               <div key={anime.id} className="relative">
                 <AnimeCard
                   anime={anime}
                   showPopup={true}
-                  className="transform transition-transform hover:scale-105"
                 />
               </div>
             ))}
