@@ -104,7 +104,7 @@ export default function ScheduleSection() {
 
           {/* Day Navigation */}
           <div className="mt-9 mb-6 flex justify-center">
-            <div className="flex space-x-1 bg-gray-800 rounded-xl p-2 overflow-x-auto flex-wrap">
+            <div className="flex space-x-1 bg-gray-800 rounded-xl p-2 flex-wrap navigation-tabs justify-center">
               {daysOfWeek.map((day) => (
                 <button
                   key={day.key}

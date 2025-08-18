@@ -114,7 +114,7 @@ function SearchPageContent() {
     season: "all",
     sort: "popularity",
     studio: "",
-    alpha: ""
+    alpha: "",
   });
 
   // Sync applied filters from URL on mount or URL change
@@ -132,7 +132,7 @@ function SearchPageContent() {
       season: params.season || "all",
       sort: params.sort || "popularity",
       studio: params.studio || "",
-      alpha: params.alpha || ""
+      alpha: params.alpha || "",
     });
     // Also update pending states so UI reflects URL
     setPendingSearchTerm(params.search || "");
@@ -182,7 +182,11 @@ function SearchPageContent() {
         if (appliedFilters.alpha === "0-9") {
           if (!anime.title || !/^[0-9]/.test(anime.title)) return false;
         } else {
-          if (!anime.title || anime.title[0].toUpperCase() !== appliedFilters.alpha.toUpperCase()) return false;
+          if (
+            !anime.title ||
+            anime.title[0].toUpperCase() !== appliedFilters.alpha.toUpperCase()
+          )
+            return false;
         }
       }
       if (
@@ -314,7 +318,7 @@ function SearchPageContent() {
   return (
     <div className="min-h-screen bg-black">
       <Navigation />
-      <main className="pt-20">
+      <main className="pt-17">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 className="text-4xl font-bold text-white mb-8 txt-heading">
             Search
@@ -378,7 +382,7 @@ function SearchPageContent() {
                 <button
                   type="button"
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer flex justify-center"
+                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer flex justify-center w-full"
                   aria-label="Show advanced filters">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -396,7 +400,7 @@ function SearchPageContent() {
                 </button>
                 <button
                   type="button"
-                  className="px-6 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer"
+                  className="px-6 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer w-full"
                   onClick={handleApplyFilters}>
                   Filter
                 </button>
@@ -533,13 +537,10 @@ function SearchPageContent() {
           {filteredAnime.length > 0 ? (
             <>
               {/* Always show grid view, since viewMode is removed */}
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 gap-5">
                 {currentAnime.map((anime) => (
                   <div key={anime.id} className="relative">
-                    <AnimeCard
-                      anime={anime}
-                      showPopup={true}
-                    />
+                    <AnimeCard anime={anime} showPopup={true} />
                   </div>
                 ))}
               </div>

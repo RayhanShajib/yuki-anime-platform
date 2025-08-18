@@ -223,7 +223,7 @@ export default function MoviesPage() {
           {/* Movies Grid/List */}
           {viewMode === "grid" ? (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
+              <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
                 {moviesToShow.map((anime) => (
                   <div key={anime.id} className="relative">
                     <AnimeCard

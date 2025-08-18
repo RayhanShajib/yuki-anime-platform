@@ -94,7 +94,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               <span className="txt-para text-sm sm:text-base">
                 {currentAnime.releaseYear}
               </span>
-              <span className="px-2 py-1 bg-blue-600 rounded text-xs font-semibold txt-para">
+              <span className="px-2 py-1 bg-blue-600 rounded text-xs font-semibold txt-small">
                 {currentAnime.type.toUpperCase()}
               </span>
             </div>

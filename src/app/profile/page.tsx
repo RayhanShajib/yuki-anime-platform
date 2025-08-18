@@ -169,10 +169,10 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-
+          
           {/* Navigation Tabs */}
           <div className="flex justify-center mb-6 sm:mb-8">
-            <div className="flex p-1 flex-wrap bg-gray-800 rounded-lg space-x-1 overflow-x-auto scrollbar-hide">
+            <div className="flex p-1 flex-wrap bg-gray-800 rounded-lg space-x-1 justify-center navigation-tabs">
               {[
                 {
                   key: "overview",

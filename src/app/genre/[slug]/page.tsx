@@ -151,7 +151,7 @@ export default function GenrePage() {
     <div className="min-h-screen bg-black">
       <Navigation />
 
-      <main className="pt-25">
+      <main className="pt-17">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-wrap justify-between items-center">
             {/* Genre Title */}
@@ -256,7 +256,7 @@ export default function GenrePage() {
                 <button
                   type="button"
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer"
+                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer flex w-full justify-center"
                   aria-label="Show advanced filters">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -274,7 +274,7 @@ export default function GenrePage() {
                 </button>
                 <button
                   type="button"
-                  className="px-6 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer"
+                  className="px-6 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer w-full"
                   onClick={() => {
                     setTypeFilter(tempType);
                     setStatusFilter(tempStatus);
@@ -442,7 +442,7 @@ export default function GenrePage() {
           {filteredAnime.length > 0 ? (
             viewMode === "grid" ? (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
+                <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
                   {paginatedAnime.map((anime) => (
                     <div key={anime.id} className="relative">
                       <AnimeCard

@@ -99,10 +99,10 @@ export default function AnimeInfoPage() {
     <div className="relative bg-black overflow-hidden">
       <Navigation />
       {/* Trailer Background */}
-      <div className="w-full h-[24rem] relative overflow-hidden min-w-full info-page-content">
+      <div className="w-full h-[24rem] relative overflow-hidden min-w-full info-page-trailer">
         {/* Trailer background with blur for mobile */}
         <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center trailer-blur-bg">
-          <div className="w-full h-full">
+          <div className="w-full h-full info-trailer">
             <iframe
               src={anime.trailer}
               title="Anime Trailer"
@@ -469,7 +469,7 @@ export default function AnimeInfoPage() {
               </a>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5">
+            <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
               {filteredAnime.map((anime) => (
                 <div key={anime.id} className="relative">
                   <AnimeCard
