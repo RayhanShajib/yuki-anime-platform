@@ -17,7 +17,6 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-tabs": "^1.1.12",
     "@types/react-google-recaptcha": "^2.1.9",
-    "artplayer": "^5.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",

@@ -2,328 +2,272 @@ import { useEffect, useRef } from "react";
 
 declare global {
   interface Window {
-    Artplayer?: {
-      new (options: Record<string, unknown>): ArtplayerInstance;
-    };
-    Hls?: {
-      isSupported: () => boolean;
-      new (): HlsInstance;
-    };
+    jwplayer?: (id: string) => JWPlayerInstance;
   }
 }
 
-interface ArtplayerInstance {
-  destroy: () => void;
-  controls?: {
-    add?: (control: Record<string, unknown>) => void;
-  };
-  pip?: boolean;
-  seek?: number;
-  currentTime?: number;
-  subtitle?: {
-    show?: boolean;
-  };
+interface JWPlayerInstance {
+  setup: (config: JWPlayerConfig) => JWPlayerInstance;
+  remove: () => void;
+  on: (event: string, callback: (event?: any) => void) => void;
+  seek: (time: number) => void;
+  getPosition: () => number;
+  play: () => void;
+  pause: () => void;
+  setVolume: (volume: number) => void;
+  getVolume: () => number;
+  setMute: (muted: boolean) => void;
+  getMute: () => boolean;
 }
 
-interface HlsInstance {
-  loadSource: (url: string) => void;
-  attachMedia: (video: HTMLVideoElement) => void;
+interface JWPlayerConfig {
+  width: string | number;
+  height: string | number;
+  title?: string;
+  key: string;
+  sources: Array<{
+    file: string;
+    type: string;
+    default?: string;
+  }>;
+  image?: string;
+  primary?: string;
+  autostart?: boolean;
+  mute?: boolean;
+  stretching?: string;
+  controls?: boolean;
+  displaytitle?: boolean;
+  displaydescription?: boolean;
+  abouttext?: string;
+  aboutlink?: string;
 }
 
 const VideoPlayer = () => {
-  const artRef = useRef<HTMLDivElement | null>(null);
-  const playerRef = useRef<ArtplayerInstance | null>(null);
+  const playerRef = useRef<HTMLDivElement | null>(null);
+  const jwPlayerRef = useRef<JWPlayerInstance | null>(null);
 
   useEffect(() => {
-    // Load Artplayer CSS
-    if (!document.querySelector('link[href*="artplayer"]')) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href =
-        "https://cdnjs.cloudflare.com/ajax/libs/artplayer/5.1.1/artplayer.css";
-      document.head.appendChild(link);
-    }
+    // Load JW Player CSS first
+    const cssLink = document.createElement("link");
+    cssLink.rel = "stylesheet";
+    cssLink.href = "https://ssl.p.jwpcdn.com/player/v/8.22.0/jwplayer.css";
+    document.head.appendChild(cssLink);
 
-    // Load Artplayer JS
+    // Load JW Player script
     const script = document.createElement("script");
-
-    script.src =
-      "https://cdnjs.cloudflare.com/ajax/libs/artplayer/5.1.1/artplayer.js";
+    script.src = "https://ssl.p.jwpcdn.com/player/v/8.22.0/jwplayer.js";
     script.onload = () => {
-      if (artRef.current && window.Artplayer) {
-        playerRef.current = new window.Artplayer({
-          container: artRef.current,
-          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-          poster:
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
-          volume: 0.7,
-          isLive: false,
-          muted: false,
-          autoplay: false,
-          pip: true,
-          autoSize: false,
-          autoMini: false,
-          screenshot: true,
-          setting: true,
-          loop: false,
-          flip: true,
-          playbackRate: true,
-          aspectRatio: true,
-          fullscreen: true,
-          fullscreenWeb: true,
-          subtitleOffset: false,
-          miniProgressBar: true,
-          mutex: true,
-          backdrop: true,
-          playsInline: true,
-          autoPlayback: true,
-          airplay: true,
-          theme: "#f39c12",
-          lang: "en",
-          whitelist: ["*"],
-          moreVideoAttr: {
-            crossOrigin: "anonymous",
-          },
-          settings: [
+      if (window.jwplayer) {
+        // Initialize JW Player with your configuration
+        jwPlayerRef.current = window.jwplayer("jwplayer-container");
+        jwPlayerRef.current.setup({
+          width: "100%",
+          height: "100%",
+          title: "HLS Live Stream",
+          key: "cLGMn8T20tGvW+0eXPhq4NNmLB57TrscPjd1IyJF84o=",
+          sources: [
             {
-              width: 200,
-              html: "Subtitle",
-              tooltip: "Subtitle",
-              icon: '<svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 12h4v2H4v-2zm10 6H4v-2h10v2zm6 0h-4v-2h4v2zm0-4H10v-2h10v2z"/></svg>',
-              selector: [
-                {
-                  html: "Display",
-                  tooltip: "Show",
-                  switch: true,
-                  onSwitch: function (item: {
-                    tooltip: string;
-                    switch: boolean;
-                  }) {
-                    item.tooltip = item.switch ? "Hide" : "Show";
-                    if (playerRef.current && playerRef.current.subtitle) {
-                      playerRef.current.subtitle.show = !item.switch;
-                    }
-                    return !item.switch;
-                  },
-                },
-              ],
-            },
-            {
-              html: "PIP Mode",
-              icon: '<svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg>',
-              tooltip: "Picture in Picture",
-              click: function () {
-                if (playerRef.current) {
-                  playerRef.current.pip = !playerRef.current.pip;
-                }
-              },
-            },
+              file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
+              type: "hls",
+              default: "true"
+            }
           ],
-          controls: [
-            {
-              position: "right",
-              html: "CC",
-              tooltip: "Closed Captions",
-              style: {
-                color: "#fff",
-                fontSize: "12px",
-                fontWeight: "bold",
-                padding: "0 8px",
-              },
-              click: function () {
-                // Toggle captions
-                console.log("CC clicked");
-              },
-            },
-          ],
-          customType: {
-            m3u8: function (video: HTMLVideoElement, url: string) {
-              if (window.Hls && window.Hls.isSupported()) {
-                const hls = new window.Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-              }
-            },
-          },
+          image: "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg",
+          primary: "html5",
+          autostart: false,
+          mute: false,
+          stretching: "uniform",
+          controls: true,
+          displaytitle: true,
+          displaydescription: false,
+          abouttext: "Yuki Anime Platform",
+          aboutlink: ""
         });
 
-        // Custom styling to match your screenshot
+        // Add custom styling to match your theme
         const style = document.createElement("style");
         style.textContent = `
-          .art-video-player {
-            background: #000;
-            border-radius: 0;
+          #jwplayer-container {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 300px !important;
+            aspect-ratio: 16/9;
+            background: #0a0a0a;
           }
           
-          .art-controls {
-            
+          .jw-wrapper {
+            border-radius: 8px;
+            overflow: hidden;
+            width: 100% !important;
+            height: 100% !important;
+            background: #0a0a0a;
           }
           
-          .art-control {
-            color: #fff !important;
-            margin: 0 4px !important;
+          .jw-media {
+            border-radius: 8px;
           }
           
-          .art-control:hover {
-            background: rgba(255,255,255,0.1) !important;
-            border-radius: 4px !important;
+          .jw-controls {
+            background: linear-gradient(transparent, rgba(10,10,10,0.9)) !important;
           }
           
-          .art-progress {
-            height: 4px !important;
+          .jw-button-color {
+            color: #ededed !important;
           }
           
-          .art-progress-inner {
-            background: #f39c12 !important;
+          .jw-button-color:hover {
+            color: #3b82f6 !important;
           }
           
-          .art-progress-dot {
-            background: #f39c12 !important;
-            width: 12px !important;
-            height: 12px !important;
+          .jw-icon-playback:hover,
+          .jw-icon-volume:hover,
+          .jw-icon-fullscreen:hover {
+            color: #3b82f6 !important;
           }
           
-          .art-time {
-            color: #fff !important;
+          .jw-progress {
+            background: rgba(55,65,81,0.6) !important;
+          }
+          
+          .jw-buffer {
+            background: rgba(55,65,81,0.8) !important;
+          }
+          
+          .jw-progress-bar {
+            background: #3b82f6 !important;
+          }
+          
+          .jw-knob {
+            background: #3b82f6 !important;
+            border: 2px solid #ededed !important;
+            box-shadow: 0 0 0 1px #3b82f6 !important;
+          }
+          
+          .jw-text {
+            color: #ededed !important;
+            font-family: "Inter", sans-serif !important;
             font-size: 12px !important;
-            font-family: monospace !important;
           }
           
-          .art-volume-slider {
+          .jw-slider-horizontal .jw-slider-container {
+            background: rgba(55,65,81,0.6) !important;
           }
           
-          .art-volume-handle {
-            background: #f39c12 !important;
+          .jw-slider-horizontal .jw-progress {
+            background: #3b82f6 !important;
           }
           
-          .art-settings {
-            background: rgba(50,50,50,0.95) !important;
+          .jw-slider-horizontal .jw-knob {
+            background: #3b82f6 !important;
+            border: 2px solid #ededed !important;
+          }
+          
+          .jw-tooltip {
+            background: rgba(31,41,55,0.95) !important;
+            color: #ededed !important;
+            border-radius: 6px !important;
+            border: 1px solid rgba(59,130,246,0.3) !important;
+            font-family: "Inter", sans-serif !important;
+          }
+          
+          .jw-menu {
+            background: rgba(31,41,55,0.98) !important;
             border-radius: 8px !important;
-            border: 1px solid #555 !important;
+            border: 1px solid rgba(59,130,246,0.2) !important;
+            backdrop-filter: blur(10px);
           }
           
-          .art-setting-item {
-            color: #fff !important;
+          .jw-option {
+            color: #ededed !important;
             padding: 8px 12px !important;
           }
           
-          .art-setting-item:hover {
-            background: rgba(255,255,255,0.1) !important;
+          .jw-option:hover {
+            background: rgba(59,130,246,0.1) !important;
+            color: #3b82f6 !important;
           }
           
-          .art-control-playAndPause,
-          .art-control-volume,
-          .art-control-time,
-          .art-control-progress,
-          .art-control-setting,
-          .art-control-fullscreen,
-          .art-control-pip {
-            display: flex !important;
-            align-items: center !important;
+          .jw-option.jw-active-option {
+            background: #3b82f6 !important;
+            color: #ededed !important;
           }
           
-          /* Custom CC button styling */
-          .art-controls .art-control[data-tooltip="Closed Captions"] {
-            background: rgba(255,255,255,0.1) !important;
-            border: 1px solid rgba(255,255,255,0.2) !important;
-            border-radius: 4px !important;
-            padding: 4px 8px !important;
-            font-size: 10px !important;
-            font-weight: bold !important;
+          .jw-settings-menu {
+            background: rgba(31,41,55,0.98) !important;
+            border: 1px solid rgba(59,130,246,0.2) !important;
           }
           
-          /* Skip buttons styling - will be added via controls API */
-          .art-control-skip {
-            position: relative;
+          .jw-volume-tip {
+            background: #3b82f6 !important;
           }
           
-          .art-control-skip::after {
-            content: "10";
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            font-size: 8px;
-            font-weight: bold;
-            background: rgba(0,0,0,0.7);
-            border-radius: 2px;
-            padding: 1px 2px;
+          .jw-time-tip {
+            background: rgba(31,41,55,0.95) !important;
+            border: 1px solid rgba(59,130,246,0.3) !important;
+          }
+          
+          /* Hover states for all interactive elements */
+          .jw-controlbar .jw-icon:hover {
+            color: #3b82f6 !important;
+          }
+          
+          .jw-button-container:hover .jw-icon {
+            color: #3b82f6 !important;
+          }
+          
+          /* Loading and buffering states */
+          .jw-icon-buffer {
+            border-color: #3b82f6 transparent transparent transparent !important;
+          }
+          
+          /* Custom accent color for special elements */
+          .jw-flag-user-inactive.jw-flag-controls-hidden .jw-logo {
+            opacity: 0.8;
           }
         `;
         document.head.appendChild(style);
 
-        // Add skip buttons
-        if (
-          playerRef.current &&
-          playerRef.current.controls &&
-          typeof playerRef.current.controls.add === "function"
-        ) {
-          // Skip backward 10s
-          playerRef.current.controls.add({
-            position: "right",
-            html: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>',
-            tooltip: "Skip backward 10s",
-            style: { position: "relative" },
-            click: function () {
-              if (playerRef.current) {
-                playerRef.current.seek =
-                  (playerRef.current.currentTime ?? 0) - 10;
-              }
-            },
-          });
+        // Add event listeners for custom functionality
+        jwPlayerRef.current.on('ready', () => {
+          console.log('JW Player is ready');
+        });
 
-          // Skip forward 10s
-          playerRef.current.controls.add({
-            position: "right",
-            html: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/></svg>',
-            tooltip: "Skip forward 10s",
-            style: { position: "relative" },
-            click: function () {
-              if (playerRef.current) {
-                playerRef.current.seek =
-                  (playerRef.current.currentTime ?? 0) + 10;
-              }
-            },
-          });
-        }
+        jwPlayerRef.current.on('play', () => {
+          console.log('Video started playing');
+        });
+
+        jwPlayerRef.current.on('pause', () => {
+          console.log('Video paused');
+        });
+
+        jwPlayerRef.current.on('error', (e) => {
+          console.error('JW Player error:', e);
+        });
       }
     };
+    
     document.head.appendChild(script);
 
     return () => {
-      if (
-        playerRef.current &&
-        typeof playerRef.current.destroy === "function"
-      ) {
-        playerRef.current.destroy();
+      // Cleanup
+      if (jwPlayerRef.current) {
+        try {
+          jwPlayerRef.current.remove();
+        } catch (error) {
+          console.error('Error removing JW Player:', error);
+        }
       }
     };
   }, []);
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div
-        ref={artRef}
-        className="w-full h-auto aspect-video min-h-full sm:min-h-[300px] md:min-h-[400px] rounded-lg overflow-hidden"
-        style={{ width: "100%" }}
+      <div 
+        id="jwplayer-container"
+        ref={playerRef}
+        className="w-full aspect-video min-h-[300px] md:min-h-[400px] rounded-lg overflow-hidden bg-black"
+        style={{ width: "100%", height: "auto" }}
       />
-
-      <div className="mt-4 text-gray-300">
-        <h2 className="text-lg font-semibold mb-2">Artplayer Features:</h2>
-        <ul className="list-disc list-inside space-y-1">
-          <li>Professional video player with all standard controls</li>
-          <li>Custom theme color matching your design (#f39c12)</li>
-          <li>Built-in skip forward/backward buttons</li>
-          <li>CC (Closed Captions) button</li>
-          <li>Picture-in-picture support</li>
-          <li>Speed control settings</li>
-          <li>Fullscreen functionality</li>
-          <li>Volume control with slider</li>
-          <li>Progress bar with scrubbing</li>
-          <li>Responsive design</li>
-          <li>HLS/M3U8 support</li>
-          <li>Screenshot capability</li>
-        </ul>
-      </div>
     </div>
   );
 };
