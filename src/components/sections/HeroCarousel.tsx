@@ -135,15 +135,6 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 2%, rgba(0,0,0,0.9) 4%, rgba(0,0,0,0.85) 6%, rgba(0,0,0,0.8) 8%, rgba(0,0,0,0.75) 10%, rgba(0,0,0,0.7) 12%, rgba(0,0,0,0.65) 14%, rgba(0,0,0,0.6) 16%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.45) 22%, rgba(0,0,0,0.4) 24%, rgba(0,0,0,0.35) 26%, rgba(0,0,0,0.3) 28%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.2) 32%, rgba(0,0,0,0.2) 68%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.3) 72%, rgba(0,0,0,0.35) 74%, rgba(0,0,0,0.4) 76%, rgba(0,0,0,0.45) 78%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0.55) 82%, rgba(0,0,0,0.6) 84%, rgba(0,0,0,0.65) 86%, rgba(0,0,0,0.7) 88%, rgba(0,0,0,0.75) 90%, rgba(0,0,0,0.8) 92%, rgba(0,0,0,0.85) 94%, rgba(0,0,0,0.9) 96%, rgba(0,0,0,0.95) 98%, rgba(0,0,0,1) 100%)",
         }}></div>
 
-      {/* Top gradient overlay */}
-      <div
-        className="absolute top-0 left-0 w-full h-24 sm:h-28 md:h-32 lg:h-36 xl:h-40 z-10 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 5%, rgba(0,0,0,0.9) 10%, rgba(0,0,0,0.85) 15%, rgba(0,0,0,0.8) 20%, rgba(0,0,0,0.75) 25%, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0.65) 35%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.35) 65%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0.15) 85%, rgba(0,0,0,0.1) 90%, rgba(0,0,0,0.05) 95%, rgba(0,0,0,0) 100%)",
-        }}
-      />
-
       {/* Bottom gradient overlay */}
       <div
         className="absolute bottom-0 left-0 w-full h-10 md:h-15 lg:h-15 xl:h-15 z-1 pointer-events-none"
