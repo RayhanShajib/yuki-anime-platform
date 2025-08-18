@@ -2,7 +2,20 @@
 
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+// Define the reCAPTCHA object type
+declare global {
+  interface Window {
+    grecaptcha: {
+      ready: (callback: () => void) => void;
+      execute: (
+        siteKey: string,
+        options: { action: string }
+      ) => Promise<string>;
+    };
+  }
+}
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,18 +26,148 @@ export default function LoginPage() {
     rememberMe: false,
   });
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [isVerifyingCaptcha, setIsVerifyingCaptcha] = useState(false);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const [isRecaptchaLoaded, setIsRecaptchaLoaded] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle login logic here
-    console.log("Login attempt:", formData);
+  // Load reCAPTCHA v3 script
+  useEffect(() => {
+    const loadRecaptcha = () => {
+      if (typeof window !== "undefined" && !window.grecaptcha) {
+        const script = document.createElement("script");
+        script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`;
+        script.onload = () => {
+          window.grecaptcha.ready(() => {
+            setIsRecaptchaLoaded(true);
+          });
+        };
+        document.head.appendChild(script);
+      } else if (window.grecaptcha) {
+        window.grecaptcha.ready(() => {
+          setIsRecaptchaLoaded(true);
+        });
+      }
+    };
+
+    loadRecaptcha();
+  }, []);
+
+  // Execute reCAPTCHA v3
+  const executeRecaptcha = async (action: string): Promise<string | null> => {
+    if (!isRecaptchaLoaded || !window.grecaptcha) {
+      setCaptchaError("reCAPTCHA not loaded. Please refresh the page.");
+      return null;
+    }
+
+    try {
+      const token = await window.grecaptcha.execute(
+        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "",
+        { action }
+      );
+      return token;
+    } catch (error) {
+      console.error("reCAPTCHA execution failed:", error);
+      setCaptchaError("reCAPTCHA verification failed. Please try again.");
+      return null;
+    }
   };
 
-  const handleForgotPasswordSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle forgot password logic here
-    console.log("Forgot password email:", forgotPasswordEmail);
-    // You can add success message or redirect logic here
+
+    setIsVerifyingCaptcha(true);
+    setCaptchaError(null);
+
+    try {
+      // Execute reCAPTCHA v3
+      const token = await executeRecaptcha("login");
+
+      if (!token) {
+        setIsVerifyingCaptcha(false);
+        return;
+      }
+
+      // Verify reCAPTCHA with our API
+      const verifyResponse = await fetch("/api/verify-recaptcha", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const verifyResult = await verifyResponse.json();
+
+      if (!verifyResult.success) {
+        setCaptchaError("Security verification failed. Please try again.");
+        return;
+      }
+
+      // reCAPTCHA verification successful, proceed with login
+      console.log("Login attempt:", formData);
+      console.log("reCAPTCHA verified with score:", verifyResult.score);
+
+      // Here you would normally handle the actual login logic
+      // For now, we'll just log success
+      alert("Login successful! Security verified.");
+    } catch (error) {
+      console.error("Error during login:", error);
+      setCaptchaError("An error occurred. Please try again.");
+    } finally {
+      setIsVerifyingCaptcha(false);
+    }
+  };
+
+  const handleFormSwitch = (showForgot: boolean) => {
+    setShowForgotPassword(showForgot);
+    // Reset any error states when switching forms
+    setCaptchaError(null);
+    setIsVerifyingCaptcha(false);
+  };
+
+  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setIsVerifyingCaptcha(true);
+    setCaptchaError(null);
+
+    try {
+      // Execute reCAPTCHA v3
+      const token = await executeRecaptcha("forgot_password");
+
+      if (!token) {
+        setIsVerifyingCaptcha(false);
+        return;
+      }
+
+      // Verify reCAPTCHA with our API
+      const verifyResponse = await fetch("/api/verify-recaptcha", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const verifyResult = await verifyResponse.json();
+
+      if (!verifyResult.success) {
+        setCaptchaError("Security verification failed. Please try again.");
+        return;
+      }
+
+      // reCAPTCHA verification successful, proceed with password reset
+      console.log("Forgot password email:", forgotPasswordEmail);
+      console.log("reCAPTCHA verified with score:", verifyResult.score);
+
+      // Here you would normally handle the actual password reset logic
+      alert("Password reset link sent! Security verified.");
+    } catch (error) {
+      console.error("Error during password reset:", error);
+      setCaptchaError("An error occurred. Please try again.");
+    } finally {
+      setIsVerifyingCaptcha(false);
+    }
   };
 
   return (
@@ -136,18 +279,49 @@ export default function LoginPage() {
                 <div className="text-sm">
                   <button
                     type="button"
-                    onClick={() => setShowForgotPassword(true)}
+                    onClick={() => handleFormSwitch(true)}
                     className="text-blue-400 hover:text-blue-300">
                     Forgot your password?
                   </button>
                 </div>
               </div>
 
+              {/* reCAPTCHA v3 Status */}
+              <div>
+                <div className="flex flex-col items-center space-y-2">
+                  {!isRecaptchaLoaded ? (
+                    <div className="flex items-center space-x-2 text-yellow-400 text-sm">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-400"></div>
+                      <span>Loading security verification...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2 text-green-400 text-sm">
+                      <div className="w-4 h-4 bg-green-400 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      </div>
+                      <span>Security verification ready</span>
+                    </div>
+                  )}
+                  {isVerifyingCaptcha && (
+                    <div className="flex items-center space-x-2 text-blue-400 text-sm">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                      <span>Verifying security check...</span>
+                    </div>
+                  )}
+                </div>
+                {captchaError && (
+                  <p className="mt-2 text-sm text-red-400 text-center">
+                    {captchaError}
+                  </p>
+                )}
+              </div>
+
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                Sign in
+                disabled={isVerifyingCaptcha || !isRecaptchaLoaded}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                {isVerifyingCaptcha ? "Verifying..." : "Sign in"}
               </button>
             </form>
           ) : (
@@ -157,7 +331,7 @@ export default function LoginPage() {
               <div className="flex items-center space-x-2 mb-4">
                 <button
                   type="button"
-                  onClick={() => setShowForgotPassword(false)}
+                  onClick={() => handleFormSwitch(false)}
                   className="flex items-center text-gray-400 hover:text-gray-300 transition-colors">
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   Back to login
@@ -200,14 +374,43 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* reCAPTCHA v3 Status */}
+              <div>
+                <div className="flex flex-col items-center space-y-2">
+                  {!isRecaptchaLoaded ? (
+                    <div className="flex items-center space-x-2 text-yellow-400 text-sm">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-400"></div>
+                      <span>Loading security verification...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2 text-green-400 text-sm">
+                      <div className="w-4 h-4 bg-green-400 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      </div>
+                      <span>Security verification ready</span>
+                    </div>
+                  )}
+                  {isVerifyingCaptcha && (
+                    <div className="flex items-center space-x-2 text-blue-400 text-sm">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                      <span>Verifying security check...</span>
+                    </div>
+                  )}
+                </div>
+                {captchaError && (
+                  <p className="mt-2 text-sm text-red-400 text-center">
+                    {captchaError}
+                  </p>
+                )}
+              </div>
+
               {/* Send Button */}
-              <Link href={"/reset"}>
-                <button
-                  type="submit"
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                  Send reset link
-                </button>
-              </Link>
+              <button
+                type="submit"
+                disabled={isVerifyingCaptcha || !isRecaptchaLoaded}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                {isVerifyingCaptcha ? "Verifying..." : "Send reset link"}
+              </button>
             </form>
           )}
         </div>
