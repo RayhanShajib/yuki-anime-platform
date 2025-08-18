@@ -256,13 +256,12 @@ button {
     display: none !important;
   }
 }
-/* @media screen and (min-width: 1350px) {
-  .max-w-7xl {
-    margin-left: 3.5rem !important;
-    margin-right: 3.5rem !important;
-    max-width: none !important;
+
+@media screen and (max-width: 1300px) {
+  .info-page-main-content{
+    margin-top: -200px !important;
   }
-} */
+}
 :host(.media-document.video.mac) {
   min-width: 100% !important;
 }
@@ -286,8 +285,6 @@ button {
     min-width: 0% !important;
     margin: auto !important;
   }
-}
-@media screen and (max-width: 1350px) {
   .min-w-full {
     min-width: 100% !important;
     margin: auto !important;
