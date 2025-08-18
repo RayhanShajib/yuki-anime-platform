@@ -116,13 +116,13 @@ const VideoPlayer = () => {
           }
           
           .jw-button-color:hover {
-            color: #3b82f6 !important;
+            color: #ffffff !important;
           }
           
           .jw-icon-playback:hover,
           .jw-icon-volume:hover,
           .jw-icon-fullscreen:hover {
-            color: #3b82f6 !important;
+            color: #ffffff !important;
           }
           
           .jw-progress {
@@ -183,8 +183,8 @@ const VideoPlayer = () => {
           }
           
           .jw-option:hover {
-            background: rgba(59,130,246,0.1) !important;
-            color: #3b82f6 !important;
+            background: rgba(255,255,255,0.1) !important;
+            color: #ffffff !important;
           }
           
           .jw-option.jw-active-option {
@@ -208,11 +208,11 @@ const VideoPlayer = () => {
           
           /* Hover states for all interactive elements */
           .jw-controlbar .jw-icon:hover {
-            color: #3b82f6 !important;
+            color: #ffffff !important;
           }
           
           .jw-button-container:hover .jw-icon {
-            color: #3b82f6 !important;
+            color: #ffffff !important;
           }
           
           /* Loading and buffering states */
