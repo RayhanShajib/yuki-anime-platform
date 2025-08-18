@@ -16,6 +16,7 @@
     "@radix-ui/react-dropdown-menu": "^2.1.15",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-tabs": "^1.1.12",
+    "@types/react-google-recaptcha": "^2.1.9",
     "artplayer": "^5.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -27,6 +28,7 @@
     "plyr-react": "^5.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-google-recaptcha": "^3.1.0",
     "react-owl-carousel": "^2.3.3",
     "react-slick": "^0.31.0",
     "slick-carousel": "^1.8.1"
