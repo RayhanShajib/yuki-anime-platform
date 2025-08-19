@@ -78,7 +78,7 @@ export function RequestModal({ open, onOpenChange }: RequestModalProps) {
 
         {/* Modal Content */}
         <Dialog.Content
-          className="fixed left-[50%] top-[50%] z-[201] w-full max-w-md md:max-w-lg translate-x-[-50%] translate-y-[-50%] bg-gray-900 border border-gray-700 rounded-lg shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300 mx-4 max-h-[90vh] overflow-auto"
+          className="fixed left-[50%] top-[50%] z-[201] w-[90%] max-w-md md:max-w-lg translate-x-[-50%] translate-y-[-50%] bg-gray-900 border border-gray-700 rounded-lg shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300 overflow-auto"
           onKeyDown={handleKeyDown}>
           <div className="p-4 md:p-6">
             {/* Header */}
@@ -101,7 +101,7 @@ export function RequestModal({ open, onOpenChange }: RequestModalProps) {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Anime Name Field */}
-              <div>
+              <div className="w-full">
                 <input
                   type="text"
                   id="animeName"
@@ -115,7 +115,7 @@ export function RequestModal({ open, onOpenChange }: RequestModalProps) {
               </div>
 
               {/* MAL/AL/AniDB Link Field */}
-              <div>
+              <div className="w-full">
                 <input
                   type="url"
                   id="malLink"
@@ -128,7 +128,7 @@ export function RequestModal({ open, onOpenChange }: RequestModalProps) {
               </div>
 
               {/* Additional Details Field */}
-              <div>
+              <div className="w-full">
                 <textarea
                   id="additionalDetails"
                   name="additionalDetails"
@@ -150,7 +150,7 @@ export function RequestModal({ open, onOpenChange }: RequestModalProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting || !captchaVerified}
-                  className="w-full px-6 py-3 bg-accent hover:bg-accent/90 disabled:bg-accent/50 disabled:cursor-not-allowed text-white font-medium rounded-md transition-all text-base focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-900">
+                  className="w-full px-6 py-3 bg-blue-600 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-md transition-all text-base focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-900">
                   {isSubmitting ? (
                     <div className="flex items-center justify-center space-x-2">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
