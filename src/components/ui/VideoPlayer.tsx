@@ -36,6 +36,7 @@ interface JWPlayerConfig {
   sources: Array<{
     file: string;
     type: string;
+    label: string;
     default?: string;
   }>;
   image?: string;
@@ -48,6 +49,14 @@ interface JWPlayerConfig {
   displaydescription?: boolean;
   abouttext?: string;
   aboutlink?: string;
+  playbackRateControls?: number[];
+  cast?: object;
+  tracks?: Array<{
+    file: string;
+    label: string;
+    kind: string;
+    default?: boolean;
+  }>;
 }
 
 const VideoPlayer = () => {
@@ -77,7 +86,13 @@ const VideoPlayer = () => {
             {
               file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
               type: "hls",
+              label: "720p",
               default: "true"
+            },
+            {
+              file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
+              type: "hls",
+              label: "1080p"
             }
           ],
           image: "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg",
@@ -89,7 +104,22 @@ const VideoPlayer = () => {
           displaytitle: true,
           displaydescription: false,
           abouttext: "Yuki Anime Platform",
-          aboutlink: ""
+          aboutlink: "",
+          playbackRateControls: [0.5, 1, 1.5, 2],
+          cast: {},
+          tracks: [
+            {
+              file: "https://example.com/subtitles.vtt",
+              label: "English",
+              kind: "subtitles",
+              default: true
+            },
+            {
+              file: "https://example.com/cc.vtt",
+              label: "Closed Captions",
+              kind: "captions"
+            }
+          ]
         });
 
         // Add custom styling to match your theme
@@ -152,7 +182,7 @@ const VideoPlayer = () => {
           }
           
           .jw-text {
-            color: #ededed !important;
+            color: #000000ff !important;
             font-family: "Inter", sans-serif !important;
             font-size: 12px !important;
           }
@@ -247,6 +277,11 @@ const VideoPlayer = () => {
           .jw-icon-rewind {
             display: none !important;
           }
+          .jw-svg-icon{
+            width: 30px!important;
+            height: 30px!important;
+          }
+
         `;
         document.head.appendChild(style);
 
