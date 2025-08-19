@@ -12,12 +12,20 @@ interface JWPlayerInstance {
   on: (event: string, callback: (event?: any) => void) => void;
   seek: (time: number) => void;
   getPosition: () => number;
+  getDuration: () => number;
   play: () => void;
   pause: () => void;
   setVolume: (volume: number) => void;
   getVolume: () => number;
   setMute: (muted: boolean) => void;
   getMute: () => boolean;
+  addButton: (
+    icon: string,
+    tooltip: string,
+    callback: () => void,
+    btnClass?: string,
+    id?: string
+  ) => void;
 }
 
 interface JWPlayerConfig {
@@ -224,12 +232,56 @@ const VideoPlayer = () => {
           .jw-flag-user-inactive.jw-flag-controls-hidden .jw-logo {
             opacity: 0.8;
           }
+
+          /* Replace rewind icon with custom 10s backward icon */
+          .jw-svg-icon-rewind path {
+            display: none;
+          }
+          .jw-svg-icon-rewind {
+            background-image: url('/skip-10-prev.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+          }
+
+          /* Hide default rewind button */
+          .jw-icon-rewind {
+            display: none !important;
+          }
         `;
         document.head.appendChild(style);
 
         // Add event listeners for custom functionality
         jwPlayerRef.current.on('ready', () => {
           console.log('JW Player is ready');
+          // Add custom 10s rewind and forward buttons using JW Player's addButton API
+          if (window.jwplayer) {
+            window.jwplayer('jwplayer-container').addButton(
+              '/skip-10-next.svg',
+              'Forward 10 seconds',
+              function() {
+                if (jwPlayerRef.current) {
+                  const currentTime = jwPlayerRef.current.getPosition();
+                  const duration = jwPlayerRef.current.getDuration();
+                  jwPlayerRef.current.seek(Math.min(currentTime + 10, duration));
+                }
+              },
+              'custom-forward-10s',
+              'Forward 10s'
+            );
+            window.jwplayer('jwplayer-container').addButton(
+              '/skip-10-prev.svg',
+              'Rewind 10 seconds',
+              function() {
+                if (jwPlayerRef.current) {
+                  const currentTime = jwPlayerRef.current.getPosition();
+                  jwPlayerRef.current.seek(Math.max(currentTime - 10, 0));
+                }
+              },
+              'custom-rewind-10s',
+              'Rewind 10s'
+            );
+            
+          }
         });
 
         jwPlayerRef.current.on('play', () => {
