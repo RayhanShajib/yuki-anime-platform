@@ -9,7 +9,7 @@ declare global {
 interface JWPlayerInstance {
   setup: (config: JWPlayerConfig) => JWPlayerInstance;
   remove: () => void;
-  on: (event: string, callback: (event?: any) => void) => void;
+  on: (event: string, callback: (event?: unknown) => void) => void;
   seek: (time: number) => void;
   getPosition: () => number;
   getDuration: () => number;
@@ -348,7 +348,7 @@ const VideoPlayer = () => {
   }, []);
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full">
       <div 
         id="jwplayer-container"
         ref={playerRef}

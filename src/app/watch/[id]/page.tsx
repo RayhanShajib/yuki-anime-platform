@@ -125,12 +125,12 @@ export default function WatchPage() {
     <div className="min-h-screen bg-black flex flex-col">
       <Navigation />
       <main className="mt-[80px]">
-        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[30px] px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
           <div className="w-full px-4 bg-gray-900/40 rounded-lg shadow-lg">
             <h1 className="text-xl md:text-xl font-bold text-white mb-3 mt-2">
               {anime?.title || "Anime Player"}
             </h1>
-            <div className="aspect-video w-full rounded-lg overflow-hidden mb-6">
+            <div className="aspect-video w-full rounded-lg mb-6">
               {selectedServer === 1 || selectedServer === 3 ? (
                 <VideoPlayer />
               ) : (
@@ -229,7 +229,7 @@ export default function WatchPage() {
               </div>
             </div>
           </div>
-          <div className="w-full p-6 bg-gray-900/40 rounded-lg shadow-lg">
+          <div className="w-full p-3.5 bg-gray-900/40 rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
               <h3 className="text-white text-md font-semibold">Episodes</h3>
               <input
@@ -281,7 +281,7 @@ export default function WatchPage() {
               className={
                 isListView
                   ? "flex flex-col max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[36rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1 list-episodes"
-                  : "grid-cols-2 sm:grid-cols-4 md:grid-cols-3 max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-2 lg:gap-2 px-1 grid-episodes"
+                  : "episodes-grid-views max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-2 lg:gap-2 px-1 grid-episodes"
               }
               style={isListView ? { display: "block" } : { display: "grid" }}>
               {/* Episodes List */}
@@ -295,7 +295,7 @@ export default function WatchPage() {
                             ? "border-blue-600"
                             : "border-transparent"
                         }`
-                      : `relative group h-20 w-full rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 ${
+                      : `relative group h-15 w-full rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 text-center ${
                           selectedEpisode === ep
                             ? "border-blue-600"
                             : "border-transparent"
@@ -333,17 +333,14 @@ export default function WatchPage() {
                         className="object-cover transition duration-300 group-hover:brightness-75"
                       />
                       <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60">
-                        <span className="text-white/90 text-sm font-semibold">
+                        <span className="text-white/90 text-[13px] font-semibold">
                           Episode {ep}
-                        </span>
-                        <span className="text-blue-600 text-sm text-center">
-                          {title}
                         </span>
                       </div>
                     </>
                   )}
                   {selectedEpisode === ep && (
-                    <div className="absolute top-1.5 right-2 bg-blue-600 text-xs px-2 py-1 rounded font-bold text-white/90">
+                    <div className="absolute top-1 right-0 bg-blue-600 text-xs px-1 py-1 rounded font-bold text-white/90">
                       Playing
                     </div>
                   )}
@@ -474,13 +471,12 @@ export default function WatchPage() {
         {/* Recommended Section */}
         <div className=" w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
           <h2 className="text-2xl font-bold text-white mb-6">Recommended</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
             {latestAnime.slice(0, 6).map((anime) => (
               <div key={anime.id} className="relative">
                 <AnimeCard
                   anime={anime}
                   showPopup={true}
-                  className="transform transition-transform hover:scale-105"
                 />
               </div>
             ))}

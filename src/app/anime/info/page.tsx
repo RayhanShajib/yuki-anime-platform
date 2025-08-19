@@ -99,7 +99,7 @@ export default function AnimeInfoPage() {
     <div className="relative bg-black overflow-hidden">
       <Navigation />
       {/* Trailer Background */}
-      <div className="w-full h-[24rem] relative overflow-hidden min-w-full info-page-trailer">
+      <div className="h-[24rem] relative overflow-hidden min-w-full info-page-trailer">
         {/* Trailer background with blur for mobile */}
         <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center trailer-blur-bg">
           <div className="w-full h-full info-trailer">

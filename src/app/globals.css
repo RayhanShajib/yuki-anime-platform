@@ -182,6 +182,9 @@ button {
   width: 170px !important;
   padding: 10px !important;
 }
+.episodes-grid-views{
+  grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr));
+}
 
 @media screen and (max-width: 600px) {
   .anime-img {
@@ -261,7 +264,11 @@ button {
   .info-page-main-content{
     margin-top: -200px !important;
   }
+  .trailer{
+    height: 100% !important;
+  }
 }
+
 :host(.media-document.video.mac) {
   min-width: 100% !important;
 }
