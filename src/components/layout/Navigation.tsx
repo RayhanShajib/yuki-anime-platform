@@ -3,7 +3,6 @@
 import {
   Bell,
   BookOpen,
-  Globe,
   LogOut,
   Menu,
   Play,
@@ -24,6 +23,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [language, setLanguage] = useState<"en" | "jp">("en");
 
   type Notification = {
     id: number;
@@ -308,9 +308,30 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="text-white hover:text-blue-400 transition-colors">
-              <Globe className="h-5 w-5" />
-            </button>
+            <div className="relative flex items-center">
+              <div className="flex">
+                <button
+                  className={`px-2.5 py-1 rounded-l-2xl text-xs font-semibold transition-colors focus:outline-none ${
+                    language === "en"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-700 text-blue-200 hover:bg-blue-500 hover:text-white"
+                  }`}
+                  onClick={() => setLanguage("en")}
+                  aria-pressed={language === "en"}>
+                  EN
+                </button>
+                <button
+                  className={`px-2.5 py-1 rounded-r-2xl text-xs font-semibold transition-colors focus:outline-none ${
+                    language === "jp"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-700 text-white hover:bg-blue-500 hover:text-white"
+                  }`}
+                  onClick={() => setLanguage("jp")}
+                  aria-pressed={language === "jp"}>
+                  JP
+                </button>
+              </div>
+            </div>
 
             {isLoggedIn ? (
               <div className="relative">
@@ -391,7 +412,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 </Link>
                 <Link
                   href="/register"
-                  className="hidden xl:flex bg-blue-600 register-btn hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg transition-colors">
+                  className="hidden xl:flex bg-blue-600 register-btn hover:bg-blue-700 text-white/90 px-3.5 py-1 rounded-lg transition-colors">
                   Register
                 </Link>
                 {/* Notification Icon and Dropdown */}
@@ -741,7 +762,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   </Link>
                   <Link
                     href="/register"
-                    className="block register-btn text-center bg-blue-600 hover:bg-blue-700 text-white/90 py-3 rounded-lg transition-colors"
+                    className="block register-btn text-center bg-blue-600 hover:bg-blue-700 text-white/90 px-3.5 py-1 rounded-lg transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     Register
                   </Link>
