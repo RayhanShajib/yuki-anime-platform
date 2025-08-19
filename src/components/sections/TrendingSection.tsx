@@ -86,7 +86,7 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
           </h2>
 
           {/* Time Filter Buttons */}
-          <div className="flex items-center space-x-2 bg-gray-800 rounded-lg p-1 flex-wrap">
+          <div className="flex items-center space-x-2 bg-gray-800 rounded-lg p-1 flex-wrap navigation-tabs">
             {timeFilters.map((filter) => (
               <button
                 key={filter.key}
