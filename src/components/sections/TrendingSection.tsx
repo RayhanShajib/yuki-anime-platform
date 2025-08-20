@@ -86,13 +86,13 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
           </h2>
 
           {/* Time Filter Buttons */}
-          <div className="flex items-center space-x-2 bg-gray-800 rounded-lg p-1 flex-wrap navigation-tabs">
+          <div className="flex items-center space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap trending-navigation-tabs">
             {timeFilters.map((filter) => (
               <button
                 key={filter.key}
                 onClick={() => setActiveFilter(filter.key)}
                 className={cn(
-                  "flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
+                  "flex items-center space-x-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                   activeFilter === filter.key
                     ? "bg-blue-600 text-white/90 shadow-lg"
                     : "text-gray-300 hover:text-white hover:bg-gray-700"

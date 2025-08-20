@@ -198,10 +198,18 @@ button {
   .media-watch {
     flex-wrap: wrap;
   }
-  .navigation-tabs{
+  .trending-navigation-tabs{
+    flex-wrap: nowrap;
+    justify-content: center;
+    margin: auto;
+  }
+}
+@media screen and (max-width: 350px) {
+    .trending-navigation-tabs{
     flex-wrap: nowrap;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
   }
 }
 @media screen and (max-width: 400px) {
