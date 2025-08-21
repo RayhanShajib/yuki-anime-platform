@@ -186,6 +186,11 @@ button {
   grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr));
 }
 
+.carousel{
+  max-width: 1800px;
+  margin: auto;
+}
+
 @media screen and (max-width: 600px) {
   .anime-img {
     width: 100% !important;
@@ -294,6 +299,10 @@ button {
     width: 100% !important;
     /* margin: auto; */
   }
+  .carousel{
+  max-width: 1800px !important;
+  width: 100% !important;
+}
   .min-w-full {
     /* min-width: 100%; */
     max-width: 1800px !important;
@@ -301,7 +310,6 @@ button {
     margin: auto !important;
   }
   .min-w-full {
-    min-width: 100% !important;
     margin: auto !important;
   }
 }

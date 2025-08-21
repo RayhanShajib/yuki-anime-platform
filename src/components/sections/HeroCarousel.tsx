@@ -48,7 +48,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   if (!currentAnime) return null;
 
   return (
-    <div className="relative w-full h-[80vh] sm:h-[70vh] md:h-[80vh] lg:h-[90vh] xl:h-[100vh] carousel overflow-hidden min-w-full">
+    <div className="relative w-full h-full sm:h-[80vh] carousel overflow-hidden min-w-full">
       <div className="absolute inset-0">
         {currentAnime.trailer ? (
           <video
@@ -56,7 +56,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             autoPlay
             muted={isMuted}
             loop
-            className="w-full h-full object-cover scale-110 sm:scale-105 md:scale-100"
+            className="w-full h-full object-fill scale-110 sm:scale-105 md:scale-100 carousel"
             poster={currentAnime.banner || currentAnime.poster}
             playsInline
             disablePictureInPicture
@@ -78,7 +78,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 h-full flex items-center">
+      <div className="relative z-10 h-full flex items-center carousel">
         <div className="max-w-7xl m-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 md:pt-7">
           <div className="max-w-xl sm:max-w-2xl mt-16 sm:mt-32 md:mt-48 lg:mt-64 xl:mt-[300px] carousel-content">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-2 sm:mb-3 md:mb-4 animate-fadeIn txt-heading leading-tight">
@@ -129,7 +129,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
       {/* Left and Right edge gradients with extended middle overlay for text readability */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="absolute inset-0 z-0 pointer-events-none carousel"
         style={{
           background:
             "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 2%, rgba(0,0,0,0.9) 4%, rgba(0,0,0,0.85) 6%, rgba(0,0,0,0.8) 8%, rgba(0,0,0,0.75) 10%, rgba(0,0,0,0.7) 12%, rgba(0,0,0,0.65) 14%, rgba(0,0,0,0.6) 16%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.45) 22%, rgba(0,0,0,0.4) 24%, rgba(0,0,0,0.35) 26%, rgba(0,0,0,0.3) 28%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.2) 32%, rgba(0,0,0,0.2) 68%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.3) 72%, rgba(0,0,0,0.35) 74%, rgba(0,0,0,0.4) 76%, rgba(0,0,0,0.45) 78%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0.55) 82%, rgba(0,0,0,0.6) 84%, rgba(0,0,0,0.65) 86%, rgba(0,0,0,0.7) 88%, rgba(0,0,0,0.75) 90%, rgba(0,0,0,0.8) 92%, rgba(0,0,0,0.85) 94%, rgba(0,0,0,0.9) 96%, rgba(0,0,0,0.95) 98%, rgba(0,0,0,1) 100%)",
