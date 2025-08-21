@@ -56,7 +56,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             autoPlay
             muted={isMuted}
             loop
-            className="w-full h-full object-fill scale-110 sm:scale-105 md:scale-100 carousel"
+            className="w-full object-fill scale-110 sm:scale-105 md:scale-100 carousel"
             poster={currentAnime.banner || currentAnime.poster}
             playsInline
             disablePictureInPicture

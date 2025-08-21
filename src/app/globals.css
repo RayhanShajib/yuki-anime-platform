@@ -191,6 +191,7 @@ button {
   margin: auto;
 }
 
+
 @media screen and (max-width: 600px) {
   .anime-img {
     width: 100% !important;
