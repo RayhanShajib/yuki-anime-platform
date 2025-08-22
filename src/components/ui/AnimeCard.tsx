@@ -330,12 +330,12 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
             ref={popupRef}
             className={cn(
               "bg-transparent rounded-xl shadow-2xl overflow-visible z-[9999]",
-              "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+              "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] modal",
               // Smart positioning based on available space
               popupPosition === "right" &&
-                "absolute left-full top-0 ml-4 w-[400px]",
+                "absolute left-full top-0 ml-4 w-[400px] z-[9999]",
               popupPosition === "left" &&
-                "absolute right-full top-0 mr-4 w-[400px]",
+                "absolute right-full top-0 mr-4 w-[400px] z-[9999]",
               popupPosition === "center" &&
                 "fixed top-[8%] left-1/2 bottom-0 m-auto transform -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[400px] max-w-[400px] max-h-[95vh] sm:max-h-[90vh] sm:m-4 flex justify-center items-center z-[9999]",
               // Animation states
@@ -400,7 +400,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 {/* Title and Rating */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-tight">
+                    <h2 className="text-[20px] font-bold text-white mb-2 leading-tight">
                       {anime.title}
                     </h2>
                     <div className="mb-3">
@@ -443,7 +443,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
 
                 {/* Description */}
                 <div className="mb-3">
-                  <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                  <p className="text-gray-300 text-sm sm:text-base leading-[22px]">
                     {anime.synopsis ||
                       "No description available for this anime."}
                   </p>

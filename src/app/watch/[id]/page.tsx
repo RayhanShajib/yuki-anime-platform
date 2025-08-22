@@ -3,6 +3,7 @@
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
+import { CommentSection } from "@/components/ui/CommentSection";
 import IframeVideoPlayer from "@/components/ui/IframeVideoPlayer";
 import VideoPlayer from "@/components/ui/VideoPlayer";
 import { latestAnime, mockAnime } from "@/lib/mockData";
@@ -13,6 +14,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import "plyr-react/plyr.css";
 import React, { useMemo } from "react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation as SwiperNavigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function WatchPage() {
   const params = useParams();
@@ -70,56 +76,6 @@ export default function WatchPage() {
   }, [episodes, searchQuery]);
   // --- Server Selection State ---
   const [selectedServer, setSelectedServer] = React.useState(1);
-
-  // --- Comments System State ---
-  const [comments, setComments] = React.useState([
-    {
-      user: "JohnDoe",
-      text: "This season is amazing! The animation is top notch.",
-      time: "2 hours ago",
-      type: "Best",
-    },
-    {
-      user: "JaneSmith",
-      text: "Just finished episode 1, can't wait for more!",
-      time: "Just now",
-      type: "New",
-    },
-    {
-      user: "AnimeFan",
-      text: "I've been following this manga for years. Glad to see it animated!",
-      time: "3 days ago",
-      type: "Oldest",
-    },
-  ]);
-  const [commentInput, setCommentInput] = React.useState("");
-  const [selectedTab, setSelectedTab] = React.useState("Best");
-
-  const handleCommentSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!commentInput.trim()) return;
-    const now = new Date();
-    const formattedTime = now.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    setComments([
-      ...comments,
-      {
-        user: "You", // You can replace with actual user
-        text: commentInput,
-        time: formattedTime,
-        type: selectedTab,
-      },
-    ]);
-    setCommentInput("");
-  };
-
-  // Filter comments by selected tab
-  const filteredComments = comments.filter((c) => c.type === selectedTab);
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -359,7 +315,7 @@ export default function WatchPage() {
                 alt="Wind Breaker Season 2"
                 width={160}
                 height={224}
-                className="rounded-lg shadow-lg w-40 h-56 object-cover"
+                className="rounded-lg shadow-lg w-55 h-70 object-cover"
                 priority
               />
             </div>
@@ -400,7 +356,7 @@ export default function WatchPage() {
                 shortcomings and receiving help from his upperclassmen will be
                 necessary to preserve the peace in Makochi.
               </div>
-              <div className="detail grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-300 text-sm mb-2">
+              <div className="detail grid grid-cols-1 md:grid-cols-3 gap-2 text-gray-300 text-sm mb-2">
                 <div>
                   Country: <span className="text-blue-600">Japan</span>
                 </div>
@@ -455,97 +411,101 @@ export default function WatchPage() {
           </div>
         </section>
         {/* Relations Section */}
-        <div className=" w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full max-w-7xl mx-auto mt-3 px-4 sm:px-6 lg:px-8 py-8 pb-16">
           <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
-            {latestAnime.slice(0, 6).map((anime) => (
-              <div key={anime.id} className="relative">
-                <AnimeCard
-                  anime={anime}
-                  showPopup={true}
-                />
-              </div>
+          <Swiper
+            modules={[SwiperNavigation]}
+            spaceBetween={20}
+            slidesPerView={1}
+            navigation={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            breakpoints={{
+              640: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+              768: {
+                slidesPerView: 4,
+                spaceBetween: 25,
+              },
+              1024: {
+                slidesPerView: 5,
+                spaceBetween: 25,
+              },
+              1280: {
+                slidesPerView: 8,
+                spaceBetween: 30,
+              },
+              1536: {
+                slidesPerView: 8,
+                spaceBetween: 30,
+              },
+            }}
+            className="relations-swiper">
+            {latestAnime.slice(0, 10).map((anime) => (
+              <SwiperSlide key={anime.id}>
+                <div className="relative">
+                  <AnimeCard anime={anime} showPopup={true} />
+                </div>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
         </div>
         {/* Recommended Section */}
-        <div className=" w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full max-w-7xl mx-auto mt-15 px-4 sm:px-6 lg:px-8 py-8 pb-16">
           <h2 className="text-2xl font-bold text-white mb-6">Recommended</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
-            {latestAnime.slice(0, 6).map((anime) => (
-              <div key={anime.id} className="relative">
-                <AnimeCard
-                  anime={anime}
-                  showPopup={true}
-                />
-              </div>
+          <Swiper
+            modules={[SwiperNavigation]}
+            spaceBetween={20}
+            slidesPerView={1}
+            navigation={true}
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+            }}
+            breakpoints={{
+              640: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+              768: {
+                slidesPerView: 4,
+                spaceBetween: 25,
+              },
+              1024: {
+                slidesPerView: 6,
+                spaceBetween: 25,
+              },
+              1280: {
+                slidesPerView: 8,
+                spaceBetween: 30,
+              },
+              1536: {
+                slidesPerView: 8,
+                spaceBetween: 30,
+              },
+            }}
+            className="recommended-swiper">
+            {latestAnime.slice(0, 10).map((anime) => (
+              <SwiperSlide key={anime.id}>
+                <div className="flex-shrink-0 overflow-visible  relative">
+                  <AnimeCard
+                    anime={anime}
+                    showPopup={true}
+                    className="h-auto overflow-visible"
+                  />
+                </div>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
         </div>
 
         {/* --- Comments Section --- */}
-        <section className="comments-section w-full max-w-7xl mx-auto mt-8 mb-8 px-4 sm:px-6 lg:px-8 py-8">
-          <h2 className="text-xl font-bold text-white mb-4">Comments</h2>
-          <div className="comments-tabs flex gap-4 mb-4 flex-wrap">
-            <button
-              className={`tab px-4 py-2 rounded bg-gray-800 ${
-                selectedTab === "Best"
-                  ? "text-blue-600 font-semibold"
-                  : "text-gray-400"
-              }`}
-              onClick={() => setSelectedTab("Best")}>
-              Best
-            </button>
-            <button
-              className={`tab px-4 py-2 rounded bg-gray-800 ${
-                selectedTab === "New"
-                  ? "text-blue-600 font-semibold"
-                  : "text-gray-400"
-              }`}
-              onClick={() => setSelectedTab("New")}>
-              New
-            </button>
-            <button
-              className={`tab px-4 py-2 rounded bg-gray-800 ${
-                selectedTab === "Oldest"
-                  ? "text-blue-600 font-semibold"
-                  : "text-gray-400"
-              }`}
-              onClick={() => setSelectedTab("Oldest")}>
-              Oldest
-            </button>
-          </div>
-          <form className="mb-6" onSubmit={handleCommentSubmit}>
-            <input
-              type="text"
-              className="w-full p-3 rounded bg-gray-800 text-white mb-2 outline-none"
-              placeholder="Add a comment..."
-              value={commentInput}
-              onChange={(e) => setCommentInput(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white/90 rounded font-semibold">
-              Post
-            </button>
-          </form>
-          <div className="comments-list space-y-4">
-            {filteredComments.length === 0 && (
-              <div className="text-gray-400">No comments yet.</div>
-            )}
-            {filteredComments.map((c, idx) => (
-              <div
-                key={idx}
-                className="comment bg-gray-900 p-4 rounded-lg shadow">
-                <div className="flex items-center mb-2">
-                  <span className="font-bold text-blue-600 mr-2">{c.user}</span>
-                  <span className="text-xs text-gray-500">{c.time}</span>
-                </div>
-                <p className="text-gray-300">{c.text}</p>
-              </div>
-            ))}
-          </div>
+        <section className="comments-section w-full max-w-7xl mx-auto mb-8 px-4 sm:px-6 lg:px-8 py-8">
+          <CommentSection />
         </section>
       </main>
       <FooterSection />
