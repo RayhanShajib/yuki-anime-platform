@@ -209,6 +209,12 @@ button {
     justify-content: center;
     margin: auto;
   }
+  .leading-relaxed{
+    display: none !important;
+  }
+  .carousel{
+    height: 100%;
+  }
 }
 @media screen and (max-width: 350px) {
     .trending-navigation-tabs{
