@@ -1,56 +1,23 @@
 "use client";
 import { latestAnime } from "@/lib/mockData";
-import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { AnimeCard } from "../ui/AnimeCard";
+import { Calendar } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { AnimeCard } from "../ui/AnimeCard";
 
 export function LatestSection() {
   const [selectedLanguage, setSelectedLanguage] = useState<
     "sub" | "dub" | "all"
   >("all");
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [cardsPerView, setCardsPerView] = useState(4);
-
   // Filter anime based on selected language
   const filteredAnime = latestAnime.filter((anime) => {
     if (selectedLanguage === "all") return true;
     return anime.language.includes(selectedLanguage);
   });
-
-  useEffect(() => {
-    const updateCardsPerView = () => {
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth;
-        const cardWidth = 170;
-        const gap = 25;
-        const buttonSpace = window.innerWidth >= 768 ? 80 : 64;
-        const availableWidth = containerWidth - buttonSpace;
-        const maxCards = Math.floor((availableWidth + gap) / (cardWidth + gap));
-        setCardsPerView(Math.min(maxCards, filteredAnime.length));
-      }
-    };
-    updateCardsPerView();
-    window.addEventListener("resize", updateCardsPerView);
-    return () => window.removeEventListener("resize", updateCardsPerView);
-  }, [filteredAnime.length]);
-
-  const maxIndex = Math.max(0, filteredAnime.length - cardsPerView);
-  const canGoPrev = currentIndex > 0;
-  const canGoNext = currentIndex < maxIndex;
-
-  const goToPrev = () => {
-    if (canGoPrev) {
-      setCurrentIndex((prev) => Math.max(0, prev - 1));
-    }
-  };
-
-  const goToNext = () => {
-    if (canGoNext) {
-      setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
-    }
-  };
 
   return (
     <section className="py-12">
@@ -94,52 +61,44 @@ export function LatestSection() {
         </div>
 
         {/* Latest Releases Slider */}
-        <div className="relative" ref={containerRef}>
-          {/* Navigation Buttons */}
-          <button
-            onClick={goToPrev}
-            disabled={!canGoPrev}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center transition-all duration-200 group w-8 h-full md:w-15 md:h-full ${
-              canGoPrev
-                ? "text-white hover:text-blue-600"
-                : "text-gray-500 cursor-not-allowed"
-            }`}>
-            <ChevronLeft className="h-30 w-40 md:h-30 md:w-40 group-hover:text-blue-600" />
-          </button>
-          <button
-            onClick={goToNext}
-            disabled={!canGoNext}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center transition-all duration-200 group w-8 h-full md:w-15 md:h-full ${
-              canGoNext
-                ? "text-white hover:text-blue-600"
-                : "text-gray-500 cursor-not-allowed"
-            }`}>
-            <ChevronRight className="h-30 w-40 md:h-30 md:w-40 group-hover:text-blue-600" />
-          </button>
-          {/* Cards Container */}
-          <div className="overflow-x-clip">
-            <div
-              className="flex transition-transform duration-300 ease-in-out h-auto"
-              style={{
-                transform: `translateX(-${currentIndex * 150}px)`,
-                gap: "20px",
-                height: "auto",
-              }}>
-              {filteredAnime.map((anime) => (
-                <div
-                  key={anime.id}
-                  className="flex-shrink-0 overflow-visible relative"
-                  style={{ width: "170px" }}>
-                  <AnimeCard
-                    anime={anime}
-                    showPopup={true}
-                    className="h-auto overflow-visible"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <Swiper
+          modules={[Navigation]}
+          navigation
+          spaceBetween={20}
+          slidesPerView={1}
+          breakpoints={{
+            640: {
+              slidesPerView: 3,
+              spaceBetween: 20,
+            },
+            768: {
+              slidesPerView: 4,
+              spaceBetween: 25,
+            },
+            1024: {
+              slidesPerView: 6,
+              spaceBetween: 25,
+            },
+            1280: {
+              slidesPerView: 8,
+              spaceBetween: 30,
+            },
+            1536: {
+              slidesPerView: 8,
+              spaceBetween: 30,
+            },
+          }}
+          className="!pb-10">
+          {filteredAnime.map((anime) => (
+            <SwiperSlide key={anime.id} style={{ width: "170px" }}>
+              <AnimeCard
+                anime={anime}
+                showPopup={true}
+                className="h-auto overflow-visible"
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
         <div className="flex justify-center mt-8">
           <Link
             href={"/latest"}
