@@ -36,6 +36,9 @@ export default function WatchPage() {
   // --- Episode Search State ---
   const [searchQuery, setSearchQuery] = React.useState("");
 
+  // --- Info Section Toggle State ---
+  const [infoType, setInfoType] = React.useState<"anime" | "episode">("anime");
+
   // --- Episodes Data (mock, replace with real data if available) ---
   type Episode = { ep: number; title: string };
 
@@ -83,9 +86,28 @@ export default function WatchPage() {
       <main className="mt-[80px]">
         <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
           <div className="w-full px-4 bg-gray-900/40 rounded-lg shadow-lg">
-            <h1 className="text-xl md:text-xl font-bold text-white mb-3 mt-2">
-              {anime?.title || "Anime Player"}
-            </h1>
+            {/* Breadcrumb Navigation */}
+            <nav className="flex items-center text-md text-gray-300 mb-4 pt-4">
+              <Link href="/" className="hover:text-blue-500 font-medium">
+                Home
+              </Link>
+              <span className="mx-2">&gt;</span>
+              {anime?.genres && anime.genres.length > 0 ? (
+                <Link
+                  href={`/genre/${encodeURIComponent(anime.genres[0])}`}
+                  className="hover:text-blue-500 font-medium">
+                  {anime.genres[0]}
+                </Link>
+              ) : (
+                <Link href="/genre" className="hover:text-blue-500 font-medium">
+                  Genre
+                </Link>
+              )}
+              <span className="mx-2">&gt;</span>
+              <span className="text-white font-semibold">
+                {anime?.title || "Anime Name"}
+              </span>
+            </nav>
             <div className="aspect-video w-full rounded-lg mb-6">
               {selectedServer === 1 || selectedServer === 3 ? (
                 <VideoPlayer />
@@ -227,9 +249,9 @@ export default function WatchPage() {
                 onClick={() => setIsListView((prev) => !prev)}>
                 {/* Simple SVG icon for list/grid toggle */}
                 {isListView ? (
-                  <List className="h-4 w-4" />
-                ) : (
                   <Grid className="h-4 w-4" />
+                ) : (
+                  <List className="h-4 w-4" />
                 )}
               </button>
             </div>
@@ -320,14 +342,45 @@ export default function WatchPage() {
               />
             </div>
             <div className="main-entity md:ml-8 mt-6 md:mt-0 w-full">
-              <h1
-                itemProp="name"
-                className="title text-2xl md:text-3xl font-bold text-white mb-2"
-                data-jp="WIND BREAKER Season 2">
-                Wind Breaker Season 2
-              </h1>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                <h1
+                  itemProp="name"
+                  className="title text-2xl md:text-3xl font-bold text-white"
+                  data-jp="WIND BREAKER Season 2">
+                  {infoType === "anime"
+                    ? "Wind Breaker Season 2"
+                    : `Episode ${selectedEpisode}: ${
+                        episodes.find((ep) => ep.ep === selectedEpisode)
+                          ?.title || "Episode Title"
+                      }`}
+                </h1>
+
+                {/* Info Type Toggle Buttons */}
+                <div className="flex mt-2 md:mt-0">
+                  <button
+                    className={`px-2.5 py-1 rounded-l-2xl text-xs font-semibold transition-colors focus:outline-none ${
+                      infoType === "anime"
+                        ? "bg-blue-600 text-white/90"
+                        : "bg-gray-600 text-white/90 hover:bg-gray-500"
+                    }`}
+                    onClick={() => setInfoType("anime")}>
+                    Anime Info
+                  </button>
+                  <button
+                    className={`px-2.5 py-1 rounded-r-2xl text-xs font-semibold transition-colors focus:outline-none ${
+                      infoType === "episode"
+                        ? "bg-blue-600 text-white/90"
+                        : "bg-gray-600 text-white/90 hover:bg-gray-500"
+                    }`}
+                    onClick={() => setInfoType("episode")}>
+                    Episode Info
+                  </button>
+                </div>
+              </div>
               <small className="al-title text-gray-300 block mb-2">
-                Wind Breaker Season 2; WIND BREAKER Season 2; Winbre; WBK
+                {infoType === "anime"
+                  ? "Wind Breaker Season 2; WIND BREAKER Season 2; Winbre; WBK"
+                  : `Episode ${selectedEpisode} of Wind Breaker Season 2`}
               </small>
               <div className="info flex gap-4 mb-2 text-sm text-gray-300 items-center">
                 <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer">
@@ -340,22 +393,45 @@ export default function WatchPage() {
                   <b>TV</b>
                 </span>
               </div>
-              <div className="desc text-gray-300 mb-2 text-sm">
-                Ever since Haruka Sakura joined Furin High School, where its
-                students call themselves Bofurin and protect the town of
-                Makochi, he has gained new friends despite his initial
-                skepticism. Now starting to learn how to fight alongside his
-                classmates and slowly growing out of his solitary past, Sakura
-                has become the grade captain of the first-years. skills are put
-                to the test when he and his classmates are faced with KEEL—a
-                delinquent group known for its ruthless violence and coercion.
-                While KEEL seems to be another rowdy group at first glance,
-                their sudden appearance and strength in numbers might just be
-                hiding a greater evil behind it. With all the odds against the
-                Bofurin members, Sakura must accept that recognizing his
-                shortcomings and receiving help from his upperclassmen will be
-                necessary to preserve the peace in Makochi.
-              </div>
+
+              {/* Dynamic Content Based on Info Type */}
+              {infoType === "anime" ? (
+                <>
+                  <div className="desc text-gray-300 mb-2 text-sm">
+                    Ever since Haruka Sakura joined Furin High School, where its
+                    students call themselves Bofurin and protect the town of
+                    Makochi, he has gained new friends despite his initial
+                    skepticism. Now starting to learn how to fight alongside his
+                    classmates and slowly growing out of his solitary past,
+                    Sakura has become the grade captain of the first-years.
+                    skills are put to the test when he and his classmates are
+                    faced with KEEL—a delinquent group known for its ruthless
+                    violence and coercion. While KEEL seems to be another rowdy
+                    group at first glance, their sudden appearance and strength
+                    in numbers might just be hiding a greater evil behind it.
+                    With all the odds against the Bofurin members, Sakura must
+                    accept that recognizing his shortcomings and receiving help
+                    from his upperclassmen will be necessary to preserve the
+                    peace in Makochi.
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="desc text-gray-300 mb-2 text-sm">
+                    <p>
+                      In this episode, Sakura faces his toughest challenge yet
+                      as KEEL&apos;s true intentions are revealed. The bonds
+                      between the Bofurin members are tested when they must work
+                      together to protect Makochi from an unprecedented threat.
+                      Watch as Sakura learns valuable lessons about teamwork and
+                      friendship while showcasing incredible fighting skills
+                      that will leave you on the edge of your seat.
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {/* Common detail grid for both anime and episode info */}
               <div className="detail grid grid-cols-1 md:grid-cols-3 gap-2 text-gray-300 text-sm mb-2">
                 <div>
                   Country: <span className="text-blue-600">Japan</span>
@@ -395,6 +471,12 @@ export default function WatchPage() {
                 </div>
                 <div>
                   Studios:{" "}
+                  <Link href={"/search"} className="text-blue-600">
+                    CloverWorks
+                  </Link>
+                </div>
+                <div>
+                  Producer:{" "}
                   <Link href={"/search"} className="text-blue-600">
                     CloverWorks
                   </Link>

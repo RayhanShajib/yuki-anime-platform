@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
@@ -8,7 +9,11 @@ import { cn } from "@/lib/utils";
 import { Bookmark, Grid, List, PlayCircle, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation as SwiperNavigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 // Mock anime data (replace with real data/fetching)
 const anime = {
@@ -156,8 +161,8 @@ export default function AnimeInfoPage() {
         {/* Info & Tabs */}
         <div className="flex-1 w-full mt-12">
           {/* Tabs */}
-          <div className="mb-6">
-            <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap">
+          <div className="mb-6 info-tabs">
+            <div className="flex space-x-1 bg-gray-800 rounded-lg p-1 flex-wrap w-fit">
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
@@ -260,6 +265,16 @@ export default function AnimeInfoPage() {
                         href={"/search"}
                         className="hover:text-white text-gray-300 tracking-wide !leading-normal">
                         Drama
+                      </Link>
+                    </span>
+                  </div>
+                  <div className="w-full sm:w-1/2 lg:w-1/3 flex justify-between gap-3 p-1 sm:p-2 sm:pr-5 md:mb-2">
+                    <span className="font-medium text-gray-300">Producer</span>
+                    <span className="text-sm text-end font-light">
+                      <Link
+                        href={"/search"}
+                        className="hover:text-white text-gray-300 tracking-wide !leading-normal">
+                        Cloworker
                       </Link>
                     </span>
                   </div>
@@ -469,17 +484,93 @@ export default function AnimeInfoPage() {
               </a>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
-              {filteredAnime.map((anime) => (
-                <div key={anime.id} className="relative">
-                  <AnimeCard
-                    anime={anime}
-                    showPopup={true}
-                  />
-                </div>
-              ))}
+            <div className="w-full max-w-7xl mx-auto mt-3 pb-10">
+              <Swiper
+                modules={[SwiperNavigation]}
+                spaceBetween={20}
+                slidesPerView={2}
+                navigation={true}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                  },
+                  768: {
+                    slidesPerView: 4,
+                    spaceBetween: 25,
+                  },
+                  1024: {
+                    slidesPerView: 5,
+                    spaceBetween: 25,
+                  },
+                  1280: {
+                    slidesPerView: 8,
+                    spaceBetween: 30,
+                  },
+                  1536: {
+                    slidesPerView: 8,
+                    spaceBetween: 30,
+                  },
+                }}
+                className="relations-swiper">
+                {filteredAnime.slice(0, 10).map((anime) => (
+                  <SwiperSlide key={anime.id}>
+                    <div className="relative">
+                      <AnimeCard anime={anime} showPopup={true} />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             </div>
           </div>
+        </div>
+        {/* Relations Section */}
+        <div className="w-full max-w-7xl mx-auto mt-3 pb-16">
+          <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
+          <Swiper
+            modules={[SwiperNavigation]}
+            spaceBetween={20}
+            slidesPerView={2}
+            navigation={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            breakpoints={{
+              640: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+              768: {
+                slidesPerView: 4,
+                spaceBetween: 25,
+              },
+              1024: {
+                slidesPerView: 5,
+                spaceBetween: 25,
+              },
+              1280: {
+                slidesPerView: 8,
+                spaceBetween: 30,
+              },
+              1536: {
+                slidesPerView: 8,
+                spaceBetween: 30,
+              },
+            }}
+            className="relations-swiper">
+            {filteredAnime.slice(0, 10).map((anime) => (
+              <SwiperSlide key={anime.id}>
+                <div className="relative">
+                  <AnimeCard anime={anime} showPopup={true} />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </main>
       <style jsx>{`

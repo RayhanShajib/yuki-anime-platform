@@ -219,6 +219,7 @@ button {
   .carousel {
     height: 100%;
   }
+
 }
 @media screen and (max-width: 350px) {
   .trending-navigation-tabs {
@@ -280,6 +281,11 @@ button {
   }
   .info-grad {
     display: none !important;
+  }
+  .info-tabs{
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
@@ -415,7 +421,6 @@ button {
   display: flex !important;
   align-items: stretch !important;
 }
-
 .relations-swiper .swiper-slide > div,
 .recommended-swiper .swiper-slide > div {
   width: 100% !important;
@@ -440,14 +445,11 @@ button {
     font-size: 14px !important;
   }
 }
-
-
 .swiper-backface-hidden .swiper-slide {
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     transform: none !important;
 }
-
 .swiper-wrapper{
   z-index: auto !important;
 }

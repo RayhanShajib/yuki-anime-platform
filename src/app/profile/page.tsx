@@ -9,7 +9,6 @@ import { mockAnime } from "@/lib/mockData";
 import {
   Bell,
   Bookmark,
-  Calendar,
   ChevronRight,
   Clock,
   Edit3,
@@ -45,7 +44,7 @@ const userData = {
 
 // Mock user's anime lists
 const userLists = {
-  recentlyWatched: mockAnime.slice(0, 6),
+  recentlyWatched: mockAnime.slice(0, 8),
   favorites: mockAnime.slice(6, 12),
   bookmark: mockAnime.slice(12, 18),
 };
@@ -105,7 +104,7 @@ export default function ProfilePage() {
   const handleRemoveNotif = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
-  
+
   // State for Hide your profile activities
   const [hideActivities, setHideActivities] = useState<"yes" | "no">("no");
   // State for Hide your bookmarks
@@ -155,21 +154,25 @@ export default function ProfilePage() {
                 <h3 className="text-sm font-normal text-white mt-1 mb-3">
                   Watching <b>One Piece</b>
                 </h3>
-                {/* Join Date */}
-                <div className="flex items-center space-x-2 text-gray-300">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    Member since{" "}
-                    {new Date(userData.joinDate).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                    })}
-                  </span>
+                <div className="flex items-center text-white py-1 rounded-full text-sm font-medium">
+                  <span className="mr-2">🌐</span>
+                  <button
+                    className="text-white hover:text-blue-600 focus:outline-none mr-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        "http://localhost:3000/profile"
+                      );
+                    }}
+                    title="Copy profile URL to clipboard">
+                    URL
+                  </button>
+                  <span> - Joined Jun 29, 2025 (1 days old)</span>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Navigation Tabs */}
           <div className="flex justify-center mb-6 sm:mb-8">
             <div className="flex p-1 flex-wrap bg-gray-800 rounded-lg space-x-1 justify-center navigation-tabs">
@@ -233,7 +236,9 @@ export default function ProfilePage() {
           {activeTab === "importexport" && (
             <div className="bg-[#0d1628] text-white/90 min-h-screen p-10 rounded-md">
               <div className="mx-auto">
-                <h2 className="text-xl font-semibold mb-6 text-white/90">Import/Export</h2>
+                <h2 className="text-xl font-semibold mb-6 text-white/90">
+                  Import/Export
+                </h2>
                 <div className="flex gap-3 mb-6">
                   <button
                     className={`bg-[#2b354a] text-white/90 px-4 py-2 rounded-md font-medium ${
@@ -569,7 +574,9 @@ export default function ProfilePage() {
                       <a href="#" className="text-blue-500 hover:underline">
                         EP 1134
                       </a>
-                      <span className="text-sm text-white/90">of One Piece</span>
+                      <span className="text-sm text-white/90">
+                        of One Piece
+                      </span>
                     </div>
 
                     <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
@@ -659,9 +666,11 @@ export default function ProfilePage() {
                     <ChevronRight className="h-4 w-4" />
                   </Link>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-3 sm:gap-4">
                   {userLists.recentlyWatched.map((anime) => (
-                    <AnimeCard key={anime.id} anime={anime} showPopup={true} />
+                    <div key={anime.id} className="relative">
+                      <AnimeCard anime={anime} showPopup={true} />
+                    </div>
                   ))}
                 </div>
               </div>

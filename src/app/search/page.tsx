@@ -3,7 +3,7 @@
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { mockAnime } from "@/lib/mockData";
 import { Tags } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const statusFilters = [
   { key: "all", label: "All Status" },
@@ -54,15 +54,6 @@ const yearOptions = [
   "2000-2009",
   "1990-1999",
 ];
-const countryOptions = ["all", "Japan", "Korea", "China", "USA", "Other"];
-const languageOptions = [
-  "all",
-  "Japanese",
-  "English",
-  "Korean",
-  "Chinese",
-  "Other",
-];
 const seasonOptions = ["all", "Summer", "Spring", "Winter", "Fall"];
 const sortOptions = [
   { key: "popularity", label: "Trending" },
@@ -95,7 +86,31 @@ function SearchPageContent() {
   const [pendingSeason, setPendingSeason] = useState("all");
   const [pendingSort, setPendingSort] = useState("popularity");
   const [pendingStudio, setPendingStudio] = useState("");
+  const [pendingProducer, setPendingProducer] = useState("");
+  const [pendingAudio, setPendingAudio] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const advancedFilterRef = useRef<HTMLDivElement>(null);
+  const toggleButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Close advanced filter when clicking outside (notification style)
+  useEffect(() => {
+    if (!showAdvanced) return;
+    function handleClickOutside(event: MouseEvent) {
+      const dropdown = advancedFilterRef.current;
+      const toggleBtn = toggleButtonRef.current;
+      if (
+        dropdown &&
+        !dropdown.contains(event.target as Node) &&
+        (!toggleBtn || !toggleBtn.contains(event.target as Node))
+      ) {
+        setShowAdvanced(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showAdvanced]);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -146,6 +161,8 @@ function SearchPageContent() {
     setPendingSeason(params.season || "all");
     setPendingSort(params.sort || "popularity");
     setPendingStudio(params.studio || "");
+    setPendingProducer(params.producer || "");
+    setPendingAudio(params.audio || "");
 
     // Reset to page 1 when URL changes (filters change)
     setCurrentPage(1);
@@ -167,6 +184,8 @@ function SearchPageContent() {
     if (pendingSeason !== "all") params.set("season", pendingSeason);
     if (pendingSort !== "popularity") params.set("sort", pendingSort);
     if (pendingStudio) params.set("studio", pendingStudio);
+    if (pendingProducer) params.set("producer", pendingProducer);
+    if (pendingAudio) params.set("audio", pendingAudio);
 
     // Reset to page 1 when applying new filters
     setCurrentPage(1);
@@ -324,7 +343,9 @@ function SearchPageContent() {
             Search
           </h1>
           <div className="mb-8">
-            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-4 relative">
+            <div
+              className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-4 relative"
+              ref={advancedFilterRef}>
               {/* Search Bar */}
               <input
                 type="text"
@@ -381,6 +402,7 @@ function SearchPageContent() {
               <div className="flex items-center gap-2 relative">
                 <button
                   type="button"
+                  ref={toggleButtonRef}
                   onClick={() => setShowAdvanced(!showAdvanced)}
                   className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer flex justify-center w-full"
                   aria-label="Show advanced filters">
@@ -457,76 +479,56 @@ function SearchPageContent() {
                         </select>
                       </div>
                     </div>
-                    {/* Studio Input Field */}
-                    <div className="mt-4">
-                      <label className="block text-gray-300 text-md mb-1">
-                        Studio
-                      </label>
-                      <input
-                        type="text"
-                        value={pendingStudio}
-                        onChange={(e) => setPendingStudio(e.target.value)}
-                        placeholder="Enter studio name"
-                        className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700"
-                      />
-                    </div>
-                    {/* Country Checkbox */}
-                    <div className="mt-4">
-                      <label className="block text-gray-300 text-md mb-1">
-                        Country
-                      </label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {countryOptions.map((option) => (
-                          <label
-                            key={option}
-                            className="flex items-center gap-1 text-gray-300 text-sm">
-                            <input
-                              type="checkbox"
-                              name="country"
-                              value={option}
-                              checked={pendingCountry.includes(option)}
-                              onChange={() => {
-                                setPendingCountry((prev) =>
-                                  prev.includes(option)
-                                    ? prev.filter((c) => c !== option)
-                                    : [...prev, option]
-                                );
-                              }}
-                              className="accent-green-600"
-                            />
-                            {option}
-                          </label>
-                        ))}
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                      {/* Studio Input Field */}
+                      <div className="mt-4">
+                        <label className="block text-gray-300 text-md mb-1">
+                          Studio
+                        </label>
+                        <input
+                          type="text"
+                          value={pendingStudio}
+                          onChange={(e) => setPendingStudio(e.target.value)}
+                          placeholder="Enter studio name"
+                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700"
+                        />
+                      </div>
+                      {/* Producer Input Field */}
+                      <div className="mt-4">
+                        <label className="block text-gray-300 text-md mb-1">
+                          Producer
+                        </label>
+                        <input
+                          type="text"
+                          value={pendingProducer}
+                          onChange={(e) => setPendingProducer(e.target.value)}
+                          placeholder="Enter producer name"
+                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700"
+                        />
                       </div>
                     </div>
-                    {/* Language Checkbox */}
-                    <div className="mt-4">
-                      <label className="block text-gray-300 text-md mb-1">
-                        Language
-                      </label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {languageOptions.map((option) => (
-                          <label
-                            key={option}
-                            className="flex items-center gap-1 text-gray-300 text-sm">
-                            <input
-                              type="checkbox"
-                              name="language"
-                              value={option}
-                              checked={pendingLanguage.includes(option)}
-                              onChange={() => {
-                                setPendingLanguage((prev) =>
-                                  prev.includes(option)
-                                    ? prev.filter((l) => l !== option)
-                                    : [...prev, option]
-                                );
-                              }}
-                              className="accent-blue-600"
-                            />
-                            {option}
-                          </label>
-                        ))}
-                      </div>
+                    {/* Sub/Dub Toggle Buttons */}
+                    <div className="mt-4 flex gap-4 items-center flex-wrap">
+                      <button
+                        type="button"
+                        className={`px-6 py-2 rounded-lg font-medium border border-gray-700 ${
+                          pendingAudio === "sub"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-800 text-gray-300"
+                        }`}
+                        onClick={() => setPendingAudio("sub")}>
+                        Sub
+                      </button>
+                      <button
+                        type="button"
+                        className={`px-6 py-2 rounded-lg font-medium border border-gray-700 ${
+                          pendingAudio === "dub"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-800 text-gray-300"
+                        }`}
+                        onClick={() => setPendingAudio("dub")}>
+                        Dub
+                      </button>
                     </div>
                   </div>
                 )}

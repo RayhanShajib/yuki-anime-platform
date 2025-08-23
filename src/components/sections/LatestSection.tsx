@@ -65,7 +65,7 @@ export function LatestSection() {
           modules={[Navigation]}
           navigation
           spaceBetween={20}
-          slidesPerView={1}
+          slidesPerView={2}
           breakpoints={{
             640: {
               slidesPerView: 3,
