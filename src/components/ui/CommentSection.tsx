@@ -92,6 +92,9 @@ export const CommentSection: React.FC = () => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [commentInput, setCommentInput] = useState("");
+  // Demo avatar for input
+  const inputAvatar =
+    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face";
   const [replyInputs, setReplyInputs] = useState<Record<number, string>>({});
   const [showReply, setShowReply] = useState<Record<number, boolean>>({});
 
@@ -202,7 +205,7 @@ export const CommentSection: React.FC = () => {
     return (
       <div
         key={comment.id}
-        className={`bg-transparent p-3 shadow ${
+        className={`bg-transparent px-12 py-1 shadow ${
           level > 0 ? `ml-${level * 8}` : ""
         }`}>
         <div className="flex items-start space-x-3 mb-2">
@@ -258,9 +261,9 @@ export const CommentSection: React.FC = () => {
         </div>
 
         {showReply[comment.id] && (
-          <div className="mt-2 ml-12 flex flex-col sm:flex-row gap-2 reply-form">
+          <div className="mt-2 ml-12 flex flex-col reply-form">
             <textarea
-              className="bg-[#20272E] p-2 flex-grow reply-input focus:outline-none text-white rounded"
+              className="bg-[#20272E] p-2 flex-grow reply-input focus:outline-none text-white rounded-t-xl"
               placeholder="Write a reply..."
               value={replyInputs[comment.id] || ""}
               onChange={(e) =>
@@ -270,15 +273,23 @@ export const CommentSection: React.FC = () => {
                 }))
               }
             />
-            <button
-              className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 reply-submit h-[40px]"
-              onClick={() => {
-                if ((replyInputs[comment.id] || "").trim()) {
-                  addReply(comment.id, replyInputs[comment.id].trim());
-                }
-              }}>
-              Send
-            </button>
+            <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-end gap-2">
+              <button
+                id="cancel-comment"
+                className="bg-gray-500 text-white rounded p-1 hover:bg-gray-600 w-[70px]"
+                onClick={() => setCommentInput("")}>
+                Cancel
+              </button>
+              <button
+                className="bg-blue-500 text-white rounded p-1 hover:bg-blue-600 w-[70px] reply-submit"
+                onClick={() => {
+                  if ((replyInputs[comment.id] || "").trim()) {
+                    addReply(comment.id, replyInputs[comment.id].trim());
+                  }
+                }}>
+                Send
+              </button>
+            </div>
           </div>
         )}
         <div className="mt-2 space-y-2">
@@ -296,40 +307,58 @@ export const CommentSection: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-2">Comments</h2>
-      <p className="text-white mb-4">{totalComments(comments)} comments</p>
-      <div className="mb-4">
-        <label htmlFor="sort-select" className="mr-2 text-gray-700">
-          Sort by:
-        </label>
+      <h2 className="text-2xl font-bold mb-8">Comments</h2>
+      <div className="mb-4 flex justify-between items-center flex-wrap">
+        <p className="text-white mb-4">{totalComments(comments)} comments</p>
         <select
           id="sort-select"
-          className="border rounded p-2 text-gray-500 focus:outline-none"
+          className="border-b border-b-blue-600 p-2 text-gray-500 focus:outline-none"
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}>
           <option value="newest">Newest</option>
           <option value="oldest">Oldest</option>
         </select>
       </div>
-      <div className="mb-4 flex flex-col gap-2">
-        <textarea
-          id="comment-input"
-          className="bg-[#20272E] rounded p-2 flex-grow focus:outline-none text-white"
-          placeholder="Write a comment..."
-          value={commentInput}
-          onChange={(e) => setCommentInput(e.target.value)}
-        />
-        <button
-          id="submit-comment"
-          className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 w-[70px]"
-          onClick={() => {
-            if (commentInput.trim()) {
-              addComment(commentInput.trim());
-              setCommentInput("");
-            }
-          }}>
-          Send
-        </button>
+      <div className="mb-4 flex flex-col">
+        <div className="flex items-start gap-3">
+          <Image
+            src={inputAvatar}
+            alt="User avatar"
+            width={40}
+            height={40}
+            className="rounded-full object-cover"
+            priority
+            unoptimized
+          />
+          <div className="flex-1 flex flex-col">
+            <textarea
+              id="comment-input"
+              className="bg-[#20272E] rounded-t-xl p-2 flex-grow focus:outline-none text-white"
+              placeholder="Write a comment..."
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+            />
+            <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-end gap-2">
+              <button
+                id="cancel-comment"
+                className="bg-gray-500 text-white rounded p-1 hover:bg-gray-600 w-[70px]"
+                onClick={() => setCommentInput("")}>
+                Cancel
+              </button>
+              <button
+                id="submit-comment"
+                className="bg-blue-500 text-white rounded p-1 hover:bg-blue-600 w-[70px]"
+                onClick={() => {
+                  if (commentInput.trim()) {
+                    addComment(commentInput.trim());
+                    setCommentInput("");
+                  }
+                }}>
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <div className="space-y-4">
         {sortedComments.map((comment) => renderComment(comment))}

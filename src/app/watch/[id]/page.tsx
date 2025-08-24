@@ -31,7 +31,7 @@ export default function WatchPage() {
   // --- Episode Selection State ---
   const [selectedEpisode, setSelectedEpisode] = React.useState(1);
   // --- Episode List/Grid Toggle State ---
-  const [isListView, setIsListView] = React.useState(false);
+  const [isListView, setIsListView] = React.useState(true);
 
   // --- Episode Search State ---
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -83,7 +83,7 @@ export default function WatchPage() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <Navigation />
-      <main className="mt-[80px]">
+      <main className="mt-[50px]">
         <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
           <div className="w-full px-4 bg-gray-900/40 rounded-lg shadow-lg">
             {/* Breadcrumb Navigation */}
@@ -249,9 +249,9 @@ export default function WatchPage() {
                 onClick={() => setIsListView((prev) => !prev)}>
                 {/* Simple SVG icon for list/grid toggle */}
                 {isListView ? (
-                  <Grid className="h-4 w-4" />
-                ) : (
                   <List className="h-4 w-4" />
+                ) : (
+                  <Grid className="h-4 w-4" />
                 )}
               </button>
             </div>
@@ -586,7 +586,7 @@ export default function WatchPage() {
         </div>
 
         {/* --- Comments Section --- */}
-        <section className="comments-section w-full max-w-7xl mx-auto mb-8 px-4 sm:px-6 lg:px-8 py-8">
+        <section className="comments-section grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
           <CommentSection />
         </section>
       </main>
