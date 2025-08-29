@@ -79,7 +79,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
       {/* Main content */}
       <div className="relative z-10 h-full flex items-center carousel">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex items-end">
           <div className="max-w-xl sm:max-w-2xl carousel-content">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-2 sm:mb-3 md:mb-4 animate-fadeIn txt-heading leading-tight">
               {currentAnime.title}
@@ -123,22 +123,6 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
                 <span className="sm:hidden">Add List</span>
               </button>
             </div>
-
-            {/* Bottom info section like AnimeKAI */}
-            <div className="grid grid-cols-3 gap-4 max-w-sm">
-              <div className="text-left">
-                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Rating</div>
-                <div className="text-white font-semibold">⭐ {formatRating(currentAnime.rating)}</div>
-              </div>
-              <div className="text-left">
-                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Release</div>
-                <div className="text-white font-semibold">{currentAnime.releaseYear}</div>
-              </div>
-              <div className="text-left">
-                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Quality</div>
-                <div className="text-white font-semibold">HD</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -151,14 +135,21 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 15%, rgba(0,0,0,0.75) 25%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.15) 65%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.03) 85%, rgba(0,0,0,0) 100%)",
         }}></div>
 
-      {/* Bottom gradient overlay */}
+      {/* Right tiny gradient overlay for xl screens only (>1800px) */}
       <div
-        className="absolute bottom-0 left-0 w-full h-10 md:h-15 lg:h-15 xl:h-15 z-1 pointer-events-none"
+        className="hidden xl:block absolute inset-0 z-0 pointer-events-none carousel"
         style={{
           background:
-            "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0) 100%)",
-        }}
-      />
+            "linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 5%, rgba(0,0,0,0.4) 10%, rgba(0,0,0,0.2) 15%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0) 65%, rgba(0,0,0,0) 75%, rgba(0,0,0,0) 85%, rgba(0,0,0,0) 100%)",
+        }}></div>
+
+      {/* Bottom gradient overlay */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none carousel"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 5%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0) 65%, rgba(0,0,0,0) 75%, rgba(0,0,0,0) 85%, rgba(0,0,0,0) 100%)",
+        }}></div>
 
       {currentAnime.trailer && (
         <div className="absolute bottom-4 sm:bottom-6 md:bottom-7 right-2 sm:right-3 md:right-4 z-20 flex flex-col space-y-1 sm:space-y-2 carousel-control">
