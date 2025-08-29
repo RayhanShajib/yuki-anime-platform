@@ -48,7 +48,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   if (!currentAnime) return null;
 
   return (
-    <div className="relative w-full carousel overflow-hidden min-w-full">
+    <div className="relative w-full h-[45vh] sm:h-[50vh] md:h-[55vh] lg:h-[65vh] xl:h-[650px] min-h-[350px] max-w-[1800px] mx-auto carousel overflow-hidden">
       <div className="absolute inset-0">
         {currentAnime.trailer ? (
           <video
@@ -56,7 +56,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             autoPlay
             muted={isMuted}
             loop
-            className="w-full object-fill scale-110 sm:scale-105 md:scale-100 carousel"
+            className="w-full h-full object-cover carousel"
             poster={currentAnime.banner || currentAnime.poster}
             playsInline
             disablePictureInPicture
@@ -70,8 +70,8 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             src={currentAnime.banner || currentAnime.poster}
             alt={currentAnime.title}
             fill
-            className="w-full h-full object-cover scale-110 sm:scale-105 md:scale-100"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
+            className="w-full h-full object-cover"
+            sizes="(max-width: 1800px) 100vw, 1800px"
             priority
           />
         )}
@@ -79,8 +79,8 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
       {/* Main content */}
       <div className="relative z-10 h-full flex items-center carousel">
-        <div className="max-w-7xl m-auto px-4 sm:px-6 lg:px-8 w-full pt-4 sm:pt-6 md:pt-7">
-          <div className="max-w-xl sm:max-w-2xl mt-16 sm:mt-32 md:mt-48 lg:mt-64 xl:mt-[300px] mb-[50px] carousel-content">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex items-center">
+          <div className="max-w-xl sm:max-w-2xl carousel-content">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-2 sm:mb-3 md:mb-4 animate-fadeIn txt-heading leading-tight">
               {currentAnime.title}
             </h1>
@@ -111,7 +111,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               {truncateText(currentAnime.synopsis, 200)}
             </p>
 
-            <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 gap-2 sm:gap-3 md:gap-3.5 flex-wrap">
+            <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 gap-2 sm:gap-3 md:gap-3.5 flex-wrap mb-4 sm:mb-6">
               <button className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 sm:px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer text-sm sm:text-base">
                 <Play className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Watch Now</span>
@@ -123,16 +123,32 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
                 <span className="sm:hidden">Add List</span>
               </button>
             </div>
+
+            {/* Bottom info section like AnimeKAI */}
+            <div className="grid grid-cols-3 gap-4 max-w-sm">
+              <div className="text-left">
+                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Rating</div>
+                <div className="text-white font-semibold">⭐ {formatRating(currentAnime.rating)}</div>
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Release</div>
+                <div className="text-white font-semibold">{currentAnime.releaseYear}</div>
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Quality</div>
+                <div className="text-white font-semibold">HD</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Left and Right edge gradients with extended middle overlay for text readability */}
+      {/* Left gradient overlay - full black at left edge */}
       <div
         className="absolute inset-0 z-0 pointer-events-none carousel"
         style={{
           background:
-            "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 2%, rgba(0,0,0,0.9) 4%, rgba(0,0,0,0.85) 6%, rgba(0,0,0,0.8) 8%, rgba(0,0,0,0.75) 10%, rgba(0,0,0,0.7) 12%, rgba(0,0,0,0.65) 14%, rgba(0,0,0,0.6) 16%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.45) 22%, rgba(0,0,0,0.4) 24%, rgba(0,0,0,0.35) 26%, rgba(0,0,0,0.3) 28%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.2) 32%, rgba(0,0,0,0.2) 68%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.3) 72%, rgba(0,0,0,0.35) 74%, rgba(0,0,0,0.4) 76%, rgba(0,0,0,0.45) 78%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0.55) 82%, rgba(0,0,0,0.6) 84%, rgba(0,0,0,0.65) 86%, rgba(0,0,0,0.7) 88%, rgba(0,0,0,0.75) 90%, rgba(0,0,0,0.8) 92%, rgba(0,0,0,0.85) 94%, rgba(0,0,0,0.9) 96%, rgba(0,0,0,0.95) 98%, rgba(0,0,0,1) 100%)",
+            "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 15%, rgba(0,0,0,0.75) 25%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.15) 65%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.03) 85%, rgba(0,0,0,0) 100%)",
         }}></div>
 
       {/* Bottom gradient overlay */}
