@@ -97,6 +97,161 @@ export const CommentSection: React.FC = () => {
     "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face";
   const [replyInputs, setReplyInputs] = useState<Record<number, string>>({});
   const [showReply, setShowReply] = useState<Record<number, boolean>>({});
+  const [showPreview, setShowPreview] = useState(false);
+  const [replyPreviews, setReplyPreviews] = useState<Record<number, boolean>>(
+    {}
+  );
+
+  // Format text with bold, italic, and quotes
+  function formatText(text: string): string {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold: **text**
+      .replace(/\*(.*?)\*/g, "<em>$1</em>") // Italic: *text*
+      .replace(/""(.*?)""/g, '<span class="text-blue-300">"$1"</span>'); // Double quotes: ""text""
+  }
+
+  // Apply formatting to comment text with buttons
+  function applyCommentFormatting(type: "bold" | "italic" | "quote") {
+    const textarea = document.getElementById(
+      "comment-input"
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const { selectionStart, selectionEnd, value } = textarea;
+    const selectedText = value.substring(selectionStart, selectionEnd);
+
+    let newText = "";
+    let newCursorPos = selectionEnd;
+
+    switch (type) {
+      case "bold":
+        if (selectedText) {
+          newText =
+            value.substring(0, selectionStart) +
+            `**${selectedText}**` +
+            value.substring(selectionEnd);
+          newCursorPos = selectionEnd + 4;
+        } else {
+          newText =
+            value.substring(0, selectionStart) +
+            "****" +
+            value.substring(selectionEnd);
+          newCursorPos = selectionStart + 2;
+        }
+        break;
+
+      case "italic":
+        if (selectedText) {
+          newText =
+            value.substring(0, selectionStart) +
+            `*${selectedText}*` +
+            value.substring(selectionEnd);
+          newCursorPos = selectionEnd + 2;
+        } else {
+          newText =
+            value.substring(0, selectionStart) +
+            "**" +
+            value.substring(selectionEnd);
+          newCursorPos = selectionStart + 1;
+        }
+        break;
+
+      case "quote":
+        if (selectedText) {
+          newText =
+            value.substring(0, selectionStart) +
+            `""${selectedText}""` +
+            value.substring(selectionEnd);
+          newCursorPos = selectionEnd + 4;
+        } else {
+          newText =
+            value.substring(0, selectionStart) +
+            '""""' +
+            value.substring(selectionEnd);
+          newCursorPos = selectionStart + 2;
+        }
+        break;
+    }
+
+    setCommentInput(newText);
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    }, 0);
+  }
+
+  // Apply formatting to reply text with buttons
+  function applyReplyFormatting(
+    type: "bold" | "italic" | "quote",
+    commentId: number
+  ) {
+    const textarea = document.querySelector(
+      `[data-reply-id="${commentId}"]`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const { selectionStart, selectionEnd, value } = textarea;
+    const selectedText = value.substring(selectionStart, selectionEnd);
+
+    let newText = "";
+    let newCursorPos = selectionEnd;
+
+    switch (type) {
+      case "bold":
+        if (selectedText) {
+          newText =
+            value.substring(0, selectionStart) +
+            `**${selectedText}**` +
+            value.substring(selectionEnd);
+          newCursorPos = selectionEnd + 4;
+        } else {
+          newText =
+            value.substring(0, selectionStart) +
+            "****" +
+            value.substring(selectionEnd);
+          newCursorPos = selectionStart + 2;
+        }
+        break;
+
+      case "italic":
+        if (selectedText) {
+          newText =
+            value.substring(0, selectionStart) +
+            `*${selectedText}*` +
+            value.substring(selectionEnd);
+          newCursorPos = selectionEnd + 2;
+        } else {
+          newText =
+            value.substring(0, selectionStart) +
+            "**" +
+            value.substring(selectionEnd);
+          newCursorPos = selectionStart + 1;
+        }
+        break;
+
+      case "quote":
+        if (selectedText) {
+          newText =
+            value.substring(0, selectionStart) +
+            `""${selectedText}""` +
+            value.substring(selectionEnd);
+          newCursorPos = selectionEnd + 4;
+        } else {
+          newText =
+            value.substring(0, selectionStart) +
+            '""""' +
+            value.substring(selectionEnd);
+          newCursorPos = selectionStart + 2;
+        }
+        break;
+    }
+
+    setReplyInputs((prev) => ({ ...prev, [commentId]: newText }));
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    }, 0);
+  }
 
   function addComment(text: string) {
     const comment: CommentType = {
@@ -229,7 +384,10 @@ export const CommentSection: React.FC = () => {
               {formatDateTime(comment.timestamp)}
             </p>
             <div>
-              <p className="text-white mb-2 mt-3">{comment.text}</p>
+              <div
+                className="text-white mb-2 mt-3"
+                dangerouslySetInnerHTML={{ __html: formatText(comment.text) }}
+              />
               <div className="flex items-center space-x-4">
                 <button
                   className={`like-btn flex items-center ${
@@ -262,17 +420,71 @@ export const CommentSection: React.FC = () => {
 
         {showReply[comment.id] && (
           <div className="mt-2 ml-12 flex flex-col reply-form">
-            <textarea
-              className="bg-[#20272E] p-2 flex-grow reply-input focus:outline-none text-white rounded-t-xl"
-              placeholder="Write a reply..."
-              value={replyInputs[comment.id] || ""}
-              onChange={(e) =>
-                setReplyInputs((prev) => ({
-                  ...prev,
-                  [comment.id]: e.target.value,
-                }))
-              }
-            />
+            <div className="mb-2 flex items-center justify-between">
+              <div className="text-xs text-gray-400">
+                Formatting: **bold**, *italic*, &quot;&quot;quotes&quot;&quot;
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => applyReplyFormatting("bold", comment.id)}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs font-bold"
+                  title="Bold">
+                  <strong>B</strong>
+                </button>
+                <button
+                  onClick={() => applyReplyFormatting("italic", comment.id)}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs italic"
+                  title="Italic">
+                  <em>I</em>
+                </button>
+                <button
+                  onClick={() => applyReplyFormatting("quote", comment.id)}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs"
+                  title="Quote">
+                  &quot;&quot;
+                </button>
+                <button
+                  onClick={() =>
+                    setReplyPreviews((prev) => ({
+                      ...prev,
+                      [comment.id]: !prev[comment.id],
+                    }))
+                  }
+                  className={`${
+                    replyPreviews[comment.id]
+                      ? "bg-blue-600 hover:bg-blue-500"
+                      : "bg-gray-600 hover:bg-gray-500"
+                  } text-white px-2 py-1 rounded text-xs`}
+                  title={
+                    replyPreviews[comment.id] ? "Show Editor" : "Show Preview"
+                  }>
+                  View
+                </button>
+              </div>
+            </div>
+            {replyPreviews[comment.id] ? (
+              <div
+                className="bg-[#20272E] p-2 min-h-[80px] text-white border border-gray-600 rounded-t-xl"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    formatText(replyInputs[comment.id] || "") ||
+                    '<span class="text-gray-500">Preview will appear here...</span>',
+                }}
+              />
+            ) : (
+              <textarea
+                data-reply-id={comment.id}
+                className="bg-[#20272E] p-2 flex-grow reply-input focus:outline-none text-white rounded-t-xl"
+                placeholder="Write a reply..."
+                value={replyInputs[comment.id] || ""}
+                onChange={(e) =>
+                  setReplyInputs((prev) => ({
+                    ...prev,
+                    [comment.id]: e.target.value,
+                  }))
+                }
+              />
+            )}
             <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-end gap-2">
               <button
                 id="cancel-comment"
@@ -331,13 +543,59 @@ export const CommentSection: React.FC = () => {
             unoptimized
           />
           <div className="flex-1 flex flex-col">
-            <textarea
-              id="comment-input"
-              className="bg-[#20272E] rounded-t-xl p-2 flex-grow focus:outline-none text-white"
-              placeholder="Write a comment..."
-              value={commentInput}
-              onChange={(e) => setCommentInput(e.target.value)}
-            />
+            <div className="mb-2 flex items-center justify-between">
+              <div className="text-xs text-gray-400">
+                Formatting: **bold**, *italic*, &quot;&quot;quotes&quot;&quot;
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => applyCommentFormatting("bold")}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs font-bold"
+                  title="Bold">
+                  <strong>B</strong>
+                </button>
+                <button
+                  onClick={() => applyCommentFormatting("italic")}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs italic"
+                  title="Italic">
+                  <em>I</em>
+                </button>
+                <button
+                  onClick={() => applyCommentFormatting("quote")}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs"
+                  title="Quote">
+                  &quot;&quot;
+                </button>
+                <button
+                  onClick={() => setShowPreview(!showPreview)}
+                  className={`${
+                    showPreview
+                      ? "bg-blue-600 hover:bg-blue-500"
+                      : "bg-gray-600 hover:bg-gray-500"
+                  } text-white px-2 py-1 rounded text-xs`}
+                  title={showPreview ? "Show Editor" : "Show Preview"}>
+                  View
+                </button>
+              </div>
+            </div>
+            {showPreview ? (
+              <div
+                className="bg-[#20272E] rounded-t-xl p-2 min-h-[100px] text-white border border-gray-600"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    formatText(commentInput) ||
+                    '<span class="text-gray-500">Preview will appear here...</span>',
+                }}
+              />
+            ) : (
+              <textarea
+                id="comment-input"
+                className="bg-[#20272E] rounded-t-xl p-2 flex-grow focus:outline-none text-white"
+                placeholder="Write a comment..."
+                value={commentInput}
+                onChange={(e) => setCommentInput(e.target.value)}
+              />
+            )}
             <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-end gap-2">
               <button
                 id="cancel-comment"
