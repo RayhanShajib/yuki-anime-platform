@@ -86,14 +86,12 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
               spaceBetween: 30,
             },
           }}
-          className="!pb-10">
+          className="!pb-10 relations-swiper">
           {filteredAnime.map((anime) => (
-            <SwiperSlide key={anime.id} style={{ width: "170px" }}>
-              <AnimeCard
-                anime={anime}
-                showPopup={true}
-                className="h-auto overflow-visible"
-              />
+            <SwiperSlide key={anime.id}>
+              <div className="relative">
+                <AnimeCard anime={anime} showPopup={true} />
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>

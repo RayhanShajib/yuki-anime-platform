@@ -77,7 +77,7 @@ export default function MoviesPage() {
           </div>
 
           {/* Featured Movie Banner */}
-          <div className="mb-8 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-lg overflow-hidden border border-purple-800/30">
+          <div className="mb-8 bg-gradient-to-r from-blue-900/20 to-blue-900/20 rounded-lg overflow-hidden border border-blue-800/30">
             <div className="flex flex-col md:flex-row">
               <div className="md:w-1/3">
                 {/* Use Next.js Image for optimized images */}
@@ -226,10 +226,7 @@ export default function MoviesPage() {
               <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
                 {moviesToShow.map((anime) => (
                   <div key={anime.id} className="relative">
-                    <AnimeCard
-                      anime={anime}
-                      showPopup={true}
-                    />
+                    <AnimeCard anime={anime} showPopup={true} />
                   </div>
                 ))}
               </div>

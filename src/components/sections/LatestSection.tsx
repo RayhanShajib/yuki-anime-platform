@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
+import { Navigation as SwiperNavigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { AnimeCard } from "../ui/AnimeCard";
 
@@ -62,8 +62,12 @@ export function LatestSection() {
 
         {/* Latest Releases Slider */}
         <Swiper
-          modules={[Navigation]}
-          navigation
+          modules={[SwiperNavigation]}
+          navigation={true}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+          }}
           spaceBetween={20}
           slidesPerView={2}
           breakpoints={{
@@ -88,14 +92,12 @@ export function LatestSection() {
               spaceBetween: 30,
             },
           }}
-          className="!pb-10">
+          className="!pb-10 relations-swiper">
           {filteredAnime.map((anime) => (
-            <SwiperSlide key={anime.id} style={{ width: "170px" }}>
-              <AnimeCard
-                anime={anime}
-                showPopup={true}
-                className="h-auto overflow-visible"
-              />
+            <SwiperSlide key={anime.id}>
+              <div className="relative">
+                <AnimeCard anime={anime} showPopup={true} />
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>

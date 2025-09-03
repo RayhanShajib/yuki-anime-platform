@@ -195,8 +195,7 @@ button {
   overflow: visible !important;
   overflow-x: clip !important;
 }
-
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 640px) {
   .anime-img {
     width: 100% !important;
     height: 100% !important;
@@ -205,9 +204,12 @@ button {
     width: 100% !important;
     height: 100% !important;
   }
+}
+@media screen and (max-width: 600px) {
   .media-watch {
-    flex-wrap: wrap;
+    grid-template-columns: revert-layer !important;
   }
+
   .trending-navigation-tabs {
     flex-wrap: nowrap;
     justify-content: center;
@@ -219,7 +221,6 @@ button {
   .carousel {
     height: 100%;
   }
-
 }
 @media screen and (max-width: 350px) {
   .trending-navigation-tabs {
@@ -262,6 +263,11 @@ button {
     font-size: 13px !important;
   }
 }
+@media screen and (max-width: 900px) {
+  .media-watch {
+    grid-template-columns: 1fr;
+  }
+}
 @media screen and (max-width: 998px) {
   .info-poster-content {
     justify-content: center;
@@ -282,7 +288,7 @@ button {
   .info-grad {
     display: none !important;
   }
-  .info-tabs{
+  .info-tabs {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -374,7 +380,7 @@ button {
   border-radius: 50% !important;
   width: 40px !important;
   height: 40px !important;
-  margin-top: calc(-20px) !important;
+  margin-top: calc(-40px) !important;
   transition: all 0.3s ease !important;
 }
 
@@ -446,13 +452,13 @@ button {
   }
 }
 .swiper-backface-hidden .swiper-slide {
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    transform: none !important;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: none !important;
 }
-.swiper-wrapper{
+.swiper-wrapper {
   z-index: auto !important;
 }
-.swiper{
+.swiper {
   z-index: inherit !important;
 }

@@ -88,7 +88,7 @@ export default function OngoingPage() {
           </div>
 
           {/* Live Status Banner */}
-          <div className="mb-8 bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-lg p-6 border border-green-800/30">
+          <div className="mb-8 bg-gradient-to-r from-blue-900/20 to-blue-900/20 rounded-lg p-6 border border-green-800/30">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
@@ -243,10 +243,7 @@ export default function OngoingPage() {
               <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
                 {paginatedAnime.map((anime) => (
                   <div key={anime.id} className="relative">
-                    <AnimeCard
-                      anime={anime}
-                      showPopup={true}
-                    />
+                    <AnimeCard anime={anime} showPopup={true} />
                   </div>
                 ))}
               </div>

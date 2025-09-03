@@ -15,7 +15,6 @@ interface AnimeCardProps {
 
 export function AnimeCard({ anime, className }: AnimeCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [justOpened, setJustOpened] = useState(false);
@@ -25,7 +24,26 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
-  console.log(showTooltip);
+
+  // Listen for global modal open events
+  useEffect(() => {
+    const handleGlobalModal = (e: CustomEvent<{ animeId: string }>) => {
+      if (e.detail.animeId !== anime.id && showPopup) {
+        setShowPopup(false);
+      }
+    };
+    window.addEventListener(
+      "animecard:openmodal",
+      handleGlobalModal as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        "animecard:openmodal",
+        handleGlobalModal as EventListener
+      );
+    };
+  }, [showPopup, anime.id]);
+
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -48,6 +66,13 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
       e.preventDefault();
       e.stopPropagation();
 
+      // Dispatch global event to close other modals
+      window.dispatchEvent(
+        new CustomEvent("animecard:openmodal", {
+          detail: { animeId: anime.id },
+        })
+      );
+
       // Calculate positioning before showing popup
       calculatePopupPosition();
 
@@ -68,6 +93,11 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
   const handleInfoClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    // Dispatch global event to close other modals
+    window.dispatchEvent(
+      new CustomEvent("animecard:openmodal", { detail: { animeId: anime.id } })
+    );
 
     // Calculate smart positioning
     calculatePopupPosition();
@@ -281,8 +311,6 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                       "opacity-100 lg:opacity-0 lg:scale-90",
                       isHovered && "lg:opacity-100 lg:scale-100"
                     )}
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
                     onClick={handleInfoClick}>
                     <Info className="h-4 w-4 lg:h-5 lg:w-5 text-white/90" />
                   </button>

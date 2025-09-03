@@ -498,7 +498,7 @@ export default function WatchPage() {
           <Swiper
             modules={[SwiperNavigation]}
             spaceBetween={20}
-            slidesPerView={1}
+            slidesPerView={2}
             navigation={true}
             autoplay={{
               delay: 3000,
@@ -537,12 +537,12 @@ export default function WatchPage() {
           </Swiper>
         </div>
         {/* Recommended Section */}
-        <div className="w-full max-w-7xl mx-auto mt-15 px-4 sm:px-6 lg:px-8 py-8 pb-16">
+        <div className="w-full max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8 py-8 pb-16">
           <h2 className="text-2xl font-bold text-white mb-6">Recommended</h2>
           <Swiper
             modules={[SwiperNavigation]}
             spaceBetween={20}
-            slidesPerView={1}
+            slidesPerView={2}
             navigation={true}
             autoplay={{
               delay: 4000,

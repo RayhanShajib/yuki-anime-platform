@@ -55,7 +55,7 @@ export default function PopularPage() {
           </div>
 
           {/* Trending Banner */}
-          <div className="mb-8 bg-gradient-to-r from-red-900/20 to-orange-900/20 rounded-lg p-3 border border-red-800/30">
+          <div className="mb-8 bg-gradient-to-r from-blue-900/20 to-blue-900/20 rounded-lg p-3 border border-blue-800/30">
             <div className="flex items-center space-x-4 flex-wrap gap-2.5">
               <div className="flex-shrink-0 anime-img">
                 {filteredAnime[0]?.poster && (
@@ -70,7 +70,7 @@ export default function PopularPage() {
               </div>
               <div>
                 <div className="flex items-center space-x-2 mb-2 flex-wrap">
-                  <span className="text-red-400 font-semibold">
+                  <span className="text-blue-400 font-semibold">
                     TRENDING NOW
                   </span>
                 </div>
@@ -173,10 +173,7 @@ export default function PopularPage() {
               <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
                 {paginatedAnime.map((anime) => (
                   <div key={anime.id} className="relative">
-                    <AnimeCard
-                      anime={anime}
-                      showPopup={true}
-                    />
+                    <AnimeCard anime={anime} showPopup={true} />
                   </div>
                 ))}
               </div>
