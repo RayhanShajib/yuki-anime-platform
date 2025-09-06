@@ -2,6 +2,12 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
+import {
+  FaRegThumbsDown,
+  FaRegThumbsUp,
+  FaTelegramPlane,
+} from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 
 type CommentType = {
   id: number;
@@ -391,17 +397,19 @@ export const CommentSection: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <button
                   className={`like-btn flex items-center ${
-                    comment.liked ? "text-red-500" : "text-gray-500"
-                  } hover:text-red-600`}
+                    comment.liked ? "text-white" : "text-gray-500"
+                  } hover:text-white`}
                   onClick={() => handleLike(comment.id)}>
-                  👍 {comment.likes}
+                  <FaRegThumbsUp className="mr-1" size={18} />
+                  {comment.likes}
                 </button>
                 <button
                   className={`dislike-btn flex items-center ${
-                    comment.disliked ? "text-blue-500" : "text-gray-500"
-                  } hover:text-blue-600`}
+                    comment.disliked ? "text-white" : "text-gray-500"
+                  } hover:text-white`}
                   onClick={() => handleDislike(comment.id)}>
-                  👎 {comment.dislikes}
+                  <FaRegThumbsDown className="mr-1" size={18} />
+                  {comment.dislikes}
                 </button>
                 <button
                   className="text-blue-500 hover:underline reply-btn"
@@ -422,9 +430,36 @@ export const CommentSection: React.FC = () => {
           <div className="mt-2 ml-12 flex flex-col reply-form">
             <div className="mb-2 flex items-center justify-between">
               <div className="text-xs text-gray-400">
-                Formatting: **bold**, *italic*, &quot;&quot;quotes&quot;&quot;
+                <span>Formatting:</span> <span>**bold**</span>,{" "}
+                <span>*italic*</span>,{" "}
+                <span>&quot;&quot;quotes&quot;&quot;</span>
               </div>
-              <div className="flex gap-2">
+            </div>
+            {replyPreviews[comment.id] ? (
+              <div
+                className="bg-[#20272E] p-2 min-h-[80px] text-white border border-gray-600 rounded-t-xl"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    formatText(replyInputs[comment.id] || "") ||
+                    '<span class="text-gray-500">Preview will appear here...</span>',
+                }}
+              />
+            ) : (
+              <textarea
+                data-reply-id={comment.id}
+                className="bg-[#20272E] p-2 flex-grow reply-input focus:outline-none text-white rounded-t-xl"
+                placeholder="Write a reply..."
+                value={replyInputs[comment.id] || ""}
+                onChange={(e) =>
+                  setReplyInputs((prev) => ({
+                    ...prev,
+                    [comment.id]: e.target.value,
+                  }))
+                }
+              />
+            )}
+            <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-between gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap items-center">
                 <button
                   onClick={() => applyReplyFormatting("bold", comment.id)}
                   className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs font-bold"
@@ -461,46 +496,23 @@ export const CommentSection: React.FC = () => {
                   View
                 </button>
               </div>
-            </div>
-            {replyPreviews[comment.id] ? (
-              <div
-                className="bg-[#20272E] p-2 min-h-[80px] text-white border border-gray-600 rounded-t-xl"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    formatText(replyInputs[comment.id] || "") ||
-                    '<span class="text-gray-500">Preview will appear here...</span>',
-                }}
-              />
-            ) : (
-              <textarea
-                data-reply-id={comment.id}
-                className="bg-[#20272E] p-2 flex-grow reply-input focus:outline-none text-white rounded-t-xl"
-                placeholder="Write a reply..."
-                value={replyInputs[comment.id] || ""}
-                onChange={(e) =>
-                  setReplyInputs((prev) => ({
-                    ...prev,
-                    [comment.id]: e.target.value,
-                  }))
-                }
-              />
-            )}
-            <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-end gap-2">
-              <button
-                id="cancel-comment"
-                className="bg-gray-500 text-white rounded p-1 hover:bg-gray-600 w-[70px]"
-                onClick={() => setCommentInput("")}>
-                Cancel
-              </button>
-              <button
-                className="bg-blue-500 text-white rounded p-1 hover:bg-blue-600 w-[70px] reply-submit"
-                onClick={() => {
-                  if ((replyInputs[comment.id] || "").trim()) {
-                    addReply(comment.id, replyInputs[comment.id].trim());
-                  }
-                }}>
-                Send
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  id="cancel-comment"
+                  className="bg-gray-500 text-white rounded p-1 hover:bg-gray-600 w-[60px] flex items-center justify-center"
+                  onClick={() => setCommentInput("")}>
+                  <MdCancel size={22} />
+                </button>
+                <button
+                  className="bg-blue-500 text-white rounded p-1 hover:bg-blue-600 reply-submit w-[60px] flex justify-center"
+                  onClick={() => {
+                    if ((replyInputs[comment.id] || "").trim()) {
+                      addReply(comment.id, replyInputs[comment.id].trim());
+                    }
+                  }}>
+                  <FaTelegramPlane size={25} />
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -526,7 +538,9 @@ export const CommentSection: React.FC = () => {
           id="sort-select"
           className="border-b border-b-blue-600 p-2 text-gray-500 focus:outline-none"
           value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}>
+          onChange={(event) =>
+            setSortOrder(event.target.value as "newest" | "oldest")
+          }>
           <option value="newest">Newest</option>
           <option value="oldest">Oldest</option>
         </select>
@@ -542,40 +556,12 @@ export const CommentSection: React.FC = () => {
             priority
             unoptimized
           />
-          <div className="flex-1 flex flex-col">
-            <div className="mb-2 flex items-center justify-between">
-              <div className="text-xs text-gray-400">
-                Formatting: **bold**, *italic*, &quot;&quot;quotes&quot;&quot;
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => applyCommentFormatting("bold")}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs font-bold"
-                  title="Bold">
-                  <strong>B</strong>
-                </button>
-                <button
-                  onClick={() => applyCommentFormatting("italic")}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs italic"
-                  title="Italic">
-                  <em>I</em>
-                </button>
-                <button
-                  onClick={() => applyCommentFormatting("quote")}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs"
-                  title="Quote">
-                  &quot;&quot;
-                </button>
-                <button
-                  onClick={() => setShowPreview(!showPreview)}
-                  className={`${
-                    showPreview
-                      ? "bg-blue-600 hover:bg-blue-500"
-                      : "bg-gray-600 hover:bg-gray-500"
-                  } text-white px-2 py-1 rounded text-xs`}
-                  title={showPreview ? "Show Editor" : "Show Preview"}>
-                  View
-                </button>
+          <div className="flex-1 flex flex-col flex-wrap">
+            <div className="mb-2 flex items-center justify-between flex-wrap">
+              <div className="text-xs text-gray-400 flex items-center flex-wrap">
+                <span>Formatting:</span> <span>**bold**</span>,{" "}
+                <span>*italic*</span>,{" "}
+                <span>&quot;&quot;quotes&quot;&quot;</span>
               </div>
             </div>
             {showPreview ? (
@@ -590,30 +576,68 @@ export const CommentSection: React.FC = () => {
             ) : (
               <textarea
                 id="comment-input"
-                className="bg-[#20272E] rounded-t-xl p-2 flex-grow focus:outline-none text-white"
+                className="bg-[#20272E] rounded-t-xl p-2 flex-grow focus:outline-none text-white w-full"
                 placeholder="Write a comment..."
                 value={commentInput}
                 onChange={(e) => setCommentInput(e.target.value)}
               />
             )}
-            <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-end gap-2">
-              <button
-                id="cancel-comment"
-                className="bg-gray-500 text-white rounded p-1 hover:bg-gray-600 w-[70px]"
-                onClick={() => setCommentInput("")}>
-                Cancel
-              </button>
-              <button
-                id="submit-comment"
-                className="bg-blue-500 text-white rounded p-1 hover:bg-blue-600 w-[70px]"
-                onClick={() => {
-                  if (commentInput.trim()) {
-                    addComment(commentInput.trim());
-                    setCommentInput("");
-                  }
-                }}>
-                Send
-              </button>
+            <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => applyCommentFormatting("bold")}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs font-bold"
+                  title="Bold"
+                  type="button">
+                  <strong>B</strong>
+                </button>
+                <button
+                  onClick={() => applyCommentFormatting("italic")}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs italic"
+                  title="Italic"
+                  type="button">
+                  <em>I</em>
+                </button>
+                <button
+                  onClick={() => applyCommentFormatting("quote")}
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs"
+                  title="Quote"
+                  type="button">
+                  &quot;&quot;
+                </button>
+                <button
+                  onClick={() => setShowPreview(!showPreview)}
+                  className={`${
+                    showPreview
+                      ? "bg-blue-600 hover:bg-blue-500"
+                      : "bg-gray-600 hover:bg-gray-500"
+                  } text-white px-2 py-1 rounded text-xs`}
+                  title={showPreview ? "Show Editor" : "Show Preview"}
+                  type="button">
+                  View
+                </button>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  id="cancel-comment"
+                  className="bg-gray-500 text-white rounded p-1 hover:bg-gray-600 w-[60px] flex items-center justify-center"
+                  onClick={() => setCommentInput("")}
+                  type="button">
+                  <MdCancel size={22} />
+                </button>
+                <button
+                  id="submit-comment"
+                  className="bg-blue-500 text-white rounded p-1 hover:bg-blue-600 w-[60px] flex justify-center"
+                  onClick={() => {
+                    if (commentInput.trim()) {
+                      addComment(commentInput.trim());
+                      setCommentInput("");
+                    }
+                  }}
+                  type="button">
+                  <FaTelegramPlane size={25} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
