@@ -80,7 +80,6 @@ const VideoPlayer = () => {
         jwPlayerRef.current.setup({
           width: "100%",
           height: "100%",
-          title: "HLS Live Stream",
           key: "cLGMn8T20tGvW+0eXPhq4NNmLB57TrscPjd1IyJF84o=",
           sources: [
             {

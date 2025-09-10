@@ -2,12 +2,8 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
-import {
-  FaRegThumbsDown,
-  FaRegThumbsUp,
-  FaTelegramPlane,
-} from "react-icons/fa";
-import { MdCancel } from "react-icons/md";
+import { FaRegThumbsDown, FaRegThumbsUp } from "react-icons/fa";
+import { MdCancel, MdSend } from "react-icons/md";
 
 type CommentType = {
   id: number;
@@ -428,13 +424,6 @@ export const CommentSection: React.FC = () => {
 
         {showReply[comment.id] && (
           <div className="mt-2 ml-12 flex flex-col reply-form">
-            <div className="mb-2 flex items-center justify-between">
-              <div className="text-xs text-gray-400">
-                <span>Formatting:</span> <span>**bold**</span>,{" "}
-                <span>*italic*</span>,{" "}
-                <span>&quot;&quot;quotes&quot;&quot;</span>
-              </div>
-            </div>
             {replyPreviews[comment.id] ? (
               <div
                 className="bg-[#20272E] p-2 min-h-[80px] text-white border border-gray-600 rounded-t-xl"
@@ -458,23 +447,23 @@ export const CommentSection: React.FC = () => {
                 }
               />
             )}
-            <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-between gap-2 flex-wrap">
-              <div className="flex gap-2 flex-wrap items-center">
+            <div className="bg-[#1A1F25] rounded-b-xl p-2 flex justify-between gap-2 flex-wrap">
+              <div className="flex flex-wrap items-center">
                 <button
                   onClick={() => applyReplyFormatting("bold", comment.id)}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs font-bold"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md font-bold"
                   title="Bold">
                   <strong>B</strong>
                 </button>
                 <button
                   onClick={() => applyReplyFormatting("italic", comment.id)}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs italic"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md italic"
                   title="Italic">
                   <em>I</em>
                 </button>
                 <button
                   onClick={() => applyReplyFormatting("quote", comment.id)}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md"
                   title="Quote">
                   &quot;&quot;
                 </button>
@@ -487,9 +476,9 @@ export const CommentSection: React.FC = () => {
                   }
                   className={`${
                     replyPreviews[comment.id]
-                      ? "bg-blue-600 hover:bg-blue-500"
-                      : "bg-gray-600 hover:bg-gray-500"
-                  } text-white px-2 py-1 rounded text-xs`}
+                      ? "bg-[#111418b5]"
+                      : "hover:bg-[#111418b5]"
+                  } text-[#888B8D] px-2 py-1 rounded text-sm`}
                   title={
                     replyPreviews[comment.id] ? "Show Editor" : "Show Preview"
                   }>
@@ -510,7 +499,7 @@ export const CommentSection: React.FC = () => {
                       addReply(comment.id, replyInputs[comment.id].trim());
                     }
                   }}>
-                  <FaTelegramPlane size={25} />
+                  <MdSend size={25} />
                 </button>
               </div>
             </div>
@@ -557,13 +546,6 @@ export const CommentSection: React.FC = () => {
             unoptimized
           />
           <div className="flex-1 flex flex-col flex-wrap">
-            <div className="mb-2 flex items-center justify-between flex-wrap">
-              <div className="text-xs text-gray-400 flex items-center flex-wrap">
-                <span>Formatting:</span> <span>**bold**</span>,{" "}
-                <span>*italic*</span>,{" "}
-                <span>&quot;&quot;quotes&quot;&quot;</span>
-              </div>
-            </div>
             {showPreview ? (
               <div
                 className="bg-[#20272E] rounded-t-xl p-2 min-h-[100px] text-white border border-gray-600"
@@ -582,25 +564,25 @@ export const CommentSection: React.FC = () => {
                 onChange={(e) => setCommentInput(e.target.value)}
               />
             )}
-            <div className="bg-[#1A1F25] rounded-b-xl p-3 flex justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-2 flex-wrap">
+            <div className="bg-[#1A1F25] rounded-b-xl p-2 flex justify-between gap-4 flex-wrap">
+              <div className="flex items-center flex-wrap">
                 <button
                   onClick={() => applyCommentFormatting("bold")}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs font-bold"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md font-bold"
                   title="Bold"
                   type="button">
                   <strong>B</strong>
                 </button>
                 <button
                   onClick={() => applyCommentFormatting("italic")}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs italic"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md italic"
                   title="Italic"
                   type="button">
                   <em>I</em>
                 </button>
                 <button
                   onClick={() => applyCommentFormatting("quote")}
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md"
                   title="Quote"
                   type="button">
                   &quot;&quot;
@@ -609,9 +591,9 @@ export const CommentSection: React.FC = () => {
                   onClick={() => setShowPreview(!showPreview)}
                   className={`${
                     showPreview
-                      ? "bg-blue-600 hover:bg-blue-500"
-                      : "bg-gray-600 hover:bg-gray-500"
-                  } text-white px-2 py-1 rounded text-xs`}
+                      ? "bg-[#111418b5]"
+                      : "hover:bg-[#111418b5]"
+                  } text-[#888B8D] px-2 py-1 rounded text-sm`}
                   title={showPreview ? "Show Editor" : "Show Preview"}
                   type="button">
                   View
@@ -635,7 +617,7 @@ export const CommentSection: React.FC = () => {
                     }
                   }}
                   type="button">
-                  <FaTelegramPlane size={25} />
+                  <MdSend size={25} />
                 </button>
               </div>
             </div>

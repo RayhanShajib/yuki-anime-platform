@@ -13,7 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import "plyr-react/plyr.css";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -27,6 +27,8 @@ export default function WatchPage() {
     () => mockAnime.find((a) => a.id === animeId),
     [animeId]
   );
+  // --- Rating State ---
+  const [userRating, setUserRating] = useState<number>(0);
 
   // --- Episode Selection State ---
   const [selectedEpisode, setSelectedEpisode] = React.useState(1);
@@ -37,7 +39,9 @@ export default function WatchPage() {
   const [searchQuery, setSearchQuery] = React.useState("");
 
   // --- Info Section Toggle State ---
-  const [infoType, setInfoType] = React.useState<"anime" | "episode">("anime");
+  const [infoType, setInfoType] = React.useState<"anime" | "episode">(
+    "episode"
+  );
 
   // --- Episodes Data (mock, replace with real data if available) ---
   type Episode = { ep: number; title: string };
@@ -325,6 +329,29 @@ export default function WatchPage() {
                 </div>
               ))}
             </div>
+            <div className="pt-12 text-center">
+              <h2 className="text-md font-bold text-blue-500">
+                How did you rate this anime?
+              </h2>
+              <p className="text-sm mt-1">9.26 by 3,920 reviews</p>
+              <div className="flex justify-center mt-1 gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className={`text-5xl rounded transition
+                ${
+                  userRating >= star
+                    ? " text-orange-400"
+                    : " text-gray-500 hover:text-orange-400"
+                }`}
+                    onClick={() => setUserRating(star)}
+                    aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}>
+                    ★
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
         {/* --- Extra Anime Info Section --- */}
@@ -359,21 +386,21 @@ export default function WatchPage() {
                 <div className="flex mt-2 md:mt-0">
                   <button
                     className={`px-2.5 py-1 rounded-l-2xl text-xs font-semibold transition-colors focus:outline-none ${
-                      infoType === "anime"
-                        ? "bg-blue-600 text-white/90"
-                        : "bg-gray-600 text-white/90 hover:bg-gray-500"
-                    }`}
-                    onClick={() => setInfoType("anime")}>
-                    Anime Info
-                  </button>
-                  <button
-                    className={`px-2.5 py-1 rounded-r-2xl text-xs font-semibold transition-colors focus:outline-none ${
                       infoType === "episode"
                         ? "bg-blue-600 text-white/90"
                         : "bg-gray-600 text-white/90 hover:bg-gray-500"
                     }`}
                     onClick={() => setInfoType("episode")}>
                     Episode Info
+                  </button>
+                  <button
+                    className={`px-2.5 py-1 rounded-r-2xl text-xs font-semibold transition-colors focus:outline-none ${
+                      infoType === "anime"
+                        ? "bg-blue-600 text-white/90"
+                        : "bg-gray-600 text-white/90 hover:bg-gray-500"
+                    }`}
+                    onClick={() => setInfoType("anime")}>
+                    Anime Info
                   </button>
                 </div>
               </div>

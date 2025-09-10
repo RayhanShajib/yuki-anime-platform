@@ -95,7 +95,7 @@ export default function ScheduleSection() {
 
   return (
     <div className="bg-gray-900/30 bg-schedule-section">
-      <main className="pt-16">
+      <main className="pt-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <h1 className="text-4xl font-bold text-white mb-4 flex items-center txt-heading">
@@ -103,7 +103,7 @@ export default function ScheduleSection() {
           </h1>
 
           {/* Day Navigation */}
-          <div className="mt-9 mb-6 flex justify-center">
+          <div className="mt-8 mb-6 flex justify-center">
             <div className="flex space-x-1 bg-gray-800 rounded-xl p-2 flex-wrap navigation-tabs justify-center">
               {daysOfWeek.map((day) => (
                 <button
@@ -125,7 +125,7 @@ export default function ScheduleSection() {
           </div>
 
           {/* Schedule Content */}
-          <div className="space-y-6 pt-5">
+          <div className="space-y-6 pt-3">
             {currentSchedule.length > 0 ? (
               currentSchedule.map((anime) => (
                 <div

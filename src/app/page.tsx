@@ -40,7 +40,7 @@ export default function Home() {
         <ScheduleSection />
 
         {/* Four-Section Content Grid */}
-        <section className="py-12 bg-gray-900/30 grid-content">
+        <section className="py-10 bg-gray-900/30 grid-content">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Top Airing */}
