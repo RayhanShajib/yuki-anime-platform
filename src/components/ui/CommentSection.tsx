@@ -447,23 +447,23 @@ export const CommentSection: React.FC = () => {
                 }
               />
             )}
-            <div className="bg-[#1A1F25] rounded-b-xl p-2 flex justify-between gap-2 flex-wrap">
+            <div className="bg-[#1A1F25] rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
               <div className="flex flex-wrap items-center">
                 <button
                   onClick={() => applyReplyFormatting("bold", comment.id)}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md font-bold"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md font-bold"
                   title="Bold">
                   <strong>B</strong>
                 </button>
                 <button
                   onClick={() => applyReplyFormatting("italic", comment.id)}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md italic"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md italic"
                   title="Italic">
                   <em>I</em>
                 </button>
                 <button
                   onClick={() => applyReplyFormatting("quote", comment.id)}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md"
                   title="Quote">
                   &quot;&quot;
                 </button>
@@ -478,22 +478,22 @@ export const CommentSection: React.FC = () => {
                     replyPreviews[comment.id]
                       ? "bg-[#111418b5]"
                       : "hover:bg-[#111418b5]"
-                  } text-[#888B8D] px-2 py-1 rounded text-sm`}
+                  } text-[#888B8D] px-1.5 py-1 rounded text-sm`}
                   title={
                     replyPreviews[comment.id] ? "Show Editor" : "Show Preview"
                   }>
                   View
                 </button>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-4 flex-wrap">
                 <button
                   id="cancel-comment"
-                  className="bg-gray-500 text-white rounded p-1 hover:bg-gray-600 w-[60px] flex items-center justify-center"
+                  className="text-white flex items-center justify-center"
                   onClick={() => setCommentInput("")}>
                   <MdCancel size={22} />
                 </button>
                 <button
-                  className="bg-blue-500 text-white rounded p-1 hover:bg-blue-600 reply-submit w-[60px] flex justify-center"
+                  className="text-white reply-submit flex justify-center"
                   onClick={() => {
                     if ((replyInputs[comment.id] || "").trim()) {
                       addReply(comment.id, replyInputs[comment.id].trim());
@@ -564,25 +564,25 @@ export const CommentSection: React.FC = () => {
                 onChange={(e) => setCommentInput(e.target.value)}
               />
             )}
-            <div className="bg-[#1A1F25] rounded-b-xl p-2 flex justify-between gap-4 flex-wrap">
+            <div className="bg-[#1A1F25] rounded-b-xl p-1 flex justify-between gap-4 flex-wrap">
               <div className="flex items-center flex-wrap">
                 <button
                   onClick={() => applyCommentFormatting("bold")}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md font-bold"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md font-bold"
                   title="Bold"
                   type="button">
                   <strong>B</strong>
                 </button>
                 <button
                   onClick={() => applyCommentFormatting("italic")}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md italic"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md italic"
                   title="Italic"
                   type="button">
                   <em>I</em>
                 </button>
                 <button
                   onClick={() => applyCommentFormatting("quote")}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-2 py-1 rounded text-md"
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md"
                   title="Quote"
                   type="button">
                   &quot;&quot;
@@ -590,26 +590,24 @@ export const CommentSection: React.FC = () => {
                 <button
                   onClick={() => setShowPreview(!showPreview)}
                   className={`${
-                    showPreview
-                      ? "bg-[#111418b5]"
-                      : "hover:bg-[#111418b5]"
-                  } text-[#888B8D] px-2 py-1 rounded text-sm`}
+                    showPreview ? "bg-[#111418b5]" : "hover:bg-[#111418b5]"
+                  } text-[#888B8D] px-1.5 py-1 rounded text-sm`}
                   title={showPreview ? "Show Editor" : "Show Preview"}
                   type="button">
                   View
                 </button>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-4 flex-wrap">
                 <button
                   id="cancel-comment"
-                  className="bg-gray-500 text-white rounded p-1 hover:bg-gray-600 w-[60px] flex items-center justify-center"
+                  className="text-white flex items-center justify-center"
                   onClick={() => setCommentInput("")}
                   type="button">
                   <MdCancel size={22} />
                 </button>
                 <button
                   id="submit-comment"
-                  className="bg-blue-500 text-white rounded p-1 hover:bg-blue-600 w-[60px] flex justify-center"
+                  className="text-white flex justify-center"
                   onClick={() => {
                     if (commentInput.trim()) {
                       addComment(commentInput.trim());
