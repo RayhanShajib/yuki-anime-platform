@@ -234,28 +234,28 @@ export default function ProfilePage() {
           </div>
 
           {activeTab === "importexport" && (
-            <div className="bg-[#0d1628] text-white/90 min-h-screen p-10 rounded-md">
+            <div className="bg-[#0d1628] text-white/90 min-h-screen p-5 rounded-md sm:p-8">
               <div className="mx-auto">
                 <h2 className="text-xl font-semibold mb-6 text-white/90">
                   Import/Export
                 </h2>
-                <div className="flex gap-3 mb-6">
+                <div className="flex gap-3 mb-6 flex-wrap">
                   <button
-                    className={`bg-[#2b354a] text-white/90 px-4 py-2 rounded-md font-medium ${
+                    className={`bg-[#2b354a] text-white/90 px-3 py-1 rounded-md font-medium ${
                       importExportMode === "import" ? "" : "opacity-60"
                     }`}
                     onClick={() => setImportExportMode("import")}>
                     Import
                   </button>
                   <button
-                    className={`bg-[#1a2438] text-white/90 px-4 py-2 rounded-md font-medium ${
+                    className={`bg-[#1a2438] text-white/90 px-3 py-1 rounded-md font-medium ${
                       importExportMode === "export" ? "" : "opacity-60"
                     }`}
                     onClick={() => setImportExportMode("export")}>
                     Export
                   </button>
                   <button
-                    className={`bg-[#1a2438] text-white/90 px-4 py-2 rounded-md font-medium ${
+                    className={`bg-[#1a2438] text-white/90 px-3 py-1 rounded-md font-medium ${
                       importExportMode === "autosync" ? "" : "opacity-60"
                     }`}
                     onClick={() => setImportExportMode("autosync")}>
@@ -683,7 +683,7 @@ export default function ProfilePage() {
                 <PlayCircle className="h-6 w-6 text-green-500 mr-3" />
                 Currently Watching ({userLists.recentlyWatched.length})
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-4">
                 {userLists.recentlyWatched.map((anime) => (
                   <div key={anime.id} className="relative">
                     <AnimeCard anime={anime} showPopup={true} />
@@ -710,9 +710,11 @@ export default function ProfilePage() {
                 <Bookmark className="h-6 w-6 text-blue-500 mr-3" />
                 Plan to Watch ({userData.stats.planToWatch})
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-4">
                 {userLists.bookmark.map((anime) => (
-                  <AnimeCard key={anime.id} anime={anime} showPopup={true} />
+                  <div key={anime.id} className="relative">
+                    <AnimeCard anime={anime} showPopup={true} />
+                  </div>
                 ))}
               </div>
             </div>

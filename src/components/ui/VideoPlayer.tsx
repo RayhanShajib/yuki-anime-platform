@@ -86,13 +86,13 @@ const VideoPlayer = () => {
               file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
               type: "hls",
               label: "720p",
-              default: "true"
+              default: "true",
             },
             {
               file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
               type: "hls",
-              label: "1080p"
-            }
+              label: "1080p",
+            },
           ],
           image: "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg",
           primary: "html5",
@@ -111,14 +111,14 @@ const VideoPlayer = () => {
               file: "https://example.com/subtitles.vtt",
               label: "English",
               kind: "subtitles",
-              default: true
+              default: true,
             },
             {
               file: "https://example.com/cc.vtt",
               label: "Closed Captions",
-              kind: "captions"
-            }
-          ]
+              kind: "captions",
+            },
+          ],
         });
 
         // Add custom styling to match your theme
@@ -181,7 +181,7 @@ const VideoPlayer = () => {
           }
           
           .jw-text {
-            color: #000000ff !important;
+            color: #fff !important;
             font-family: "Inter", sans-serif !important;
             font-size: 12px !important;
           }
@@ -288,53 +288,54 @@ const VideoPlayer = () => {
         document.head.appendChild(style);
 
         // Add event listeners for custom functionality
-        jwPlayerRef.current.on('ready', () => {
-          console.log('JW Player is ready');
+        jwPlayerRef.current.on("ready", () => {
+          console.log("JW Player is ready");
           // Add custom 10s rewind and forward buttons using JW Player's addButton API
           if (window.jwplayer) {
-            window.jwplayer('jwplayer-container').addButton(
-              '/skip-10-next.svg',
-              'Forward 10 seconds',
-              function() {
+            window.jwplayer("jwplayer-container").addButton(
+              "/skip-10-next.svg",
+              "Forward 10 seconds",
+              function () {
                 if (jwPlayerRef.current) {
                   const currentTime = jwPlayerRef.current.getPosition();
                   const duration = jwPlayerRef.current.getDuration();
-                  jwPlayerRef.current.seek(Math.min(currentTime + 10, duration));
+                  jwPlayerRef.current.seek(
+                    Math.min(currentTime + 10, duration)
+                  );
                 }
               },
-              'custom-forward-10s',
-              'Forward 10s'
+              "custom-forward-10s",
+              "Forward 10s"
             );
-            window.jwplayer('jwplayer-container').addButton(
-              '/skip-10-prev.svg',
-              'Rewind 10 seconds',
-              function() {
+            window.jwplayer("jwplayer-container").addButton(
+              "/skip-10-prev.svg",
+              "Rewind 10 seconds",
+              function () {
                 if (jwPlayerRef.current) {
                   const currentTime = jwPlayerRef.current.getPosition();
                   jwPlayerRef.current.seek(Math.max(currentTime - 10, 0));
                 }
               },
-              'custom-rewind-10s',
-              'Rewind 10s'
+              "custom-rewind-10s",
+              "Rewind 10s"
             );
-            
           }
         });
 
-        jwPlayerRef.current.on('play', () => {
-          console.log('Video started playing');
+        jwPlayerRef.current.on("play", () => {
+          console.log("Video started playing");
         });
 
-        jwPlayerRef.current.on('pause', () => {
-          console.log('Video paused');
+        jwPlayerRef.current.on("pause", () => {
+          console.log("Video paused");
         });
 
-        jwPlayerRef.current.on('error', (e) => {
-          console.error('JW Player error:', e);
+        jwPlayerRef.current.on("error", (e) => {
+          console.error("JW Player error:", e);
         });
       }
     };
-    
+
     document.head.appendChild(script);
 
     return () => {
@@ -343,7 +344,7 @@ const VideoPlayer = () => {
         try {
           jwPlayerRef.current.remove();
         } catch (error) {
-          console.error('Error removing JW Player:', error);
+          console.error("Error removing JW Player:", error);
         }
       }
     };
@@ -351,7 +352,7 @@ const VideoPlayer = () => {
 
   return (
     <div className="w-full">
-      <div 
+      <div
         id="jwplayer-container"
         ref={playerRef}
         className="w-full aspect-video min-h-[300px] md:min-h-[400px] rounded-lg overflow-hidden bg-black"

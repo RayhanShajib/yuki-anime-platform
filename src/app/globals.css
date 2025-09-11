@@ -204,9 +204,6 @@ button {
     width: 100% !important;
     height: 100% !important;
   }
-  .schedule-anime-img{
-    
-  }
 }
 @media screen and (max-width: 600px) {
   .media-watch {
@@ -383,7 +380,7 @@ button {
   border-radius: 50% !important;
   width: 40px !important;
   height: 40px !important;
-  margin-top: calc(-40px) !important;
+  margin-top: calc(-50px) !important;
   transition: all 0.3s ease !important;
 }
 
@@ -444,7 +441,7 @@ button {
   .recommended-swiper .swiper-button-prev {
     width: 35px !important;
     height: 35px !important;
-    margin-top: calc(-17.5px) !important;
+    margin-top: calc(-50.5px) !important;
   }
 
   .relations-swiper .swiper-button-next::after,

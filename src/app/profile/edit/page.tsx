@@ -48,7 +48,6 @@ const initialUserData = {
 
 export default function ProfileEditPage() {
   const [userData, setUserData] = useState(initialUserData);
-  const [activeTab, setActiveTab] = useState("profile");
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -125,275 +124,243 @@ export default function ProfileEditPage() {
             </div>
           )}
 
-          {/* Navigation Tabs */}
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-1 bg-gray-800 rounded-lg p-1 mb-6 sm:mb-8">
-            {[
-              {
-                key: "profile",
-                label: "Profile Info",
-                shortLabel: "Profile",
-                icon: User,
-              },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center justify-center space-x-2 px-3 sm:px-4 py-3 sm:py-2 rounded-md text-sm font-medium transition-colors min-h-[48px] touch-manipulation ${
-                    activeTab === tab.key
-                      ? "bg-blue-600 text-white/90"
-                      : "text-gray-300 hover:text-white hover:bg-gray-700"
-                  }`}>
-                  <Icon className="h-4 w-4" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.shortLabel}</span>
-                </button>
-              );
-            })}
-          </div>
-
           {/* Tab Content */}
-          {activeTab === "profile" && (
-            <div className="space-y-8">
-              {/* Avatar Section */}
-              <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
-                <h2 className="text-xl font-bold text-white mb-6">
-                  Profile Picture
-                </h2>
-                <div className="flex items-center space-x-6">
-                  <div className="relative">
-                    <div className="w-24 h-24 rounded-full border-4 border-blue-500 overflow-hidden">
-                      <Image
-                        src={userData.avatar}
-                        alt="Profile"
-                        width={96}
-                        height={96}
-                        className="object-cover w-full h-full"
-                        priority
-                      />
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-gray-300 mb-4">
-                      Upload a new profile picture. Recommended size is 400x400
-                      pixels.
-                    </p>
-                    <button
-                      className="bg-gray-700 text-white/90 px-4 py-2 rounded-lg transition-colors opacity-60"
-                      style={{ cursor: "not-allowed" }}
-                      disabled>
-                      Choose File
-                    </button>
+          <div className="space-y-8">
+            {/* Avatar Section */}
+            <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+              <h2 className="text-xl font-bold text-white mb-6">
+                Profile Picture
+              </h2>
+              <div className="flex items-center space-x-6">
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full border-4 border-blue-500 overflow-hidden">
+                    <Image
+                      src={userData.avatar}
+                      alt="Profile"
+                      width={96}
+                      height={96}
+                      className="object-cover w-full h-full"
+                      priority
+                    />
                   </div>
                 </div>
-              </div>
-
-              {/* Basic Information */}
-              <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
-                <h2 className="text-xl font-bold text-white mb-6">
-                  Basic Information
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Username
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <input
-                        type="text"
-                        value={userData.username}
-                        onChange={(e) =>
-                          handleInputChange("username", e.target.value)
-                        }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Email
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <input
-                        type="email"
-                        value={userData.email}
-                        onChange={(e) =>
-                          handleInputChange("email", e.target.value)
-                        }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Birthday
-                    </label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <input
-                        type="date"
-                        value={userData.birthday}
-                        onChange={(e) =>
-                          handleInputChange("birthday", e.target.value)
-                        }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Gender
-                    </label>
-                    <select
-                      value={userData.gender}
-                      onChange={(e) =>
-                        handleInputChange("gender", e.target.value)
-                      }
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
-                      <option value="prefer-not-to-say">
-                        Prefer not to say
-                      </option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Location
-                    </label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <input
-                        type="text"
-                        value={userData.location}
-                        onChange={(e) =>
-                          handleInputChange("location", e.target.value)
-                        }
-                        placeholder="City, Country"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Website
-                    </label>
-                    <div className="relative">
-                      <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <input
-                        type="url"
-                        value={userData.website}
-                        onChange={(e) =>
-                          handleInputChange("website", e.target.value)
-                        }
-                        placeholder="https://your-website.com"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Bio
-                  </label>
-                  <textarea
-                    value={userData.bio}
-                    onChange={(e) => handleInputChange("bio", e.target.value)}
-                    rows={4}
-                    placeholder="Tell us about yourself and your anime interests..."
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500 resize-none"
-                  />
-                  <p className="text-gray-400 text-sm mt-2">
-                    {userData.bio.length}/500 characters
+                <div className="flex-1">
+                  <p className="text-gray-300 mb-4">
+                    Upload a new profile picture. Recommended size is 400x400
+                    pixels.
                   </p>
+                  <button
+                    className="bg-gray-700 text-white/90 px-4 py-2 rounded-lg transition-colors opacity-60"
+                    style={{ cursor: "not-allowed" }}
+                    disabled>
+                    Choose File
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Basic Information */}
+            <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+              <h2 className="text-xl font-bold text-white mb-6">
+                Basic Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Username
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      value={userData.username}
+                      onChange={(e) =>
+                        handleInputChange("username", e.target.value)
+                      }
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Email
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      type="email"
+                      value={userData.email}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Birthday
+                  </label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      type="date"
+                      value={userData.birthday}
+                      onChange={(e) =>
+                        handleInputChange("birthday", e.target.value)
+                      }
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Gender
+                  </label>
+                  <select
+                    value={userData.gender}
+                    onChange={(e) =>
+                      handleInputChange("gender", e.target.value)
+                    }
+                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
+                    <option value="prefer-not-to-say">Prefer not to say</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Location
+                  </label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      value={userData.location}
+                      onChange={(e) =>
+                        handleInputChange("location", e.target.value)
+                      }
+                      placeholder="City, Country"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Website
+                  </label>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      type="url"
+                      value={userData.website}
+                      onChange={(e) =>
+                        handleInputChange("website", e.target.value)
+                      }
+                      placeholder="https://your-website.com"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Social Links */}
-              <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
-                <h2 className="text-xl font-bold text-white mb-6">
-                  Social Links
-                </h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Twitter
-                    </label>
-                    <div className="relative">
-                      <Twitter className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <input
-                        type="text"
-                        value={userData.socialLinks.twitter}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "twitter",
-                            e.target.value,
-                            "socialLinks"
-                          )
-                        }
-                        placeholder="username"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
-                  </div>
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Bio
+                </label>
+                <textarea
+                  value={userData.bio}
+                  onChange={(e) => handleInputChange("bio", e.target.value)}
+                  rows={4}
+                  placeholder="Tell us about yourself and your anime interests..."
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500 resize-none"
+                />
+                <p className="text-gray-400 text-sm mt-2">
+                  {userData.bio.length}/500 characters
+                </p>
+              </div>
+            </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      GitHub
-                    </label>
-                    <div className="relative">
-                      <Github className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <input
-                        type="text"
-                        value={userData.socialLinks.github}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "github",
-                            e.target.value,
-                            "socialLinks"
-                          )
-                        }
-                        placeholder="username"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
+            {/* Social Links */}
+            <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+              <h2 className="text-xl font-bold text-white mb-6">
+                Social Links
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Twitter
+                  </label>
+                  <div className="relative">
+                    <Twitter className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      value={userData.socialLinks.twitter}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "twitter",
+                          e.target.value,
+                          "socialLinks"
+                        )
+                      }
+                      placeholder="username"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    />
                   </div>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Instagram
-                    </label>
-                    <div className="relative">
-                      <Instagram className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <input
-                        type="text"
-                        value={userData.socialLinks.instagram}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "instagram",
-                            e.target.value,
-                            "socialLinks"
-                          )
-                        }
-                        placeholder="username"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                      />
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    GitHub
+                  </label>
+                  <div className="relative">
+                    <Github className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      value={userData.socialLinks.github}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "github",
+                          e.target.value,
+                          "socialLinks"
+                        )
+                      }
+                      placeholder="username"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Instagram
+                  </label>
+                  <div className="relative">
+                    <Instagram className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      value={userData.socialLinks.instagram}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "instagram",
+                          e.target.value,
+                          "socialLinks"
+                        )
+                      }
+                      placeholder="username"
+                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    />
                   </div>
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </main>
       <FooterSection />

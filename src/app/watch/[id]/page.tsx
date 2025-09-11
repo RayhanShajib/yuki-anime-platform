@@ -382,10 +382,10 @@ export default function WatchPage() {
               />
             </div>
             <div className="main-entity md:ml-8 mt-6 md:mt-0 w-full">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+              <div className="flex items-center justify-end mb-2 flex-wrap-reverse gap-4">
                 <h1
                   itemProp="name"
-                  className="title text-2xl md:text-3xl font-bold text-white"
+                  className="title text-2xl md:text-3xl font-bold text-white flex-grow"
                   data-jp="WIND BREAKER Season 2">
                   {infoType === "anime"
                     ? "Wind Breaker Season 2"
@@ -396,9 +396,9 @@ export default function WatchPage() {
                 </h1>
 
                 {/* Info Type Toggle Buttons */}
-                <div className="flex mt-2 md:mt-0">
+                <div className="flex shrink-0 ml-auto">
                   <button
-                    className={`px-2.5 py-1 rounded-l-2xl text-xs font-semibold transition-colors focus:outline-none ${
+                    className={`px-3 py-1.5 rounded-l-lg text-sm font-medium transition-colors focus:outline-none ${
                       infoType === "episode"
                         ? "bg-blue-600 text-white/90"
                         : "bg-gray-600 text-white/90 hover:bg-gray-500"
@@ -407,7 +407,7 @@ export default function WatchPage() {
                     Episode Info
                   </button>
                   <button
-                    className={`px-2.5 py-1 rounded-r-2xl text-xs font-semibold transition-colors focus:outline-none ${
+                    className={`px-3 py-1.5 rounded-r-lg text-sm font-medium transition-colors focus:outline-none ${
                       infoType === "anime"
                         ? "bg-blue-600 text-white/90"
                         : "bg-gray-600 text-white/90 hover:bg-gray-500"
