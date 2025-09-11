@@ -4,6 +4,10 @@ import { useState } from "react";
 import { Calendar, Clock, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation as SwiperNavigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
 const daysOfWeek = [
   { key: "today", label: "Today", date: "Dec 28" },
@@ -89,7 +93,6 @@ const scheduleData = {
 
 export default function ScheduleSection() {
   const [activeDay, setActiveDay] = useState("today");
-
   const currentSchedule =
     scheduleData[activeDay as keyof typeof scheduleData] || [];
 
@@ -104,24 +107,53 @@ export default function ScheduleSection() {
 
           {/* Day Navigation */}
           <div className="mt-8 mb-6 flex justify-center">
-            <div className="flex space-x-1 bg-gray-800 rounded-xl p-2 flex-wrap navigation-tabs justify-center">
-              {daysOfWeek.map((day) => (
-                <button
-                  key={day.key}
-                  onClick={() => setActiveDay(day.key)}
-                  className={cn(
-                    "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
-                    activeDay === day.key
-                      ? "bg-blue-600 text-white/90 shadow-lg"
-                      : "text-gray-300 hover:text-white hover:bg-gray-700"
-                  )}>
-                  <div className="text-center">
-                    <div className="font-semibold">{day.label}</div>
-                    <div className="text-xs opacity-75">{day.date}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
+              {/* Desktop Navigation */}
+              <div className="hidden sm:flex space-x-1 bg-gray-800 rounded-xl p-2 flex-wrap navigation-tabs justify-center">
+                {daysOfWeek.map((day) => (
+                  <button
+                    key={day.key}
+                    onClick={() => setActiveDay(day.key)}
+                    className={cn(
+                      "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
+                      activeDay === day.key
+                        ? "bg-blue-600 text-white/90 shadow-lg"
+                        : "text-gray-300 hover:text-white hover:bg-gray-700"
+                    )}>
+                    <div className="text-center">
+                      <div className="font-semibold">{day.label}</div>
+                      <div className="text-xs opacity-75">{day.date}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Mobile Navigation with Swiper */}
+              <div className="sm:hidden bg-gray-800 rounded-xl p-2 relative group w-full">
+                <Swiper
+                  modules={[SwiperNavigation]}
+                  navigation={true}
+                  slidesPerView="auto"
+                  spaceBetween={4}
+                  className="w-full px-6 relations-swiper">
+                  {daysOfWeek.map((day) => (
+                    <SwiperSlide key={day.key} className="!w-auto">
+                      <button
+                        onClick={() => setActiveDay(day.key)}
+                        className={cn(
+                          "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
+                          activeDay === day.key
+                            ? "bg-blue-600 text-white/90 shadow-lg"
+                            : "text-gray-300 hover:text-white hover:bg-gray-700"
+                        )}>
+                        <div className="text-center">
+                          <div className="font-semibold">{day.label}</div>
+                          <div className="text-xs opacity-75">{day.date}</div>
+                        </div>
+                      </button>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
           </div>
 
           {/* Schedule Content */}
@@ -130,7 +162,7 @@ export default function ScheduleSection() {
               currentSchedule.map((anime) => (
                 <div
                   key={anime.id}
-                  className=" rounded-lg borde transition-colors pb-2">
+                  className="rounded-lg borde transition-colors pb-2">
                   <div className="flex items-center space-x-4">
                     {/* Poster */}
                     <div className="flex-shrink-0">
@@ -167,11 +199,6 @@ export default function ScheduleSection() {
 
                         {/* Actions */}
                         <div className="flex items-center">
-                          {/* {anime.isNew && (
-                            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">
-                              NEW
-                            </span>
-                          )} */}
                           <button
                             className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
                             title="Add to watchlist">
