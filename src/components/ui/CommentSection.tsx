@@ -488,9 +488,9 @@ export const CommentSection: React.FC = () => {
               <div className="flex items-center gap-4 flex-wrap">
                 <button
                   id="cancel-comment"
-                  className="text-white flex items-center justify-center"
+                  className="flex items-center justify-center"
                   onClick={() => setCommentInput("")}>
-                  <MdCancel size={22} />
+                  <MdCancel size={19} className="text-[#888B8D]" />
                 </button>
                 <button
                   className="text-white reply-submit flex justify-center"
@@ -499,7 +499,7 @@ export const CommentSection: React.FC = () => {
                       addReply(comment.id, replyInputs[comment.id].trim());
                     }
                   }}>
-                  <MdSend size={25} />
+                  <MdSend size={20} className="text-[#888B8D]" />
                 </button>
               </div>
             </div>
@@ -603,7 +603,7 @@ export const CommentSection: React.FC = () => {
                   className="text-white flex items-center justify-center"
                   onClick={() => setCommentInput("")}
                   type="button">
-                  <MdCancel size={22} />
+                  <MdCancel size={19} className="text-[#888B8D]" />
                 </button>
                 <button
                   id="submit-comment"
@@ -615,7 +615,7 @@ export const CommentSection: React.FC = () => {
                     }
                   }}
                   type="button">
-                  <MdSend size={25} />
+                  <MdSend size={20} className="text-[#888B8D]" />
                 </button>
               </div>
             </div>

@@ -261,6 +261,9 @@ const VideoPlayer = () => {
           .jw-flag-user-inactive.jw-flag-controls-hidden .jw-logo {
             opacity: 0.8;
           }
+          .jw-icon-playback{
+            display: flex !important;
+           }
 
           /* Replace rewind icon with custom 10s backward icon */
           .jw-svg-icon-rewind path {

@@ -204,6 +204,9 @@ button {
     width: 100% !important;
     height: 100% !important;
   }
+  .schedule-anime-img{
+    
+  }
 }
 @media screen and (max-width: 600px) {
   .media-watch {

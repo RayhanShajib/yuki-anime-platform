@@ -107,53 +107,90 @@ export default function ScheduleSection() {
 
           {/* Day Navigation */}
           <div className="mt-8 mb-6 flex justify-center">
-              {/* Desktop Navigation */}
-              <div className="hidden sm:flex space-x-1 bg-gray-800 rounded-xl p-2 flex-wrap navigation-tabs justify-center">
-                {daysOfWeek.map((day) => (
-                  <button
-                    key={day.key}
-                    onClick={() => setActiveDay(day.key)}
-                    className={cn(
-                      "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
-                      activeDay === day.key
-                        ? "bg-blue-600 text-white/90 shadow-lg"
-                        : "text-gray-300 hover:text-white hover:bg-gray-700"
-                    )}>
-                    <div className="text-center">
-                      <div className="font-semibold">{day.label}</div>
-                      <div className="text-xs opacity-75">{day.date}</div>
-                    </div>
-                  </button>
-                ))}
-              </div>
+            {/* Desktop Navigation */}
+            <div className="hidden sm:flex space-x-1 bg-gray-800 rounded-xl p-2 flex-wrap navigation-tabs justify-center">
+              {daysOfWeek.map((day) => (
+                <button
+                  key={day.key}
+                  onClick={() => setActiveDay(day.key)}
+                  className={cn(
+                    "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
+                    activeDay === day.key
+                      ? "bg-blue-600 text-white/90 shadow-lg"
+                      : "text-gray-300 hover:text-white hover:bg-gray-700"
+                  )}>
+                  <div className="text-center">
+                    <div className="font-semibold">{day.label}</div>
+                    <div className="text-xs opacity-75">{day.date}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
 
-              {/* Mobile Navigation with Swiper */}
-              <div className="sm:hidden bg-gray-800 rounded-xl p-2 relative group w-full">
-                <Swiper
-                  modules={[SwiperNavigation]}
-                  navigation={true}
-                  slidesPerView="auto"
-                  spaceBetween={4}
-                  className="w-full px-6 relations-swiper">
-                  {daysOfWeek.map((day) => (
-                    <SwiperSlide key={day.key} className="!w-auto">
-                      <button
-                        onClick={() => setActiveDay(day.key)}
-                        className={cn(
-                          "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
-                          activeDay === day.key
-                            ? "bg-blue-600 text-white/90 shadow-lg"
-                            : "text-gray-300 hover:text-white hover:bg-gray-700"
-                        )}>
-                        <div className="text-center">
-                          <div className="font-semibold">{day.label}</div>
-                          <div className="text-xs opacity-75">{day.date}</div>
-                        </div>
-                      </button>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+            {/* Mobile Navigation with Swiper */}
+            <div className="sm:hidden bg-gray-800 rounded-xl p-2 relative group w-[90%]">
+              <Swiper
+                modules={[SwiperNavigation]}
+                navigation={{
+                  nextEl: ".swiper-button-next-custom",
+                  prevEl: ".swiper-button-prev-custom",
+                }}
+                slidesPerView="auto"
+                spaceBetween={4}
+                className="w-full px-6 relations-swiper">
+                {daysOfWeek.map((day) => (
+                  <SwiperSlide key={day.key} className="!w-auto">
+                    <button
+                      onClick={() => setActiveDay(day.key)}
+                      className={cn(
+                        "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
+                        activeDay === day.key
+                          ? "bg-blue-600 text-white/90 shadow-lg"
+                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      )}>
+                      <div className="text-center">
+                        <div className="font-semibold">{day.label}</div>
+                        <div className="text-xs opacity-75">{day.date}</div>
+                      </div>
+                    </button>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              <div className="swiper-button-prev-custom absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 z-10">
+                <div className="p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-600 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6 text-white">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15.75 19.5L8.25 12 15.75 4.5"
+                    />
+                  </svg>
+                </div>
               </div>
+              <div className="swiper-button-next-custom absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 z-10">
+                <div className="p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-600 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6 text-white">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Schedule Content */}
