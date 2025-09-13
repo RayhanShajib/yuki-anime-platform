@@ -114,14 +114,45 @@ export default function WatchPage() {
             </nav>
             <div className="aspect-video w-full rounded-lg mb-6">
               {selectedServer === 1 || selectedServer === 3 ? (
-                <VideoPlayer />
+                <VideoPlayer 
+                  videoSources={[
+                    {
+                      file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
+                      type: "hls",
+                      label: "1080p",
+                      default: true,
+                    },
+                    {
+                      file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
+                      type: "hls",
+                      label: "720p",
+                    },
+                  ]}
+                  posterImage={anime?.banner || anime?.poster || "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg"}
+                  videoTitle={`${anime?.title || "Anime"} - Episode ${selectedEpisode}`}
+                  subtitles={[
+                    {
+                      file: "https://brenopolanski.github.io/html5-video-webvtt-example/MIB2-subtitles-pt-BR.vtt",
+                      label: "English",
+                      kind: "subtitles",
+                      default: true,
+                    },
+                  ]}
+                  // Don't pass thumbnailsVttUrl - let it use the built-in placeholder system
+                  // thumbnailsVttUrl will be undefined, so it will use the fallback
+                />
               ) : (
                 <IframeVideoPlayer src="https://www.youtube.com/embed/dQw4w9WgXcQ" />
               )}
             </div>
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <div>
-                <p className="text-lg text-white">You are watching Episode 5</p>
+                <p className="text-lg text-white">
+                  You are watching Episode {selectedEpisode}
+                  {episodes.find(ep => ep.ep === selectedEpisode)?.title && 
+                    ` - ${episodes.find(ep => ep.ep === selectedEpisode)?.title}`
+                  }
+                </p>
                 <p className="text-sm text-gray-500 mt-3">
                   If the current server is not working, please try switching{" "}
                   <br /> to other servers.
