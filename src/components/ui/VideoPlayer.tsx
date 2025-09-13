@@ -279,9 +279,9 @@ const VideoPlayer = () => {
           .jw-icon-rewind {
             display: none !important;
           }
-          .jw-button-container > .jw-svg-icon{
-            width: 30px!important;
-            height: 30px!important;
+          .jw-button-container .jw-svg-icon{
+            width: 24px!important;
+            height: 24px!important;
           }
           .jw-icon-display > .jw-svg-icon-play{
             width: 100px!important;
