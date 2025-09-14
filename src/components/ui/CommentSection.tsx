@@ -362,8 +362,8 @@ export const CommentSection: React.FC = () => {
     return (
       <div
         key={comment.id}
-        className={`bg-transparent px-12 py-1 shadow ${
-          level > 0 ? `ml-${level * 8}` : ""
+        className={`bg-transparent py-1 shadow ${
+          level > 0 ? "pl-[30px]" : ""
         }`}>
         <div className="flex items-start space-x-3 mb-2">
           <Image
@@ -423,7 +423,7 @@ export const CommentSection: React.FC = () => {
         </div>
 
         {showReply[comment.id] && (
-          <div className="mt-2 ml-12 flex flex-col reply-form">
+          <div className="mt-2 ml-8 sm:ml-[20px] flex flex-col reply-form">
             {replyPreviews[comment.id] ? (
               <div
                 className="bg-[#20272E] p-2 min-h-[80px] text-white border border-gray-600 rounded-t-xl"
@@ -622,7 +622,7 @@ export const CommentSection: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 overflow-auto">
         {sortedComments.map((comment) => renderComment(comment))}
       </div>
     </div>

@@ -228,13 +228,13 @@ export default function SchedulePage() {
                     <div className="flex-1 min-w-0 w-full">
                       <div className="flex flex-col sm:flex-row items-start justify-between w-full">
                         <div>
-                          <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">
+                          <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 txt-para">
                             {anime.title}
                           </h3>
-                          <p className="text-blue-400 font-medium mb-1">
+                          <p className="text-blue-400 font-medium mb-1 txt-small">
                             {anime.episode}
                             {anime.episodeTitle && (
-                              <span className="text-gray-400 font-normal">
+                              <span className="text-gray-400 font-normal txt-small">
                                 {" - "}
                                 {anime.episodeTitle}
                               </span>
@@ -242,17 +242,17 @@ export default function SchedulePage() {
                           </p>
                           <div className="flex items-center text-gray-400 text-sm flex-wrap">
                             <Clock className="h-4 w-4 mr-1" />
-                            <span>{anime.time}</span>
-                            <span className="ml-2 text-xs bg-gray-700 px-2 py-1 rounded">
+                            <span className="txt-small">{anime.time}</span>
+                            <span className="ml-2 text-xs bg-gray-700 px-2 py-1 rounded txt-small">
                               Simulcast
                             </span>
                           </div>
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center space-x-3 mt-4 sm:mt-0 flex-wrap">
+                        <div className="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap">
                           {anime.isNew && (
-                            <span className="bg-green-600 text-white/90 px-2 py-1 rounded text-xs font-bold">
+                            <span className="bg-green-600 text-white/90 px-2 py-1 rounded sm:text-xs font-bold text-[11px]">
                               NEW
                             </span>
                           )}

@@ -388,8 +388,7 @@ button {
 .relations-swiper .swiper-button-prev:hover,
 .recommended-swiper .swiper-button-next:hover,
 .recommended-swiper .swiper-button-prev:hover {
-  background: rgba(59, 130, 246, 0.8) !important;
-  color: white !important;
+  color: #3b82f6 !important;
   transform: scale(1.1) !important;
 }
 
@@ -417,7 +416,6 @@ button {
 
 .relations-swiper .swiper-pagination-bullet-active,
 .recommended-swiper .swiper-pagination-bullet-active {
-  background: #3b82f6 !important;
   transform: scale(1.2) !important;
 }
 
