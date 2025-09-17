@@ -86,12 +86,12 @@ const anime = {
 };
 
 const tabs = [
-  { key: "Synopsis", label: "Synopsis", icon: User },
+  { key: "Overview", label: "Overview", icon: User },
   { key: "episodes", label: "Episodes", icon: List },
 ];
 
 export default function AnimeInfoPage() {
-  const [activeTab, setActiveTab] = useState("Synopsis");
+  const [activeTab, setActiveTab] = useState("Overview");
   const [episodeLayout, setEpisodeLayout] = useState("flex"); // "flex" or "grid"
   const [audioType, setAudioType] = useState("sub"); // "sub" or "dub"
   const filteredAnime = mockAnime;
@@ -180,10 +180,14 @@ export default function AnimeInfoPage() {
           </div>
 
           {/* Tab Content (no animation) */}
-          {activeTab === "Synopsis" && (
+          {activeTab === "Overview" && (
             <div className="space-y-6 md:space-y-0 md:flex md:gap-8">
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-white mb-2">Synopsis</h2>
+                <p className="text-gray-300 text-lg mb-4">
+                  {anime.description}
+                </p>
+                <h2 className="text-2xl font-bold text-white mb-2">Background</h2>
                 <p className="text-gray-300 text-lg mb-4">
                   {anime.description}
                 </p>

@@ -556,6 +556,13 @@ export default function WatchPage() {
               </div>
             </div>
           </div>
+          <div className="flex justify-center mt-5">
+          <Link
+            href={"/anime/info"}
+            className="px-4 py-2 bg-blue-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors">
+            View Full Info
+          </Link>
+        </div>
         </section>
         {/* Relations Section */}
         <div className="w-full max-w-7xl mx-auto mt-3 px-4 sm:px-6 lg:px-8 py-4 sm:py-8 pb-4 sm:pb-16">
