@@ -30,7 +30,7 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
   const filteredAnime: Anime[] = trendingAnime.slice(0, 10);
 
   return (
-    <section className="py-12 backdrop-blur-sm relative">
+    <section className="py-3 sm:py-12 backdrop-blur-sm relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8 text-3xl font-bold text-white flex-wrap gap-5">

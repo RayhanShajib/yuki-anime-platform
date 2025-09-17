@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { NotificationDropdown } from "../ui/NotificationDropdown";
+import Image from "next/image";
 interface NavigationProps {
   isLandingPage?: boolean;
 }
@@ -148,8 +149,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-blue-500">雪</div>
-            <span className="text-xl font-semibold text-white">Yuki</span>
+            <div className=""><Image width={200} height={100} src="/logo.png" alt="Logo" /></div>
           </Link>
 
           <div className="hidden xl:flex items-center space-x-4">

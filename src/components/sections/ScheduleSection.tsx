@@ -98,7 +98,7 @@ export default function ScheduleSection() {
 
   return (
     <div className="bg-gray-900/30 bg-schedule-section">
-      <main className="pt-5">
+      <main className="pt-3 sm:pt-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <h1 className="text-4xl font-bold text-white mb-4 flex items-center txt-heading">

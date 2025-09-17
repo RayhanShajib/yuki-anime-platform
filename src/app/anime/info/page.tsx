@@ -462,7 +462,7 @@ export default function AnimeInfoPage() {
         </div>
 
         <div className="w-full max-w-7xl mx-auto">
-          <div className="relative flex flex-col gap-4 md:gap-5 w-full z-20 mx-auto my-5 mb-9 lg:my-8 lg:mb-12 md:px-2 xl:px-0 !select-none">
+          <div className="relative flex flex-col gap-4 md:gap-5 w-full z-20 mx-auto mt-8 lg:my-8 lg:mb-12 md:px-2 xl:px-0 !select-none">
             <div className="text-lg sm:text-xl lg:text-2xl font-medium lg:font-normal tracking-[0.015em] lg:tracking-normal 2xl:text-[1.6rem] font-popin items-center gap-2 flex px-2">
               <a className="flex gap-2 items-center" href="/search">
                 <div className="h-6 md:h-8 rounded-md w-[.38rem] bg-blue-600"></div>
@@ -529,7 +529,7 @@ export default function AnimeInfoPage() {
           </div>
         </div>
         {/* Relations Section */}
-        <div className="w-full max-w-7xl mx-auto mt-3 pb-16">
+        <div className="w-full max-w-7xl mx-auto mt-3 pb-10 sm:pb-16">
           <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
           <Swiper
             modules={[SwiperNavigation]}

@@ -399,7 +399,7 @@ export default function WatchPage() {
           </div>
         </div>
         {/* --- Extra Anime Info Section --- */}
-        <section className="entity-section w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-8">
+        <section className="entity-section w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-3 sm:py-8">
           <div className="poster-wrap flex flex-col md:flex-row items-center md:items-start">
             <div className="poster flex justify-center items-center">
               <Image
@@ -427,7 +427,7 @@ export default function WatchPage() {
                 </h1>
 
                 {/* Info Type Toggle Buttons */}
-                <div className="flex shrink-0 ml-auto">
+                <div className="flex shrink-0 m-auto sm:ml-auto">
                   <button
                     className={`px-3 py-1.5 rounded-l-lg text-sm font-medium transition-colors focus:outline-none ${
                       infoType === "episode"
@@ -558,7 +558,7 @@ export default function WatchPage() {
           </div>
         </section>
         {/* Relations Section */}
-        <div className="w-full max-w-7xl mx-auto mt-3 px-4 sm:px-6 lg:px-8 py-8 pb-16">
+        <div className="w-full max-w-7xl mx-auto mt-3 px-4 sm:px-6 lg:px-8 py-4 sm:py-8 pb-4 sm:pb-16">
           <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
           <Swiper
             modules={[SwiperNavigation]}
@@ -602,7 +602,7 @@ export default function WatchPage() {
           </Swiper>
         </div>
         {/* Recommended Section */}
-        <div className="w-full max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8 py-8 pb-16">
+        <div className="w-full max-w-7xl mx-auto mt-4 sm:mt-10 px-4 sm:px-6 lg:px-8 py-8 pb-5 sm:pb-16">
           <h2 className="text-2xl font-bold text-white mb-6">Recommended</h2>
           <Swiper
             modules={[SwiperNavigation]}
