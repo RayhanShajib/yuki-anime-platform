@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { RequestModal } from "../modals/RequestModal";
-import Image from "next/image";
 
 export function FooterSection() {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
