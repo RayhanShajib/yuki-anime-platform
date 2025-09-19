@@ -85,7 +85,7 @@ export default function ProfileEditPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-16">
@@ -108,7 +108,7 @@ export default function ProfileEditPage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white/90 px-4 sm:px-6 py-3 sm:py-2 rounded-lg transition-colors w-full sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
+              className="flex items-center justify-center space-x-2 btn-purple disabled:bg-blue-800 text-white/90 px-4 sm:px-6 py-3 sm:py-2 rounded-lg transition-colors m-auto sm:m-0 sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
               <Save className="h-4 w-4" />
               <span>{isSaving ? "Saving..." : "Save Changes"}</span>
             </button>
@@ -133,7 +133,7 @@ export default function ProfileEditPage() {
               </h2>
               <div className="flex items-center space-x-6">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full border-4 border-blue-500 overflow-hidden">
+                  <div className="w-24 h-24 rounded-full border-4 border-purple-600 overflow-hidden">
                     <Image
                       src={userData.avatar}
                       alt="Profile"

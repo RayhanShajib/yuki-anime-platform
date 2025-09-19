@@ -148,7 +148,7 @@ export default function GenrePage() {
   );
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-17">
@@ -274,7 +274,7 @@ export default function GenrePage() {
                 </button>
                 <button
                   type="button"
-                  className="px-6 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer w-full"
+                  className="px-6 py-2 rounded-lg btn-purple text-white/90 font-medium cursor-pointer w-full"
                   onClick={() => {
                     setTypeFilter(tempType);
                     setStatusFilter(tempStatus);
@@ -458,7 +458,7 @@ export default function GenrePage() {
                   {currentPage > 1 && (
                     <button
                       onClick={() => setCurrentPage(1)}
-                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                       aria-label="First Page">
                       &#171;
                     </button>
@@ -467,7 +467,7 @@ export default function GenrePage() {
                   {currentPage > 1 && (
                     <button
                       onClick={() => setCurrentPage(currentPage - 1)}
-                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                       aria-label="Previous Page">
                       &lt;
                     </button>
@@ -482,8 +482,8 @@ export default function GenrePage() {
                         className={cn(
                           "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
                           currentPage === pageNum
-                            ? "bg-blue-600 text-white/90"
-                            : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
+                            ? "btn-purple text-white/90"
+                            : "bg-gray-800 text-gray-300 hover:text-white hover:bg-[#7760A9]"
                         )}>
                         {pageNum}
                       </button>
@@ -493,7 +493,7 @@ export default function GenrePage() {
                   {currentPage < totalPages && (
                     <button
                       onClick={() => setCurrentPage(currentPage + 1)}
-                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-[#7760A9] transition-colors"
                       aria-label="Next Page">
                       &gt;
                     </button>
@@ -502,7 +502,7 @@ export default function GenrePage() {
                   {currentPage < totalPages && (
                     <button
                       onClick={() => setCurrentPage(totalPages)}
-                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                      className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-[#7760A9] transition-colors"
                       aria-label="Last Page">
                       &#187;
                     </button>
@@ -547,8 +547,8 @@ export default function GenrePage() {
                                 anime.status === "ongoing"
                                   ? "text-green-400"
                                   : anime.status === "completed"
-                                  ? "text-blue-400"
-                                  : "text-yellow-400"
+                                    ? "text-blue-400"
+                                    : "text-yellow-400"
                               )}>
                               {anime.status}
                             </span>

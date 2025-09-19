@@ -408,7 +408,7 @@ export const CommentSection: React.FC = () => {
                   {comment.dislikes}
                 </button>
                 <button
-                  className="text-blue-500 hover:underline reply-btn"
+                  className="text-pink hover:underline reply-btn"
                   onClick={() =>
                     setShowReply((prev) => ({
                       ...prev,
@@ -525,7 +525,7 @@ export const CommentSection: React.FC = () => {
         <p className="text-white mb-4">{totalComments(comments)} comments</p>
         <select
           id="sort-select"
-          className="border-b border-b-blue-600 p-2 text-gray-500 focus:outline-none"
+          className="border-b border-b-pink-400 p-2 text-gray-500 focus:outline-none"
           value={sortOrder}
           onChange={(event) =>
             setSortOrder(event.target.value as "newest" | "oldest")

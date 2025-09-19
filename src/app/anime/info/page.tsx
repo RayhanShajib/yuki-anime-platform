@@ -101,10 +101,10 @@ export default function AnimeInfoPage() {
   const dubCount = anime.episodesData.filter((ep) => ep.type === "dub").length;
 
   return (
-    <div className="relative bg-black overflow-hidden">
+    <div className="relative overflow-hidden">
       <Navigation />
       {/* Trailer Background */}
-      <div className="h-[18rem] relative overflow-hidden min-w-full info-page-trailer md:h-[18rem] lg:h-[25rem]">
+      <div className="h-[18rem] relative overflow-hidden min-w-full info-page-trailer md:h-[20rem] lg:h-[25rem]">
         {/* Trailer background with blur for mobile */}
         <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center trailer-blur-bg">
           <div className="w-full h-full info-trailer">
@@ -147,10 +147,10 @@ export default function AnimeInfoPage() {
             </h1>
             <span className="text-white font-normal mb-4">{anime.type}</span>
             <div className="flex gap-4 mt-4 mb-4 flex-wrap info-buttons">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-600 text-white/90 font-semibold text-md shadow-lg transition">
+              <button className="flex items-center gap-2 px-4 py-2 rounded-lg btn-purple text-white/90 font-semibold text-md shadow-lg transition">
                 <PlayCircle className="h-5 w-5" /> Watch Now
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-md shadow-lg transition">
+              <button className="flex items-center gap-2 px-4 py-2 rounded-lg btn-pink text-white font-semibold text-md shadow-lg transition">
                 <Bookmark className="h-5 w-5" /> Add to List
               </button>
             </div>
@@ -170,8 +170,8 @@ export default function AnimeInfoPage() {
                   className={cn(
                     "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                     activeTab === tab.key
-                      ? "bg-blue-600 text-white/90"
-                      : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      ? "btn-purple text-white/90"
+                      : "text-gray-300 hover:text-white hover:bg-[#7760A9]"
                   )}>
                   <span className="text-white">{tab.label}</span>
                 </button>
@@ -469,7 +469,7 @@ export default function AnimeInfoPage() {
           <div className="relative flex flex-col gap-4 md:gap-5 w-full z-20 mx-auto mt-8 lg:my-8 lg:mb-12 md:px-2 xl:px-0 !select-none">
             <div className="text-lg sm:text-xl lg:text-2xl font-medium lg:font-normal tracking-[0.015em] lg:tracking-normal 2xl:text-[1.6rem] font-popin items-center gap-2 flex px-2">
               <a className="flex gap-2 items-center" href="/search">
-                <div className="h-6 md:h-8 rounded-md w-[.38rem] bg-blue-600"></div>
+                <div className="h-6 md:h-8 rounded-md w-[.38rem] btn-pink"></div>
                 <span className="text-white">You may also like</span>
                 <span className="ml-auto md:m-0 text-white">
                   <svg

@@ -45,7 +45,7 @@ export default function TopRated() {
   });
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -72,7 +72,7 @@ export default function TopRated() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         ratingFilter === option
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option}
@@ -92,7 +92,7 @@ export default function TopRated() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         timeFilter === option.key
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -112,7 +112,7 @@ export default function TopRated() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         typeFilter === option.key
-                          ? "bg-purple-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -130,7 +130,7 @@ export default function TopRated() {
                     className={cn(
                       "p-2 rounded-md transition-colors cursor-pointer",
                       viewMode === "grid"
-                        ? "bg-gray-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <Grid className="h-4 w-4" />
@@ -140,7 +140,7 @@ export default function TopRated() {
                     className={cn(
                       "p-2 rounded-md transition-colors cursor-pointer",
                       viewMode === "list"
-                        ? "bg-gray-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <List className="h-4 w-4" />
@@ -198,7 +198,7 @@ export default function TopRated() {
                         {anime.synopsis}
                       </p>
                       <div className="flex items-center space-x-4 text-sm">
-                        <span className="text-blue-400">
+                        <span className="text-pink">
                           {anime.releaseYear}
                         </span>
                         <span className="text-gray-400">•</span>
@@ -212,12 +212,12 @@ export default function TopRated() {
                         </div>
                         <div className="flex space-x-1">
                           {anime.language.includes("sub") && (
-                            <span className="px-2 py-1 bg-green-600 text-white/90 text-xs font-bold rounded">
+                            <span className="px-2 py-1 btn-pink text-white/90 text-xs font-bold rounded">
                               SUB
                             </span>
                           )}
                           {anime.language.includes("dub") && (
-                            <span className="px-2 py-1 bg-orange-600 text-white/90 text-xs font-bold rounded">
+                            <span className="px-2 py-1 btn-purple text-white/90 text-xs font-bold rounded">
                               DUB
                             </span>
                           )}
@@ -235,7 +235,7 @@ export default function TopRated() {
             <div className="flex justify-center mt-8">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="px-6 py-3 bg-blue-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors cursor-pointer">
+                className="px-6 py-3 btn-purple text-white/90 rounded-lg font-medium transition-colors cursor-pointer">
                 {showAll ? "View Less" : "View More"}
               </button>
             </div>

@@ -122,11 +122,11 @@ export default function ProfilePage() {
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Profile Header */}
-          <div className="bg-gradient-to-r from-blue-900/20 to-blue-900/20 rounded-lg p-4 sm:p-6 border border-blue-800/30 mb-6 sm:mb-8">
+          <div className="bg-gradient-to-r from-purple-900/20 to-purple-900/20 rounded-lg p-4 sm:p-6 border border-purple-800/30 mb-6 sm:mb-8">
             <div className="flex flex-col items-center sm:items-start md:flex-row md:items-center space-y-4 sm:space-y-6 md:space-y-0 md:space-x-4">
               {/* Avatar */}
               <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-4 border-blue-500 overflow-hidden">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-4 border-purple-500 overflow-hidden">
                   <Image
                     src={userData.avatar}
                     alt={userData.username}
@@ -146,7 +146,7 @@ export default function ProfilePage() {
                   </h1>
                   <Link
                     href="/profile/edit"
-                    className="flex items-center justify-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white/90 px-3 py-2 sm:py-2 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-0">
+                    className="flex items-center justify-center space-x-2 btn-purple text-white/90 px-3 py-2 sm:py-2 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] sm:min-h-0">
                     <Edit3 className="h-3 w-3" />
                     <span className="text-sm text-white/90">Edit Profile</span>
                   </Link>
@@ -157,7 +157,7 @@ export default function ProfilePage() {
                 <div className="flex items-center text-white py-1 rounded-full text-sm font-medium">
                   <span className="mr-2">🌐</span>
                   <button
-                    className="text-white hover:text-blue-600 focus:outline-none mr-2"
+                    className="text-white hover:text-pink-400 focus:outline-none mr-2"
                     style={{ cursor: "pointer" }}
                     onClick={() => {
                       navigator.clipboard.writeText(
@@ -221,7 +221,7 @@ export default function ProfilePage() {
                     onClick={() => setActiveTab(tab.key)}
                     className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-2 py-2 sm:py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap min-h-[44px] sm:min-h-0 ${
                       activeTab === tab.key
-                        ? "bg-blue-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     }`}>
                     <Icon className="h-4 w-4 flex-shrink-0" />
@@ -365,7 +365,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
                     </div>
-                    <button className="bg-blue-600 text-white/90 px-6 py-2 rounded-md font-medium w-full mt-7">
+                    <button className="btn-purple text-white/90 px-6 py-2 rounded-md font-medium w-full mt-7">
                       Import
                     </button>
                   </div>
@@ -498,14 +498,14 @@ export default function ProfilePage() {
                 <div className="flex gap-2">
                   <button
                     className={`px-4 py-2 rounded-md text-white/90 ${
-                      hideBookmarks === "no" ? "bg-blue-600" : "bg-[#3b465b]"
+                      hideBookmarks === "no" ? "btn-purple" : "bg-[#3b465b]"
                     }`}
                     onClick={() => setHideBookmarks("no")}>
                     No
                   </button>
                   <button
                     className={`px-4 py-2 rounded-md text-white/90 ${
-                      hideBookmarks === "yes" ? "bg-blue-600" : "bg-[#3b465b]"
+                      hideBookmarks === "yes" ? "btn-purple" : "bg-[#3b465b]"
                     }`}
                     onClick={() => setHideBookmarks("yes")}>
                     Yes
@@ -521,14 +521,14 @@ export default function ProfilePage() {
                 <div className="flex gap-2">
                   <button
                     className={`px-4 py-2 rounded-md text-white/90 ${
-                      hideActivities === "no" ? "bg-blue-600" : "bg-[#3b465b]"
+                      hideActivities === "no" ? "btn-purple" : "bg-[#3b465b]"
                     }`}
                     onClick={() => setHideActivities("no")}>
                     No
                   </button>
                   <button
                     className={`px-4 py-2 rounded-md text-white/90 ${
-                      hideActivities === "yes" ? "bg-blue-600" : "bg-[#3b465b]"
+                      hideActivities === "yes" ? "btn-purple" : "bg-[#3b465b]"
                     }`}
                     onClick={() => setHideActivities("yes")}>
                     Yes
@@ -536,7 +536,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <button className="w-full bg-blue-600 hover:bg-blue-500 text-white/90 font-semibold py-3 rounded-md text-center">
+              <button className="w-full btn-purple text-white/90 font-semibold py-3 rounded-md text-center">
                 Save Changes
               </button>
             </div>
@@ -563,7 +563,7 @@ export default function ProfilePage() {
                   {/* <!-- Activity Items --> */}
                   <div className="space-y-3">
                     <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                      <span className="w-2 h-2 bg-pink-400 rounded-full"></span>
                       <span className="text-sm text-gray-400">
                         3 minutes ago
                       </span>
@@ -571,7 +571,7 @@ export default function ProfilePage() {
                         xs9yj7to4
                       </span>
                       <span className="text-sm text-gray-400">watched</span>
-                      <a href="#" className="text-blue-500 hover:underline">
+                      <a href="#" className="text-pink hover:underline">
                         EP 1134
                       </a>
                       <span className="text-sm text-white/90">
@@ -580,7 +580,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                      <span className="w-2 h-2 bg-pink-400 rounded-full"></span>
                       <span className="text-sm text-gray-400">
                         26 minutes ago
                       </span>
@@ -588,14 +588,14 @@ export default function ProfilePage() {
                         xs9yj7to4
                       </span>
                       <span className="text-sm text-gray-400">watched</span>
-                      <a href="#" className="text-blue-500 hover:underline">
+                      <a href="#" className="text-pink hover:underline">
                         EP 13
                       </a>
                       <span className="text-sm text-white/90">of LAZARUS</span>
                     </div>
 
                     <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                      <span className="w-2 h-2 bg-pink-400 rounded-full"></span>
                       <span className="text-sm text-gray-400">
                         26 minutes ago
                       </span>
@@ -603,7 +603,7 @@ export default function ProfilePage() {
                         xs9yj7to4
                       </span>
                       <span className="text-sm text-gray-400">watched</span>
-                      <a href="#" className="text-blue-500 hover:underline">
+                      <a href="#" className="text-pink hover:underline">
                         EP 12
                       </a>
                       <span className="text-sm text-white/90">
@@ -638,10 +638,10 @@ export default function ProfilePage() {
                       <h3 className="font-semibold">Koupen-chan</h3>
                       <div className="mt-1">
                         <div className="flex flex-wrap gap-2">
-                          <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
+                          <span className="btn-pink text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
                             SUB 23
                           </span>
-                          <span className="bg-purple-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
+                          <span className="btn-purple text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
                             DUB 12
                           </span>
                           <span className="text-sm text-gray-400">TV</span>
@@ -656,12 +656,12 @@ export default function ProfilePage() {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-white flex items-center">
-                    <Clock className="h-6 w-6 text-blue-500 mr-3" />
+                    <Clock className="h-6 w-6 text-pink mr-3" />
                     Recently Watched
                   </h2>
                   <Link
                     href="/continue-watching"
-                    className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors">
+                    className="flex items-center space-x-2 text-pink-400 hover:text-pink-300 transition-colors">
                     <span>View All</span>
                     <ChevronRight className="h-4 w-4" />
                   </Link>
@@ -680,7 +680,7 @@ export default function ProfilePage() {
           {activeTab === "watching" && (
             <div>
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                <PlayCircle className="h-6 w-6 text-green-500 mr-3" />
+                <PlayCircle className="h-6 w-6 text-pink mr-3" />
                 Currently Watching ({userLists.recentlyWatched.length})
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-4">
@@ -707,7 +707,7 @@ export default function ProfilePage() {
           {activeTab === "bookmark" && (
             <div>
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                <Bookmark className="h-6 w-6 text-blue-500 mr-3" />
+                <Bookmark className="h-6 w-6 text-pink mr-3" />
                 Plan to Watch ({userData.stats.planToWatch})
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-4">

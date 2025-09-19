@@ -100,7 +100,7 @@ export default function SchedulePage() {
     scheduleData[activeDay as keyof typeof scheduleData] || [];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-16">
@@ -123,8 +123,8 @@ export default function SchedulePage() {
                   className={cn(
                     "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                     activeDay === day.key
-                      ? "bg-blue-600 text-white/90 shadow-lg"
-                      : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      ? "btn-purple text-white/90 shadow-lg"
+                      : "text-gray-300 hover:text-white hover:bg-[#7760A9]"
                   )}>
                   <div className="text-center">
                     <div className="font-semibold">{day.label}</div>
@@ -152,8 +152,8 @@ export default function SchedulePage() {
                       className={cn(
                         "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                         activeDay === day.key
-                          ? "bg-blue-600 text-white/90 shadow-lg"
-                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                          ? "btn-purple text-white/90 shadow-lg"
+                          : "text-gray-300 hover:text-white hover:bg-[#7760A9]"
                       )}>
                       <div className="text-center">
                         <div className="font-semibold">{day.label}</div>
@@ -231,7 +231,7 @@ export default function SchedulePage() {
                           <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 txt-para">
                             {anime.title}
                           </h3>
-                          <p className="text-blue-400 font-medium mb-1 txt-small">
+                          <p className="text-pink font-medium mb-1 txt-small">
                             {anime.episode}
                             {anime.episodeTitle && (
                               <span className="text-gray-400 font-normal txt-small">
@@ -252,7 +252,7 @@ export default function SchedulePage() {
                         {/* Actions */}
                         <div className="flex items-center space-x-3 mt-2 sm:mt-0 flex-wrap">
                           {anime.isNew && (
-                            <span className="bg-green-600 text-white/90 px-2 py-1 rounded sm:text-xs font-bold text-[11px]">
+                            <span className="btn-purple text-white/90 px-2 py-1 rounded sm:text-xs font-bold text-[11px]">
                               NEW
                             </span>
                           )}

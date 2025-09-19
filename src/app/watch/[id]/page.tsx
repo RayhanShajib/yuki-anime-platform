@@ -85,7 +85,7 @@ export default function WatchPage() {
   const [selectedServer, setSelectedServer] = React.useState(1);
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Navigation />
       <main className="mt-[50px]">
         <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
@@ -164,7 +164,7 @@ export default function WatchPage() {
                   className={
                     `px-3 py-1 rounded font-normal shadow transition ` +
                     (selectedServer === 1
-                      ? "bg-blue-600 text-white/90 hover:bg-blue-700"
+                      ? "btn-purple text-white/90 hover:bg-blue-700"
                       : "bg-gray-700 text-white/90 hover:bg-gray-800")
                   }
                   onClick={() => setSelectedServer(1)}>
@@ -174,7 +174,7 @@ export default function WatchPage() {
                   className={
                     `px-3 py-1 rounded font-normal shadow transition ` +
                     (selectedServer === 2
-                      ? "bg-blue-700 text-white/90"
+                      ? "btn-purple text-white/90"
                       : "bg-gray-700 text-white/90 hover:bg-gray-800")
                   }
                   onClick={() => setSelectedServer(2)}>
@@ -184,7 +184,7 @@ export default function WatchPage() {
                   className={
                     `px-3 py-1 rounded font-normal shadow transition ` +
                     (selectedServer === 3
-                      ? "bg-blue-600 text-white/90 hover:bg-blue-700"
+                      ? "btn-purple text-white/90 hover:bg-blue-700"
                       : "bg-gray-700 text-white/90 hover:bg-gray-800")
                   }
                   onClick={() => setSelectedServer(3)}>
@@ -194,7 +194,7 @@ export default function WatchPage() {
                   className={
                     `px-3 py-1 rounded font-normal shadow transition ` +
                     (selectedServer === 4
-                      ? "bg-blue-700 text-white/90"
+                      ? "btn-purple text-white/90"
                       : "bg-gray-700 text-white/90 hover:bg-gray-800")
                   }
                   onClick={() => setSelectedServer(4)}>
@@ -305,12 +305,12 @@ export default function WatchPage() {
                     isListView
                       ? `relative group flex items-center w-full rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 mb-2 ${
                           selectedEpisode === ep
-                            ? "border-blue-600"
+                            ? "border-purple-600"
                             : "border-transparent"
                         }`
                       : `relative group h-15 w-full rounded-lg overflow-hidden shadow-lg cursor-pointer border-2 text-center ${
                           selectedEpisode === ep
-                            ? "border-blue-600"
+                            ? "border-purple-600"
                             : "border-transparent"
                         }`
                   }
@@ -332,7 +332,7 @@ export default function WatchPage() {
                         <span className="text-white text-sm font-semibold">
                           Ep {ep}
                         </span>
-                        <span className="text-blue-600 text-md mt-1">
+                        <span className="text-pink text-md mt-1">
                           {title}
                         </span>
                       </div>
@@ -353,7 +353,7 @@ export default function WatchPage() {
                     </>
                   )}
                   {selectedEpisode === ep && (
-                    <div className="absolute top-1 right-0 bg-blue-600 text-xs px-1 py-1 rounded font-bold text-white/90">
+                    <div className="absolute top-1 right-0 btn-purple text-xs px-1 py-1 rounded font-bold text-white/90">
                       Playing
                     </div>
                   )}
@@ -361,7 +361,7 @@ export default function WatchPage() {
               ))}
             </div>
             <div className="pt-12 text-center shadow-xl p-5">
-              <h2 className="text-md font-bold text-blue-500">
+              <h2 className="text-md font-bold text-pink">
                 How did you rate this anime?
               </h2>
               <p className="text-sm mt-1">9.26 by 3,920 reviews</p>
@@ -431,7 +431,7 @@ export default function WatchPage() {
                   <button
                     className={`px-3 py-1.5 rounded-l-lg text-sm font-medium transition-colors focus:outline-none ${
                       infoType === "episode"
-                        ? "bg-blue-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "bg-gray-600 text-white/90 hover:bg-gray-500"
                     }`}
                     onClick={() => setInfoType("episode")}>
@@ -440,7 +440,7 @@ export default function WatchPage() {
                   <button
                     className={`px-3 py-1.5 rounded-r-lg text-sm font-medium transition-colors focus:outline-none ${
                       infoType === "anime"
-                        ? "bg-blue-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "bg-gray-600 text-white/90 hover:bg-gray-500"
                     }`}
                     onClick={() => setInfoType("anime")}>
@@ -499,14 +499,14 @@ export default function WatchPage() {
               {/* Common detail grid for both anime and episode info */}
               <div className="detail grid grid-cols-1 md:grid-cols-3 gap-2 text-gray-300 text-sm mb-2">
                 <div>
-                  Country: <span className="text-blue-600">Japan</span>
+                  Country: <span className="text-pink">Japan</span>
                 </div>
                 <div>
                   Genres:{" "}
-                  <Link href={"/search"} className="text-blue-600">
+                  <Link href={"/search"} className="text-pink">
                     Comedy,
                   </Link>
-                  <Link href={"/search"} className="text-blue-600">
+                  <Link href={"/search"} className="text-pink">
                     Action
                   </Link>
                 </div>
@@ -536,19 +536,19 @@ export default function WatchPage() {
                 </div>
                 <div>
                   Studios:{" "}
-                  <Link href={"/search"} className="text-blue-600">
+                  <Link href={"/search"} className="text-pink">
                     CloverWorks
                   </Link>
                 </div>
                 <div>
                   Producer:{" "}
-                  <Link href={"/search"} className="text-blue-600">
+                  <Link href={"/search"} className="text-pink">
                     CloverWorks
                   </Link>
                 </div>
                 <div>
                   Producers:{" "}
-                  <span className="text-blue-600">
+                  <span className="text-pink">
                     Aniplex, Kodansha, Mainichi Broadcasting System, Aiming,
                     Tohan Corporation
                   </span>
@@ -559,7 +559,7 @@ export default function WatchPage() {
           <div className="flex justify-center mt-5">
           <Link
             href={"/anime/info"}
-            className="px-4 py-2 bg-blue-600 text-white/90 rounded-lg font-medium hover:bg-green-700 transition-colors">
+            className="px-4 py-2 btn-purple text-white/90 rounded-lg font-medium transition-colors">
             View Full Info
           </Link>
         </div>
