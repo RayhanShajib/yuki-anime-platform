@@ -333,7 +333,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               className="flex items-center gap-2"
               suppressHydrationWarning={true}>
               <>
-                <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
+                <span className="bg-pink-400 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
                   SUB{" "}
                   {typeof anime.subEpisodes === "number"
                     ? anime.subEpisodes

@@ -35,7 +35,7 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8 text-3xl font-bold text-white flex-wrap gap-5">
           <h2 className="text-3xl font-bold text-white flex items-center txt-heading">
-            <TrendingUp className="h-8 w-8 text-blue-500 mr-3" />
+            <TrendingUp className="h-8 w-8 text-[#F5B9D4] mr-3" />
             Trending
           </h2>
 
@@ -48,7 +48,7 @@ export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
                 className={cn(
                   "flex items-center space-x-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                   activeFilter === filter.key
-                    ? "bg-blue-600 text-white/90 shadow-lg"
+                    ? "btn-purple text-white/90 shadow-lg"
                     : "text-gray-300 hover:text-white hover:bg-gray-700"
                 )}>
                 {filter.icon}

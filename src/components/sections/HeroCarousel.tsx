@@ -92,7 +92,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               <span className="txt-para text-sm sm:text-base">
                 {currentAnime.releaseYear}
               </span>
-              <span className="px-2 py-1 bg-blue-600 rounded text-xs font-semibold txt-small">
+              <span className="px-2 py-1 rounded text-xs font-semibold txt-small btn-purple">
                 {currentAnime.type.toUpperCase()}
               </span>
             </div>
@@ -112,12 +112,12 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             </p>
 
             <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 gap-2 sm:gap-3 md:gap-3.5 flex-wrap mb-4 sm:mb-6">
-              <button className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 sm:px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer text-sm sm:text-base">
+              <button className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 sm:px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-purple">
                 <Play className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Watch Now</span>
               </button>
 
-              <button className="flex items-center space-x-1 sm:space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer text-sm sm:text-base">
+              <button className="flex items-center space-x-1 sm:space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-pink">
                 <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">Add to List</span>
                 <span className="sm:hidden">Add List</span>

@@ -50,7 +50,7 @@ export function NotificationDropdown({
           <button
             className={`px-2 py-1 rounded text-md font-medium transition-colors w-[150px] txt-small ${
               selectedType === "Anime"
-                ? "bg-blue-600 text-white"
+                ? "btn-purple text-white"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
             onClick={() => setSelectedType("Anime")}>
@@ -59,7 +59,7 @@ export function NotificationDropdown({
           <button
             className={`px-2 py-1 rounded text-md font-medium transition-colors w-[150px] txt-small ${
               selectedType === "Community"
-                ? "bg-blue-600 text-white"
+                ? "btn-purple text-white"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
             onClick={() => setSelectedType("Community")}>

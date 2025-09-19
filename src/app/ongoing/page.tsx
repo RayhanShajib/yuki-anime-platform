@@ -75,7 +75,7 @@ export default function OngoingPage() {
   );
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-16">
@@ -88,11 +88,11 @@ export default function OngoingPage() {
           </div>
 
           {/* Live Status Banner */}
-          <div className="mb-8 bg-gradient-to-r from-blue-900/20 to-blue-900/20 rounded-lg p-6 border border-green-800/30">
+          <div className="mb-8 bg-gradient-to-r from-purple-900/20 to-purple-900/20 rounded-lg p-6 border border-purple-800/30">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                <span className="text-blue-400 font-semibold">LIVE</span>
+                <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
+                <span className="text-pink font-semibold">LIVE</span>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white mb-1">
@@ -150,7 +150,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -170,7 +170,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         typeFilter === option.key
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -192,7 +192,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         genreFilter === option.key
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -210,7 +210,7 @@ export default function OngoingPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "grid"
-                        ? "bg-gray-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <Grid className="h-4 w-4" />
@@ -220,7 +220,7 @@ export default function OngoingPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "list"
-                        ? "bg-gray-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <List className="h-4 w-4" />
@@ -253,7 +253,7 @@ export default function OngoingPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="First Page">
                     &#171;
                   </button>
@@ -262,7 +262,7 @@ export default function OngoingPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Previous Page">
                     &lt;
                   </button>
@@ -277,7 +277,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         currentPage === pageNum
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {pageNum}
@@ -288,7 +288,7 @@ export default function OngoingPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Next Page">
                     &gt;
                   </button>
@@ -297,7 +297,7 @@ export default function OngoingPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(totalPages)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Last Page">
                     &#187;
                   </button>
@@ -328,7 +328,7 @@ export default function OngoingPage() {
                               <h3 className="text-lg font-semibold text-white">
                                 {anime.title}
                               </h3>
-                              <div className="flex items-center space-x-1 bg-green-600 px-2 py-1 rounded text-xs font-bold">
+                              <div className="flex items-center space-x-1 btn-purple px-2 py-1 rounded text-xs font-bold">
                                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                                 <span className="text-white/90">LIVE</span>
                               </div>
@@ -337,7 +337,7 @@ export default function OngoingPage() {
                               {anime.synopsis}
                             </p>
                             <div className="flex items-center space-x-3 text-sm flex-wrap">
-                              <span className="text-blue-400">
+                              <span className="text-pink">
                                 {anime.releaseYear}
                               </span>
                               <span className="text-gray-400">•</span>
@@ -345,7 +345,7 @@ export default function OngoingPage() {
                                 {anime.type}
                               </span>
                               <span className="text-gray-400">•</span>
-                              <span className="text-green-400 font-medium">
+                              <span className="text-pink font-medium">
                                 Episode {Math.floor(Math.random() * 20) + 1}
                               </span>
                               <span className="text-gray-400">•</span>
@@ -358,10 +358,10 @@ export default function OngoingPage() {
                             </div>
                           </div>
                           <div className="flex space-x-2">
-                            <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
+                            <button className="btn-purple text-white/90 px-4 py-2 rounded text-sm transition-colors">
                               Watch
                             </button>
-                            <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded text-sm transition-colors">
+                            <button className="btn-pink text-white/90 px-4 py-2 rounded text-sm transition-colors">
                               Info
                             </button>
                           </div>
@@ -377,7 +377,7 @@ export default function OngoingPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="First Page">
                     &#171;
                   </button>
@@ -386,7 +386,7 @@ export default function OngoingPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Previous Page">
                     &lt;
                   </button>
@@ -401,7 +401,7 @@ export default function OngoingPage() {
                       className={cn(
                         "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         currentPage === pageNum
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {pageNum}
@@ -412,7 +412,7 @@ export default function OngoingPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Next Page">
                     &gt;
                   </button>
@@ -421,7 +421,7 @@ export default function OngoingPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(totalPages)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Last Page">
                     &#187;
                   </button>

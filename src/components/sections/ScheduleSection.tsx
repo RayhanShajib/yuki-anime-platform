@@ -116,8 +116,8 @@ export default function ScheduleSection() {
                   className={cn(
                     "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                     activeDay === day.key
-                      ? "bg-blue-600 text-white/90 shadow-lg"
-                      : "text-gray-300 hover:text-white hover:bg-gray-700"
+                      ? "btn-purple text-white/90 shadow-lg"
+                      : "text-gray-300 hover:text-white hover:btn-[#7760A9]"
                   )}>
                   <div className="text-center">
                     <div className="font-semibold">{day.label}</div>
@@ -145,8 +145,8 @@ export default function ScheduleSection() {
                       className={cn(
                         "flex-shrink-0 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
                         activeDay === day.key
-                          ? "bg-blue-600 text-white/90 shadow-lg"
-                          : "text-gray-300 hover:text-white hover:bg-gray-700"
+                          ? "btn-purple text-white/90 shadow-lg"
+                          : "text-gray-300 hover:text-white hover:btn-[#7760A9]"
                       )}>
                       <div className="text-center">
                         <div className="font-semibold">{day.label}</div>
@@ -219,7 +219,7 @@ export default function ScheduleSection() {
                           <h3 className="text-xl font-semibold text-white mb-1 txt-para">
                             {anime.title}
                           </h3>
-                          <p className="text-blue-600 font-medium mb-1 txt-small">
+                          <p className="text-[#F5B9D4] font-medium mb-1 txt-small">
                             {anime.episode}
                             {anime.episodeTitle && (
                               <span className="text-gray-300 font-normal">

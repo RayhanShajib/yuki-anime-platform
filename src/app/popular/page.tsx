@@ -42,7 +42,7 @@ export default function PopularPage() {
   );
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-16">
@@ -55,7 +55,7 @@ export default function PopularPage() {
           </div>
 
           {/* Trending Banner */}
-          <div className="mb-8 bg-gradient-to-r from-blue-900/20 to-blue-900/20 rounded-lg p-3 border border-blue-800/30">
+          <div className="mb-8 bg-gradient-to-r from-purple-900/20 to-purple-900/20 rounded-lg p-3 border border-purple-800/30">
             <div className="flex items-center space-x-4 flex-wrap gap-2.5">
               <div className="flex-shrink-0 anime-img">
                 {filteredAnime[0]?.poster && (
@@ -70,7 +70,7 @@ export default function PopularPage() {
               </div>
               <div>
                 <div className="flex items-center space-x-2 mb-2 flex-wrap">
-                  <span className="text-blue-400 font-semibold">
+                  <span className="text-pink font-semibold">
                     TRENDING NOW
                   </span>
                 </div>
@@ -101,7 +101,7 @@ export default function PopularPage() {
                       className={cn(
                         "flex items-center space-x-2 px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         timeFilter === option.key
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.icon}
@@ -122,7 +122,7 @@ export default function PopularPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         typeFilter === option.key
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -140,7 +140,7 @@ export default function PopularPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "grid"
-                        ? "bg-gray-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <Grid className="h-4 w-4" />
@@ -150,7 +150,7 @@ export default function PopularPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "list"
-                        ? "bg-gray-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <List className="h-4 w-4" />
@@ -183,7 +183,7 @@ export default function PopularPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="First Page">
                     &#171;
                   </button>
@@ -192,7 +192,7 @@ export default function PopularPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Previous Page">
                     &lt;
                   </button>
@@ -207,7 +207,7 @@ export default function PopularPage() {
                       className={cn(
                         "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         currentPage === pageNum
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {pageNum}
@@ -218,7 +218,7 @@ export default function PopularPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Next Page">
                     &gt;
                   </button>
@@ -227,7 +227,7 @@ export default function PopularPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(totalPages)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Last Page">
                     &#187;
                   </button>
@@ -260,7 +260,7 @@ export default function PopularPage() {
                           {anime.synopsis}
                         </p>
                         <div className="flex items-center gap-3 text-sm flex-wrap">
-                          <span className="text-blue-400">
+                          <span className="text-pink">
                             {anime.releaseYear}
                           </span>
                           <span className="text-gray-400">•</span>
@@ -273,7 +273,7 @@ export default function PopularPage() {
                             <span className="text-white">{anime.rating}</span>
                           </div>
                           <span className="text-gray-400">•</span>
-                          <span className="text-red-400">
+                          <span className="text-pink">
                             {anime.popularity.toLocaleString()} views
                           </span>
                         </div>
@@ -288,7 +288,7 @@ export default function PopularPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="First Page">
                     &#171;
                   </button>
@@ -297,7 +297,7 @@ export default function PopularPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Previous Page">
                     &lt;
                   </button>
@@ -312,7 +312,7 @@ export default function PopularPage() {
                       className={cn(
                         "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         currentPage === pageNum
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {pageNum}
@@ -323,7 +323,7 @@ export default function PopularPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Next Page">
                     &gt;
                   </button>
@@ -332,7 +332,7 @@ export default function PopularPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(totalPages)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Last Page">
                     &#187;
                   </button>

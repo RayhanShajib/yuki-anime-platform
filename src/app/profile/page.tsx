@@ -116,7 +116,7 @@ export default function ProfilePage() {
   >("import");
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-16">

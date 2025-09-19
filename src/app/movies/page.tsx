@@ -64,7 +64,7 @@ export default function MoviesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-16">
@@ -77,7 +77,7 @@ export default function MoviesPage() {
           </div>
 
           {/* Featured Movie Banner */}
-          <div className="mb-8 bg-gradient-to-r from-blue-900/20 to-blue-900/20 rounded-lg overflow-hidden border border-blue-800/30">
+          <div className="mb-8 bg-gradient-to-r from-purple-900/20 to-purple-900/20 rounded-lg overflow-hidden border border-purple-800/30">
             <div className="flex flex-col md:flex-row">
               <div className="md:w-1/3">
                 {/* Use Next.js Image for optimized images */}
@@ -98,10 +98,10 @@ export default function MoviesPage() {
               </div>
               <div className="md:w-2/3 p-6 flex flex-col justify-center">
                 <div className="flex items-center space-x-2 mb-3">
-                  <span className="bg-blue-600 text-white/90 px-3 py-1 rounded text-sm font-bold">
+                  <span className="btn-purple text-white/90 px-3 py-1 rounded text-sm font-bold">
                     FEATURED
                   </span>
-                  <span className="bg-gray-700 text-white/90 px-2 py-1 rounded text-xs">
+                  <span className="btn-pink text-white/90 px-2 py-1 rounded text-xs">
                     MOVIE
                   </span>
                 </div>
@@ -126,10 +126,10 @@ export default function MoviesPage() {
                   </div>
                 </div>
                 <div className="flex space-x-3 flex-wrap gap-3">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-6 py-2 rounded-lg transition-colors font-semibold">
+                  <button className="btn-purple hover:bg-blue-700 text-white/90 px-6 py-2 rounded-lg transition-colors font-semibold">
                     Watch Now
                   </button>
-                  <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-6 py-2 rounded-lg transition-colors">
+                  <button className="btn-pink hover:bg-gray-600 text-white/90 px-6 py-2 rounded-lg transition-colors">
                     More Info
                   </button>
                 </div>
@@ -153,7 +153,7 @@ export default function MoviesPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         sortBy === option.key
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -175,7 +175,7 @@ export default function MoviesPage() {
                       className={cn(
                         "px-3 py-1 rounded-md text-sm font-medium transition-colors",
                         genreFilter === option.key
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {option.label}
@@ -193,7 +193,7 @@ export default function MoviesPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "grid"
-                        ? "bg-gray-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <Grid className="h-4 w-4" />
@@ -203,7 +203,7 @@ export default function MoviesPage() {
                     className={cn(
                       "p-2 rounded-md transition-colors",
                       viewMode === "list"
-                        ? "bg-gray-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-700"
                     )}>
                     <List className="h-4 w-4" />
@@ -236,7 +236,7 @@ export default function MoviesPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="First Page">
                     &#171;
                   </button>
@@ -245,7 +245,7 @@ export default function MoviesPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Previous Page">
                     &lt;
                   </button>
@@ -260,7 +260,7 @@ export default function MoviesPage() {
                       className={cn(
                         "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         currentPage === pageNum
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {pageNum}
@@ -271,7 +271,7 @@ export default function MoviesPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Next Page">
                     &gt;
                   </button>
@@ -280,7 +280,7 @@ export default function MoviesPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(totalPages)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Last Page">
                     &#187;
                   </button>
@@ -319,7 +319,7 @@ export default function MoviesPage() {
                               {movie.synopsis}
                             </p>
                             <div className="flex items-center space-x-3 text-sm">
-                              <span className="text-blue-400">
+                              <span className="text-pink">
                                 {movie.releaseYear}
                               </span>
                               <span className="text-gray-400">•</span>
@@ -336,10 +336,10 @@ export default function MoviesPage() {
                             </div>
                           </div>
                           <div className="flex space-x-2">
-                            <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded text-sm transition-colors">
+                            <button className="btn-purple text-white/90 px-4 py-2 rounded text-sm transition-colors">
                               Watch
                             </button>
-                            <button className="bg-gray-700 hover:bg-gray-600 text-white/90 px-4 py-2 rounded text-sm transition-colors">
+                            <button className="btn-pink text-white/90 px-4 py-2 rounded text-sm transition-colors">
                               Info
                             </button>
                           </div>
@@ -355,7 +355,7 @@ export default function MoviesPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="First Page">
                     &#171;
                   </button>
@@ -364,7 +364,7 @@ export default function MoviesPage() {
                 {currentPage > 1 && (
                   <button
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Previous Page">
                     &lt;
                   </button>
@@ -379,7 +379,7 @@ export default function MoviesPage() {
                       className={cn(
                         "px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
                         currentPage === pageNum
-                          ? "bg-blue-600 text-white/90"
+                          ? "btn-purple text-white/90"
                           : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
                       )}>
                       {pageNum}
@@ -390,7 +390,7 @@ export default function MoviesPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Next Page">
                     &gt;
                   </button>
@@ -399,7 +399,7 @@ export default function MoviesPage() {
                 {currentPage < totalPages && (
                   <button
                     onClick={() => setCurrentPage(totalPages)}
-                    className="px-3 py-2 rounded-md bg-gray-700 text-white hover:bg-blue-600 transition-colors"
+                    className="px-3 py-2 rounded-md btn-purple text-white transition-colors"
                     aria-label="Last Page">
                     &#187;
                   </button>

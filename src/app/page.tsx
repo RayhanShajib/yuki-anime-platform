@@ -19,7 +19,7 @@ export default function Home() {
   const continueWatching: never[] = []; // Empty for new users
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-purple">
       {/* Navigation - transparent background on home page */}
       <Navigation isLandingPage={true} />
 

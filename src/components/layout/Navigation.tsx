@@ -149,7 +149,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <div className=""><Image width={200} height={100} src="/logo.png" alt="Logo" /></div>
+            <div className=""><Image width={200} height={100} src="/logo.svg" alt="Logo" /></div>
           </Link>
 
           <div className="hidden xl:flex items-center space-x-4">
@@ -198,12 +198,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           <div className="hidden xl:flex items-center space-x-6">
             <Link
               href="/"
-              className="text-white hover:text-blue-400 transition-colors">
+              className="text-white hover:text-purple-400 transition-colors">
               Home
             </Link>
 
             <div className="relative group">
-              <button className="text-white hover:text-blue-400 transition-colors flex items-center space-x-1">
+              <button className="text-white hover:text-purple-400 transition-colors flex items-center space-x-1">
                 <span>Browse</span>
                 <svg
                   className="w-4 h-4"
@@ -250,7 +250,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             </div>
 
             <div className="relative group">
-              <button className="text-white hover:text-blue-400 transition-colors flex items-center space-x-1">
+              <button className="text-white hover:text-purple-400 transition-colors flex items-center space-x-1">
                 <span>Genre</span>
                 <svg
                   className="w-4 h-4"
@@ -297,12 +297,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
             <Link
               href="/anime/info"
-              className="text-white hover:text-blue-400 transition-colors">
+              className="text-white hover:text-purple-400 transition-colors">
               Random
             </Link>
             <Link
               href="/schedule"
-              className="text-white hover:text-blue-400 transition-colors">
+              className="text-white hover:text-purple-400 transition-colors">
               Schedule
             </Link>
           </div>
@@ -313,8 +313,8 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 <button
                   className={`px-2.5 py-1 rounded-l-2xl text-xs font-semibold transition-colors focus:outline-none ${
                     language === "en"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-700 text-blue-200 hover:bg-blue-500 hover:text-white"
+                      ? "btn-purple text-white"
+                      : "bg-gray-700 text-blue-200 hover:bg-[#7760A9] hover:text-white"
                   }`}
                   onClick={() => setLanguage("en")}
                   aria-pressed={language === "en"}>
@@ -323,8 +323,8 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 <button
                   className={`px-2.5 py-1 rounded-r-2xl text-xs font-semibold transition-colors focus:outline-none ${
                     language === "jp"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-700 text-white hover:bg-blue-500 hover:text-white"
+                      ? "btn-purple text-white"
+                      : "bg-gray-700 text-white hover:bg-[#7760A9] hover:text-white"
                   }`}
                   onClick={() => setLanguage("jp")}
                   aria-pressed={language === "jp"}>
@@ -407,12 +407,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="hidden xl:flex text-white login-btn hover:text-blue-400 transition-colors">
+                  className="hidden xl:flex text-white login-btn hover:text-purple-400 transition-colors">
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="hidden xl:flex bg-blue-600 register-btn hover:bg-blue-700 text-white/90 px-3.5 py-1 rounded-lg transition-colors">
+                  className="hidden xl:flex register-btn text-white/90 px-3.5 py-1 rounded-lg transition-colors btn-purple">
                   Register
                 </Link>
                 {/* Notification Icon and Dropdown */}

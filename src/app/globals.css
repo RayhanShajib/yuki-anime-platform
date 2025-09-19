@@ -9,15 +9,6 @@
   --muted: #374151;
 }
 
-.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --primary: #3b82f6;
-  --secondary: #1f2937;
-  --accent: #f59e0b;
-  --muted: #374151;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -33,10 +24,24 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.btn-purple{
+  background-color: #7760A9 !important;
+  color: #fff !important;
+}
+.btn-pink{
+  background-color: #FB64B6 !important;
+  color: #fff !important;
+}
+.text-pink{
+  color: #F5B9D4 !important;
+}
+body{
+  background: linear-gradient(to right, #000000 0%, #1a0e26 50%, #000000 100%) !important;
+}
+
 /* Default dark theme */
 body,
 .dark {
-  background-color: #0a0a0a;
   color: #ededed;
 }
 
