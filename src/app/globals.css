@@ -45,8 +45,8 @@ body,
   color: #ededed;
 }
 
-.dark .bg-navbar {
-  background-color: #000 !important;
+.bg-navbar {
+  background: linear-gradient(to right, #000000 0%, #1a0e26 50%, #000000 100%) !important;
 }
 
 /* Custom scrollbar */

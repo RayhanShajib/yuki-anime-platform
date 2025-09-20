@@ -142,7 +142,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       className={`fixed top-0 left-0 right-0 z-100 transition-all duration-300 ${
         isLandingPage
           ? isScrolled
-            ? "bg-black/90 bg-navbar backdrop-blur-md shadow-lg"
+            ? "bg-navbar backdrop-blur-md shadow-lg"
             : "bg-transparent"
           : "bg-navbar shadow-lg"
       }`}>

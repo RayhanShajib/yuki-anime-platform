@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -50,13 +51,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-blue-900 flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10">
       <div className="max-w-md w-full space-y-8">
         {/* Logo */}
         <div className="text-center">
           <Link href="/" className="inline-flex items-center space-x-2">
-            <div className="text-4xl font-bold text-blue-500">雪</div>
-            <span className="text-2xl font-semibold text-white/90">Yuki</span>
+            <div><Image width={200} height={100} src="/logo.png" alt="Logo" /></div>
           </Link>
           <h2 className="mt-6 text-3xl font-bold text-white/90">
             Welcome back
@@ -159,7 +159,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => handleFormSwitch(true)}
-                    className="text-blue-400 hover:text-blue-300">
+                    className="text-pink">
                     Forgot your password?
                   </button>
                 </div>
@@ -168,7 +168,7 @@ export default function LoginPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium btn-purple focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                 Sign in
               </button>
             </form>
@@ -239,7 +239,7 @@ export default function LoginPage() {
               Don&#39;t have an account?{" "}
               <Link
                 href="/register"
-                className="text-blue-400 hover:text-blue-300 font-medium">
+                className="text-pink font-medium">
                 Sign up for free
               </Link>
             </p>

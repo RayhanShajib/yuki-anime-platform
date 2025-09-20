@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff, User, Lock, Mail, Check } from 'lucide-react';
+import Image from 'next/image';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,8 +31,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="text-center">
           <Link href="/" className="inline-flex items-center space-x-2">
-            <div className="text-4xl font-bold text-blue-500">雪</div>
-            <span className="text-2xl font-semibold text-white/90">Yuki</span>
+            <div><Image width={200} height={100} src="/logo.png" alt="Logo" /></div>
           </Link>
           <h2 className="mt-6 text-3xl font-bold text-white/90 txt-heading">Create your account</h2>
           <p className="mt-2 text-sm text-gray-400">
@@ -184,11 +184,11 @@ export default function RegisterPage() {
               />
               <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-400">
                 I agree to the{' '}
-                <Link href="/terms" className="text-blue-400 hover:text-blue-300">
+                <Link href="/terms" className="text-pink">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-blue-400 hover:text-blue-300">
+                <Link href="/privacy" className="text-pink">
                   Privacy Policy
                 </Link>
               </label>
@@ -198,7 +198,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={!formData.agreeToTerms || !passwordValid || !passwordsMatch}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium btn-purple focus:outline-none focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Create account
             </button>
@@ -210,7 +210,7 @@ export default function RegisterPage() {
         <div className="text-center">
           <p className="text-sm text-gray-400">
             Already have an account?{' '}
-            <Link href="/login" className="text-blue-400 hover:text-blue-300 font-medium">
+            <Link href="/login" className="text-pink font-medium">
               Sign in
             </Link>
           </p>
