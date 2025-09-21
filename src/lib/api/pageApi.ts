@@ -96,14 +96,12 @@ export const pageApi = {
 
   // Anime Info Page
   getAnimeInfoPageData: cache(async (id: string) => {
-    const [details, recommendations] = await Promise.all([
-      fetchFromApi(`/anime/${id}`),
-      fetchFromApi(`/anime/${id}/recommendations`),
+    const [details] = await Promise.all([
+      fetchFromApi(`/anime/${id}/`)
     ]);
 
     return {
-      details,
-      recommendations,
+      details
     };
   }),
 

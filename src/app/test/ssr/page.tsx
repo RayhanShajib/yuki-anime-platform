@@ -18,7 +18,7 @@ export default async function TestSSRPage() {
     // Test 3: Anime Info Page Data
     console.log('\n3. Testing Anime Info Page Data:');
     // Using a sample anime ID - replace with a real one from your API
-    const animeData = await pageApi.getAnimeInfoPageData('1');
+    const animeData = await pageApi.getAnimeInfoPageData('219');
     console.log('Anime Info Data:', JSON.stringify(animeData, null, 2));
 
     return (
