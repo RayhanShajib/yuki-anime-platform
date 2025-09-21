@@ -48,7 +48,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   if (!currentAnime) return null;
 
   return (
-    <div className="relative w-full h-[45vh] sm:h-[50vh] md:h-[55vh] lg:h-[65vh] xl:h-[650px] min-h-[350px] max-w-[1800px] mx-auto carousel overflow-hidden">
+    <div className="relative w-full h-[45vh] sm:h-[55vh] md:h-[65vh] lg:h-[75vh] xl:h-[750px] min-h-[350px] max-w-[1800px] mx-auto carousel overflow-hidden">
       <div className="absolute inset-0">
         {currentAnime.trailer ? (
           <video
