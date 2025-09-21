@@ -104,9 +104,9 @@ export default function AnimeInfoPage() {
     <div className="relative overflow-hidden">
       <Navigation />
       {/* Trailer Background */}
-      <div className="h-[18rem] relative overflow-hidden min-w-full info-page-trailer md:h-[20rem] lg:h-[25rem]">
+      <div className="h-[20rem] relative overflow-hidden min-w-full info-page-trailer md:h-[23rem] lg:h-[30rem]">
         {/* Trailer background with blur for mobile */}
-        <div className="absolute top-0 h-[100vh] trailer size-full object-cover pointer-events-none object-center trailer-blur-bg">
+        <div className="absolute top-0 h-full trailer size-full object-cover pointer-events-none object-center trailer-blur-bg">
           <div className="w-full h-full info-trailer">
             <iframe
               src={anime.trailer}
@@ -120,7 +120,7 @@ export default function AnimeInfoPage() {
         <div className="info-grad z-0"></div>
         <div className="absolute inset-0 hero-gradient" />
         {/* Left blur gradient */}
-        <div className="absolute left-0 top-0 bottom-0 w-110 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 hero-left-gradient w-110 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* Main Content */}
@@ -577,22 +577,6 @@ export default function AnimeInfoPage() {
           </Swiper>
         </div>
       </main>
-      <style jsx>{`
-        @media (max-width: 600px) {
-          .trailer-blur-bg {
-            filter: blur(32px);
-            transition: filter 0.3s;
-          }
-          .info-blur-bg {
-            position: relative;
-          }
-
-          .info-blur-bg > * {
-            position: relative;
-            z-index: 1;
-          }
-        }
-      `}</style>
       <FooterSection />
     </div>
   );

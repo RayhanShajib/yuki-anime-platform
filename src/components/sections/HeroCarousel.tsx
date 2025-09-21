@@ -157,13 +157,13 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
           <div className="flex flex-col space-y-1">
             <button
               onClick={goToPrevious}
-              className="p-1.5 sm:p-2 bg-gray-900/50 backdrop-blur-sm text-white/90 rounded-full hover:bg-black/70 transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
               aria-label="Previous slide">
               <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             </button>
             <button
               onClick={goToNext}
-              className="p-1.5 sm:p-2 bg-gray-900/50 backdrop-blur-sm text-white/90 rounded-full hover:bg-black/70 transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
               aria-label="Next slide">
               <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
             </button>
@@ -172,7 +172,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
           {/* Mute/Unmute Button */}
           <button
             onClick={() => setIsMuted(!isMuted)}
-            className="p-2 sm:p-3 bg-gray-900/50 backdrop-blur-sm text-white/90 rounded-full hover:bg-black/70 transition-colors cursor-pointer"
+            className="p-2 sm:p-3 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
             aria-label={isMuted ? "Unmute" : "Mute"}>
             {isMuted ? (
               <VolumeX className="h-3 w-3 sm:h-4 sm:w-4" />

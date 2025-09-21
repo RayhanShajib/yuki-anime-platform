@@ -226,6 +226,9 @@ button {
   .carousel {
     height: 100%;
   }
+  .hero-gradient, .hero-left-gradient{
+    display: none;
+  }
 }
 @media screen and (max-width: 350px) {
   .trending-navigation-tabs {
@@ -283,9 +286,6 @@ button {
   }
   .info-buttons {
     justify-content: center;
-  }
-  .info-trailer {
-    display: none !important;
   }
   .info-page-main-content {
     margin-top: -250px !important;
@@ -380,8 +380,8 @@ button {
 .relations-swiper .swiper-button-prev,
 .recommended-swiper .swiper-button-next,
 .recommended-swiper .swiper-button-prev {
-  color: #3b82f6 !important;
-  background: rgba(0, 0, 0, 0.8) !important;
+  color: #fff !important;
+  background: #7760A9  !important;
   border-radius: 50% !important;
   width: 40px !important;
   height: 40px !important;
@@ -393,7 +393,7 @@ button {
 .relations-swiper .swiper-button-prev:hover,
 .recommended-swiper .swiper-button-next:hover,
 .recommended-swiper .swiper-button-prev:hover {
-  color: #3b82f6 !important;
+  color: #fff !important;
   transform: scale(1.1) !important;
 }
 
