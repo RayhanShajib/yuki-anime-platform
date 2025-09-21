@@ -159,7 +159,6 @@ https://picsum.photos/160/90?random=12`;
             },
           ],
           image: posterImage || "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg",
-          title: videoTitle || "Yuki Anime Platform",
           primary: "html5",
           stretching: "uniform",
           playbackRateControls: [0.5, 1, 1.5, 2],
