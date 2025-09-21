@@ -120,7 +120,7 @@ export default function AnimeInfoPage() {
         <div className="info-grad z-0"></div>
         <div className="absolute inset-0 hero-gradient" />
         {/* Left blur gradient */}
-        <div className="absolute left-0 top-0 bottom-0 hero-left-gradient w-110 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 hero-left-gradient w-110 bg-gradient-to-r from-brand-primary/80 via-brand-primary/50 to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* Main Content */}
@@ -157,7 +157,7 @@ export default function AnimeInfoPage() {
           </div>
         </div>
         {/* Bottom blur gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-70 bg-gradient-to-t from-black via-black/80 to-transparent z-0 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-70 bg-gradient-to-t from-brand-primary/80 via-brand-primary/50 to-transparent z-0 pointer-events-none" />
         {/* Info & Tabs */}
         <div className="flex-1 w-full mt-12">
           {/* Tabs */}
