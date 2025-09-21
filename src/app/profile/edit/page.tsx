@@ -8,6 +8,7 @@ import {
   Github,
   Globe,
   Instagram,
+  Lock,
   Mail,
   MapPin,
   Save,
@@ -50,6 +51,13 @@ export default function ProfileEditPage() {
   const [userData, setUserData] = useState(initialUserData);
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordError, setPasswordError] = useState("");
 
   const handleInputChange = (
     field: string,
@@ -83,7 +91,32 @@ export default function ProfileEditPage() {
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
+  const handlePasswordInputChange = (field: string, value: string) => {
+    setPasswordData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    setPasswordError("");
+  };
 
+
+  const handlePasswordSave = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError("New password and confirm password do not match");
+      return;
+    }
+    if (passwordData.newPassword.length < 8) {
+      setPasswordError("New password must be at least 8 characters long");
+      return;
+    }
+    setIsSaving(true);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setIsSaving(false);
+    setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+    setIsPasswordModalOpen(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -105,13 +138,22 @@ export default function ProfileEditPage() {
               </h1>
             </div>
 
-            <button
+         <div className="flex gap-4 flex-wrap">
+             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center justify-center space-x-2 btn-purple disabled:bg-blue-800 text-white/90 px-4 sm:px-6 py-3 sm:py-2 rounded-lg transition-colors m-auto sm:m-0 sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
+              className="flex items-center justify-center space-x-2 btn-purple disabled:bg-blue-800 text-white/90 px-4 sm:px-3 py-3 sm:py-1 rounded-lg transition-colors m-auto sm:m-0 sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
               <Save className="h-4 w-4" />
               <span>{isSaving ? "Saving..." : "Save Changes"}</span>
             </button>
+            <button
+              onClick={() => setIsPasswordModalOpen(true)}
+              className="flex items-center justify-center space-x-2 btn-purple text-white/90 px-4 sm:px-3 py-3 sm:py-1 rounded-lg transition-colors min-h-[48px] text-sm sm:text-base touch-manipulation"
+            >
+              <Lock className="h-4 w-4" />
+              <span>Change Password</span>
+            </button>
+         </div>
           </div>
 
           {/* Success Message */}
@@ -121,6 +163,89 @@ export default function ProfileEditPage() {
               <span className="text-green-400">
                 Profile updated successfully!
               </span>
+            </div>
+          )}
+
+          {/* Password Change Modal */}
+          {isPasswordModalOpen && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+                <h2 className="text-xl font-bold text-white mb-4">
+                  Change Password
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Old Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="password"
+                        value={passwordData.oldPassword}
+                        onChange={(e) =>
+                          handlePasswordInputChange("oldPassword", e.target.value)
+                        }
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      New Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="password"
+                        value={passwordData.newPassword}
+                        onChange={(e) =>
+                          handlePasswordInputChange("newPassword", e.target.value)
+                        }
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Confirm New Password
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="password"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) =>
+                          handlePasswordInputChange(
+                            "confirmPassword",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      />
+                    </div>
+                  </div>
+                  {passwordError && (
+                    <div className="text-red-400 text-sm">{passwordError}</div>
+                  )}
+                </div>
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button
+                    onClick={() => setIsPasswordModalOpen(false)}
+                    className="px-4 py-2 bg-gray-600 text-white/90 rounded-lg hover:bg-gray-500 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handlePasswordSave}
+                    disabled={isSaving}
+                    className="flex items-center justify-center space-x-2 btn-purple disabled:bg-blue-800 text-white/90 px-4 py-2 rounded-lg transition-colors"
+                  >
+                    <Save className="h-4 w-4" />
+                    <span>{isSaving ? "Saving..." : "Save Password"}</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
