@@ -127,12 +127,12 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         </div>
       </div>
 
-      {/* Left gradient overlay - full black at left edge */}
+      {/* Left gradient overlay - full dark purple at left edge */}
       <div
         className="absolute inset-0 z-0 pointer-events-none carousel"
         style={{
           background:
-            "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 15%, rgba(0,0,0,0.75) 25%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.15) 65%, rgba(0,0,0,0.08) 75%, rgba(0,0,0,0.03) 85%, rgba(0,0,0,0) 100%)",
+            "linear-gradient(to right, rgba(23,17,37,1) 0%, rgba(23,17,37,0.85) 15%, rgba(23,17,37,0.75) 25%, rgba(23,17,37,0.6) 35%, rgba(23,17,37,0.45) 45%, rgba(23,17,37,0.3) 55%, rgba(23,17,37,0.15) 65%, rgba(23,17,37,0.08) 75%, rgba(23,17,37,0.03) 85%, rgba(23,17,37,0) 100%)",
         }}></div>
 
       {/* Right tiny gradient overlay for xl screens only (>1800px) */}
@@ -140,7 +140,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         className="hidden xl:block absolute inset-0 z-0 pointer-events-none carousel"
         style={{
           background:
-            "linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 5%, rgba(0,0,0,0.4) 10%, rgba(0,0,0,0.2) 15%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0) 65%, rgba(0,0,0,0) 75%, rgba(0,0,0,0) 85%, rgba(0,0,0,0) 100%)",
+            "linear-gradient(to left, rgba(23,17,37,1) 0%, rgba(23,17,37,0.7) 5%, rgba(23,17,37,0.4) 10%, rgba(23,17,37,0.2) 15%, rgba(23,17,37,0) 45%, rgba(23,17,37,0) 55%, rgba(23,17,37,0) 65%, rgba(23,17,37,0) 75%, rgba(23,17,37,0) 85%, rgba(23,17,37,0) 100%)",
         }}></div>
 
       {/* Bottom gradient overlay */}
@@ -148,7 +148,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         className="absolute inset-0 z-0 pointer-events-none carousel"
         style={{
           background:
-            "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 5%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0) 65%, rgba(0,0,0,0) 75%, rgba(0,0,0,0) 85%, rgba(0,0,0,0) 100%)",
+            "linear-gradient(to top, rgba(23,17,37,1) 0%, rgba(23,17,37,0.5) 5%, rgba(23,17,37,0.2) 10%, rgba(23,17,37,0) 15%, rgba(23,17,37,0) 45%, rgba(23,17,37,0) 55%, rgba(23,17,37,0) 65%, rgba(23,17,37,0) 75%, rgba(23,17,37,0) 85%, rgba(23,17,37,0) 100%)",
         }}></div>
 
       {currentAnime.trailer && (
