@@ -138,22 +138,22 @@ export default function ProfileEditPage() {
               </h1>
             </div>
 
-         <div className="flex gap-4 flex-wrap">
-             <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="flex items-center justify-center space-x-2 btn-purple disabled:bg-blue-800 text-white/90 px-4 sm:px-3 py-3 sm:py-1 rounded-lg transition-colors m-auto sm:m-0 sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
-              <Save className="h-4 w-4" />
-              <span>{isSaving ? "Saving..." : "Save Changes"}</span>
-            </button>
-            <button
-              onClick={() => setIsPasswordModalOpen(true)}
-              className="flex items-center justify-center space-x-2 btn-purple text-white/90 px-4 sm:px-3 py-3 sm:py-1 rounded-lg transition-colors min-h-[48px] text-sm sm:text-base touch-manipulation"
-            >
-              <Lock className="h-4 w-4" />
-              <span>Change Password</span>
-            </button>
-         </div>
+            <div className="flex gap-4 flex-wrap">
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex items-center justify-center space-x-2 btn-purple disabled:bg-blue-800 text-white/90 px-4 sm:px-3 py-3 sm:py-1 rounded-lg transition-colors m-auto sm:m-0 sm:w-auto min-h-[48px] text-sm sm:text-base touch-manipulation">
+                <Save className="h-4 w-4" />
+                <span>{isSaving ? "Saving..." : "Save Changes"}</span>
+              </button>
+              <button
+                onClick={() => setIsPasswordModalOpen(true)}
+                className="flex items-center justify-center space-x-2 btn-purple text-white/90 px-4 sm:px-3 py-3 sm:py-1 rounded-lg transition-colors min-h-[48px] text-sm sm:text-base touch-manipulation"
+              >
+                <Lock className="h-4 w-4" />
+                <span>Change Password</span>
+              </button>
+            </div>
           </div>
 
           {/* Success Message */}
@@ -343,23 +343,6 @@ export default function ProfileEditPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Gender
-                  </label>
-                  <select
-                    value={userData.gender}
-                    onChange={(e) =>
-                      handleInputChange("gender", e.target.value)
-                    }
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
-                    <option value="prefer-not-to-say">Prefer not to say</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Location
                   </label>
                   <div className="relative">
@@ -375,23 +358,23 @@ export default function ProfileEditPage() {
                     />
                   </div>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Website
-                  </label>
-                  <div className="relative">
-                    <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="url"
-                      value={userData.website}
-                      onChange={(e) =>
-                        handleInputChange("website", e.target.value)
-                      }
-                      placeholder="https://your-website.com"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                    />
-                  </div>
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Website
+                </label>
+                <div className="relative w-full">
+                  <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <input
+                    type="url"
+                    value={userData.website}
+                    onChange={(e) =>
+                      handleInputChange("website", e.target.value)
+                    }
+                    placeholder="https://your-website.com"
+                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                  />
                 </div>
               </div>
 
