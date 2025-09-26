@@ -78,7 +78,7 @@ export default function ContinueWatchingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-16">
@@ -129,7 +129,7 @@ export default function ContinueWatchingPage() {
                     onClick={() => setViewMode("grid")}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[40px] ${
                       viewMode === "grid"
-                        ? "bg-blue-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-600"
                     }`}>
                     <Grid3X3 className="h-4 w-4" />
@@ -139,7 +139,7 @@ export default function ContinueWatchingPage() {
                     onClick={() => setViewMode("list")}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[40px] ${
                       viewMode === "list"
-                        ? "bg-blue-600 text-white/90"
+                        ? "btn-purple text-white/90"
                         : "text-gray-300 hover:text-white hover:bg-gray-600"
                     }`}>
                     <List className="h-4 w-4" />
@@ -258,7 +258,7 @@ export default function ContinueWatchingPage() {
 
                         {/* Actions */}
                         <div className="flex items-center space-x-2 mx-auto sm:mx-0 flex-wrap gap-2.5">
-                          <button className="bg-blue-600 hover:bg-blue-700 text-white/90 px-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[40px] flex items-center space-x-2">
+                          <button className="btn-purple px-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[40px] flex items-center space-x-2">
                             <Play className="h-4 w-4" />
                             <span>Continue</span>
                           </button>

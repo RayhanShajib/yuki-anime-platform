@@ -3,6 +3,7 @@
 import { Eye, EyeOff, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import Image from 'next/image';
 
 export default function ResetPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,13 +20,12 @@ export default function ResetPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-blue-900 flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10">
       <div className="max-w-md w-full space-y-8">
         {/* Logo */}
         <div className="text-center">
           <Link href="/" className="inline-flex items-center space-x-2">
-            <div className="text-4xl font-bold text-blue-500">雪</div>
-            <span className="text-2xl font-semibold text-white/90">Yuki</span>
+             <div><Image width={200} height={100} src="/logo.png" alt="Logo" /></div>
           </Link>
           <h2 className="mt-6 text-3xl font-bold text-white/90">
             Welcome back
@@ -115,7 +115,7 @@ export default function ResetPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white/90 btn-purple focus:outline-none transition-colors">
               Sign in
             </button>
           </form>

@@ -144,7 +144,6 @@ export function RequestModal({ open, onOpenChange }: RequestModalProps) {
                 </div>
               </div>
 
-
               {/* Submit Button */}
               <div className="pt-2">
                 <button
