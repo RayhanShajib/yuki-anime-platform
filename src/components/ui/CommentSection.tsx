@@ -111,7 +111,7 @@ export const CommentSection: React.FC = () => {
       .replace(/""(.*?)""/g, '<span class="text-blue-300">"$1"</span>')
       .replace(
         /\|\|(.*?)\|\|/g,
-        `<span class="spoiler bg-[#1A1F25] text-[#1A1F25] rounded px-1 cursor-pointer" onclick="this.classList.remove('bg-red-600','text-red-600', 'revealed');this.style.background='transparent';this.style.color='white';">$1</span>`
+        `<span class="spoiler bg-[#1A1F25] text-[#1A1F25] rounded px-1 cursor-pointer" onclick="this.classList.remove('bg-red-600','text-red-600',);this.style.background='transparent';this.style.color='white';">$1</span>`
       );
   }
 
