@@ -28,7 +28,7 @@ const userData = {
 
 export default function UrlPage() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
 
       <main className="pt-16">
@@ -38,7 +38,7 @@ export default function UrlPage() {
             <div className="flex flex-col items-center sm:items-start md:flex-row md:items-center space-y-4 sm:space-y-6 md:space-y-0 md:space-x-4">
               {/* Avatar */}
               <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-4 border-blue-500 overflow-hidden">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-4 border-purple-500 overflow-hidden">
                   <Image
                     src={userData.avatar}
                     alt={userData.username}

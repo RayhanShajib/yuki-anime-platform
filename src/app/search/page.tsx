@@ -556,8 +556,8 @@ function SearchPageContent() {
                     disabled={currentPage === 1}
                     className={`p-2 rounded-lg ${
                       currentPage === 1
-                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                        : "bg-gray-700 text-white hover:bg-gray-600"
+                        ? "btn-purple text-gray-500 cursor-not-allowed"
+                        : "bg-gray-700 text-white hover:btn-purple"
                     }`}
                     aria-label="First page">
                     <svg
@@ -639,8 +639,8 @@ function SearchPageContent() {
                     disabled={currentPage === totalPages}
                     className={`p-2 rounded-lg ${
                       currentPage === totalPages
-                        ? "bg-purple-800 text-gray-500 cursor-not-allowed"
-                        : "bg-gray-700 text-white hover:bg-purple-600"
+                        ? "btn-purple text-gray-500 cursor-not-allowed"
+                        : "bg-gray-700 text-white hover:btn-purple"
                     }`}
                     aria-label="Last page">
                     <svg
