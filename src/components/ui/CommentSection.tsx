@@ -504,7 +504,9 @@ export const CommentSection: React.FC = () => {
 
         {/* Nested Replies */}
         {comment.replies.length > 0 && (
-          <div className="ml-4 mt-2">{comment.replies.map((r) => renderComment(r, level + 1))}</div>
+          <div className="ml-4 mt-2">
+            {comment.replies.map((r) => renderComment(r, level + 1))}
+          </div>
         )}
       </div>
     );
