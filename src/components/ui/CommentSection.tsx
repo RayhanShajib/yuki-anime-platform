@@ -94,7 +94,6 @@ export const CommentSection: React.FC = () => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [commentInput, setCommentInput] = useState("");
-  // Demo avatar for input
   const inputAvatar =
     "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face";
   const [replyInputs, setReplyInputs] = useState<Record<number, string>>({});
@@ -104,16 +103,22 @@ export const CommentSection: React.FC = () => {
     {}
   );
 
-  // Format text with bold, italic, and quotes
+  // Format text with bold, italic, quotes, and spoilers
   function formatText(text: string): string {
     return text
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold: **text**
-      .replace(/\*(.*?)\*/g, "<em>$1</em>") // Italic: *text*
-      .replace(/""(.*?)""/g, '<span class="text-blue-300">"$1"</span>'); // Double quotes: ""text""
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.*?)\*/g, "<em>$1</em>")
+      .replace(/""(.*?)""/g, '<span class="text-blue-300">"$1"</span>')
+      .replace(
+        /\|\|(.*?)\|\|/g,
+        `<span class="spoiler bg-[#1A1F25] text-[#1A1F25] rounded px-1 cursor-pointer" onclick="this.classList.remove('bg-red-600','text-red-600', 'revealed');this.style.background='transparent';this.style.color='white';">$1</span>`
+      );
   }
 
-  // Apply formatting to comment text with buttons
-  function applyCommentFormatting(type: "bold" | "italic" | "quote") {
+  // Formatting for main comment
+  function applyCommentFormatting(
+    type: "bold" | "italic" | "quote" | "spoiler"
+  ) {
     const textarea = document.getElementById(
       "comment-input"
     ) as HTMLTextAreaElement;
@@ -121,57 +126,52 @@ export const CommentSection: React.FC = () => {
 
     const { selectionStart, selectionEnd, value } = textarea;
     const selectedText = value.substring(selectionStart, selectionEnd);
-
     let newText = "";
     let newCursorPos = selectionEnd;
 
     switch (type) {
       case "bold":
-        if (selectedText) {
-          newText =
-            value.substring(0, selectionStart) +
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
             `**${selectedText}**` +
-            value.substring(selectionEnd);
-          newCursorPos = selectionEnd + 4;
-        } else {
-          newText =
-            value.substring(0, selectionStart) +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
             "****" +
             value.substring(selectionEnd);
-          newCursorPos = selectionStart + 2;
-        }
+        newCursorPos = selectionStart + 2;
         break;
 
       case "italic":
-        if (selectedText) {
-          newText =
-            value.substring(0, selectionStart) +
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
             `*${selectedText}*` +
-            value.substring(selectionEnd);
-          newCursorPos = selectionEnd + 2;
-        } else {
-          newText =
-            value.substring(0, selectionStart) +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
             "**" +
             value.substring(selectionEnd);
-          newCursorPos = selectionStart + 1;
-        }
+        newCursorPos = selectionStart + 1;
         break;
 
       case "quote":
-        if (selectedText) {
-          newText =
-            value.substring(0, selectionStart) +
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
             `""${selectedText}""` +
-            value.substring(selectionEnd);
-          newCursorPos = selectionEnd + 4;
-        } else {
-          newText =
-            value.substring(0, selectionStart) +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
             '""""' +
             value.substring(selectionEnd);
-          newCursorPos = selectionStart + 2;
-        }
+        newCursorPos = selectionStart + 2;
+        break;
+
+      case "spoiler":
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
+            `||${selectedText}||` +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
+            "||||" +
+            value.substring(selectionEnd);
+        newCursorPos = selectionStart + 2;
         break;
     }
 
@@ -182,9 +182,9 @@ export const CommentSection: React.FC = () => {
     }, 0);
   }
 
-  // Apply formatting to reply text with buttons
+  // Formatting for reply
   function applyReplyFormatting(
-    type: "bold" | "italic" | "quote",
+    type: "bold" | "italic" | "quote" | "spoiler",
     commentId: number
   ) {
     const textarea = document.querySelector(
@@ -194,57 +194,52 @@ export const CommentSection: React.FC = () => {
 
     const { selectionStart, selectionEnd, value } = textarea;
     const selectedText = value.substring(selectionStart, selectionEnd);
-
     let newText = "";
     let newCursorPos = selectionEnd;
 
     switch (type) {
       case "bold":
-        if (selectedText) {
-          newText =
-            value.substring(0, selectionStart) +
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
             `**${selectedText}**` +
-            value.substring(selectionEnd);
-          newCursorPos = selectionEnd + 4;
-        } else {
-          newText =
-            value.substring(0, selectionStart) +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
             "****" +
             value.substring(selectionEnd);
-          newCursorPos = selectionStart + 2;
-        }
+        newCursorPos = selectionStart + 2;
         break;
 
       case "italic":
-        if (selectedText) {
-          newText =
-            value.substring(0, selectionStart) +
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
             `*${selectedText}*` +
-            value.substring(selectionEnd);
-          newCursorPos = selectionEnd + 2;
-        } else {
-          newText =
-            value.substring(0, selectionStart) +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
             "**" +
             value.substring(selectionEnd);
-          newCursorPos = selectionStart + 1;
-        }
+        newCursorPos = selectionStart + 1;
         break;
 
       case "quote":
-        if (selectedText) {
-          newText =
-            value.substring(0, selectionStart) +
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
             `""${selectedText}""` +
-            value.substring(selectionEnd);
-          newCursorPos = selectionEnd + 4;
-        } else {
-          newText =
-            value.substring(0, selectionStart) +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
             '""""' +
             value.substring(selectionEnd);
-          newCursorPos = selectionStart + 2;
-        }
+        newCursorPos = selectionStart + 2;
+        break;
+
+      case "spoiler":
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
+            `||${selectedText}||` +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
+            "||||" +
+            value.substring(selectionEnd);
+        newCursorPos = selectionStart + 2;
         break;
     }
 
@@ -255,6 +250,7 @@ export const CommentSection: React.FC = () => {
     }, 0);
   }
 
+  // ---- COMMENT HANDLERS ----
   function addComment(text: string) {
     const comment: CommentType = {
       id: Date.now(),
@@ -306,11 +302,7 @@ export const CommentSection: React.FC = () => {
         comms.map((c) => {
           if (c.id === id) {
             if (c.liked) {
-              return {
-                ...c,
-                likes: c.likes - 1,
-                liked: false,
-              };
+              return { ...c, likes: c.likes - 1, liked: false };
             } else {
               return {
                 ...c,
@@ -333,11 +325,7 @@ export const CommentSection: React.FC = () => {
         comms.map((c) => {
           if (c.id === id) {
             if (c.disliked) {
-              return {
-                ...c,
-                dislikes: c.dislikes - 1,
-                disliked: false,
-              };
+              return { ...c, dislikes: c.dislikes - 1, disliked: false };
             } else {
               return {
                 ...c,
@@ -358,6 +346,7 @@ export const CommentSection: React.FC = () => {
     return comms.reduce((acc, c) => acc + 1 + totalComments(c.replies), 0);
   }
 
+  // ---- RENDER COMMENT ----
   function renderComment(comment: CommentType, level = 0): React.ReactNode {
     return (
       <div
@@ -422,6 +411,7 @@ export const CommentSection: React.FC = () => {
           </div>
         </div>
 
+        {/* Reply Box */}
         {showReply[comment.id] && (
           <div className="mt-2 ml-8 sm:ml-[20px] flex flex-col reply-form">
             {replyPreviews[comment.id] ? (
@@ -468,6 +458,12 @@ export const CommentSection: React.FC = () => {
                   &quot;&quot;
                 </button>
                 <button
+                  onClick={() => applyReplyFormatting("spoiler", comment.id)}
+                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md"
+                  title="Spoiler">
+                  S
+                </button>
+                <button
                   onClick={() =>
                     setReplyPreviews((prev) => ({
                       ...prev,
@@ -499,19 +495,22 @@ export const CommentSection: React.FC = () => {
                       addReply(comment.id, replyInputs[comment.id].trim());
                     }
                   }}>
-                  <MdSend size={20} className="text-[#888B8D]" />
+                  <MdSend size={19} className="text-[#888B8D]" />
                 </button>
               </div>
             </div>
           </div>
         )}
-        <div className="mt-2 space-y-2">
-          {comment.replies.map((reply) => renderComment(reply, level + 1))}
-        </div>
+
+        {/* Nested Replies */}
+        {comment.replies.length > 0 && (
+          <div className="ml-4 mt-2">{comment.replies.map((r) => renderComment(r, level + 1))}</div>
+        )}
       </div>
     );
   }
 
+  // ---- SORTED COMMENTS ----
   const sortedComments = [...comments].sort((a, b) =>
     sortOrder === "newest"
       ? b.timestamp.getTime() - a.timestamp.getTime()
@@ -519,112 +518,107 @@ export const CommentSection: React.FC = () => {
   );
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-8">Comments</h2>
-      <div className="mb-4 flex justify-between items-center flex-wrap">
-        <p className="text-white mb-4">{totalComments(comments)} comments</p>
+    <div className="bg-transparent p-4 rounded-lg">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl text-white font-semibold">
+          Comments ({totalComments(comments)})
+        </h3>
         <select
-          id="sort-select"
-          className="border-b border-b-pink-400 p-2 text-gray-500 focus:outline-none"
           value={sortOrder}
-          onChange={(event) =>
-            setSortOrder(event.target.value as "newest" | "oldest")
-          }>
+          onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+          className="bg-[#20272E] text-white px-2 py-1 rounded-md text-sm focus:outline-none">
           <option value="newest">Newest</option>
           <option value="oldest">Oldest</option>
         </select>
       </div>
-      <div className="mb-4 flex flex-col">
-        <div className="flex items-start gap-3">
-          <Image
-            src={inputAvatar}
-            alt="User avatar"
-            width={40}
-            height={40}
-            className="rounded-full object-cover"
-            priority
-            unoptimized
-          />
-          <div className="flex-1 flex flex-col flex-wrap">
-            {showPreview ? (
-              <div
-                className="bg-[#20272E] rounded-t-xl p-2 min-h-[100px] text-white border border-gray-600"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    formatText(commentInput) ||
-                    '<span class="text-gray-500">Preview will appear here...</span>',
-                }}
-              />
-            ) : (
-              <textarea
-                id="comment-input"
-                className="bg-[#20272E] rounded-t-xl p-2 flex-grow focus:outline-none text-white w-full"
-                placeholder="Write a comment..."
-                value={commentInput}
-                onChange={(e) => setCommentInput(e.target.value)}
-              />
-            )}
-            <div className="bg-[#1A1F25] rounded-b-xl p-1 flex justify-between gap-4 flex-wrap">
-              <div className="flex items-center flex-wrap">
-                <button
-                  onClick={() => applyCommentFormatting("bold")}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md font-bold"
-                  title="Bold"
-                  type="button">
-                  <strong>B</strong>
-                </button>
-                <button
-                  onClick={() => applyCommentFormatting("italic")}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md italic"
-                  title="Italic"
-                  type="button">
-                  <em>I</em>
-                </button>
-                <button
-                  onClick={() => applyCommentFormatting("quote")}
-                  className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md"
-                  title="Quote"
-                  type="button">
-                  &quot;&quot;
-                </button>
-                <button
-                  onClick={() => setShowPreview(!showPreview)}
-                  className={`${
-                    showPreview ? "bg-[#111418b5]" : "hover:bg-[#111418b5]"
-                  } text-[#888B8D] px-1.5 py-1 rounded text-sm`}
-                  title={showPreview ? "Show Editor" : "Show Preview"}
-                  type="button">
-                  View
-                </button>
-              </div>
-              <div className="flex items-center gap-4 flex-wrap">
-                <button
-                  id="cancel-comment"
-                  className="text-white flex items-center justify-center"
-                  onClick={() => setCommentInput("")}
-                  type="button">
-                  <MdCancel size={19} className="text-[#888B8D]" />
-                </button>
-                <button
-                  id="submit-comment"
-                  className="text-white flex justify-center"
-                  onClick={() => {
-                    if (commentInput.trim()) {
-                      addComment(commentInput.trim());
-                      setCommentInput("");
-                    }
-                  }}
-                  type="button">
-                  <MdSend size={20} className="text-[#888B8D]" />
-                </button>
-              </div>
+
+      {/* Input Box */}
+      <div className="flex items-start space-x-3 mb-6">
+        <Image
+          src={inputAvatar}
+          alt="User Avatar"
+          width={40}
+          height={40}
+          className="rounded-full object-cover"
+        />
+        <div className="flex-1">
+          {showPreview ? (
+            <div
+              className="bg-[#20272E] p-2 min-h-[80px] text-white border border-gray-600 rounded-t-xl"
+              dangerouslySetInnerHTML={{
+                __html:
+                  formatText(commentInput) ||
+                  '<span class="text-gray-500">Preview will appear here...</span>',
+              }}
+            />
+          ) : (
+            <textarea
+              id="comment-input"
+              className="bg-[#20272E] p-2 w-full min-h-[80px] text-white border border-gray-600 rounded-t-xl focus:outline-none"
+              placeholder="Add a comment..."
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+            />
+          )}
+          <div className="bg-[#1A1F25] rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
+            <div className="flex flex-wrap items-center">
+              <button
+                onClick={() => applyCommentFormatting("bold")}
+                className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md font-bold"
+                title="Bold">
+                <strong>B</strong>
+              </button>
+              <button
+                onClick={() => applyCommentFormatting("italic")}
+                className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md italic"
+                title="Italic">
+                <em>I</em>
+              </button>
+              <button
+                onClick={() => applyCommentFormatting("quote")}
+                className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md"
+                title="Quote">
+                &quot;&quot;
+              </button>
+              <button
+                onClick={() => applyCommentFormatting("spoiler")}
+                className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md"
+                title="Spoiler">
+                S
+              </button>
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                className={`${
+                  showPreview ? "bg-[#111418b5]" : "hover:bg-[#111418b5]"
+                } text-[#888B8D] px-1.5 py-1 rounded text-sm`}
+                title={showPreview ? "Show Editor" : "Show Preview"}>
+                View
+              </button>
+            </div>
+            <div className="flex items-center gap-4 flex-wrap">
+              <button
+                id="cancel-comment"
+                className="flex items-center justify-center"
+                onClick={() => setCommentInput("")}>
+                <MdCancel size={19} className="text-[#888B8D]" />
+              </button>
+              <button
+                className="text-white flex justify-center"
+                onClick={() => {
+                  if (commentInput.trim()) {
+                    addComment(commentInput.trim());
+                    setCommentInput("");
+                  }
+                }}>
+                <MdSend size={19} className="text-[#888B8D]" />
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <div className="space-y-4 overflow-auto">
-        {sortedComments.map((comment) => renderComment(comment))}
-      </div>
+
+      {/* Render Comments */}
+      <div>{sortedComments.map((c) => renderComment(c))}</div>
     </div>
   );
 };

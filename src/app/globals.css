@@ -24,18 +24,18 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.btn-purple{
-  background-color: #7760A9 !important;
+.btn-purple {
+  background-color: #7760a9 !important;
   color: #fff !important;
 }
-.btn-pink{
-  background-color: #FB64B6 !important;
+.btn-pink {
+  background-color: #fb64b6 !important;
   color: #fff !important;
 }
-.text-pink{
-  color: #F5B9D4 !important;
+.text-pink {
+  color: #f5b9d4 !important;
 }
-body{
+body {
   background: #171125ff !important;
 }
 
@@ -45,8 +45,17 @@ body,
   color: #ededed;
 }
 
+.bg-purple {
+  background: #171125ff !important;
+}
+
 .bg-navbar {
-  background: linear-gradient(to right, #000000 0%, #1a0e26 50%, #000000 100%) !important;
+  background: linear-gradient(
+    to right,
+    #000000 0%,
+    #1a0e26 50%,
+    #000000 100%
+  ) !important;
 }
 
 /* Custom scrollbar */
@@ -60,12 +69,12 @@ body,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #7760A9;
+  background: #7760a9;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #7760A9;
+  background: #7760a9;
 }
 
 /* Smooth scrolling */
@@ -226,7 +235,8 @@ button {
   .carousel {
     height: 100%;
   }
-  .hero-gradient, .hero-left-gradient{
+  .hero-gradient,
+  .hero-left-gradient {
     display: none;
   }
 }
@@ -381,7 +391,7 @@ button {
 .recommended-swiper .swiper-button-next,
 .recommended-swiper .swiper-button-prev {
   color: #fff !important;
-  background: #7760A9  !important;
+  background: #7760a9 !important;
   border-radius: 50% !important;
   width: 40px !important;
   height: 40px !important;

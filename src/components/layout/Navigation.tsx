@@ -10,10 +10,10 @@ import {
   Settings,
   User,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { NotificationDropdown } from "../ui/NotificationDropdown";
-import Image from "next/image";
 interface NavigationProps {
   isLandingPage?: boolean;
 }
@@ -149,7 +149,9 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <div className=""><Image width={200} height={100} src="/logo.png" alt="Logo" /></div>
+            <div className="">
+              <Image width={200} height={100} src="/logo.png" alt="Logo" />
+            </div>
           </Link>
 
           <div className="hidden xl:flex items-center space-x-4">
@@ -453,7 +455,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   setIsMobileMenuOpen(true);
                 }
               }}
-              className="xl:hidden text-white hover:text-blue-400 transition-colors">
+              className="xl:hidden text-white hover:text-purple-400 transition-colors">
               {isMobileMenuOpen || isMobileMenuClosing ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -486,7 +488,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 ? "animate-navbar-slide-out"
                 : "animate-navbar-slide-in"
             }
-            bg-black h-[100vh]`}>
+            bg-purple h-[100vh]`}>
           {/* Navbar Slide-in Animation */}
           <style jsx>{`
             @keyframes navbar-slide-in {
@@ -563,7 +565,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             <div className="space-y-2">
               <Link
                 href="/"
-                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white hover:text-purple-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
                 Home
               </Link>
@@ -572,7 +574,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="space-y-1">
                 <button
                   type="button"
-                  className="w-full flex justify-between items-center text-white font-medium text-sm uppercase tracking-wide mb-2 focus:outline-none"
+                  className="w-full flex justify-between items-center hover:text-purple-400 font-medium text-sm uppercase tracking-wide mb-2 focus:outline-none"
                   onClick={() => setMobileBrowseOpen((prev) => !prev)}
                   aria-expanded={mobileBrowseOpen}>
                   <span>Browse</span>
@@ -595,25 +597,25 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   <div className="pl-4">
                     <Link
                       href="/latest"
-                      className="block text-white hover:text-blue-400 transition-colors py-2"
+                      className="block text-white hover:text-purple-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       Latest
                     </Link>
                     <Link
                       href="/popular"
-                      className="block text-white hover:text-blue-400 transition-colors py-2"
+                      className="block text-white hover:text-purple-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       Popular
                     </Link>
                     <Link
                       href="/ongoing"
-                      className="block text-white hover:text-blue-400 transition-colors py-2"
+                      className="block text-white hover:text-purple-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       On Going
                     </Link>
                     <Link
                       href="/movies"
-                      className="block text-white hover:text-blue-400 transition-colors py-2"
+                      className="block text-white hover:text-purple-400 transition-colors py-2"
                       onClick={() => setIsMobileMenuOpen(false)}>
                       Movies
                     </Link>
@@ -625,7 +627,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               <div className="space-y-1">
                 <button
                   type="button"
-                  className="w-full flex justify-between items-center text-white font-medium text-sm uppercase tracking-wide mb-2 mt-4 focus:outline-none"
+                  className="w-full flex justify-between items-center hover:text-purple-400 font-medium text-sm uppercase tracking-wide mb-2 mt-4 focus:outline-none"
                   onClick={() => setMobileGenresOpen((prev) => !prev)}
                   aria-expanded={mobileGenresOpen}>
                   <span>Genres</span>
@@ -661,7 +663,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       <Link
                         key={genre}
                         href={`/genre/${genre.toLowerCase()}`}
-                        className="block text-white hover:text-blue-400 transition-colors py-1 text-sm"
+                        className="block text-white hover:text-purple-400 transition-colors py-1 text-sm"
                         onClick={() => setIsMobileMenuOpen(false)}>
                         {genre}
                       </Link>
@@ -671,19 +673,19 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
               </div>
               <Link
                 href="/random"
-                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white hover:text-purple-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
                 Random
               </Link>
               <Link
                 href="/schedule"
-                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white hover:text-purple-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
                 Schedule
               </Link>
               <Link
                 href="/contact"
-                className="block text-white hover:text-blue-400 transition-colors py-2 text-lg"
+                className="block text-white hover:text-purple-400 transition-colors py-2 text-lg"
                 onClick={() => setIsMobileMenuOpen(false)}>
                 Contact
               </Link>
@@ -695,54 +697,54 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 <div>
                   <Link
                     href="/profile"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-purple-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <User className="h-5 w-5 mr-3" />
                     Profile
                   </Link>
                   <Link
                     href="/profile/edit"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-purple-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
                     Edit Profile
                   </Link>
                   <Link
                     href="/continue-watching"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-purple-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Play className="h-5 w-5 mr-3" />
                     Continue Watching
                   </Link>
                   <Link
                     href="/bookmarks"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-purple-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <BookOpen className="h-5 w-5 mr-3" />
                     Bookmarks
                   </Link>
                   <Link
                     href="/notifications"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-purple-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Bell className="h-5 w-5 mr-3" />
                     Notifications
                   </Link>
                   <Link
                     href="/import-export"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-purple-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
                     Import/Export
                   </Link>
                   <Link
                     href="/settings"
-                    className="flex items-center text-white hover:text-blue-400 transition-colors py-2"
+                    className="flex items-center text-white hover:text-purple-400 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     <Settings className="h-5 w-5 mr-3" />
                     Settings
                   </Link>
-                  <button className="flex items-center w-full text-white hover:text-blue-400 transition-colors py-2">
+                  <button className="flex items-center w-full text-white hover:text-purple-400 transition-colors py-2">
                     <LogOut className="h-5 w-5 mr-3" />
                     Logout
                   </button>
@@ -756,13 +758,13 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 <div className="space-y-3">
                   <Link
                     href="/login"
-                    className="block text-white hover:text-blue-400 transition-colors"
+                    className="block text-white hover:text-purple-400 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     Login
                   </Link>
                   <Link
                     href="/register"
-                    className="block register-btn text-center bg-blue-600 hover:bg-blue-700 text-white/90 px-3.5 py-1 rounded-lg transition-colors"
+                    className="block register-btn text-center btn-purple px-3.5 py-1 rounded-lg transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     Register
                   </Link>
