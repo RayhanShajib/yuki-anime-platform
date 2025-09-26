@@ -335,7 +335,7 @@ function SearchPageContent() {
   const pageNumbers = generatePageNumbers();
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen">
       <Navigation />
       <main className="pt-17">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -422,7 +422,7 @@ function SearchPageContent() {
                 </button>
                 <button
                   type="button"
-                  className="px-6 py-2 rounded-lg bg-blue-600 text-white/90 font-medium hover:bg-blue-700 cursor-pointer w-full"
+                  className="px-6 py-2 rounded-lg btn-purple text-white/90 font-medium hover:bg-purple-700 cursor-pointer w-full"
                   onClick={handleApplyFilters}>
                   Filter
                 </button>
@@ -513,7 +513,7 @@ function SearchPageContent() {
                         type="button"
                         className={`px-6 py-2 rounded-lg font-medium border border-gray-700 ${
                           pendingAudio === "sub"
-                            ? "bg-blue-600 text-white"
+                            ? "btn-purple text-white"
                             : "bg-gray-800 text-gray-300"
                         }`}
                         onClick={() => setPendingAudio("sub")}>
@@ -523,7 +523,7 @@ function SearchPageContent() {
                         type="button"
                         className={`px-6 py-2 rounded-lg font-medium border border-gray-700 ${
                           pendingAudio === "dub"
-                            ? "bg-blue-600 text-white"
+                            ? "btn-purple text-white"
                             : "bg-gray-800 text-gray-300"
                         }`}
                         onClick={() => setPendingAudio("dub")}>
@@ -604,8 +604,8 @@ function SearchPageContent() {
                       onClick={() => handlePageChange(pageNum)}
                       className={`px-4 py-2 rounded-lg font-medium ${
                         currentPage === pageNum
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-700 text-white hover:bg-gray-600"
+                          ? "btn-purple text-white"
+                          : "bg-gray-700 text-white hover:btn-purple"
                       }`}>
                       {pageNum}
                     </button>
@@ -615,7 +615,7 @@ function SearchPageContent() {
                   {currentPage < totalPages && (
                     <button
                       onClick={handleNextPage}
-                      className="p-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600"
+                      className="p-2 rounded-lg btn-purple text-white hover:btn-purple"
                       aria-label="Next page">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -639,8 +639,8 @@ function SearchPageContent() {
                     disabled={currentPage === totalPages}
                     className={`p-2 rounded-lg ${
                       currentPage === totalPages
-                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                        : "bg-gray-700 text-white hover:bg-gray-600"
+                        ? "bg-purple-800 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-700 text-white hover:bg-purple-600"
                     }`}
                     aria-label="Last page">
                     <svg
