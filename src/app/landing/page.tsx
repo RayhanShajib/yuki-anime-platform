@@ -10,22 +10,22 @@ export default function LandingPage() {
   return (
     <div>
       <nav className="p-4 flex justify-center space-x-6 text-white text-sm uppercase tracking-wide absolute z-50 items-center left-0 right-0 mx-auto">
-        <a href="#" className="hover:text-blue-400">
+        <a href="#" className="hover:text-purple-400">
           Genres
         </a>
-        <a href="#" className="hover:text-blue-400">
+        <a href="#" className="hover:text-purple-400">
           Types
         </a>
-        <a href="#" className="hover:text-blue-400">
+        <a href="#" className="hover:text-purple-400">
           New Releases
         </a>
-        <a href="#" className="hover:text-blue-400">
+        <a href="#" className="hover:text-purple-400">
           Updates
         </a>
-        <a href="#" className="hover:text-blue-400">
+        <a href="#" className="hover:text-purple-400">
           Ongoing
         </a>
-        <a href="#" className="hover:text-blue-400">
+        <a href="#" className="hover:text-purple-400">
           Recent
         </a>
       </nav>
@@ -44,8 +44,9 @@ export default function LandingPage() {
 
         <div className="relative z-60 bg-opacity-70 mt-30 rounded-lg text-center max-w-2xl w-full">
           <div className="text-4xl font-bold mb-6 flex gap-2 justify-center items-center">
-            <div className="text-2xl font-bold text-blue-500">雪</div>
-            <span className="text-xl font-semibold text-white">Yuki</span>
+            <div>
+              <Image width={200} height={100} src="/logo.png" alt="Logo" />
+            </div>
           </div>
           <div className="flex justify-center mb-4 w-full">
             <div className="xl:flex items-center space-x-4 w-full">
@@ -95,7 +96,7 @@ export default function LandingPage() {
           </p>
           <a
             href="#"
-            className="bg-blue-600 px-6 py-3 rounded-md font-semibold hover:bg-blue-700">
+            className="btn-purple px-6 py-3 rounded-md font-semibold hover:bg-purple-700">
             WATCH NOW
           </a>
         </div>
@@ -110,7 +111,7 @@ export default function LandingPage() {
       <section className="p-6 max-w-5xl mx-auto text-gray-200 leading-relaxed">
         <h2 className="text-2xl font-bold italic text-white mb-4">
           THE BEST SITE TO WATCH{" "}
-          <span className="text-blue-400">ANIME ONLINE FOR FREE</span>
+          <span className="text-pink">ANIME ONLINE FOR FREE</span>
         </h2>
         <p className="mb-4">
           Anime is not just about stories drawn with pen strokes; it’s a gateway
@@ -163,7 +164,7 @@ export default function LandingPage() {
           and better than 9Anime. We also support advanced features...
         </p>
 
-        <p className="italic text-blue-300 mt-6">
+        <p className="italic text-pink mt-6">
           If you enjoy your time with us, please spread the word and don’t
           forget to bookmark our site!
         </p>
