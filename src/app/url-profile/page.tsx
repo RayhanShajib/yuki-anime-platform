@@ -34,7 +34,7 @@ export default function UrlPage() {
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Profile Header */}
-          <div className="bg-gradient-to-r from-blue-900/20 to-blue-900/20 rounded-lg p-4 sm:p-6 border border-blue-800/30 mb-6 sm:mb-8">
+          <div className="bg-gradient-to-r from-purple-900/20 to-purple-900/20 rounded-lg p-4 sm:p-6 border border-purple-800/30 mb-6 sm:mb-8">
             <div className="flex flex-col items-center sm:items-start md:flex-row md:items-center space-y-4 sm:space-y-6 md:space-y-0 md:space-x-4">
               {/* Avatar */}
               <div className="relative">
