@@ -1,9 +1,7 @@
-"use client";
-
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
-import { latestAnime } from "@/lib/mockData";
+import { pageApi } from "@/lib/api/pageApi";
 import { cn } from "@/lib/utils";
 import { Grid, List } from "lucide-react";
 import Image from "next/image";
@@ -28,6 +26,37 @@ const typeFilters = [
 ];
 
 export default function LatestPage() {
+
+  const latestAnimeFromAPI =  pageApi.getLatestPageData(20, 0);
+
+  let latestAnime = [
+    {
+      id: "1",
+      title: "Attack on Titan: Final Season",
+      alternativeTitles: ["Shingeki no Kyojin", "AOT"],
+      synopsis:
+        "The final battle for humanity begins as Eren Yeager leads the Survey Corps in their ultimate mission to save what remains of mankind.",
+      poster:
+        "https://via.placeholder.com/300x450/1a1a1a/white?text=Attack+on+Titan",
+      banner:
+        "https://via.placeholder.com/1920x1080/1a1a1a/white?text=AOT+Banner",
+      trailer: "https://www.w3schools.com/html/mov_bbb.mp4",
+      genres: ["Action", "Drama", "Fantasy", "Military"],
+      subEpisodes: 20,
+      dubEpisodes: 12,
+      studio: "Studio Mappa",
+      releaseYear: 2023,
+      status: "completed",
+      type: "series",
+      totalEpisodes: 87,
+      rating: 9.0,
+      popularity: 95000,
+      language: ["sub", "dub"],
+      malId: "16498",
+      anilistId: "16498",
+    },
+  ]
+
   const [languageFilter, setLanguageFilter] = useState("all");
   const [timeFilter, setTimeFilter] = useState("week");
   const [typeFilter, setTypeFilter] = useState("all");
