@@ -49,8 +49,8 @@ export const pageApi = {
   }),
 
   // Latest Page
-  getLatestPageData: cache(async (page = 1) => {
-    return fetchFromApi(`/recent?page=${page}`);
+  getLatestPageData: cache(async (limit = 20, offset = 0) => {
+    return fetchFromApi(`/latest/?limit=${limit}&offset=${offset}`);
   }),
 
   // Movies Page

@@ -19,7 +19,12 @@ export default async function TestSSRPage() {
     console.log('\n3. Testing Anime Info Page Data:');
     // Using a sample anime ID - replace with a real one from your API
     const animeData = await pageApi.getAnimeInfoPageData('219');
-    console.log('Anime Info Data:', JSON.stringify(animeData, null, 2));
+    console.log('Anime Info Data:', animeData);
+
+    // Test 4: Latest anime page
+    console.log('\n4. Testing Latest anime page')
+    const latestData = await pageApi.getLatestPageData(20,0);
+    console.log(latestData)
 
     return (
       <div className="p-8">
