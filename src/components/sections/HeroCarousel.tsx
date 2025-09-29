@@ -9,8 +9,6 @@ import {
   ChevronRight,
   Play,
   Plus,
-  Volume2,
-  VolumeX,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -20,7 +18,6 @@ interface HeroCarouselProps {
 
 export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
   const [isPlaying] = useState(true);
 
   const currentAnime = featuredAnime[currentIndex];
@@ -50,31 +47,18 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   return (
     <div className="relative w-full h-[45vh] sm:h-[55vh] md:h-[65vh] lg:h-[75vh] xl:h-[750px] min-h-[350px] max-w-[1800px] mx-auto carousel overflow-hidden">
       <div className="absolute inset-0">
-        {currentAnime.trailer ? (
-          <video
-            key={currentAnime.id}
-            autoPlay
-            muted={isMuted}
-            loop
-            className="w-full h-full object-cover carousel"
-            poster={currentAnime.banner || currentAnime.poster}
-            playsInline
-            disablePictureInPicture
-            controls={false}
-            onTouchStart={(e) => e.preventDefault()}
-            onClick={(e) => e.preventDefault()}>
-            <source src={currentAnime.trailer} type="video/mp4" />
-          </video>
-        ) : (
-          <Image
-            src={currentAnime.banner || currentAnime.poster}
-            alt={currentAnime.title}
-            fill
-            className="w-full h-full object-cover"
-            sizes="(max-width: 1800px) 100vw, 1800px"
-            priority
-          />
-        )}
+        <Image
+          src={currentAnime.banner || currentAnime.poster}
+          alt={currentAnime.title}
+          fill
+          className="w-full h-full object-cover"
+          sizes="(max-width: 1800px) 100vw, 1800px"
+          priority
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = '/placeholder-anime.jpg';
+          }}
+        />
       </div>
 
       {/* Main content */}
@@ -151,37 +135,23 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             "linear-gradient(to top, rgba(23,17,37,1) 0%, rgba(23,17,37,0.5) 5%, rgba(23,17,37,0.2) 10%, rgba(23,17,37,0) 15%, rgba(23,17,37,0) 45%, rgba(23,17,37,0) 55%, rgba(23,17,37,0) 65%, rgba(23,17,37,0) 75%, rgba(23,17,37,0) 85%, rgba(23,17,37,0) 100%)",
         }}></div>
 
-      {currentAnime.trailer && (
-        <div className="absolute bottom-4 sm:bottom-6 md:bottom-7 right-2 sm:right-3 md:right-4 z-20 flex flex-col space-y-1 sm:space-y-2 carousel-control">
-          {/* Carousel Navigation Buttons */}
-          <div className="flex flex-col space-y-1">
-            <button
-              onClick={goToPrevious}
-              className="p-1.5 sm:p-2 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
-              aria-label="Previous slide">
-              <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            </button>
-            <button
-              onClick={goToNext}
-              className="p-1.5 sm:p-2 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
-              aria-label="Next slide">
-              <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-            </button>
-          </div>
-
-          {/* Mute/Unmute Button */}
+      <div className="absolute bottom-4 sm:bottom-6 md:bottom-7 right-2 sm:right-3 md:right-4 z-20 flex flex-col space-y-1 sm:space-y-2 carousel-control">
+        {/* Carousel Navigation Buttons */}
+        <div className="flex flex-col space-y-1">
           <button
-            onClick={() => setIsMuted(!isMuted)}
-            className="p-2 sm:p-3 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
-            aria-label={isMuted ? "Unmute" : "Mute"}>
-            {isMuted ? (
-              <VolumeX className="h-3 w-3 sm:h-4 sm:w-4" />
-            ) : (
-              <Volume2 className="h-3 w-3 sm:h-4 sm:w-4" />
-            )}
+            onClick={goToPrevious}
+            className="p-1.5 sm:p-2 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
+            aria-label="Previous slide">
+            <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+          </button>
+          <button
+            onClick={goToNext}
+            className="p-1.5 sm:p-2 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
+            aria-label="Next slide">
+            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
           </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

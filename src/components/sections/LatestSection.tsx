@@ -1,5 +1,5 @@
 "use client";
-import { latestAnime } from "@/lib/mockData";
+import { Anime } from "@/types/anime";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,7 +9,11 @@ import { Navigation as SwiperNavigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { AnimeCard } from "../ui/AnimeCard";
 
-export function LatestSection() {
+interface LatestSectionProps {
+  latestAnime: Anime[];
+}
+
+export function LatestSection({ latestAnime }: LatestSectionProps) {
   const [selectedLanguage, setSelectedLanguage] = useState<
     "sub" | "dub" | "all"
   >("all");

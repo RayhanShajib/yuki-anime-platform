@@ -30,7 +30,7 @@ export const pageApi = {
     const homeData = await fetchFromApi('/home-agg/')
         .then(data => {
           // Ensure all required fields are present
-          if (!data || !data.airing || !data.trending || !data.latest || !data.completed || !data.spotlight || !data.favourite) {
+          if (!data || !data.airing || !data.trending || !data.latest || !data.completed || !data.spotlight || !data.favourite || !data.popular) {
             throw new Error('Invalid home page data structure');
           }
           return data;
