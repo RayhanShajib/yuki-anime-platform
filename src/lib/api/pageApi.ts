@@ -100,9 +100,7 @@ export const pageApi = {
       fetchFromApi(`/anime/${id}/`)
     ]);
 
-    return {
-      details
-    };
+    return details;
   }),
 
   // Watch Page
