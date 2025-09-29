@@ -43,9 +43,9 @@ export const pageApi = {
   }),
 
   // Popular Page - with filters
-  getPopularPageData: cache(async () => {
+  getPopularPageData: cache(async (limit = 20, offset = 0) => {
 
-    return fetchFromApi(`/popular/`);
+    return fetchFromApi(`/popular/?limit=${limit}&offset=${offset}`);
   }),
 
   // Latest Page
