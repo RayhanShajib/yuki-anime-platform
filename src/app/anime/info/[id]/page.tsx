@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useParams } from 'next/navigation';
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
@@ -196,12 +197,20 @@ export default function AnimeInfoPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Static ID for now (will be dynamic later)
-  const animeId = "219";
+  // Get dynamic ID from URL params
+  const params = useParams();
+  const animeId = params.id as string;
 
   // Fetch anime data
   useEffect(() => {
     const fetchAnimeData = async () => {
+      // Validate anime ID
+      if (!animeId) {
+        setError('Invalid anime ID');
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
