@@ -64,8 +64,8 @@ export const pageApi = {
   }),
 
   // Schedule Page
-  getSchedulePageData: cache(async (weekday?: string) => {
-    const endpoint = weekday ? `/schedule/${weekday}` : '/schedule/week';
+  getSchedulePageData: cache(async () => {
+    const endpoint = '/schedule/';
     return fetchFromApi(endpoint);
   }),
 
