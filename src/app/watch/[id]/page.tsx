@@ -5,7 +5,7 @@ import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { CommentSection } from "@/components/ui/CommentSection";
 import IframeVideoPlayer from "@/components/ui/IframeVideoPlayer";
-import VideoPlayer from "@/components/ui/VideoPlayer";
+import VideoPlayer, { VideoPlayerRef } from "@/components/ui/VideoPlayer";
 import { latestAnime, mockAnime } from "@/lib/mockData";
 import type { Anime } from "@/types/anime";
 import { Grid, List } from "lucide-react";
@@ -83,6 +83,43 @@ export default function WatchPage() {
   }, [episodes, searchQuery]);
   // --- Server Selection State ---
   const [selectedServer, setSelectedServer] = React.useState(1);
+  
+  // --- Video Player Ref ---
+  const videoPlayerRef = React.useRef<VideoPlayerRef>(null);
+  
+  // --- Video Sources Configuration ---
+  const videoSources = {
+    1: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+    2: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+  };
+
+  // --- Handle Server Switch with Time Continuity ---
+  const handleServerSwitch = (serverNumber: number) => {
+    if (serverNumber === 3) {
+      // Server 3 is iframe - just switch normally
+      setSelectedServer(serverNumber);
+      return;
+    }
+
+    if (videoPlayerRef.current && (serverNumber === 1 || serverNumber === 2)) {
+      // Get current time before switching
+      const currentTime = videoPlayerRef.current.getCurrentTime();
+      
+      // Load new source with time continuity
+      videoPlayerRef.current.loadNewSource(
+        videoSources[serverNumber as keyof typeof videoSources], 
+        currentTime
+      );
+      
+      // Update server state
+      setSelectedServer(serverNumber);
+    } else {
+      // Fallback for other servers
+      setSelectedServer(serverNumber);
+    }
+  };
+
+
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -113,19 +150,17 @@ export default function WatchPage() {
               </span>
             </nav>
             <div className="aspect-video w-full rounded-lg mb-6">
-              {selectedServer === 1 || selectedServer === 3 ? (
+              {selectedServer === 3 ? (
+                <IframeVideoPlayer src="https://www.youtube.com/embed/dQw4w9WgXcQ" />
+              ) : (
                 <VideoPlayer 
+                  ref={videoPlayerRef}
                   videoSources={[
                     {
-                      file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
+                      file: videoSources[1], // Default to first M3U source
                       type: "hls",
                       label: "1080p",
                       default: true,
-                    },
-                    {
-                      file: "https://vz-cea98c59-23c.b-cdn.net/c309129c-27b6-4e43-8254-62a15c77c5ee/1280x720/video.m3u8",
-                      type: "hls",
-                      label: "720p",
                     },
                   ]}
                   posterImage={anime?.banner || anime?.poster || "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg"}
@@ -141,10 +176,9 @@ export default function WatchPage() {
                   // Don't pass thumbnailsVttUrl - let it use the built-in placeholder system
                   // thumbnailsVttUrl will be undefined, so it will use the fallback
                 />
-              ) : (
-                <IframeVideoPlayer src="https://www.youtube.com/embed/dQw4w9WgXcQ" />
               )}
             </div>
+            
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <div>
                 <p className="text-lg text-white">
@@ -167,38 +201,28 @@ export default function WatchPage() {
                       ? "btn-purple text-white/90 hover:bg-blue-700"
                       : "bg-gray-700 text-white/90 hover:bg-gray-800")
                   }
-                  onClick={() => setSelectedServer(1)}>
+                  onClick={() => handleServerSwitch(1)}>
                   Server 1
                 </button>
                 <button
                   className={
                     `px-3 py-1 rounded font-normal shadow transition ` +
                     (selectedServer === 2
-                      ? "btn-purple text-white/90"
+                      ? "btn-purple text-white/90 hover:bg-blue-700"
                       : "bg-gray-700 text-white/90 hover:bg-gray-800")
                   }
-                  onClick={() => setSelectedServer(2)}>
+                  onClick={() => handleServerSwitch(2)}>
                   Server 2
                 </button>
                 <button
                   className={
                     `px-3 py-1 rounded font-normal shadow transition ` +
                     (selectedServer === 3
-                      ? "btn-purple text-white/90 hover:bg-blue-700"
-                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
-                  }
-                  onClick={() => setSelectedServer(3)}>
-                  Server 3
-                </button>
-                <button
-                  className={
-                    `px-3 py-1 rounded font-normal shadow transition ` +
-                    (selectedServer === 4
                       ? "btn-purple text-white/90"
                       : "bg-gray-700 text-white/90 hover:bg-gray-800")
                   }
-                  onClick={() => setSelectedServer(4)}>
-                  Server 4
+                  onClick={() => handleServerSwitch(3)}>
+                  Server 3
                 </button>
               </div>
             </div>

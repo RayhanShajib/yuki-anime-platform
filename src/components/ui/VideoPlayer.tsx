@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useImperativeHandle } from "react";
 
 declare global {
   interface Window {
@@ -19,6 +19,12 @@ interface JWPlayerInstance {
   getVolume: () => number;
   setMute: (muted: boolean) => void;
   getMute: () => boolean;
+  load: (sources: Array<{
+    file: string;
+    type: string;
+    label: string;
+    default?: boolean;
+  }>) => void;
   addButton: (
     icon: string,
     tooltip: string,
@@ -77,15 +83,50 @@ interface VideoPlayerProps {
   thumbnailsVttUrl?: string; // URL to your server-generated VTT file
 }
 
-const VideoPlayer = ({ 
+export interface VideoPlayerRef {
+  loadNewSource: (url: string, startTime?: number) => void;
+  getCurrentTime: () => number;
+  seekTo: (time: number) => void;
+}
+
+const VideoPlayer = React.forwardRef<VideoPlayerRef, VideoPlayerProps>(({ 
   videoSources, 
   posterImage, 
   videoTitle, 
   subtitles, 
   thumbnailsVttUrl 
-}: VideoPlayerProps = {}) => {
+}: VideoPlayerProps = {}, ref) => {
   const playerRef = useRef<HTMLDivElement | null>(null);
   const jwPlayerRef = useRef<JWPlayerInstance | null>(null);
+
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    loadNewSource: (url: string, startTime: number = 0) => {
+      if (jwPlayerRef.current) {
+        jwPlayerRef.current.load([{
+          file: url,
+          type: "hls",
+          label: "1080p",
+          default: true
+        }]);
+        
+        // Seek to the specified time after a short delay to ensure the video has loaded
+        setTimeout(() => {
+          if (jwPlayerRef.current && startTime > 0) {
+            jwPlayerRef.current.seek(startTime);
+          }
+        }, 1000);
+      }
+    },
+    getCurrentTime: () => {
+      return jwPlayerRef.current ? jwPlayerRef.current.getPosition() : 0;
+    },
+    seekTo: (time: number) => {
+      if (jwPlayerRef.current) {
+        jwPlayerRef.current.seek(time);
+      }
+    }
+  }), []);
 
   useEffect(() => {
     const createFallbackVTT = () => {
@@ -390,9 +431,6 @@ https://picsum.photos/160/90?random=12`;
 
         // Add event listeners for custom functionality
         jwPlayerRef.current.on("ready", () => {
-          console.log("JW Player is ready");
-          console.log("Thumbnail VTT URL:", thumbnailVTTUrl);
-          console.log("Thumbnail preview enabled - hover over progress bar to see thumbnails");
           
           // Custom thumbnail positioning
           const progressBar = document.querySelector('.jw-slider-time');
@@ -428,10 +466,7 @@ https://picsum.photos/160/90?random=12`;
             });
           }
           
-          // Debug: Check if tracks are loaded
-          setTimeout(() => {
-            console.log("Player tracks:", jwPlayerRef.current);
-          }, 2000);
+
           
           // Add custom 10s rewind and forward buttons using JW Player's addButton API
           if (window.jwplayer) {
@@ -466,11 +501,11 @@ https://picsum.photos/160/90?random=12`;
         });
 
         jwPlayerRef.current.on("play", () => {
-          console.log("Video started playing");
+          // Video started playing
         });
 
         jwPlayerRef.current.on("pause", () => {
-          console.log("Video paused");
+          // Video paused
         });
 
         jwPlayerRef.current.on("error", (e) => {
@@ -502,6 +537,8 @@ https://picsum.photos/160/90?random=12`;
       />
     </div>
   );
-};
+});
+
+VideoPlayer.displayName = 'VideoPlayer';
 
 export default VideoPlayer;
