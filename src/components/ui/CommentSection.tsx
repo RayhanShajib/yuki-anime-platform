@@ -181,7 +181,6 @@ export const CommentSection: React.FC = () => {
       textarea.setSelectionRange(newCursorPos, newCursorPos);
     }, 0);
   }
-
   // Formatting for reply
   function applyReplyFormatting(
     type: "bold" | "italic" | "quote" | "spoiler",
@@ -424,20 +423,28 @@ export const CommentSection: React.FC = () => {
                 }}
               />
             ) : (
-              <textarea
-                data-reply-id={comment.id}
-                className="bg-[#20272E] p-2 flex-grow reply-input focus:outline-none text-white rounded-t-xl"
-                placeholder="Write a reply..."
-                value={replyInputs[comment.id] || ""}
-                onChange={(e) =>
-                  setReplyInputs((prev) => ({
-                    ...prev,
-                    [comment.id]: e.target.value,
-                  }))
-                }
-              />
+              <div
+                style={{
+                  background:
+                    "linear-gradient(to right, #000000 0%, #1a0e26 50%, #000000 100%)",
+                  padding: "2px",
+                  borderRadius: "0.75rem 0.75rem 0 0",
+                }}>
+                <textarea
+                  data-reply-id={comment.id}
+                  className="bg-purple p-2 flex-grow reply-input focus:outline-none text-white rounded-t-xl border-0 w-full"
+                  placeholder="Write a reply..."
+                  value={replyInputs[comment.id] || ""}
+                  onChange={(e) =>
+                    setReplyInputs((prev) => ({
+                      ...prev,
+                      [comment.id]: e.target.value,
+                    }))
+                  }
+                />
+              </div>
             )}
-            <div className="bg-[#1A1F25] rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
+            <div className="bg-navbar rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
               <div className="flex flex-wrap items-center">
                 <button
                   onClick={() => applyReplyFormatting("bold", comment.id)}
@@ -528,7 +535,7 @@ export const CommentSection: React.FC = () => {
         <select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
-          className="bg-[#20272E] text-white px-2 py-1 rounded-md text-sm focus:outline-none">
+          className="bg-navbar text-white px-2 py-1 rounded-md text-sm focus:outline-none">
           <option value="newest">Newest</option>
           <option value="oldest">Oldest</option>
         </select>
@@ -554,15 +561,23 @@ export const CommentSection: React.FC = () => {
               }}
             />
           ) : (
-            <textarea
-              id="comment-input"
-              className="bg-[#20272E] p-2 w-full min-h-[80px] text-white border border-gray-600 rounded-t-xl focus:outline-none"
-              placeholder="Add a comment..."
-              value={commentInput}
-              onChange={(e) => setCommentInput(e.target.value)}
-            />
+            <div
+              style={{
+                background:
+                  "linear-gradient(to right, #000000 0%, #1a0e26 50%, #000000 100%)",
+                padding: "2px",
+                borderRadius: "0.75rem 0.75rem 0 0",
+              }}>
+              <textarea
+                id="comment-input"
+                className="bg-purple p-2 w-full min-h-[80px] text-white rounded-t-xl focus:outline-none border-0"
+                placeholder="Add a comment..."
+                value={commentInput}
+                onChange={(e) => setCommentInput(e.target.value)}
+              />
+            </div>
           )}
-          <div className="bg-[#1A1F25] rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
+          <div className="bg-navbar rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
             <div className="flex flex-wrap items-center">
               <button
                 onClick={() => applyCommentFormatting("bold")}

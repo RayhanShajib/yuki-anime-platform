@@ -234,7 +234,7 @@ export default function ProfilePage() {
           </div>
 
           {activeTab === "importexport" && (
-            <div className="bg-[#0d1628] text-white/90 min-h-screen p-5 rounded-md sm:p-8">
+            <div className="bg-purple border border-gray-700 text-white/90 min-h-screen p-5 rounded-md sm:p-8">
               <div className="mx-auto">
                 <h2 className="text-xl font-semibold mb-6 text-white/90">
                   Import/Export
@@ -415,7 +415,7 @@ export default function ProfilePage() {
                         </label>
                       </div>
                     </div>
-                    <button className="bg-blue-600 text-white px-6 py-2 rounded-md font-medium mt-4">
+                    <button className="btn-purple text-white px-6 py-2 rounded-md font-medium mt-4">
                       Download Export
                     </button>
                   </div>
@@ -429,7 +429,7 @@ export default function ProfilePage() {
                         Automatically sync your anime list with supported
                         platforms.
                       </p>
-                      <button className="bg-blue-600 text-white/90 px-6 py-2 rounded-md font-medium">
+                      <button className="btn-purple text-white/90 px-6 py-2 rounded-md font-medium">
                         Grant Permission
                       </button>
                     </div>
@@ -440,7 +440,7 @@ export default function ProfilePage() {
           )}
 
           {activeTab === "settings" && (
-            <div className="bg-[#1a2438] p-8 rounded-lg w-full border border-[#2b354a]">
+            <div className="bg-purple p-8 rounded-lg w-full border border-[#2b354a]">
               <h2 className="text-xl font-semibold mb-8">Settings</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-10">
@@ -450,7 +450,7 @@ export default function ProfilePage() {
                     Preferred language for anime titles
                   </p>
                 </div>
-                <select className="bg-[#2e3a52] text-white/90 p-2 rounded-md w-full focus:outline-none">
+                <select className="bg-purple text-white/90 p-2 rounded-md w-full border border-gray-700 focus:outline-none">
                   <option>English</option>
                 </select>
 
@@ -460,7 +460,7 @@ export default function ProfilePage() {
                     Preferred audio language
                   </p>
                 </div>
-                <select className="bg-[#2e3a52] text-white/90 p-2 rounded-md w-full focus:outline-none">
+                <select className="bg-purple text-white/90 p-2 rounded-md w-full border border-gray-700 focus:outline-none">
                   <option>Sub</option>
                   <option>Dub</option>
                 </select>
@@ -474,7 +474,7 @@ export default function ProfilePage() {
                 <input
                   type="number"
                   value="10"
-                  className="bg-[#2e3a52] text-white/90 p-2 rounded-md w-full focus:outline-none"
+                  className="bg-purple text-white/90 p-2 rounded-md w-full border border-gray-700 focus:outline-none"
                 />
 
                 <div>
@@ -483,7 +483,7 @@ export default function ProfilePage() {
                     Number of anime to show per page
                   </p>
                 </div>
-                <select className="bg-[#2e3a52] text-white/90 p-2 rounded-md w-full focus:outline-none">
+                <select className="bg-purple text-white/90 p-2 rounded-md w-full border border-gray-700 focus:outline-none">
                   <option>25</option>
                   <option>50</option>
                   <option>100</option>
@@ -498,14 +498,14 @@ export default function ProfilePage() {
                 <div className="flex gap-2">
                   <button
                     className={`px-4 py-2 rounded-md text-white/90 ${
-                      hideBookmarks === "no" ? "btn-purple" : "bg-[#3b465b]"
+                      hideBookmarks === "no" ? "btn-purple" : "bg-purple border border-gray-700 "
                     }`}
                     onClick={() => setHideBookmarks("no")}>
                     No
                   </button>
                   <button
                     className={`px-4 py-2 rounded-md text-white/90 ${
-                      hideBookmarks === "yes" ? "btn-purple" : "bg-[#3b465b]"
+                      hideBookmarks === "yes" ? "btn-purple" : "bg-purple border border-gray-700 "
                     }`}
                     onClick={() => setHideBookmarks("yes")}>
                     Yes
@@ -521,14 +521,14 @@ export default function ProfilePage() {
                 <div className="flex gap-2">
                   <button
                     className={`px-4 py-2 rounded-md text-white/90 ${
-                      hideActivities === "no" ? "btn-purple" : "bg-[#3b465b]"
+                      hideActivities === "no" ? "btn-purple" : "bg-purple border border-gray-700 "
                     }`}
                     onClick={() => setHideActivities("no")}>
                     No
                   </button>
                   <button
                     className={`px-4 py-2 rounded-md text-white/90 ${
-                      hideActivities === "yes" ? "btn-purple" : "bg-[#3b465b]"
+                      hideActivities === "yes" ? "btn-purple" : "bg-purple border border-gray-700"
                     }`}
                     onClick={() => setHideActivities("yes")}>
                     Yes
@@ -555,7 +555,7 @@ export default function ProfilePage() {
             <div className="space-y-8">
               <div className="flex gap-8 flex-wrap justify-center">
                 {/* <!-- Activities Card --> */}
-                <div className="bg-[#131c31] p-5 rounded-lg w-full max-w-3xl border border-[#1d2a47]">
+                <div className="bg-purple p-5 rounded-lg w-full max-w-3xl border border-[#1d2a47]">
                   <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                     <span className="text-blue-400">🕒</span> ACTIVITIES
                   </h2>
@@ -614,7 +614,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* <!-- Watch List --> */}
-                <div className="bg-[#131c31] p-5 rounded-lg w-full max-w-sm border border-[#1d2a47]">
+                <div className="bg-purple p-5 rounded-lg w-full max-w-sm border border-[#1d2a47]">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-bold flex items-center gap-2">
                       <span className="text-purple-400">📋</span> Watch List

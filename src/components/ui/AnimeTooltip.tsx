@@ -111,7 +111,7 @@ export function AnimeTooltip({
         <div
           ref={tooltipRef}
           style={tooltipStyle}
-          className="bg-gray-800 border border-gray-700 rounded-lg p-4 shadow-xl max-w-sm z-50"
+          className="bg-purple border border-gray-700 rounded-lg p-4 shadow-xl max-w-sm z-50"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}>
           <div className="space-y-2">

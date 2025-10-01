@@ -374,7 +374,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
             onClick={popupPosition === "center" ? undefined : handleClosePopup}>
             <div
               className={cn(
-                "bg-gray-900 rounded-2xl w-full overflow-y-auto transform",
+                "bg-navbar rounded-2xl w-full overflow-y-auto transform",
                 "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
                 isAnimating
                   ? "scale-100 opacity-100 translate-y-0"
@@ -416,7 +416,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                   {/* Close Button */}
                   <button
                     onClick={handleClosePopup}
-                    className="absolute top-2 right-2 sm:bottom-4 sm:right-4 sm:top-auto bg-black/70 hover:bg-black/90 p-2 rounded-full transition-colors z-10"
+                    className="absolute top-2 right-2 sm:bottom-4 sm:right-4 sm:top-auto bg-purple p-2 rounded-full transition-colors z-10"
                     aria-label="Close">
                     <X className="h-5 w-5 sm:h-6 sm:w-6 text-white/90" />
                   </button>
@@ -434,7 +434,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                     <div className="mb-3">
                       <div className="flex flex-wrap gap-2">
                         <>
-                          <span className="bg-blue-600 text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
+                          <span className="btn-pink text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
                             SUB{" "}
                             {typeof anime.subEpisodes === "number"
                               ? anime.subEpisodes
@@ -481,7 +481,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <Link
                     href={`/anime/${anime.id}/${animeSlug}`}
-                    className="bg-red-600 hover:bg-red-700 text-white/90 p-2 sm:p-3 rounded-full font-semibold flex items-center space-x-2 transition-colors"
+                    className="btn-purple p-2 sm:p-3 rounded-full font-semibold flex items-center space-x-2 transition-colors"
                     onClick={handleClosePopup}>
                     <Play className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Link>

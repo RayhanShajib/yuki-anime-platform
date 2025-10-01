@@ -41,7 +41,7 @@ export function NotificationDropdown({
   return (
     <div
       ref={dropdownRef}
-      className="w-full bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-md shadow-lg z-50">
+      className="w-full bg-purple backdrop-blur-md border border-gray-700/50 rounded-md shadow-lg z-50">
       <div className="py-2 px-2 max-h-96 overflow-y-auto">
         <div className="font-semibold text-white/90 px-2 pb-2 flex items-center justify-between text-lg txt-para">
           <span>Notifications</span>

@@ -168,8 +168,8 @@ export default function ProfileEditPage() {
 
           {/* Password Change Modal */}
           {isPasswordModalOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+              <div className="bg-purple rounded-lg p-6 w-full max-w-md">
                 <h2 className="text-xl font-bold text-white mb-4">
                   Change Password
                 </h2>
@@ -186,7 +186,7 @@ export default function ProfileEditPage() {
                         onChange={(e) =>
                           handlePasswordInputChange("oldPassword", e.target.value)
                         }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                        className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -202,7 +202,7 @@ export default function ProfileEditPage() {
                         onChange={(e) =>
                           handlePasswordInputChange("newPassword", e.target.value)
                         }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                        className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function ProfileEditPage() {
                             e.target.value
                           )
                         }
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                        className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                       />
                     </div>
                   </div>
@@ -252,7 +252,7 @@ export default function ProfileEditPage() {
           {/* Tab Content */}
           <div className="space-y-8">
             {/* Avatar Section */}
-            <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+            <div className="bg-gradient-to-r from-purple-900/20 to-purple-900/20 rounded-lg p-6 border border-purple-800/30">
               <h2 className="text-xl font-bold text-white mb-6">
                 Profile Picture
               </h2>
@@ -285,7 +285,7 @@ export default function ProfileEditPage() {
             </div>
 
             {/* Basic Information */}
-            <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+            <div className="bg-purple rounded-lg p-6 border border-gray-700">
               <h2 className="text-xl font-bold text-white mb-6">
                 Basic Information
               </h2>
@@ -302,7 +302,7 @@ export default function ProfileEditPage() {
                       onChange={(e) =>
                         handleInputChange("username", e.target.value)
                       }
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
                 </div>
@@ -319,7 +319,7 @@ export default function ProfileEditPage() {
                       onChange={(e) =>
                         handleInputChange("email", e.target.value)
                       }
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
                 </div>
@@ -336,7 +336,7 @@ export default function ProfileEditPage() {
                       onChange={(e) =>
                         handleInputChange("birthday", e.target.value)
                       }
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
                 </div>
@@ -354,7 +354,7 @@ export default function ProfileEditPage() {
                         handleInputChange("location", e.target.value)
                       }
                       placeholder="City, Country"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
                 </div>
@@ -373,7 +373,7 @@ export default function ProfileEditPage() {
                       handleInputChange("website", e.target.value)
                     }
                     placeholder="https://your-website.com"
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                   />
                 </div>
               </div>
@@ -387,7 +387,7 @@ export default function ProfileEditPage() {
                   onChange={(e) => handleInputChange("bio", e.target.value)}
                   rows={4}
                   placeholder="Tell us about yourself and your anime interests..."
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500 resize-none"
+                  className="w-full bg-purple border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500 resize-none"
                 />
                 <p className="text-gray-400 text-sm mt-2">
                   {userData.bio.length}/500 characters
@@ -396,7 +396,7 @@ export default function ProfileEditPage() {
             </div>
 
             {/* Social Links */}
-            <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+            <div className="bg-purple rounded-lg p-6 border border-gray-700">
               <h2 className="text-xl font-bold text-white mb-6">
                 Social Links
               </h2>
@@ -418,7 +418,7 @@ export default function ProfileEditPage() {
                         )
                       }
                       placeholder="username"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
                 </div>
@@ -440,7 +440,7 @@ export default function ProfileEditPage() {
                         )
                       }
                       placeholder="username"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
                 </div>
@@ -462,7 +462,7 @@ export default function ProfileEditPage() {
                         )
                       }
                       placeholder="username"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
                 </div>

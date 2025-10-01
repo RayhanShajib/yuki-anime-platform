@@ -70,20 +70,161 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { Suspense } from "react";
 
+// Multi-Select Component
+interface MultiSelectProps {
+  options: string[] | { key: string; label: string }[];
+  selectedValues: string[];
+  onChange: (values: string[]) => void;
+  className?: string;
+}
+
+const MultiSelect: React.FC<MultiSelectProps> = ({
+  options,
+  selectedValues,
+  onChange,
+  className = "",
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Normalize options to have consistent structure
+  const normalizedOptions = options.map((option) =>
+    typeof option === "string"
+      ? { key: option, label: option.charAt(0).toUpperCase() + option.slice(1) }
+      : option
+  );
+
+  const handleToggleOption = (optionKey: string) => {
+    if (optionKey === "all") {
+      // If "all" is selected, clear all other selections
+      onChange(["all"]);
+    } else {
+      // Remove "all" if present and toggle the option
+      const filteredValues = selectedValues.filter((val) => val !== "all");
+
+      if (filteredValues.includes(optionKey)) {
+        // Remove the option
+        const newValues = filteredValues.filter((val) => val !== optionKey);
+        onChange(newValues.length === 0 ? ["all"] : newValues);
+      } else {
+        // Add the option
+        onChange([...filteredValues, optionKey]);
+      }
+    }
+  };
+
+  const getDisplayText = () => {
+    if (selectedValues.includes("all") || selectedValues.length === 0) {
+      return "All Types";
+    }
+
+    if (selectedValues.length === 1) {
+      const option = normalizedOptions.find(
+        (opt) => opt.key === selectedValues[0]
+      );
+      return option?.label || selectedValues[0];
+    }
+
+    const firstOption = normalizedOptions.find(
+      (opt) => opt.key === selectedValues[0]
+    );
+    return `${firstOption?.label || selectedValues[0]} + [${
+      selectedValues.length - 1
+    }]`;
+  };
+
+  return (
+    <div className={`relative ${className}`} ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 text-left flex items-center justify-between hover:bg-gray-700 focus:outline-none">
+        <span>{getDisplayText()}</span>
+        <svg
+          className={`w-4 h-4 transition-transform ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          {normalizedOptions.map((option) => (
+            <label
+              key={option.key}
+              className="flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer transition-colors">
+              <span className="relative mr-3 inline-block w-4 h-4 align-middle">
+                <input
+                  type="checkbox"
+                  checked={selectedValues.includes(option.key)}
+                  onChange={() => handleToggleOption(option.key)}
+                  className="w-4 h-4 rounded focus:outline-none appearance-none border border-gray-400"
+                  style={
+                    selectedValues.includes(option.key)
+                      ? { backgroundColor: "#7760a9", borderColor: "#7760a9" }
+                      : { backgroundColor: "#1f2937", borderColor: "#6b7280" }
+                  }
+                />
+                {selectedValues.includes(option.key) && (
+                  <span
+                    className="absolute left-0 top-0 w-4 h-4 flex items-center justify-center text-white text-base pointer-events-none select-none"
+                    style={{ lineHeight: "1rem", fontWeight: 700 }}>
+                    +
+                  </span>
+                )}
+              </span>
+              <span className="text-white">{option.label}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Pending filter states (controlled by UI)
   const [pendingSearchTerm, setPendingSearchTerm] = useState("");
-  const [pendingType, setPendingType] = useState("all");
-  const [pendingStatus, setPendingStatus] = useState("all");
-  const [pendingGenre, setPendingGenre] = useState("all");
-  const [pendingRating, setPendingRating] = useState("all");
-  const [pendingYear, setPendingYear] = useState("all");
+  const [pendingType, setPendingType] = useState<string[]>(["all"]);
+  const [pendingStatus, setPendingStatus] = useState<string[]>(["all"]);
+  const [pendingGenre, setPendingGenre] = useState<string[]>(["all"]);
+  const [pendingRating, setPendingRating] = useState<string[]>(["all"]);
+  const [pendingYear, setPendingYear] = useState<string[]>(["all"]);
   const [pendingCountry, setPendingCountry] = useState<string[]>([]);
   const [pendingLanguage, setPendingLanguage] = useState<string[]>([]);
-  const [pendingSeason, setPendingSeason] = useState("all");
+  const [pendingSeason, setPendingSeason] = useState<string[]>(["all"]);
   const [pendingSort, setPendingSort] = useState("popularity");
   const [pendingStudio, setPendingStudio] = useState("");
   const [pendingProducer, setPendingProducer] = useState("");
@@ -119,14 +260,14 @@ function SearchPageContent() {
   // Applied filter states (from URL)
   const [appliedFilters, setAppliedFilters] = useState({
     search: "",
-    type: "all",
-    status: "all",
-    genre: "all",
-    rating: "all",
-    year: "all",
+    type: [] as string[],
+    status: [] as string[],
+    genre: [] as string[],
+    rating: [] as string[],
+    year: [] as string[],
     country: [] as string[],
     language: [] as string[],
-    season: "all",
+    season: [] as string[],
     sort: "popularity",
     studio: "",
     alpha: "",
@@ -137,28 +278,28 @@ function SearchPageContent() {
     const params = Object.fromEntries(searchParams.entries());
     setAppliedFilters({
       search: params.search || "",
-      type: params.type || "all",
-      status: params.status || "all",
-      genre: params.genre || "all",
-      rating: params.rating || "all",
-      year: params.year || "all",
+      type: params.type ? params.type.split(",") : ["all"],
+      status: params.status ? params.status.split(",") : ["all"],
+      genre: params.genre ? params.genre.split(",") : ["all"],
+      rating: params.rating ? params.rating.split(",") : ["all"],
+      year: params.year ? params.year.split(",") : ["all"],
       country: params.country ? (params.country.split(",") as string[]) : [],
       language: params.language ? (params.language.split(",") as string[]) : [],
-      season: params.season || "all",
+      season: params.season ? params.season.split(",") : ["all"],
       sort: params.sort || "popularity",
       studio: params.studio || "",
       alpha: params.alpha || "",
     });
     // Also update pending states so UI reflects URL
     setPendingSearchTerm(params.search || "");
-    setPendingType(params.type || "all");
-    setPendingStatus(params.status || "all");
-    setPendingGenre(params.genre || "all");
-    setPendingRating(params.rating || "all");
-    setPendingYear(params.year || "all");
+    setPendingType(params.type ? params.type.split(",") : ["all"]);
+    setPendingStatus(params.status ? params.status.split(",") : ["all"]);
+    setPendingGenre(params.genre ? params.genre.split(",") : ["all"]);
+    setPendingRating(params.rating ? params.rating.split(",") : ["all"]);
+    setPendingYear(params.year ? params.year.split(",") : ["all"]);
     setPendingCountry(params.country ? params.country.split(",") : []);
     setPendingLanguage(params.language ? params.language.split(",") : []);
-    setPendingSeason(params.season || "all");
+    setPendingSeason(params.season ? params.season.split(",") : ["all"]);
     setPendingSort(params.sort || "popularity");
     setPendingStudio(params.studio || "");
     setPendingProducer(params.producer || "");
@@ -172,16 +313,22 @@ function SearchPageContent() {
   const handleApplyFilters = () => {
     const params = new URLSearchParams();
     if (pendingSearchTerm) params.set("search", pendingSearchTerm);
-    if (pendingType !== "all") params.set("type", pendingType);
-    if (pendingStatus !== "all") params.set("status", pendingStatus);
-    if (pendingGenre !== "all") params.set("genre", pendingGenre);
-    if (pendingRating !== "all") params.set("rating", pendingRating);
-    if (pendingYear !== "all") params.set("year", pendingYear);
+    if (pendingType.length > 0 && !pendingType.includes("all"))
+      params.set("type", pendingType.join(","));
+    if (pendingStatus.length > 0 && !pendingStatus.includes("all"))
+      params.set("status", pendingStatus.join(","));
+    if (pendingGenre.length > 0 && !pendingGenre.includes("all"))
+      params.set("genre", pendingGenre.join(","));
+    if (pendingRating.length > 0 && !pendingRating.includes("all"))
+      params.set("rating", pendingRating.join(","));
+    if (pendingYear.length > 0 && !pendingYear.includes("all"))
+      params.set("year", pendingYear.join(","));
     if (pendingCountry.length > 0 && !pendingCountry.includes("all"))
       params.set("country", pendingCountry.join(","));
     if (pendingLanguage.length > 0 && !pendingLanguage.includes("all"))
       params.set("language", pendingLanguage.join(","));
-    if (pendingSeason !== "all") params.set("season", pendingSeason);
+    if (pendingSeason.length > 0 && !pendingSeason.includes("all"))
+      params.set("season", pendingSeason.join(","));
     if (pendingSort !== "popularity") params.set("sort", pendingSort);
     if (pendingStudio) params.set("studio", pendingStudio);
     if (pendingProducer) params.set("producer", pendingProducer);
@@ -214,32 +361,49 @@ function SearchPageContent() {
       )
         return false;
       if (
-        appliedFilters.genre !== "all" &&
+        appliedFilters.genre.length > 0 &&
+        !appliedFilters.genre.includes("all") &&
         !anime.genres.some((g) =>
-          g.toLowerCase().includes(appliedFilters.genre.toLowerCase())
+          appliedFilters.genre.some((selectedGenre) =>
+            g.toLowerCase().includes(selectedGenre.toLowerCase())
+          )
         )
       )
         return false;
-      if (appliedFilters.type !== "all" && anime.type !== appliedFilters.type)
-        return false;
       if (
-        appliedFilters.status !== "all" &&
-        anime.status !== appliedFilters.status
+        appliedFilters.type.length > 0 &&
+        !appliedFilters.type.includes("all") &&
+        !appliedFilters.type.includes(anime.type)
       )
         return false;
       if (
-        appliedFilters.rating !== "all" &&
-        anime.rating < parseInt(appliedFilters.rating)
+        appliedFilters.status.length > 0 &&
+        !appliedFilters.status.includes("all") &&
+        !appliedFilters.status.includes(anime.status)
       )
         return false;
       if (
-        appliedFilters.year !== "all" &&
-        anime.releaseYear.toString() !== appliedFilters.year &&
-        !(
-          appliedFilters.year.includes("-") &&
-          anime.releaseYear >= parseInt(appliedFilters.year.split("-")[0]) &&
-          anime.releaseYear <= parseInt(appliedFilters.year.split("-")[1])
-        )
+        appliedFilters.rating.length > 0 &&
+        !appliedFilters.rating.includes("all") &&
+        !appliedFilters.rating.some((ratingFilter) => {
+          const ratingValue = parseInt(ratingFilter);
+          return anime.rating >= ratingValue;
+        })
+      )
+        return false;
+      if (
+        appliedFilters.year.length > 0 &&
+        !appliedFilters.year.includes("all") &&
+        !appliedFilters.year.some((yearFilter) => {
+          if (yearFilter.includes("-")) {
+            const [startYear, endYear] = yearFilter.split("-");
+            return (
+              anime.releaseYear >= parseInt(startYear) &&
+              anime.releaseYear <= parseInt(endYear)
+            );
+          }
+          return anime.releaseYear.toString() === yearFilter;
+        })
       )
         return false;
       if (
@@ -352,46 +516,34 @@ function SearchPageContent() {
                 placeholder="Search anime..."
                 value={pendingSearchTerm}
                 onChange={(e) => setPendingSearchTerm(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none w-full"
+                className="px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 focus:outline-none w-full"
               />
-              {/* Type Dropdown */}
-              <select
-                value={pendingType}
-                onChange={(e) => setPendingType(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
-                {typeFilters.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {/* Genre Dropdown */}
-              <select
-                value={pendingGenre}
-                onChange={(e) => setPendingGenre(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
-                {genreOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
-                  </option>
-                ))}
-              </select>
-              {/* Status Dropdown */}
-              <select
-                value={pendingStatus}
-                onChange={(e) => setPendingStatus(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
-                {statusFilters.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              {/* Type Multi-Select */}
+              <MultiSelect
+                options={typeFilters}
+                selectedValues={pendingType}
+                onChange={setPendingType}
+                className="w-full"
+              />
+              {/* Genre Multi-Select */}
+              <MultiSelect
+                options={genreOptions}
+                selectedValues={pendingGenre}
+                onChange={setPendingGenre}
+                className="w-full"
+              />
+              {/* Status Multi-Select */}
+              <MultiSelect
+                options={statusFilters}
+                selectedValues={pendingStatus}
+                onChange={setPendingStatus}
+                className="w-full"
+              />
               {/* Sort Dropdown */}
               <select
                 value={pendingSort}
                 onChange={(e) => setPendingSort(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
+                className="px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 w-full">
                 {sortOptions.map((option) => (
                   <option key={option.key} value={option.key}>
                     {option.label}
@@ -404,7 +556,7 @@ function SearchPageContent() {
                   type="button"
                   ref={toggleButtonRef}
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer flex justify-center w-full"
+                  className="p-2 rounded-lg btn-pink text-white cursor-pointer flex justify-center w-full"
                   aria-label="Show advanced filters">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -428,55 +580,43 @@ function SearchPageContent() {
                 </button>
                 {/* Advanced Dropdown - position absolute */}
                 {showAdvanced && (
-                  <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 mt-2 absolute top-full right-0 z-50 w-[min(90vw,600px)] shadow-xl">
+                  <div className="bg-purple border border-gray-700 rounded-lg p-4 mt-2 absolute top-full right-0 z-50 w-[min(90vw,600px)] shadow-xl">
                     <div className="flex justify-between items-center gap-4">
-                      {/* Rating Dropdown */}
+                      {/* Rating Multi-Select */}
                       <div className="w-full">
                         <label className="block text-gray-300 text-sm mb-1">
                           Rating
                         </label>
-                        <select
-                          value={pendingRating}
-                          onChange={(e) => setPendingRating(e.target.value)}
-                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700">
-                          {ratingOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
+                        <MultiSelect
+                          options={ratingOptions}
+                          selectedValues={pendingRating}
+                          onChange={setPendingRating}
+                          className="w-full"
+                        />
                       </div>
-                      {/* Year Dropdown */}
+                      {/* Year Multi-Select */}
                       <div className="w-full">
                         <label className="block text-gray-300 text-sm mb-1">
                           Year
                         </label>
-                        <select
-                          value={pendingYear}
-                          onChange={(e) => setPendingYear(e.target.value)}
-                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700">
-                          {yearOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
+                        <MultiSelect
+                          options={yearOptions}
+                          selectedValues={pendingYear}
+                          onChange={setPendingYear}
+                          className="w-full"
+                        />
                       </div>
-                      {/* Season Dropdown */}
+                      {/* Season Multi-Select */}
                       <div className="w-full">
                         <label className="block text-gray-300 text-sm mb-1">
                           Season
                         </label>
-                        <select
-                          value={pendingSeason}
-                          onChange={(e) => setPendingSeason(e.target.value)}
-                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700">
-                          {seasonOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
+                        <MultiSelect
+                          options={seasonOptions}
+                          selectedValues={pendingSeason}
+                          onChange={setPendingSeason}
+                          className="w-full"
+                        />
                       </div>
                     </div>
                     <div className="flex items-center justify-between flex-wrap gap-4">
@@ -490,7 +630,7 @@ function SearchPageContent() {
                           value={pendingStudio}
                           onChange={(e) => setPendingStudio(e.target.value)}
                           placeholder="Enter studio name"
-                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700"
+                          className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700"
                         />
                       </div>
                       {/* Producer Input Field */}
@@ -503,7 +643,7 @@ function SearchPageContent() {
                           value={pendingProducer}
                           onChange={(e) => setPendingProducer(e.target.value)}
                           placeholder="Enter producer name"
-                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700"
+                          className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700"
                         />
                       </div>
                     </div>
@@ -514,7 +654,7 @@ function SearchPageContent() {
                         className={`px-6 py-2 rounded-lg font-medium border border-gray-700 ${
                           pendingAudio === "sub"
                             ? "btn-purple text-white"
-                            : "bg-gray-800 text-gray-300"
+                            : "bg-purple text-gray-300"
                         }`}
                         onClick={() => setPendingAudio("sub")}>
                         Sub
@@ -524,7 +664,7 @@ function SearchPageContent() {
                         className={`px-6 py-2 rounded-lg font-medium border border-gray-700 ${
                           pendingAudio === "dub"
                             ? "btn-purple text-white"
-                            : "bg-gray-800 text-gray-300"
+                            : "bg-purple text-gray-300"
                         }`}
                         onClick={() => setPendingAudio("dub")}>
                         Dub
