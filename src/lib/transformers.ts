@@ -13,6 +13,8 @@ interface ApiSpotlightItem {
   genre?: string[];
   released_date?: string;
   type?: string;
+  sub_total?: number;
+  dub_total?: number;
   [key: string]: unknown;
 }
 
@@ -27,6 +29,8 @@ interface ApiAnimeItem {
   airing?: boolean;
   anime_type?: string;
   number_of_episodes?: number;
+  sub_total?: number;
+  dub_total?: number;
   [key: string]: unknown;
 }
 
@@ -63,6 +67,8 @@ export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
     rating: 8.5, // Default rating for display
     popularity: 95, // Default popularity for display
     language: ['sub' as const],
+    subEpisodes: item.sub_total || 0,
+    dubEpisodes: item.dub_total || 0,
   }));
 };
 
@@ -93,6 +99,8 @@ export const transformAnimeListData = (animeList: ApiAnimeItem[]) => {
     rating: 0,
     popularity: 0,
     language: ['sub' as const],
+    subEpisodes: item.sub_total || 0,
+    dubEpisodes: item.dub_total || 0,
   }));
 };
 
