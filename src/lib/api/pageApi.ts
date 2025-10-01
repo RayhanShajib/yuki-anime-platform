@@ -104,19 +104,28 @@ export const pageApi = {
   }),
 
   // Watch Page
-  getWatchPageData: cache(async (animeId: string, episodeNumber: number) => {
-    const [anime, episode, nextEpisode] = await Promise.all([
-      fetchFromApi(`/anime/${animeId}`),
-      fetchFromApi(`/anime/${animeId}/episodes/${episodeNumber}`),
-      fetchFromApi(`/anime/${animeId}/episodes/${episodeNumber + 1}`).catch(() => null),
-    ]);
-
-    return {
-      anime,
-      episode,
-      nextEpisode,
-    };
+   getWatchPageData: cache(async (episodeId: string) => {
+    const endpoint = `/episode/${episodeId}`;
+    return fetchFromApi(endpoint);
   }),
+
+  // Get Real video source
+  getPrivateVideoSource: cache(async (privateId: string) => {
+    const endpoint = `/m3u8?id=${privateId}`;
+    return fetchFromApi(endpoint);
+  }),
+
+  // getWatchPageData: cache(async (animeId: string, episodeId: string) => {
+  //   const [anime, episode] = await Promise.all([
+  //     fetchFromApi(`/anime/${animeId}/`),
+  //     fetchFromApi(`/episode/${episodeId}/`),
+  //   ]);
+
+  //   return {
+  //     anime,
+  //     episode,
+  //   };
+  // }),
 
   // Continue Watching Page - Requires authentication
   getContinueWatchingPageData: cache(async () => {

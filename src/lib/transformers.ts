@@ -2,7 +2,7 @@
 
 // API Response Interfaces
 interface ApiSpotlightItem {
-  id: number;
+  id: number | null;
   title?: {
     romaji?: string;
     english?: string;
@@ -17,7 +17,7 @@ interface ApiSpotlightItem {
 }
 
 interface ApiAnimeItem {
-  id: number;
+  id: number | null;
   title?: string;
   synopsis?: string;
   image?: string;
@@ -43,8 +43,10 @@ interface ApiLatestData {
 
 // Helper function to transform API spotlight data to expected Anime interface
 export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
-  return spotlightData.map((item: ApiSpotlightItem) => ({
-    id: item.id.toString(),
+  return spotlightData
+    .filter((item: ApiSpotlightItem): item is ApiSpotlightItem & { id: number } => item.id != null)
+    .map((item: ApiSpotlightItem & { id: number }) => ({
+      id: item.id.toString(),
     title: typeof item.title === 'object' && item.title !== null 
       ? (item.title.romaji || item.title.english || 'Unknown Title')
       : (item.title || 'Unknown Title'),
@@ -73,8 +75,10 @@ export const transformTrendingData = (trendingData: ApiTrendingData) => {
 
 // Helper function to transform anime list data
 export const transformAnimeListData = (animeList: ApiAnimeItem[]) => {
-  return animeList.map((item: ApiAnimeItem) => ({
-    id: item.id.toString(),
+  return animeList
+    .filter((item: ApiAnimeItem): item is ApiAnimeItem & { id: number } => item.id != null)
+    .map((item: ApiAnimeItem & { id: number }) => ({
+      id: item.id.toString(),
     title: item.title || 'Unknown Title',
     synopsis: item.synopsis || '',
     poster: item.image || '/placeholder-anime.jpg',
@@ -106,4 +110,81 @@ export const transformLatestData = (latestData: ApiLatestData) => {
   }));
   
   return [...subAnime, ...dubAnime];
+};
+
+// Watch Page Transformers
+import type { 
+  ApiWatchPageResponse, 
+  TransformedWatchPageData, 
+  ApiRelatedAnime, 
+  TransformedAnimeData as WatchTransformedAnimeData,
+  ApiEpisodeData,
+  TransformedEpisodeData,
+  ApiVideoSourceGroup,
+  TransformedVideoSource
+} from '@/types/api';
+
+// Transform watch page API response to component interface
+export const transformWatchPageData = (apiData: ApiWatchPageResponse): TransformedWatchPageData => {
+  return {
+    viewCount: apiData.view_count,
+    animeId: apiData.anime,
+    relatedAnime: apiData.related_animes.filter(anime => anime.id != null).map(transformRelatedAnime),
+    similarAnime: apiData.similar_animes.filter(anime => anime.id != null).map(transformRelatedAnime),
+    episodes: {
+      sub: apiData.episodes.sub.map(transformEpisodeData),
+      dub: apiData.episodes.dub.map(transformEpisodeData),
+    },
+    videoSources: {
+      sub: apiData.vidsrces.sub.map(transformVideoSource),
+      dub: apiData.vidsrces.dub.map(transformVideoSource),
+    },
+    skipTimes: {
+      introSkip: parseFloat(apiData.skip_time.intro_skip),
+      outroSkip: parseFloat(apiData.skip_time.outro_skip),
+    },
+  };
+};
+
+// Transform related/similar anime data
+const transformRelatedAnime = (anime: ApiRelatedAnime): WatchTransformedAnimeData => {
+  return {
+    id: anime.id?.toString() || '0',
+    title: anime.title,
+    titleJapanese: anime.title_japanese,
+    type: anime.anime_type,
+    episodeCount: anime.number_of_episodes,
+    isAiring: anime.airing,
+    synopsis: anime.synopsis,
+    trailerId: anime.trailer_yt_id,
+    poster: anime.image,
+    banner: anime.background_banner,
+    episodeCounts: {
+      sub: anime.sub_total,
+      dub: anime.dub_total,
+      raw: anime.raw_total,
+    },
+    genres: anime.genre,
+  };
+};
+
+// Transform episode data
+const transformEpisodeData = (episode: ApiEpisodeData): TransformedEpisodeData => {
+  return {
+    id: episode.id,
+    episodeNumber: episode.ep_no,
+    title: episode.title,
+    description: episode.description,
+    thumbnail: episode.image,
+    airedDate: episode.aired_date,
+  };
+};
+
+// Transform video source data
+const transformVideoSource = (source: ApiVideoSourceGroup): TransformedVideoSource => {
+  return {
+    iframeUrls: source.iframe,
+    m3u8Urls: source.m3u8,
+    privateKey: source.private,
+  };
 };

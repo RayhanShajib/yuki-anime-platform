@@ -10,7 +10,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 interface ApiAiringAnime {
-  id: number;
+  id: number | null;
   title: string;
   title_japanese?: string;
   sub_total?: number;
@@ -35,15 +35,17 @@ interface ScheduleSectionProps {
 
 // Transform API airing data to schedule format
 const transformAiringData = (airingAnime: ApiAiringAnime[]) => {
-  const transformedAnime = airingAnime.map((anime: ApiAiringAnime) => ({
-    id: anime.id.toString(),
-    title: anime.title,
-    episode: `Episode ${anime.sub_total || '?'}`,
-    episodeTitle: anime.title_japanese || '',
-    time: "TBA JST", // API doesn't seem to have time data
-    poster: anime.image || '/placeholder-anime.jpg',
-    isNew: anime.airing || false,
-  }));
+  const transformedAnime = airingAnime
+    .filter((anime: ApiAiringAnime): anime is ApiAiringAnime & { id: number } => anime.id != null) // Filter out anime with null/undefined IDs
+    .map((anime: ApiAiringAnime & { id: number }) => ({
+      id: anime.id.toString(),
+      title: anime.title || 'Unknown Title',
+      episode: `Episode ${anime.sub_total || '?'}`,
+      episodeTitle: anime.title_japanese || '',
+      time: "TBA JST", // API doesn't seem to have time data
+      poster: anime.image || '/placeholder-anime.jpg',
+      isNew: anime.airing || false,
+    }));
 
   // Generate dynamic day keys
   const daysKeys = generateDaysOfWeek().map(day => day.key);

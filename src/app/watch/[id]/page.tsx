@@ -6,14 +6,15 @@ import { AnimeCard } from "@/components/ui/AnimeCard";
 import { CommentSection } from "@/components/ui/CommentSection";
 import IframeVideoPlayer from "@/components/ui/IframeVideoPlayer";
 import VideoPlayer, { VideoPlayerRef } from "@/components/ui/VideoPlayer";
-import { latestAnime, mockAnime } from "@/lib/mockData";
-import type { Anime } from "@/types/anime";
-import { Grid, List } from "lucide-react";
+import { pageApi } from "@/lib/api/pageApi";
+import { transformWatchPageData } from "@/lib/transformers";
+import type { TransformedWatchPageData } from "@/types/api";
+import { Grid, List, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import "plyr-react/plyr.css";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -22,11 +23,16 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function WatchPage() {
   const params = useParams();
-  const animeId = params?.id as string;
-  const anime: Anime | undefined = useMemo(
-    () => mockAnime.find((a) => a.id === animeId),
-    [animeId]
-  );
+  const episodeId = params?.id as string;
+
+  // --- API Data State ---
+  const [watchData, setWatchData] = useState<TransformedWatchPageData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // --- Audio Type State (sub/dub) ---
+  const [audioType, setAudioType] = useState<'sub' | 'dub'>('sub');
+
   // --- Rating State ---
   const [userRating, setUserRating] = useState<number>(0);
 
@@ -43,35 +49,49 @@ export default function WatchPage() {
     "episode"
   );
 
-  // --- Episodes Data (mock, replace with real data if available) ---
-  type Episode = { ep: number; title: string };
+  // --- Fetch Watch Page Data ---
+  useEffect(() => {
+    if (!episodeId) return;
 
-  // Define a type for the possible episode structure in anime.episodes
-  type AnimeEpisode = {
-    ep?: number;
-    number?: number;
-    title?: string;
-  };
+    const fetchWatchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const apiData = await pageApi.getWatchPageData(episodeId);
+        const transformedData = transformWatchPageData(apiData);
+        
+        setWatchData(transformedData);
+        
+        // Set initial episode based on available episodes
+        const availableEpisodes = transformedData.episodes[audioType];
+        if (availableEpisodes.length > 0) {
+          setSelectedEpisode(availableEpisodes[0].episodeNumber);
+        }
+      } catch (err) {
+        console.error('Error fetching watch page data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load watch data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWatchData();
+  }, [episodeId, audioType]);
+
+  // --- Episodes Data from API ---
+  type Episode = { ep: number; title: string; thumbnail: string };
 
   const episodes = useMemo<Episode[]>(() => {
-    // If anime.episodes exists, use it; otherwise, use a mock array
-    if (anime && Array.isArray(anime.episodes)) {
-      // Map or cast anime.episodes to the correct shape if necessary
-      return anime.episodes.map((ep: AnimeEpisode) => ({
-        ep: ep.ep ?? ep.number ?? 0,
-        title: ep.title ?? `Episode ${ep.ep ?? ep.number ?? ""}`,
-      }));
-    }
-    // Example mock data
-    return [
-      { ep: 1, title: "The Beginning" },
-      { ep: 2, title: "A New Challenge" },
-      { ep: 3, title: "Allies and Enemies" },
-      { ep: 4, title: "Turning Point" },
-      { ep: 5, title: "Climax" },
-      { ep: 6, title: "Resolution" },
-    ];
-  }, [anime]);
+    if (!watchData) return [];
+    
+    const episodeList = watchData.episodes[audioType];
+    return episodeList.map((ep) => ({
+      ep: ep.episodeNumber,
+      title: ep.title || `Episode ${ep.episodeNumber}`,
+      thumbnail: ep.thumbnail,
+    }));
+  }, [watchData, audioType]);
 
   // --- Filtered Episodes ---
   const filteredEpisodes = useMemo(() => {
@@ -87,11 +107,33 @@ export default function WatchPage() {
   // --- Video Player Ref ---
   const videoPlayerRef = React.useRef<VideoPlayerRef>(null);
   
-  // --- Video Sources Configuration ---
-  const videoSources = {
-    1: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-    2: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-  };
+  // --- Video Sources Configuration from API ---
+  const videoSources = useMemo(() => {
+    if (!watchData) return {};
+    
+    const sources = watchData.videoSources[audioType];
+    if (!sources.length) return {};
+    
+    // For now, we'll use the first video source group
+    // Later you can implement logic to handle multiple source groups
+    const sourceGroup = sources[0];
+    
+    const sourcesMap: Record<number, string> = {};
+    
+    // Map iframe URLs to server numbers (keeping as placeholder URLs for now)
+    sourceGroup.iframeUrls.forEach((url, index) => {
+      sourcesMap[index + 1] = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"; // Placeholder until you provide video handling logic
+    });
+    
+    // If no iframe URLs, use m3u8 URLs as fallback
+    if (Object.keys(sourcesMap).length === 0) {
+      sourceGroup.m3u8Urls.forEach((url, index) => {
+        sourcesMap[index + 1] = url;
+      });
+    }
+    
+    return sourcesMap;
+  }, [watchData, audioType]);
 
   // --- Handle Server Switch with Time Continuity ---
   const handleServerSwitch = (serverNumber: number) => {
@@ -121,34 +163,78 @@ export default function WatchPage() {
 
 
 
+  // Get current anime info from related anime (assuming the first related anime is the current one)
+  const currentAnime = watchData?.relatedAnime?.[0] || watchData?.similarAnime?.[0];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      <main className="mt-[50px]">
-        <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
-          <div className="w-full px-4 bg-gray-900/40 rounded-lg shadow-lg">
-            {/* Breadcrumb Navigation */}
-            <nav className="flex items-center text-md text-gray-300 mb-4 pt-4">
-              <Link href="/" className="hover:text-blue-500 font-medium">
-                Home
-              </Link>
-              <span className="mx-2">&gt;</span>
-              {anime?.genres && anime.genres.length > 0 ? (
-                <Link
-                  href={`/genre/${encodeURIComponent(anime.genres[0])}`}
-                  className="hover:text-blue-500 font-medium">
-                  {anime.genres[0]}
+      
+      {/* Loading State */}
+      {loading && (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center py-12">
+            <Loader2 className="h-16 w-16 text-purple-500 mx-auto mb-4 animate-spin" />
+            <h3 className="text-xl font-semibold text-gray-400 mb-2">
+              Loading Watch Page...
+            </h3>
+            <p className="text-gray-500">
+              Please wait while we fetch the episode data.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center py-12">
+            <div className="h-16 w-16 text-red-500 mx-auto mb-4">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-red-400 mb-2">
+              Error Loading Watch Page
+            </h3>
+            <p className="text-gray-500 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="btn-purple text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      {!loading && !error && watchData && (
+        <main className="mt-[50px]">
+          <div className="grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
+            <div className="w-full px-4 bg-gray-900/40 rounded-lg shadow-lg">
+              {/* Breadcrumb Navigation */}
+              <nav className="flex items-center text-md text-gray-300 mb-4 pt-4">
+                <Link href="/" className="hover:text-blue-500 font-medium">
+                  Home
                 </Link>
-              ) : (
-                <Link href="/genre" className="hover:text-blue-500 font-medium">
-                  Genre
-                </Link>
-              )}
-              <span className="mx-2">&gt;</span>
-              <span className="text-white font-semibold">
-                {anime?.title || "Anime Name"}
-              </span>
-            </nav>
+                <span className="mx-2">&gt;</span>
+                {currentAnime?.genres && currentAnime.genres.length > 0 ? (
+                  <Link
+                    href={`/genre/${encodeURIComponent(currentAnime.genres[0])}`}
+                    className="hover:text-blue-500 font-medium">
+                    {currentAnime.genres[0]}
+                  </Link>
+                ) : (
+                  <Link href="/genre" className="hover:text-blue-500 font-medium">
+                    Genre
+                  </Link>
+                )}
+                <span className="mx-2">&gt;</span>
+                <span className="text-white font-semibold">
+                  {currentAnime?.title || "Anime Name"}
+                </span>
+              </nav>
             <div className="aspect-video w-full rounded-lg mb-6">
               {selectedServer === 3 ? (
                 <IframeVideoPlayer src="https://www.youtube.com/embed/dQw4w9WgXcQ" />
@@ -163,8 +249,8 @@ export default function WatchPage() {
                       default: true,
                     },
                   ]}
-                  posterImage={anime?.banner || anime?.poster || "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg"}
-                  videoTitle={`${anime?.title || "Anime"} - Episode ${selectedEpisode}`}
+                  posterImage={currentAnime?.banner || currentAnime?.poster || "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg"}
+                  videoTitle={`${currentAnime?.title || "Anime"} - Episode ${selectedEpisode}`}
                   subtitles={[
                     {
                       file: "https://brenopolanski.github.io/html5-video-webvtt-example/MIB2-subtitles-pt-BR.vtt",
@@ -223,6 +309,31 @@ export default function WatchPage() {
                   }
                   onClick={() => handleServerSwitch(3)}>
                   Server 3
+                </button>
+              </div>
+              
+              {/* Audio Type Selection (SUB/DUB) */}
+              <div className="flex gap-4 justify-center items-center flex-wrap mt-4">
+                <span className="text-white text-sm font-medium">Audio:</span>
+                <button
+                  className={
+                    `px-3 py-1 rounded font-normal shadow transition ` +
+                    (audioType === 'sub'
+                      ? "btn-purple text-white/90 hover:bg-blue-700"
+                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
+                  }
+                  onClick={() => setAudioType('sub')}>
+                  SUB
+                </button>
+                <button
+                  className={
+                    `px-3 py-1 rounded font-normal shadow transition ` +
+                    (audioType === 'dub'
+                      ? "btn-purple text-white/90 hover:bg-blue-700"
+                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
+                  }
+                  onClick={() => setAudioType('dub')}>
+                  DUB
                 </button>
               </div>
             </div>
@@ -294,9 +405,13 @@ export default function WatchPage() {
                   }
                 )}
               </select>
-              <select className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center cursor-pointer focus:outline-none">
-                <option>SUB 12</option>
-                <option>DUB 20</option>
+              <select 
+                className="bg-gray-700 text-white/90 p-2 rounded-md w-full text-center cursor-pointer focus:outline-none"
+                value={audioType}
+                onChange={(e) => setAudioType(e.target.value as 'sub' | 'dub')}
+              >
+                <option value="sub">SUB {watchData?.episodes.sub?.length || 0}</option>
+                <option value="dub">DUB {watchData?.episodes.dub?.length || 0}</option>
               </select>
               {/* List/Grid Toggle Icon */}
               <button
@@ -322,7 +437,7 @@ export default function WatchPage() {
               }
               style={isListView ? { display: "block" } : { display: "grid" }}>
               {/* Episodes List */}
-              {filteredEpisodes.map(({ ep, title }) => (
+              {filteredEpisodes.map(({ ep, title, thumbnail }) => (
                 <div
                   key={ep}
                   className={
@@ -346,7 +461,7 @@ export default function WatchPage() {
                     <>
                       <div className="w-22 h-17 flex-shrink-0 rounded overflow-hidden relative">
                         <Image
-                          src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
+                          src={thumbnail || `https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
                           alt={`Episode ${ep}`}
                           fill
                           className="object-cover"
@@ -364,7 +479,7 @@ export default function WatchPage() {
                   ) : (
                     <>
                       <Image
-                        src={`https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
+                        src={thumbnail || `https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`}
                         alt={`Episode ${ep}`}
                         fill
                         className="object-cover transition duration-300 group-hover:brightness-75"
@@ -623,10 +738,25 @@ export default function WatchPage() {
               },
             }}
             className="relations-swiper">
-            {latestAnime.slice(0, 10).map((anime) => (
+            {watchData?.relatedAnime?.slice(0, 10).map((anime) => (
               <SwiperSlide key={anime.id}>
                 <div className="relative">
-                  <AnimeCard anime={anime} showPopup={true} />
+                  <AnimeCard anime={{
+                    id: anime.id,
+                    title: anime.title,
+                    synopsis: anime.synopsis,
+                    poster: anime.poster,
+                    banner: anime.banner,
+                    genres: anime.genres,
+                    studio: 'Unknown',
+                    releaseYear: new Date().getFullYear(),
+                    status: anime.isAiring ? 'ongoing' as const : 'completed' as const,
+                    type: anime.type.toLowerCase() === 'movie' ? 'movie' as const : 'series' as const,
+                    totalEpisodes: anime.episodeCount,
+                    rating: 0,
+                    popularity: 0,
+                    language: ['sub' as const],
+                  }} showPopup={true} />
                 </div>
               </SwiperSlide>
             ))}
@@ -667,11 +797,26 @@ export default function WatchPage() {
               },
             }}
             className="recommended-swiper">
-            {latestAnime.slice(0, 10).map((anime) => (
+            {watchData?.similarAnime?.slice(0, 10).map((anime) => (
               <SwiperSlide key={anime.id}>
                 <div className="flex-shrink-0 overflow-visible  relative">
                   <AnimeCard
-                    anime={anime}
+                    anime={{
+                      id: anime.id,
+                      title: anime.title,
+                      synopsis: anime.synopsis,
+                      poster: anime.poster,
+                      banner: anime.banner,
+                      genres: anime.genres,
+                      studio: 'Unknown',
+                      releaseYear: new Date().getFullYear(),
+                      status: anime.isAiring ? 'ongoing' as const : 'completed' as const,
+                      type: anime.type.toLowerCase() === 'movie' ? 'movie' as const : 'series' as const,
+                      totalEpisodes: anime.episodeCount,
+                      rating: 0,
+                      popularity: 0,
+                      language: ['sub' as const],
+                    }}
                     showPopup={true}
                     className="h-auto overflow-visible"
                   />
@@ -681,11 +826,13 @@ export default function WatchPage() {
           </Swiper>
         </div>
 
-        {/* --- Comments Section --- */}
-        <section className="comments-section grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
-          <CommentSection />
-        </section>
-      </main>
+          {/* --- Comments Section --- */}
+          <section className="comments-section grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
+            <CommentSection />
+          </section>
+        </main>
+      )}
+      
       <FooterSection />
     </div>
   );

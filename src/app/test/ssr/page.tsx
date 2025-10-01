@@ -11,9 +11,9 @@ export default async function TestSSRPage() {
     console.log('Home Page Data:', homeData);
 
     // Test 2: Popular Page Data
-    console.log('\n2. Testing Popular Page Data:');
-    const popularData = await pageApi.getPopularPageData();
-    console.log('Popular Page Data:', popularData);
+    //console.log('\n2. Testing Popular Page Data:');
+    //const popularData = await pageApi.getPopularPageData();
+    //console.log('Popular Page Data:', popularData);
 
     // Test 3: Anime Info Page Data
     console.log('\n3. Testing Anime Info Page Data:');
@@ -39,12 +39,12 @@ export default async function TestSSRPage() {
             </pre>
           </div>
 
-          <div className="p-4 bg-gray-800 rounded">
+          {/* <div className="p-4 bg-gray-800 rounded">
             <h2 className="font-bold mb-2">Popular Page Data Test:</h2>
             <pre className="whitespace-pre-wrap">
               {JSON.stringify(popularData, null, 2)}
             </pre>
-          </div>
+          </div> */}
 
           <div className="p-4 bg-gray-800 rounded">
             <h2 className="font-bold mb-2">Anime Info Data Test:</h2>
