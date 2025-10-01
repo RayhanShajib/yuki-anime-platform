@@ -98,8 +98,6 @@ interface ApiEpisode {
   description: string | null;
 }
 
-
-
 const tabs = [
   { key: "Overview", label: "Overview", icon: User },
   { key: "episodes", label: "Episodes", icon: List },
@@ -786,7 +784,53 @@ export default function AnimeInfoPage() {
           )}
         </div>
 
-        <div className="w-full max-w-7xl mx-auto">
+       
+        {/* Relations Section */}
+        <div className="w-full max-w-7xl mx-auto mt-3 pb-10 sm:pb-16">
+          <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
+          <Swiper
+            modules={[SwiperNavigation]}
+            spaceBetween={20}
+            slidesPerView={2}
+            navigation={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            breakpoints={{
+              640: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+              768: {
+                slidesPerView: 4,
+                spaceBetween: 25,
+              },
+              1024: {
+                slidesPerView: 5,
+                spaceBetween: 25,
+              },
+              1280: {
+                slidesPerView: 8,
+                spaceBetween: 30,
+              },
+              1536: {
+                slidesPerView: 8,
+                spaceBetween: 30,
+              },
+            }}
+            className="relations-swiper">
+            {anime.relatedAnime.slice(0, 10).map((animeItem) => (
+              <SwiperSlide key={animeItem.id}>
+                <div className="relative">
+                  <AnimeCard anime={animeItem} showPopup={true} />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+
+         <div className="w-full max-w-7xl mx-auto">
           <div className="relative flex flex-col gap-4 md:gap-5 w-full z-20 mx-auto mt-8 lg:my-8 lg:mb-12 md:px-2 xl:px-0 !select-none">
             <div className="text-lg sm:text-xl lg:text-2xl font-medium lg:font-normal tracking-[0.015em] lg:tracking-normal 2xl:text-[1.6rem] font-popin items-center gap-2 flex px-2">
               <a className="flex gap-2 items-center" href="/search">
@@ -852,50 +896,6 @@ export default function AnimeInfoPage() {
               </Swiper>
             </div>
           </div>
-        </div>
-        {/* Relations Section */}
-        <div className="w-full max-w-7xl mx-auto mt-3 pb-10 sm:pb-16">
-          <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
-          <Swiper
-            modules={[SwiperNavigation]}
-            spaceBetween={20}
-            slidesPerView={2}
-            navigation={true}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            breakpoints={{
-              640: {
-                slidesPerView: 3,
-                spaceBetween: 20,
-              },
-              768: {
-                slidesPerView: 4,
-                spaceBetween: 25,
-              },
-              1024: {
-                slidesPerView: 5,
-                spaceBetween: 25,
-              },
-              1280: {
-                slidesPerView: 8,
-                spaceBetween: 30,
-              },
-              1536: {
-                slidesPerView: 8,
-                spaceBetween: 30,
-              },
-            }}
-            className="relations-swiper">
-            {anime.relatedAnime.slice(0, 10).map((animeItem) => (
-              <SwiperSlide key={animeItem.id}>
-                <div className="relative">
-                  <AnimeCard anime={animeItem} showPopup={true} />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
         </div>
       </main>
         </>
