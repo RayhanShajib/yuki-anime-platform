@@ -9,13 +9,33 @@ import { Navigation as SwiperNavigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
+interface ApiAiringAnime {
+  id: number;
+  title: string;
+  title_japanese?: string;
+  sub_total?: number;
+  image?: string;
+  airing?: boolean;
+  [key: string]: unknown;
+}
+
+interface TransformedAnime {
+  id: string;
+  title: string;
+  episode: string;
+  episodeTitle: string;
+  time: string;
+  poster: string;
+  isNew: boolean;
+}
+
 interface ScheduleSectionProps {
-  airingAnime: any[];
+  airingAnime: ApiAiringAnime[];
 }
 
 // Transform API airing data to schedule format
-const transformAiringData = (airingAnime: any[]) => {
-  const transformedAnime = airingAnime.map((anime: any, index: number) => ({
+const transformAiringData = (airingAnime: ApiAiringAnime[]) => {
+  const transformedAnime = airingAnime.map((anime: ApiAiringAnime) => ({
     id: anime.id.toString(),
     title: anime.title,
     episode: `Episode ${anime.sub_total || '?'}`,
@@ -27,7 +47,7 @@ const transformAiringData = (airingAnime: any[]) => {
 
   // Generate dynamic day keys
   const daysKeys = generateDaysOfWeek().map(day => day.key);
-  const schedule: any = {};
+  const schedule: Record<string, typeof transformedAnime> = {};
   
   daysKeys.forEach(day => {
     schedule[day] = [];
@@ -178,7 +198,7 @@ export default function ScheduleSection({ airingAnime }: ScheduleSectionProps) {
           {/* Schedule Content */}
           <div className="space-y-6 pt-3">
             {currentSchedule.length > 0 ? (
-              currentSchedule.map((anime: any) => (
+              currentSchedule.map((anime: TransformedAnime) => (
                 <div
                   key={anime.id}
                   className="rounded-lg borde transition-colors pb-2">

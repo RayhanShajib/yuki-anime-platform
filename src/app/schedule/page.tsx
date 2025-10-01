@@ -136,7 +136,7 @@ export default function SchedulePage() {
   const [scheduleData, setScheduleData] = useState<Record<string, ScheduleAnime[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [daysOfWeek, setDaysOfWeek] = useState(generateDaysOfWeek());
+  const daysOfWeek = generateDaysOfWeek();
 
   // Fetch schedule data
   useEffect(() => {

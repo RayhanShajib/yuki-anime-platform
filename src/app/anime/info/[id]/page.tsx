@@ -27,7 +27,7 @@ interface ApiAnimeInfoResponse {
   number_of_episodes: number;
   status: string;
   released_date: string;
-  anime_source: any[];
+  anime_source: string[];
   characters: ApiCharacter[];
   airing: boolean;
   aired: string;
@@ -105,8 +105,83 @@ const tabs = [
   { key: "episodes", label: "Episodes", icon: List },
 ];
 
+// Type for transformed data
+interface TransformedAnimeData {
+  id: number;
+  title: string;
+  poster: string;
+  trailer: string | null;
+  trailerReleaseDate: string;
+  type: string;
+  description: string;
+  background: string | null;
+  episodes: number;
+  score: number;
+  rank: number;
+  popularity: number;
+  status: string;
+  aired: string;
+  rating: string;
+  genres: string[];
+  themes: string[];
+  studios: string[];
+  producers: string[];
+  characters: Array<{
+    name: string;
+    image: string;
+    role: string;
+    voiceActor: {
+      name: string;
+      image: string;
+      language: string;
+    };
+  }>;
+  episodesData: Array<{
+    id: string;
+    ep_no: number;
+    title: string;
+    type: "sub" | "dub";
+    image: string;
+    aired_date: string;
+    description: string | null;
+  }>;
+  subTotal: number;
+  dubTotal: number;
+  reviews: never[];
+  similarAnime: Array<{
+    id: string;
+    title: string;
+    synopsis: string;
+    poster: string;
+    genres: string[];
+    studio: string;
+    releaseYear: number;
+    status: "ongoing" | "completed" | "upcoming";
+    type: "series" | "movie" | "ova" | "special";
+    totalEpisodes?: number;
+    rating: number;
+    popularity: number;
+    language: ("sub" | "dub")[];
+  }>;
+  relatedAnime: Array<{
+    id: string;
+    title: string;
+    synopsis: string;
+    poster: string;
+    genres: string[];
+    studio: string;
+    releaseYear: number;
+    status: "ongoing" | "completed" | "upcoming";
+    type: "series" | "movie" | "ova" | "special";
+    totalEpisodes?: number;
+    rating: number;
+    popularity: number;
+    language: ("sub" | "dub")[];
+  }>;
+}
+
 // Transform API response to component format
-const transformApiDataToComponent = (apiData: ApiAnimeInfoResponse) => {
+const transformApiDataToComponent = (apiData: ApiAnimeInfoResponse): TransformedAnimeData => {
   return {
     id: apiData.id,
     title: apiData.title,
@@ -141,7 +216,7 @@ const transformApiDataToComponent = (apiData: ApiAnimeInfoResponse) => {
     })),
     episodesData: [
       ...apiData.episodes.sub.map(episode => ({
-        id: episode.id,
+        id: episode.id.toString(),
         ep_no: episode.ep_no,
         title: episode.title,
         type: "sub" as const,
@@ -150,7 +225,7 @@ const transformApiDataToComponent = (apiData: ApiAnimeInfoResponse) => {
         description: episode.description,
       })),
       ...(apiData.episodes.dub || []).map(episode => ({
-        id: episode.id,
+        id: episode.id.toString(),
         ep_no: episode.ep_no,
         title: episode.title,
         type: "dub" as const,
@@ -162,23 +237,31 @@ const transformApiDataToComponent = (apiData: ApiAnimeInfoResponse) => {
     similarAnime: apiData.similar_animes.map(anime => ({
       id: anime.id.toString(),
       title: anime.title,
-      poster: anime.image,
       synopsis: anime.synopsis,
-      type: anime.anime_type.toLowerCase(),
-      episodes: anime.number_of_episodes,
+      poster: anime.image,
       genres: anime.genre,
+      studio: 'Unknown Studio',
+      releaseYear: new Date().getFullYear(),
+      status: anime.airing ? 'ongoing' as const : 'completed' as const,
+      type: anime.anime_type === 'Movie' ? 'movie' as const : 'series' as const,
+      totalEpisodes: anime.number_of_episodes,
       rating: 8.0, // Default rating
+      popularity: 0,
       language: anime.sub_total > 0 ? ["sub"] : [] as ("sub" | "dub")[],
     })),
     relatedAnime: apiData.related_animes.map(anime => ({
       id: anime.id.toString(),
       title: anime.title,
-      poster: anime.image,
       synopsis: anime.synopsis,
-      type: anime.anime_type.toLowerCase(),
-      episodes: anime.number_of_episodes,
+      poster: anime.image,
       genres: anime.genre,
+      studio: 'Unknown Studio',
+      releaseYear: new Date().getFullYear(),
+      status: anime.airing ? 'ongoing' as const : 'completed' as const,
+      type: anime.anime_type === 'Movie' ? 'movie' as const : 'series' as const,
+      totalEpisodes: anime.number_of_episodes,
       rating: 8.0, // Default rating
+      popularity: 0,
       language: anime.sub_total > 0 ? ["sub"] : [] as ("sub" | "dub")[],
     })),
     subTotal: apiData.sub_total,
@@ -193,7 +276,7 @@ export default function AnimeInfoPage() {
   const [audioType, setAudioType] = useState("sub"); // "sub" or "dub"
   
   // API State
-  const [animeData, setAnimeData] = useState<any>(null);
+  const [animeData, setAnimeData] = useState<TransformedAnimeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -251,12 +334,19 @@ export default function AnimeInfoPage() {
     characters: [],
     episodesData: [],
     similarAnime: [],
+    relatedAnime: [],
+    subTotal: 0,
+    dubTotal: 0,
     reviews: [],
+    score: 0,
+    rank: 0,
+    popularity: 0,
+    themes: [],
   };
 
   // Calculate counts for sub and dub
-  const subCount = anime.subTotal || anime.episodesData.filter((ep: any) => ep.type === "sub").length;
-  const dubCount = anime.dubTotal || anime.episodesData.filter((ep: any) => ep.type === "dub").length;
+  const subCount = anime.subTotal || anime.episodesData.filter((ep) => ep.type === "sub").length;
+  const dubCount = anime.dubTotal || anime.episodesData.filter((ep) => ep.type === "dub").length;
 
   return (
     <div className="relative overflow-hidden">
@@ -510,7 +600,7 @@ export default function AnimeInfoPage() {
                   Characters
                 </h3>
                 <div className="flex flex-col w-full max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1">
-                  {anime.characters.map((char: any, idx: number) => (
+                  {anime.characters.map((char, idx: number) => (
                     <div
                       key={char.name + idx}
                       className="flex items-center gap-3 bg-[#282831] rounded-lg p-2 shadow">
@@ -613,11 +703,11 @@ export default function AnimeInfoPage() {
                     : "flex flex-wrap w-full max-h-[21.6rem] sm:max-h-[23rem] lg:max-h-[31rem] overflow-auto gap-2 sm:gap-3 lg:gap-4 px-1"
                 }>
                 {anime.episodesData
-                  .filter((episode: any) => episode.type === audioType)
+                  .filter((episode) => episode.type === audioType)
                   .length > 0 ? (
                     anime.episodesData
-                      .filter((episode: any) => episode.type === audioType)
-                      .map((episode: any) => (
+                      .filter((episode) => episode.type === audioType)
+                      .map((episode) => (
                     <div
                       key={episode.id}
                       title={episode.title}
@@ -752,7 +842,7 @@ export default function AnimeInfoPage() {
                   },
                 }}
                 className="relations-swiper">
-                {anime.similarAnime.slice(0, 10).map((animeItem: any) => (
+                {anime.similarAnime.slice(0, 10).map((animeItem) => (
                   <SwiperSlide key={animeItem.id}>
                     <div className="relative">
                       <AnimeCard anime={animeItem} showPopup={true} />
@@ -798,7 +888,7 @@ export default function AnimeInfoPage() {
               },
             }}
             className="relations-swiper">
-            {anime.relatedAnime.slice(0, 10).map((animeItem: any) => (
+            {anime.relatedAnime.slice(0, 10).map((animeItem) => (
               <SwiperSlide key={animeItem.id}>
                 <div className="relative">
                   <AnimeCard anime={animeItem} showPopup={true} />

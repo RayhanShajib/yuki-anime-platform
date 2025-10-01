@@ -9,6 +9,17 @@ import { pageApi } from "@/lib/api/pageApi";
 import { transformSpotlightData, transformTrendingData, transformLatestData } from "@/lib/transformers";
 import Image from "next/image";
 
+// Type for API anime items in home sections
+interface ApiAnimeItem {
+  id: number;
+  title: string;
+  image: string;
+  anime_type: string;
+  airing: boolean;
+  number_of_episodes?: number;
+  [key: string]: unknown; // For additional properties we don't need to type
+}
+
 export default async function Home() {
   // Fetch data directly on server
   const homeData = await pageApi.getHomePageData();
@@ -47,7 +58,7 @@ export default async function Home() {
                   Top Airing
                 </h3>
                 <div className="space-y-4 mb-4">
-                  {(homeData.airing || []).slice(0, 5).map((anime: any) => (
+                  {(homeData.airing || []).slice(0, 5).map((anime: ApiAnimeItem) => (
                     <div
                       key={anime.id}
                       className="flex items-center space-x-4 border-b border-gray-700 pb-5">
@@ -83,7 +94,7 @@ export default async function Home() {
                   Most Popular
                 </h3>
                 <div className="space-y-4 mb-4">
-                  {(homeData.popular || []).slice(0, 5).map((anime: any) => (
+                  {(homeData.popular || []).slice(0, 5).map((anime: ApiAnimeItem) => (
                     <div
                       key={anime.id}
                       className="flex items-center space-x-4 border-b border-gray-700 pb-4">
@@ -122,7 +133,7 @@ export default async function Home() {
                   Most Favorite
                 </h3>
                 <div className="space-y-4 mb-4">
-                  {(homeData.favourite || []).slice(0, 5).map((anime: any) => (
+                  {(homeData.favourite || []).slice(0, 5).map((anime: ApiAnimeItem) => (
                     <div
                       key={anime.id}
                       className="flex items-center space-x-4 border-b border-gray-700 pb-4">
@@ -161,7 +172,7 @@ export default async function Home() {
                   Latest Completed
                 </h3>
                 <div className="space-y-4 mb-4">
-                  {(homeData.completed || []).slice(0, 5).map((anime: any) => (
+                  {(homeData.completed || []).slice(0, 5).map((anime: ApiAnimeItem) => (
                     <div
                       key={anime.id}
                       className="flex items-center space-x-4 border-b border-gray-700 pb-4">

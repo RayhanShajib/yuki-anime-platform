@@ -93,7 +93,7 @@ const getVisiblePages = (currentPage: number, totalPages: number, maxVisible: nu
 
   const halfVisible = Math.floor(maxVisible / 2);
   let startPage = Math.max(1, currentPage - halfVisible);
-  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  const endPage = Math.min(totalPages, startPage + maxVisible - 1);
 
   if (endPage - startPage + 1 < maxVisible) {
     startPage = Math.max(1, endPage - maxVisible + 1);
@@ -115,8 +115,6 @@ export default function PopularPage() {
   // Pagination state from API
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
-  const [hasPrevious, setHasPrevious] = useState(false);
   const itemsPerPage = 20;
 
   // Fetch data from API
@@ -131,8 +129,6 @@ export default function PopularPage() {
         
         setAnimeList(transformedAnime);
         setTotalCount(apiResponse.count);
-        setHasNext(!!apiResponse.next);
-        setHasPrevious(!!apiResponse.previous);
         
       } catch (err) {
         console.error('Error fetching popular anime:', err);
