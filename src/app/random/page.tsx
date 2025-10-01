@@ -141,9 +141,9 @@ export default function AnimeInfoPage() {
             </h1>
             <span className="text-white font-normal mb-4">{anime.type}</span>
             <div className="flex gap-4 mt-4 mb-4 flex-wrap">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-600 text-white/90 font-semibold text-md shadow-lg transition">
+              <Link href={`/watch/${anime.id}`} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-600 text-white/90 font-semibold text-md shadow-lg transition">
                 <PlayCircle className="h-5 w-5" /> Watch Now
-              </button>
+              </Link>
               <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold text-md shadow-lg transition">
                 <Bookmark className="h-5 w-5" /> Add to List
               </button>

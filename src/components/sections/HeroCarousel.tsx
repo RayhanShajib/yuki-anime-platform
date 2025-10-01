@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { formatRating, truncateText } from "@/lib/utils";
 import { Anime } from "@/types/anime";
@@ -96,10 +97,10 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             </p>
 
             <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 gap-2 sm:gap-3 md:gap-3.5 flex-wrap mb-4 sm:mb-6">
-              <button className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 sm:px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-purple">
+              <Link href={`/watch/${currentAnime.id}`} className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 sm:px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-purple">
                 <Play className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Watch Now</span>
-              </button>
+              </Link>
 
               <button className="flex items-center space-x-1 sm:space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-pink">
                 <Plus className="h-3 w-3 sm:h-4 sm:w-4" />

@@ -6,6 +6,7 @@ import { mockAnime } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 import { Calendar, Clock, Grid, List, Star } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 const sortOptions = [
@@ -126,9 +127,9 @@ export default function MoviesPage() {
                   </div>
                 </div>
                 <div className="flex space-x-3 flex-wrap gap-3">
-                  <button className="btn-purple hover:bg-blue-700 text-white/90 px-6 py-2 rounded-lg transition-colors font-semibold">
+                  <Link href={`/watch/${filteredMovies[0]?.id}`} className="btn-purple hover:bg-blue-700 text-white/90 px-6 py-2 rounded-lg transition-colors font-semibold">
                     Watch Now
-                  </button>
+                  </Link>
                   <button className="btn-pink hover:bg-gray-600 text-white/90 px-6 py-2 rounded-lg transition-colors">
                     More Info
                   </button>

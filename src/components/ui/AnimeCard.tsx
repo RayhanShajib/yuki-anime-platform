@@ -480,7 +480,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 {/* Watch Now Button */}
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <Link
-                    href={`/anime/${anime.id}/${animeSlug}`}
+                    href={`/watch/${anime.id}`}
                     className="bg-red-600 hover:bg-red-700 text-white/90 p-2 sm:p-3 rounded-full font-semibold flex items-center space-x-2 transition-colors"
                     onClick={handleClosePopup}>
                     <Play className="h-4 w-4 sm:h-5 sm:w-5" />
