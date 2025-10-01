@@ -9,92 +9,94 @@ import { Navigation as SwiperNavigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-const daysOfWeek = [
-  { key: "today", label: "Today", date: "Dec 28" },
-  { key: "tomorrow", label: "Tomorrow", date: "Dec 29" },
-  { key: "monday", label: "Monday", date: "Dec 30" },
-  { key: "tuesday", label: "Tuesday", date: "Dec 31" },
-  { key: "wednesday", label: "Wednesday", date: "Jan 1" },
-  { key: "thursday", label: "Thursday", date: "Jan 2" },
-  { key: "friday", label: "Friday", date: "Jan 3" },
-];
+interface ApiAiringAnime {
+  id: number;
+  title: string;
+  title_japanese?: string;
+  sub_total?: number;
+  image?: string;
+  airing?: boolean;
+  [key: string]: unknown;
+}
 
-const scheduleData = {
-  today: [
-    {
-      id: "1",
-      title: "Attack on Titan: Final Season",
-      episode: "Episode 12",
-      episodeTitle: "The Final Battle",
-      time: "16:05 JST",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BMjlmZmI5MDctNDE2YS00YWE0LWE5ZWItZDBhYWQ0NTcxNWRhXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_FMjpg_UX1000_.jpg",
-      isNew: true,
-    },
-    {
-      id: "2",
-      title: "Demon Slayer: Kimetsu no Yaiba",
-      episode: "Episode 8",
-      episodeTitle: "The Sound of Thunder",
-      time: "23:15 JST",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BODRmZDVmNzUtZDA4ZC00NjhkLWI2M2UtN2M0ZDIzNDcxYThjL2ltYWdlXkEyXkFqcGdeQXVyNTk0MzMzODA@._V1_FMjpg_UX1000_.jpg",
-      isNew: true,
-    },
-  ],
-  tomorrow: [
-    {
-      id: "3",
-      title: "Jujutsu Kaisen Season 2",
-      episode: "Episode 15",
-      episodeTitle: "Hidden Inventory",
-      time: "24:25 JST",
-      poster: "https://via.placeholder.com/80x120/4a2d4a/white?text=JJK",
-      isNew: true,
-    },
-  ],
-  monday: [
-    {
-      id: "4",
-      title: "One Piece",
-      episode: "Episode 1095",
-      episodeTitle: "The Legendary Devil Fruit",
-      time: "09:30 JST",
-      poster: "https://via.placeholder.com/80x120/4a4a2d/white?text=OP",
-      isNew: false,
-    },
-  ],
-  tuesday: [],
-  wednesday: [
-    {
-      id: "5",
-      title: "My Hero Academia Season 7",
-      episode: "Episode 4",
-      episodeTitle: "Heroes Rising",
-      time: "17:30 JST",
-      poster: "https://via.placeholder.com/80x120/2d2d4a/white?text=MHA",
-      isNew: true,
-    },
-  ],
-  thursday: [],
-  friday: [
-    {
-      id: "6",
-      title: "Chainsaw Man",
-      episode: "Episode 13",
-      episodeTitle: "The Devil Hunter",
-      time: "24:00 JST",
-      poster:
-        "https://m.media-amazon.com/images/M/MV5BODRmZDVmNzUtZDA4ZC00NjhkLWI2M2UtN2M0ZDIzNDcxYThjL2ltYWdlXkEyXkFqcGdeQXVyNTk0MzMzODA@._V1_FMjpg_UX1000_.jpg",
-      isNew: true,
-    },
-  ],
+interface TransformedAnime {
+  id: string;
+  title: string;
+  episode: string;
+  episodeTitle: string;
+  time: string;
+  poster: string;
+  isNew: boolean;
+}
+
+interface ScheduleSectionProps {
+  airingAnime: ApiAiringAnime[];
+}
+
+// Transform API airing data to schedule format
+const transformAiringData = (airingAnime: ApiAiringAnime[]) => {
+  const transformedAnime = airingAnime.map((anime: ApiAiringAnime) => ({
+    id: anime.id.toString(),
+    title: anime.title,
+    episode: `Episode ${anime.sub_total || '?'}`,
+    episodeTitle: anime.title_japanese || '',
+    time: "TBA JST", // API doesn't seem to have time data
+    poster: anime.image || '/placeholder-anime.jpg',
+    isNew: anime.airing || false,
+  }));
+
+  // Generate dynamic day keys
+  const daysKeys = generateDaysOfWeek().map(day => day.key);
+  const schedule: Record<string, typeof transformedAnime> = {};
+  
+  daysKeys.forEach(day => {
+    schedule[day] = [];
+  });
+
+  // Distribute anime across days (2-3 per day)
+  transformedAnime.forEach((anime, index) => {
+    const dayIndex = Math.floor(index / 3) % daysKeys.length;
+    const dayKey = daysKeys[dayIndex];
+    if (schedule[dayKey].length < 3) {
+      schedule[dayKey].push(anime);
+    }
+  });
+
+  return schedule;
 };
 
-export default function ScheduleSection() {
+// Generate dynamic dates
+const generateDaysOfWeek = () => {
+  const today = new Date();
+  const days = [];
+  
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    
+    let label = '';
+    if (i === 0) label = 'Today';
+    else if (i === 1) label = 'Tomorrow';
+    else label = date.toLocaleDateString('en-US', { weekday: 'long' });
+    
+    days.push({
+      key: i === 0 ? 'today' : i === 1 ? 'tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+      label,
+      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    });
+  }
+  
+  return days;
+};
+
+const daysOfWeek = generateDaysOfWeek();
+
+export default function ScheduleSection({ airingAnime }: ScheduleSectionProps) {
   const [activeDay, setActiveDay] = useState("today");
-  const currentSchedule =
-    scheduleData[activeDay as keyof typeof scheduleData] || [];
+  
+  // Transform API data to match the expected structure
+  const transformedData = transformAiringData(airingAnime);
+  const currentSchedule = transformedData[activeDay as keyof typeof transformedData] || [];
 
   return (
     <div className="bg-gray-900/30 bg-schedule-section">
@@ -196,7 +198,7 @@ export default function ScheduleSection() {
           {/* Schedule Content */}
           <div className="space-y-6 pt-3">
             {currentSchedule.length > 0 ? (
-              currentSchedule.map((anime) => (
+              currentSchedule.map((anime: TransformedAnime) => (
                 <div
                   key={anime.id}
                   className="rounded-lg borde transition-colors pb-2">
@@ -207,8 +209,12 @@ export default function ScheduleSection() {
                         src={anime.poster}
                         alt={anime.title}
                         width={70}
-                        height={50}
+                        height={105}
                         className="object-cover rounded-lg"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/placeholder-anime.jpg';
+                        }}
                       />
                     </div>
 

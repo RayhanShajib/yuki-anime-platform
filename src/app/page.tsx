@@ -5,16 +5,25 @@ import { HeroCarousel } from "@/components/sections/HeroCarousel";
 import { LatestSection } from "@/components/sections/LatestSection";
 import ScheduleSection from "@/components/sections/ScheduleSection";
 import { TrendingSection } from "@/components/sections/TrendingSection";
-import { AnimeTooltip } from "@/components/ui/AnimeTooltip";
-import { featuredAnime, latestAnime, trendingAnime } from "@/lib/mockData";
+import { pageApi } from "@/lib/api/pageApi";
+import { transformSpotlightData, transformTrendingData, transformLatestData } from "@/lib/transformers";
 import Image from "next/image";
 
-// import { pageApi } from "@/lib/api/pageApi";
+// Type for API anime items in home sections
+interface ApiAnimeItem {
+  id: number;
+  title: string;
+  image: string;
+  anime_type: string;
+  airing: boolean;
+  number_of_episodes?: number;
+  [key: string]: unknown; // For additional properties we don't need to type
+}
 
-// Home page API data will be fetched here when API is ready
-// const homeData = await pageApi.getHomePageData();
-
-export default function Home() {
+export default async function Home() {
+  // Fetch data directly on server
+  const homeData = await pageApi.getHomePageData();
+  
   // Mock continue watching data - in real app this would come from user's watch history
   const continueWatching: never[] = []; // Empty for new users
 
@@ -24,7 +33,7 @@ export default function Home() {
       <Navigation isLandingPage={true} />
 
       {/* Hero Carousel */}
-      <HeroCarousel featuredAnime={featuredAnime} />
+      <HeroCarousel featuredAnime={transformSpotlightData(homeData.spotlight || [])} />
 
       {/* Main Content */}
       <main className="relative z-10">
@@ -32,12 +41,12 @@ export default function Home() {
         <ContinueWatchingSection continueWatching={continueWatching} />
 
         {/* Trending Section */}
-        <TrendingSection trendingAnime={trendingAnime} />
+        <TrendingSection trendingAnime={transformTrendingData(homeData.trending || { now: [], day: [], week: [], month: [] })} />
 
         {/* Latest Anime Section */}
-        <LatestSection />
+        <LatestSection latestAnime={transformLatestData(homeData.latest || { sub: [], dub: [] })} />
 
-        <ScheduleSection />
+        <ScheduleSection airingAnime={homeData.airing || []} />
 
         {/* Four-Section Content Grid */}
         <section className="py-5 sm:py-10 bg-gray-900/30 grid-content">
@@ -49,34 +58,32 @@ export default function Home() {
                   Top Airing
                 </h3>
                 <div className="space-y-4 mb-4">
-                  {latestAnime.slice(0, 5).map((anime) => (
+                  {(homeData.airing || []).slice(0, 5).map((anime: ApiAnimeItem) => (
                     <div
                       key={anime.id}
                       className="flex items-center space-x-4 border-b border-gray-700 pb-5">
-                      <AnimeTooltip anime={anime} position="right">
-                        <Image
-                          src={anime.poster}
-                          alt={anime.title}
-                          width={70}
-                          height={40}
-                          className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
-                        />
-                      </AnimeTooltip>
+                      <Image
+                        src={anime.image || '/placeholder-anime.jpg'}
+                        alt={anime.title}
+                        width={70}
+                        height={100}
+                        className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      />
                       <div className="flex-1">
                         <h4 className="text-white font-semibold text-md">
                           {anime.title}
                         </h4>
                         <div className="flex items-center gap-2 mt-2">
                           <p className="text-gray-300 text-xs">
-                            Episode {anime.totalEpisodes || "?"}
+                            Episode {anime.number_of_episodes || "?"}
                           </p>
-                          •<p className="text-gray-200 text-sm">{anime.type}</p>
+                          •<p className="text-gray-200 text-sm">{anime.anime_type}</p>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                <a href="#" className="text-white">
+                <a href="/ongoing" className="text-white hover:text-pink transition-colors">
                   <button>View more..</button>
                 </a>
               </div>
@@ -87,40 +94,35 @@ export default function Home() {
                   Most Popular
                 </h3>
                 <div className="space-y-4 mb-4">
-                  {[...latestAnime]
-                    .sort((a, b) => b.popularity - a.popularity)
-                    .slice(0, 5)
-                    .map((anime) => (
-                      <div
-                        key={anime.id}
-                        className="flex items-center space-x-4 border-b border-gray-700 pb-4">
-                        <AnimeTooltip anime={anime} position="right">
-                          <Image
-                            src={anime.poster}
-                            alt={anime.title}
-                            width={70}
-                            height={40}
-                            className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
-                          />
-                        </AnimeTooltip>
-                        <div className="flex-1">
-                          <h4 className="text-white font-semibold text-md">
-                            {anime.title}
-                          </h4>
-                          <div className="flex items-center gap-2 mt-2">
-                            <p className="text-gray-300 text-xs">
-                              Episode {anime.totalEpisodes || "?"}
-                            </p>
-                            •
-                            <p className="text-gray-200 text-sm">
-                              {anime.type}
-                            </p>
-                          </div>
+                  {(homeData.popular || []).slice(0, 5).map((anime: ApiAnimeItem) => (
+                    <div
+                      key={anime.id}
+                      className="flex items-center space-x-4 border-b border-gray-700 pb-4">
+                      <Image
+                        src={anime.image || '/placeholder-anime.jpg'}
+                        alt={anime.title}
+                        width={70}
+                        height={100}
+                        className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      />
+                      <div className="flex-1">
+                        <h4 className="text-white font-semibold text-md">
+                          {anime.title}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-2">
+                          <p className="text-gray-300 text-xs">
+                            Episode {anime.number_of_episodes || "?"}
+                          </p>
+                          •
+                          <p className="text-gray-200 text-sm">
+                            {anime.anime_type}
+                          </p>
                         </div>
                       </div>
-                    ))}
+                    </div>
+                  ))}
                 </div>
-                <a href="#" className="text-white">
+                <a href="/popular" className="text-white hover:text-pink transition-colors">
                   <button>View more..</button>
                 </a>
               </div>
@@ -131,40 +133,35 @@ export default function Home() {
                   Most Favorite
                 </h3>
                 <div className="space-y-4 mb-4">
-                  {[...latestAnime]
-                    .sort((a, b) => b.rating - a.rating)
-                    .slice(0, 5)
-                    .map((anime) => (
-                      <div
-                        key={anime.id}
-                        className="flex items-center space-x-4 border-b border-gray-700 pb-4">
-                        <AnimeTooltip anime={anime} position="right">
-                          <Image
-                            src={anime.poster}
-                            alt={anime.title}
-                            width={70}
-                            height={40}
-                            className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
-                          />
-                        </AnimeTooltip>
-                        <div className="flex-1">
-                          <h4 className="text-white font-semibold text-md">
-                            {anime.title}
-                          </h4>
-                          <div className="flex items-center gap-2 mt-2">
-                            <p className="text-gray-300 text-xs">
-                              Episode {anime.totalEpisodes || "?"}
-                            </p>
-                            •
-                            <p className="text-gray-200 text-sm">
-                              {anime.type}
-                            </p>
-                          </div>
+                  {(homeData.favourite || []).slice(0, 5).map((anime: ApiAnimeItem) => (
+                    <div
+                      key={anime.id}
+                      className="flex items-center space-x-4 border-b border-gray-700 pb-4">
+                      <Image
+                        src={anime.image || '/placeholder-anime.jpg'}
+                        alt={anime.title}
+                        width={70}
+                        height={100}
+                        className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      />
+                      <div className="flex-1">
+                        <h4 className="text-white font-semibold text-md">
+                          {anime.title}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-2">
+                          <p className="text-gray-300 text-xs">
+                            Episode {anime.number_of_episodes || "?"}
+                          </p>
+                          •
+                          <p className="text-gray-200 text-sm">
+                            {anime.anime_type}
+                          </p>
                         </div>
                       </div>
-                    ))}
+                    </div>
+                  ))}
                 </div>
-                <a href="#" className="text-white">
+                <a href="/top-rated" className="text-white hover:text-pink transition-colors">
                   <button>View more..</button>
                 </a>
               </div>
@@ -175,40 +172,35 @@ export default function Home() {
                   Latest Completed
                 </h3>
                 <div className="space-y-4 mb-4">
-                  {latestAnime
-                    .filter((anime) => anime.status === "completed")
-                    .slice(0, 5)
-                    .map((anime) => (
-                      <div
-                        key={anime.id}
-                        className="flex items-center space-x-4 border-b border-gray-700 pb-4">
-                        <AnimeTooltip anime={anime} position="right">
-                          <Image
-                            src={anime.poster}
-                            alt={anime.title}
-                            width={70}
-                            height={40}
-                            className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
-                          />
-                        </AnimeTooltip>
-                        <div className="flex-1">
-                          <h4 className="text-white font-semibold text-md">
-                            {anime.title}
-                          </h4>
-                          <div className="flex items-center gap-2 mt-2">
-                            <p className="text-gray-300 text-xs">
-                              Episode {anime.totalEpisodes || "?"}
-                            </p>
-                            •
-                            <p className="text-gray-200 text-sm">
-                              {anime.type}
-                            </p>
-                          </div>
+                  {(homeData.completed || []).slice(0, 5).map((anime: ApiAnimeItem) => (
+                    <div
+                      key={anime.id}
+                      className="flex items-center space-x-4 border-b border-gray-700 pb-4">
+                      <Image
+                        src={anime.image || '/placeholder-anime.jpg'}
+                        alt={anime.title}
+                        width={70}
+                        height={100}
+                        className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      />
+                      <div className="flex-1">
+                        <h4 className="text-white font-semibold text-md">
+                          {anime.title}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-2">
+                          <p className="text-gray-300 text-xs">
+                            Episode {anime.number_of_episodes || "?"}
+                          </p>
+                          •
+                          <p className="text-gray-200 text-sm">
+                            {anime.anime_type}
+                          </p>
                         </div>
                       </div>
-                    ))}
+                    </div>
+                  ))}
                 </div>
-                <a href="#" className="text-white">
+                <a href="/movies" className="text-white hover:text-pink transition-colors">
                   <button>View more..</button>
                 </a>
               </div>

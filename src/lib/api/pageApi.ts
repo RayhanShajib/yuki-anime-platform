@@ -30,7 +30,7 @@ export const pageApi = {
     const homeData = await fetchFromApi('/home-agg/')
         .then(data => {
           // Ensure all required fields are present
-          if (!data || !data.airing || !data.trending || !data.latest || !data.completed || !data.spotlight || !data.favourite) {
+          if (!data || !data.airing || !data.trending || !data.latest || !data.completed || !data.spotlight || !data.favourite || !data.popular) {
             throw new Error('Invalid home page data structure');
           }
           return data;
@@ -43,14 +43,14 @@ export const pageApi = {
   }),
 
   // Popular Page - with filters
-  getPopularPageData: cache(async () => {
+  getPopularPageData: cache(async (limit = 20, offset = 0) => {
 
-    return fetchFromApi(`/popular/`);
+    return fetchFromApi(`/popular/?limit=${limit}&offset=${offset}`);
   }),
 
   // Latest Page
-  getLatestPageData: cache(async (page = 1) => {
-    return fetchFromApi(`/recent?page=${page}`);
+  getLatestPageData: cache(async (limit = 20, offset = 0) => {
+    return fetchFromApi(`/latest/?limit=${limit}&offset=${offset}`);
   }),
 
   // Movies Page
@@ -64,8 +64,8 @@ export const pageApi = {
   }),
 
   // Schedule Page
-  getSchedulePageData: cache(async (weekday?: string) => {
-    const endpoint = weekday ? `/schedule/${weekday}` : '/schedule/week';
+  getSchedulePageData: cache(async () => {
+    const endpoint = '/schedule/';
     return fetchFromApi(endpoint);
   }),
 
@@ -100,9 +100,7 @@ export const pageApi = {
       fetchFromApi(`/anime/${id}/`)
     ]);
 
-    return {
-      details
-    };
+    return details;
   }),
 
   // Watch Page
