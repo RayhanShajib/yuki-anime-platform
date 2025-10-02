@@ -8,7 +8,7 @@ import IframeVideoPlayer from "@/components/ui/IframeVideoPlayer";
 import VideoPlayer, { VideoPlayerRef } from "@/components/ui/VideoPlayer";
 import { pageApi } from "@/lib/api/pageApi";
 import { transformWatchPageData } from "@/lib/transformers";
-import type { TransformedWatchPageData } from "@/types/api";
+import type { TransformedWatchPageData, PrivateVideoSourceResponse } from "@/types/api";
 import { Grid, List, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -49,6 +49,10 @@ export default function WatchPage() {
     "episode"
   );
 
+  // --- Private Video Sources State ---
+  const [privateVideoSources, setPrivateVideoSources] = useState<string[]>([]);
+  const [privateSourcesLoading, setPrivateSourcesLoading] = useState(false);
+
   // --- Fetch Watch Page Data ---
   useEffect(() => {
     if (!episodeId) return;
@@ -79,6 +83,45 @@ export default function WatchPage() {
     fetchWatchData();
   }, [episodeId, audioType]);
 
+  // --- Fetch Private Video Sources ---
+  useEffect(() => {
+    if (!watchData) return;
+
+    const fetchPrivateVideoSources = async () => {
+      try {
+        setPrivateSourcesLoading(true);
+        
+        // Get video sources for current audio type
+        const sources = watchData.videoSources[audioType];
+        if (!sources.length) return;
+        
+        // Use the first video source group's private key
+        const privateKey = sources[0].privateKey;
+        if (!privateKey) return;
+        
+        // Fetch real video sources
+        const privateSourcesResponse: PrivateVideoSourceResponse = await pageApi.getPrivateVideoSource(privateKey);
+        
+        // Extract URLs in fallback order (default -> backup -> others)
+        const sourceUrls = privateSourcesResponse.m3u8
+          .sort((a, b) => {
+            const order = { 'default': 0, 'backup': 1, '1080': 2 };
+            return (order[a.quality as keyof typeof order] ?? 999) - (order[b.quality as keyof typeof order] ?? 999);
+          })
+          .map(source => source.url);
+        
+        setPrivateVideoSources(sourceUrls);
+      } catch (err) {
+        console.error('Error fetching private video sources:', err);
+        setPrivateVideoSources([]);
+      } finally {
+        setPrivateSourcesLoading(false);
+      }
+    };
+
+    fetchPrivateVideoSources();
+  }, [watchData, audioType]);
+
   // --- Episodes Data from API ---
   type Episode = { ep: number; title: string; thumbnail: string };
 
@@ -103,62 +146,112 @@ export default function WatchPage() {
   }, [episodes, searchQuery]);
   // --- Server Selection State ---
   const [selectedServer, setSelectedServer] = React.useState(1);
+  const [selectedIframeServer, setSelectedIframeServer] = React.useState<number | null>(null);
+  const [serverType, setServerType] = React.useState<'video' | 'iframe'>('video');
   
   // --- Video Player Ref ---
   const videoPlayerRef = React.useRef<VideoPlayerRef>(null);
   
-  // --- Video Sources Configuration from API ---
+  // --- Proxy URL Helper ---
+  const getProxiedUrl = (originalUrl: string): string => {
+    if (!originalUrl) return '';
+    return `http://45.13.227.9:5010/cors?url=${encodeURIComponent(originalUrl)}`;
+  };
+  
+  // --- Video Sources Configuration (Private + Public M3U8) ---
   const videoSources = useMemo(() => {
     if (!watchData) return {};
     
     const sources = watchData.videoSources[audioType];
     if (!sources.length) return {};
     
-    // For now, we'll use the first video source group
-    // Later you can implement logic to handle multiple source groups
     const sourceGroup = sources[0];
-    
     const sourcesMap: Record<number, string> = {};
+    let serverNumber = 1;
     
-    // Map iframe URLs to server numbers (keeping as placeholder URLs for now)
-    sourceGroup.iframeUrls.forEach((url, index) => {
-      sourcesMap[index + 1] = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"; // Placeholder until you provide video handling logic
-    });
-    
-    // If no iframe URLs, use m3u8 URLs as fallback
-    if (Object.keys(sourcesMap).length === 0) {
-      sourceGroup.m3u8Urls.forEach((url, index) => {
-        sourcesMap[index + 1] = url;
+    // Private video sources (Server 1, 2, 3...) - only add if URL exists and is not empty
+    if (privateVideoSources.length > 0) {
+      privateVideoSources.forEach((url) => {
+        if (url && url.trim()) {
+          sourcesMap[serverNumber] = getProxiedUrl(url);
+          serverNumber++;
+        }
       });
     }
     
+    // Public M3U8 sources (Server 4, 5, 6... after private sources) - only add if URL exists and is not empty
+    if (sourceGroup.m3u8Urls && sourceGroup.m3u8Urls.length > 0) {
+      sourceGroup.m3u8Urls.forEach((url) => {
+        if (url && url.trim()) {
+          sourcesMap[serverNumber] = getProxiedUrl(url);
+          serverNumber++;
+        }
+      });
+    }
+    
+    // Fallback: if no sources exist, ensure at least one server if there's any M3U8 URL
+    if (Object.keys(sourcesMap).length === 0 && sourceGroup.m3u8Urls && sourceGroup.m3u8Urls.length > 0) {
+      const firstValidUrl = sourceGroup.m3u8Urls.find(url => url && url.trim());
+      if (firstValidUrl) {
+        sourcesMap[1] = getProxiedUrl(firstValidUrl);
+      }
+    }
+    
     return sourcesMap;
+  }, [watchData, audioType, privateVideoSources]);
+
+  // --- Iframe Sources Configuration (Separate from video sources) ---
+  const iframeSources = useMemo(() => {
+    if (!watchData) return [];
+    
+    const sources = watchData.videoSources[audioType];
+    if (!sources.length) return [];
+    
+    const sourceGroup = sources[0];
+    return sourceGroup.iframeUrls || [];
   }, [watchData, audioType]);
 
-  // --- Handle Server Switch with Time Continuity ---
-  const handleServerSwitch = (serverNumber: number) => {
-    if (serverNumber === 3) {
-      // Server 3 is iframe - just switch normally
-      setSelectedServer(serverNumber);
-      return;
+  // --- Auto-select First Working Server ---
+  useEffect(() => {
+    if (Object.keys(videoSources).length > 0) {
+      // Find the first available video server
+      const serverNumbers = Object.keys(videoSources).map(Number).sort((a, b) => a - b);
+      const firstAvailableServer = serverNumbers[0];
+      
+      if (firstAvailableServer && (selectedServer !== firstAvailableServer || serverType !== 'video')) {
+        setSelectedServer(firstAvailableServer);
+        setServerType('video');
+        setSelectedIframeServer(null);
+      }
+    } else if (iframeSources.length > 0) {
+      // Fallback to iframe if no video sources available
+      setSelectedIframeServer(1);
+      setServerType('iframe');
     }
+  }, [videoSources, iframeSources]);
 
-    if (videoPlayerRef.current && (serverNumber === 1 || serverNumber === 2)) {
-      // Get current time before switching
-      const currentTime = videoPlayerRef.current.getCurrentTime();
-      
-      // Load new source with time continuity
-      videoPlayerRef.current.loadNewSource(
-        videoSources[serverNumber as keyof typeof videoSources], 
-        currentTime
-      );
-      
-      // Update server state
-      setSelectedServer(serverNumber);
-    } else {
-      // Fallback for other servers
-      setSelectedServer(serverNumber);
+  // --- Handle Video Server Switch with Time Continuity ---
+  const handleServerSwitch = (serverNumber: number) => {
+    // Get current time for continuity (if video player exists)
+    const currentTime = videoPlayerRef.current?.getCurrentTime() || 0;
+    
+    // Update server state
+    setSelectedServer(serverNumber);
+    setServerType('video');
+    setSelectedIframeServer(null);
+    
+    // Handle video source loading with time continuity for HLS sources
+    const newSource = videoSources[serverNumber as keyof typeof videoSources];
+    if (videoPlayerRef.current && newSource) {
+      // All video sources use HLS with proxy
+      videoPlayerRef.current.loadNewSource(newSource, currentTime);
     }
+  };
+
+  // --- Handle Iframe Server Switch ---
+  const handleIframeServerSwitch = (iframeServerNumber: number) => {
+    setSelectedIframeServer(iframeServerNumber);
+    setServerType('iframe');
   };
 
 
@@ -236,16 +329,16 @@ export default function WatchPage() {
                 </span>
               </nav>
             <div className="aspect-video w-full rounded-lg mb-6">
-              {selectedServer === 3 ? (
-                <IframeVideoPlayer src="https://www.youtube.com/embed/dQw4w9WgXcQ" />
+              {serverType === 'iframe' && selectedIframeServer ? (
+                <IframeVideoPlayer src={iframeSources[selectedIframeServer - 1] || "https://www.youtube.com/embed/dQw4w9WgXcQ"} />
               ) : (
                 <VideoPlayer 
                   ref={videoPlayerRef}
                   videoSources={[
                     {
-                      file: videoSources[1], // Default to first M3U source
-                      type: "hls",
-                      label: "1080p",
+                      file: videoSources[selectedServer as keyof typeof videoSources] || "", 
+                      type: "hls", // All proxied M3U8 sources use HLS
+                      label: `Server ${selectedServer}`,
                       default: true,
                     },
                   ]}
@@ -278,38 +371,65 @@ export default function WatchPage() {
                   <br /> to other servers.
                 </p>
               </div>
-              {/* Server Selection Buttons */}
-              <div className="flex gap-4 justify-center items-center flex-wrap">
-                <button
-                  className={
-                    `px-3 py-1 rounded font-normal shadow transition ` +
-                    (selectedServer === 1
-                      ? "btn-purple text-white/90 hover:bg-blue-700"
-                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
-                  }
-                  onClick={() => handleServerSwitch(1)}>
-                  Server 1
-                </button>
-                <button
-                  className={
-                    `px-3 py-1 rounded font-normal shadow transition ` +
-                    (selectedServer === 2
-                      ? "btn-purple text-white/90 hover:bg-blue-700"
-                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
-                  }
-                  onClick={() => handleServerSwitch(2)}>
-                  Server 2
-                </button>
-                <button
-                  className={
-                    `px-3 py-1 rounded font-normal shadow transition ` +
-                    (selectedServer === 3
-                      ? "btn-purple text-white/90"
-                      : "bg-gray-700 text-white/90 hover:bg-gray-800")
-                  }
-                  onClick={() => handleServerSwitch(3)}>
-                  Server 3
-                </button>
+              {/* Server Selection Buttons - Two Row Layout */}
+              <div className="flex flex-col gap-3 justify-center items-center">
+                {/* First Row: Video Servers (Private + Public M3U8) */}
+                <div className="flex gap-2 justify-center items-center flex-wrap">
+                  {Object.keys(videoSources).map((serverNum) => {
+                    const serverNumber = parseInt(serverNum);
+                    const isPrivate = serverNumber <= privateVideoSources.length;
+                    const isSelected = serverType === 'video' && selectedServer === serverNumber;
+                    
+                    let label = `Server ${serverNumber}`;
+                    if (isPrivate) {
+                      if (serverNumber === 1) label += ' (HQ)';
+                      else if (serverNumber === 2) label += ' (HD)';
+                      else if (serverNumber === 3) label += ' (SD)';
+                    }
+                    
+                    return (
+                      <button
+                        key={serverNumber}
+                        className={
+                          `px-3 py-1 rounded font-normal shadow transition ${
+                            privateSourcesLoading && isPrivate ? 'opacity-50 cursor-not-allowed' : ''
+                          } ` +
+                          (isSelected
+                            ? "btn-purple text-white/90 hover:bg-blue-700"
+                            : "bg-gray-700 text-white/90 hover:bg-gray-800")
+                        }
+                        onClick={() => handleServerSwitch(serverNumber)}
+                        disabled={privateSourcesLoading && isPrivate}>
+                        {privateSourcesLoading && isPrivate ? 'Loading...' : label}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                {/* Second Row: Iframe Servers */}
+                {iframeSources.length > 0 && (
+                  <div className="flex gap-2 justify-center items-center flex-wrap">
+                    <span className="text-white text-sm font-medium mr-2">Iframe:</span>
+                    {iframeSources.map((_, index) => {
+                      const iframeServerNumber = index + 1;
+                      const isSelected = serverType === 'iframe' && selectedIframeServer === iframeServerNumber;
+                      
+                      return (
+                        <button
+                          key={iframeServerNumber}
+                          className={
+                            `px-3 py-1 rounded font-normal shadow transition ` +
+                            (isSelected
+                              ? "btn-purple text-white/90 hover:bg-blue-700"
+                              : "bg-gray-700 text-white/90 hover:bg-gray-800")
+                          }
+                          onClick={() => handleIframeServerSwitch(iframeServerNumber)}>
+                          Server {iframeServerNumber}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
               
               {/* Audio Type Selection (SUB/DUB) */}

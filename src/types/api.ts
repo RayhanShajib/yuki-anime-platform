@@ -172,6 +172,16 @@ export interface TransformedVideoSource {
   privateKey: string;
 }
 
+export interface PrivateVideoSourceResponse {
+  m3u8: Array<{
+    quality: string;
+    url: string;
+    isM3U8: boolean;
+  }>;
+  intro_skip: string;
+  outro_skip: string;
+}
+
 export interface TransformedAnimeData {
   id: string;
   title: string;
