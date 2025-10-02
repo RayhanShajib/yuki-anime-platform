@@ -155,7 +155,7 @@ export default function WatchPage() {
   // --- Proxy URL Helper ---
   const getProxiedUrl = (originalUrl: string): string => {
     if (!originalUrl) return '';
-    return `http://45.13.227.9:5010/cors?url=${encodeURIComponent(originalUrl)}`;
+    return `${encodeURIComponent(originalUrl)}`;
   };
   
   // --- Video Sources Configuration (Private + Public M3U8) ---
@@ -357,6 +357,35 @@ export default function WatchPage() {
                 />
               )}
             </div>
+
+             {/* Video Source Debug Information */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="bg-gray-800 p-4 rounded-lg mb-4 text-xs text-gray-300">
+                <strong>Debug Info:</strong>
+                <div>Server Type: {serverType}</div>
+                <div>Selected Video Server: {selectedServer}</div>
+                <div>Selected Iframe Server: {selectedIframeServer || 'None'}</div>
+                <div>Private Sources Loading: {privateSourcesLoading ? 'Yes' : 'No'}</div>
+                <div>Private Sources Count: {privateVideoSources.length}</div>
+                <div>Public M3U8 URLs Count: {watchData?.videoSources[audioType]?.[0]?.m3u8Urls?.length || 0}</div>
+                <div>Available Video Servers: {Object.keys(videoSources).join(', ')}</div>
+                <div>Available Iframe Servers: {iframeSources.length}</div>
+                <div>Current Source: {serverType === 'iframe' ? 
+                  (iframeSources[selectedIframeServer! - 1]?.substring(0, 80) + '...') : 
+                  (videoSources[selectedServer]?.substring(0, 80) + '...')}</div>
+                {watchData?.videoSources[audioType]?.[0]?.m3u8Urls && (
+                  <div>
+                    <strong>Raw M3U8 URLs:</strong>
+                    {watchData.videoSources[audioType][0].m3u8Urls.map((url, index) => (
+                      <div key={index} className="truncate">
+                        [{index + 1}]: {url ? url.substring(0, 60) + '...' : 'Empty URL'}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            
             
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <div>
