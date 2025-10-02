@@ -136,6 +136,34 @@ export const pageApi = {
     });
   }),
 
+  // Auth Token
+  getAuthToken: async (username: string, password: string) => {
+    const endpoint = '/account/token/';
+    return fetchFromApi(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({
+        username,
+        password
+      }),
+      next: { revalidate: 0 }, // Don't cache auth requests
+    });
+  },
+
+  // Register Account
+  registerAccount: async (username: string, email: string, password: string, password2: string) => {
+    const endpoint = '/account/register/';
+    return fetchFromApi(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({
+        username,
+        email,
+        password,
+        password2
+      }),
+      next: { revalidate: 0 }, // Don't cache registration requests
+    });
+  },
+
   // Profile Page - Requires authentication
   getProfilePageData: cache(async (userId: string) => {
     const [profile, watchlist, history] = await Promise.all([
