@@ -140,12 +140,12 @@ export const transformWatchPageData = (apiData: ApiWatchPageResponse): Transform
     relatedAnime: apiData.related_animes.filter(anime => anime.id != null).map(transformRelatedAnime),
     similarAnime: apiData.similar_animes.filter(anime => anime.id != null).map(transformRelatedAnime),
     episodes: {
-      sub: apiData.episodes.sub.map(transformEpisodeData),
-      dub: apiData.episodes.dub.map(transformEpisodeData),
+      sub: apiData.episodes.sub?.map(transformEpisodeData) || [],
+      dub: apiData.episodes.dub?.map(transformEpisodeData) || [],
     },
     videoSources: {
-      sub: apiData.vidsrces.sub.map(transformVideoSource),
-      dub: apiData.vidsrces.dub.map(transformVideoSource),
+      sub: apiData.vidsrces.sub?.map(transformVideoSource) || [],
+      dub: apiData.vidsrces.dub?.map(transformVideoSource) || [],
     },
     skipTimes: {
       introSkip: parseFloat(apiData.skip_time.intro_skip),

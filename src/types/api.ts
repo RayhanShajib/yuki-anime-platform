@@ -108,8 +108,8 @@ export interface ApiRelatedAnime {
 }
 
 export interface ApiVideoSources {
-  sub: ApiVideoSourceGroup[];
-  dub: ApiVideoSourceGroup[];
+  sub?: ApiVideoSourceGroup[];
+  dub?: ApiVideoSourceGroup[];
 }
 
 export interface ApiVideoSourceGroup {
@@ -119,8 +119,8 @@ export interface ApiVideoSourceGroup {
 }
 
 export interface ApiEpisodes {
-  sub: ApiEpisodeData[];
-  dub: ApiEpisodeData[];
+  sub?: ApiEpisodeData[];
+  dub?: ApiEpisodeData[];
 }
 
 export interface ApiEpisodeData {
