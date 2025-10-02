@@ -230,7 +230,7 @@ export default function WatchPage() {
     }
   }, [videoSources, iframeSources]);
 
-  // --- Handle Video Server Switch with Time Continuity ---
+  // -- Handle Video Server Switch with Time Continuity --
   const handleServerSwitch = (serverNumber: number) => {
     // Get current time for continuity (if video player exists)
     const currentTime = videoPlayerRef.current?.getCurrentTime() || 0;
