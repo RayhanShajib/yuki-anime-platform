@@ -1,15 +1,20 @@
 "use client";
 
-import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { pageApi } from "@/lib/api/pageApi";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
     rememberMe: false,
   });
@@ -17,17 +22,46 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     try {
-      // Handle the actual login logic
-      console.log("Login attempt:", formData);
-
-      // Here you would normally handle the actual login logic
-      // For now, we'll just log success
-      alert("Login successful!");
-    } catch (error) {
+      // Call the login API
+      const response = await pageApi.getAuthToken(formData.username, formData.password);
+      
+      // Check if response has access and refresh tokens (successful login)
+      if (response.access && response.refresh) {
+        // Store tokens in localStorage
+        localStorage.setItem("access_token", response.access);
+        localStorage.setItem("refresh_token", response.refresh);
+        
+        // If remember me is checked, you might want to store tokens in cookies as well
+        if (formData.rememberMe) {
+          // Set cookies with longer expiration
+          document.cookie = `access_token=${response.access}; max-age=${30 * 24 * 60 * 60}; path=/`; // 30 days
+          document.cookie = `refresh_token=${response.refresh}; max-age=${30 * 24 * 60 * 60}; path=/`; // 30 days
+        }
+        
+        // Redirect to home page or intended page
+        router.push("/");
+      } else {
+        // Handle unexpected response format
+        setError("Login failed. Please try again.");
+      }
+    } catch (error: any) {
       console.error("Error during login:", error);
-      alert("An error occurred. Please try again.");
+      
+      // Handle specific error messages from API
+      if (error.message && error.message.includes("No active account found")) {
+        setError("Invalid username or password. Please check your credentials.");
+      } else if (error.message && error.message.includes("detail")) {
+        // Try to extract the detail message from API response
+        setError("Login failed. Please check your credentials.");
+      } else {
+        setError("An error occurred during login. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -71,29 +105,37 @@ export default function LoginPage() {
           {!showForgotPassword ? (
             // Login Form
             <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* Email Field */}
+              {/* Error Display */}
+              {error && (
+                <div className="bg-red-600/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
+                  {error}
+                </div>
+              )}
+
+              {/* Username Field */}
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="block text-sm font-medium text-gray-400 mb-2">
-                  Email address
+                  Username
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                    <User className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
+                    id="username"
+                    name="username"
+                    type="text"
+                    autoComplete="username"
                     required
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    value={formData.username}
+                    onChange={(e) => {
+                      setFormData({ ...formData, username: e.target.value });
+                      setError(""); // Clear error when user types
+                    }}
                     className="w-full pl-10 pr-3 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter your email"
+                    placeholder="Enter your username"
                   />
                 </div>
               </div>
@@ -116,9 +158,10 @@ export default function LoginPage() {
                     autoComplete="current-password"
                     required
                     value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, password: e.target.value });
+                      setError(""); // Clear error when user types
+                    }}
                     className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter your password"
                   />
@@ -168,8 +211,20 @@ export default function LoginPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium btn-purple focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                Sign in
+                disabled={isLoading}
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
+                  isLoading 
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                    : 'btn-purple hover:bg-blue-700'
+                }`}>
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    <span>Signing in...</span>
+                  </div>
+                ) : (
+                  'Sign in'
+                )}
               </button>
             </form>
           ) : (
