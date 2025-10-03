@@ -31,6 +31,35 @@ export interface UpdateAnimeData {
   background_banner?: string;
 }
 
+export interface CreateAnimeData {
+  genre?: Array<{ name: string }>;
+  theme?: Array<{ name: string }>;
+  studio?: Array<{ name: string }>;
+  producer?: Array<{ name: string }>;
+  titles?: Array<{ title: string }>;
+  related_animes?: number[];
+  mal_id?: number;
+  title: string; // Required field
+  title_japanese?: string | null;
+  anime_type?: string | null;
+  source?: string | null;
+  number_of_episodes?: number | null;
+  status?: string | null;
+  airing?: boolean | null;
+  aired?: string | null;
+  score?: number;
+  scored_by?: number;
+  rank?: number | null;
+  rating?: string | null;
+  popularity?: number | null;
+  members?: number | null;
+  favourites?: number | null;
+  synopsis?: string | null;
+  trailer_yt_id?: string | null;
+  image?: string | null;
+  background_banner?: string | null;
+}
+
 // Base fetch function
 const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
   const baseUrl = process.env.API_BASE_URL || 'https://serverloader1.yukiwatch.fr/api/v1';
@@ -70,23 +99,20 @@ export const adminApi = {
     // Update anime info
     updateAnime: async (animeId: string, data: UpdateAnimeData) => {
         const endpoint = `/anime/${animeId}/`;
-        
-        // Don't use cache for update operations
-        const baseUrl = process.env.API_BASE_URL || 'https://serverloader1.yukiwatch.fr/api/v1';
-        const url = `${baseUrl}${endpoint}`;
-        
-        const response = await fetch(url, {
+        return fetchFromApi(endpoint, {
             method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(data),
+            next: { revalidate: 0 }, // Don't cache update operations
         });
-
-        if (!response.ok) {
-            throw new Error(`Failed to update anime: ${response.statusText}`);
-        }
-
-        return response.json();
+    },
+    
+    // Add new anime
+    createAnime: async (data: CreateAnimeData) => {
+        const endpoint = `/anime/`;
+        return fetchFromApi(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            next: { revalidate: 0 }, // Don't cache create operations
+        });
     },
 };
