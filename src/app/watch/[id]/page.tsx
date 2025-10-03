@@ -155,7 +155,7 @@ export default function WatchPage() {
   // --- Proxy URL Helper ---
   const getProxiedUrl = (originalUrl: string): string => {
     if (!originalUrl) return '';
-    return `http://45.13.227.9:5010/cors?url=${encodeURIComponent(originalUrl)}`;
+    return `https://serverloader1.yukiwatch.fr/cors-service/cors?url=${encodeURIComponent(originalUrl)}`;
   };
   
   // --- Video Sources Configuration (Private + Public M3U8) ---
