@@ -2,12 +2,18 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, User, Lock, Mail, Check } from 'lucide-react';
 import Image from 'next/image';
+import { pageApi } from '@/lib/api/pageApi';
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({});
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -16,10 +22,52 @@ export default function RegisterPage() {
     agreeToTerms: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log('Registration attempt:', formData);
+    setError("");
+    setFieldErrors({});
+    
+    // Client-side validation
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (!formData.agreeToTerms) {
+      setError("You must agree to the Terms of Service and Privacy Policy");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await pageApi.registerAccount(
+        formData.username,
+        formData.email,
+        formData.password,
+        formData.confirmPassword
+      );
+
+      // Registration successful
+      console.log('Registration successful:', response);
+      
+      // Redirect to login page with success message
+      router.push('/login?registered=true');
+      
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      
+      // Handle different types of errors
+      if (error.username) {
+        setFieldErrors({ username: error.username[0] });
+      } else if (error.password) {
+        setError(error.password);
+      } else {
+        setError(error.detail || 'Registration failed. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const passwordsMatch = formData.password === formData.confirmPassword;
@@ -42,6 +90,12 @@ export default function RegisterPage() {
         {/* Registration Form */}
         <div className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-gray-700">
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Error Display */}
+            {error && (
+              <div className="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
             {/* Username Field */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-400 mb-2">
@@ -58,11 +112,22 @@ export default function RegisterPage() {
                   autoComplete="username"
                   required
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full pl-10 pr-3 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white/90 placeholder-gray-400 focus:outline-none focus:border-transparent"
+                  onChange={(e) => {
+                    setFormData({ ...formData, username: e.target.value });
+                    if (fieldErrors.username) {
+                      setFieldErrors({ ...fieldErrors, username: "" });
+                    }
+                    if (error) setError("");
+                  }}
+                  className={`w-full pl-10 pr-3 py-3 bg-gray-700 border rounded-lg text-white/90 placeholder-gray-400 focus:outline-none focus:border-transparent ${
+                    fieldErrors.username ? 'border-red-500' : 'border-gray-600'
+                  }`}
                   placeholder="Choose a username"
                 />
               </div>
+              {fieldErrors.username && (
+                <p className="mt-2 text-sm text-red-400">{fieldErrors.username}</p>
+              )}
             </div>
 
             {/* Email Field */}
@@ -81,7 +146,10 @@ export default function RegisterPage() {
                   autoComplete="email"
                   required
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (error) setError("");
+                  }}
                   className="w-full pl-10 pr-3 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white/90 focus:outline-none placeholder-gray-400  focus:border-transparent"
                   placeholder="Enter your email"
                 />
@@ -104,7 +172,10 @@ export default function RegisterPage() {
                   autoComplete="new-password"
                   required
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, password: e.target.value });
+                    if (error) setError("");
+                  }}
                   className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white/90 focus:outline-none placeholder-gray-400 "
                   placeholder="Create a password"
                 />
@@ -146,7 +217,10 @@ export default function RegisterPage() {
                   autoComplete="new-password"
                   required
                   value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, confirmPassword: e.target.value });
+                    if (error) setError("");
+                  }}
                   className="w-full pl-10 pr-12 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white/90 placeholder-gray-400 focus:outline-none focus:border-transparent"
                   placeholder="Confirm your password"
                 />
@@ -197,10 +271,10 @@ export default function RegisterPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={!formData.agreeToTerms || !passwordValid || !passwordsMatch}
+              disabled={!formData.agreeToTerms || !passwordValid || !passwordsMatch || isLoading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium btn-purple focus:outline-none focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create account
+              {isLoading ? 'Creating account...' : 'Create account'}
             </button>
           </form>
 
