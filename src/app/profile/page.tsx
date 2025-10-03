@@ -6,6 +6,7 @@ import { AnimeCard } from "@/components/ui/AnimeCard";
 import { NotificationDropdown } from "@/components/ui/NotificationDropdown";
 
 import { mockAnime } from "@/lib/mockData";
+import { pageApi } from "@/lib/api/pageApi";
 import {
   Bell,
   Bookmark,
@@ -19,7 +20,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 // Mock user data
 const userData = {
@@ -50,7 +52,11 @@ const userLists = {
 };
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
+  const [profileData, setProfileData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   type Notification = {
     id: number;
     text: string;
@@ -59,8 +65,64 @@ export default function ProfilePage() {
     type: "Anime" | "Community";
   };
 
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
+  // Fetch profile data on component mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+
+        // Get token from localStorage (set during login)
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          setError("Please log in to view your profile");
+          router.push('/login');
+          return;
+        }
+
+        const data = await pageApi.getProfilePageData(token);
+        setProfileData(data);
+      } catch (error: any) {
+        console.error('Error fetching profile:', error);
+        
+        // Handle token validation errors
+        if (error.message.includes('token_not_valid') || error.message.includes('401')) {
+          setError("Your session has expired. Please log in again.");
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          router.push('/login');
+        } else {
+          setError("Failed to load profile data. Please try again.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [router]);
+
+  // Initialize notifications from API data when profileData is loaded
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  
+  useEffect(() => {
+    if (profileData?.notifications) {
+      const formattedNotifications = profileData.notifications.map((notif: any, index: number) => ({
+        id: index + 1,
+        text: notif.message || notif.text || "New notification",
+        date: new Date(notif.created_at || Date.now()).toLocaleDateString(),
+        time: new Date(notif.created_at || Date.now()).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        type: notif.type || "Anime" as "Anime" | "Community",
+      }));
+      setNotifications(formattedNotifications);
+    }
+  }, [profileData]);
+
+  // Mock notification for fallback
+  const mockNotification = {
       id: 1,
       text: "New episode released for One Piece!",
       date: new Date().toLocaleDateString(),
@@ -68,39 +130,8 @@ export default function ProfilePage() {
         hour: "2-digit",
         minute: "2-digit",
       }),
-      type: "Anime",
-    },
-    {
-      id: 2,
-      text: "Your post received a new comment.",
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "Community",
-    },
-    {
-      id: 3,
-      text: "Attack on Titan finale airs this week!",
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "Anime",
-    },
-    {
-      id: 4,
-      text: "You have a new follower in the community.",
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "Community",
-    },
-  ]);
+      type: "Anime" as "Anime" | "Community",
+    };
   const handleRemoveNotif = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
@@ -121,6 +152,35 @@ export default function ProfilePage() {
 
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="text-white text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                <p>Loading profile...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !isLoading && (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="bg-red-900/20 border border-red-800 rounded-lg p-6 text-center max-w-md">
+                <p className="text-red-400 mb-4">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Profile Content - Only show when data is loaded */}
+          {!isLoading && !error && profileData && (
+            <>
           {/* Profile Header */}
           <div className="bg-gradient-to-r from-purple-900/20 to-purple-900/20 rounded-lg p-4 sm:p-6 border border-purple-800/30 mb-6 sm:mb-8">
             <div className="flex flex-col items-center sm:items-start md:flex-row md:items-center space-y-4 sm:space-y-6 md:space-y-0 md:space-x-4">
@@ -128,8 +188,8 @@ export default function ProfilePage() {
               <div className="relative">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-4 border-purple-500 overflow-hidden">
                   <Image
-                    src={userData.avatar}
-                    alt={userData.username}
+                    src={profileData?.avatar || "https://i.pravatar.cc/150?img=5"}
+                    alt={profileData?.username || "User"}
                     width={128}
                     height={128}
                     className="object-cover w-full h-full"
@@ -142,7 +202,7 @@ export default function ProfilePage() {
               <div className="flex-1 text-center sm:text-left">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
                   <h1 className="text-2xl sm:text-3xl font-bold text-white">
-                    {userData.username}
+                    {profileData?.username || "Loading..."}
                   </h1>
                   <Link
                     href="/profile/edit"
@@ -167,7 +227,7 @@ export default function ProfilePage() {
                     title="Copy profile URL to clipboard">
                     URL
                   </button>
-                  <span> - Joined Jun 29, 2025 (1 days old)</span>
+                  <span> - {profileData?.email || "No email"} ({profileData?.role || "user"})</span>
                 </div>
               </div>
             </div>
@@ -708,7 +768,7 @@ export default function ProfilePage() {
             <div>
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
                 <Bookmark className="h-6 w-6 text-pink mr-3" />
-                Plan to Watch ({userData.stats.planToWatch})
+                Plan to Watch ({profileData?.watchlist ? Object.keys(profileData.watchlist).length : 0})
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-4">
                 {userLists.bookmark.map((anime) => (
@@ -718,6 +778,8 @@ export default function ProfilePage() {
                 ))}
               </div>
             </div>
+          )}
+            </>
           )}
         </div>
       </main>
