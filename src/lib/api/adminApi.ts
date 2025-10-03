@@ -29,4 +29,10 @@ export const adminApi = {
         const endpoint = `/anime/?limit=${limit}&offset=${offset}`;
         return fetchFromApi(endpoint);
     }),
+
+    // Get single anime details
+    getSingleAnimeDetails: cache(async (animeId: string) => {
+        const endpoint = `/anime/${animeId}/`;
+        return fetchFromApi(endpoint);
+    }),
 };
