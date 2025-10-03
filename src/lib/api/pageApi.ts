@@ -165,17 +165,13 @@ export const pageApi = {
   },
 
   // Profile Page - Requires authentication
-  getProfilePageData: cache(async (userId: string) => {
-    const [profile, watchlist, history] = await Promise.all([
-      fetchFromApi(`/users/${userId}`),
-      fetchFromApi(`/users/${userId}/watchlist`),
-      fetchFromApi(`/users/${userId}/history`),
-    ]);
-
-    return {
-      profile,
-      watchlist,
-      history,
-    };
+  getProfilePageData: cache(async (token: string) => {
+    const endpoint = '/account/profile/';
+    return fetchFromApi(endpoint, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      next: { revalidate: 0 }, // Don't cache profile data for security
+    });
   }),
 };
