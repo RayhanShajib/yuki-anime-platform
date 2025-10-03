@@ -54,16 +54,21 @@ export default function RegisterPage() {
       // Redirect to login page with success message
       router.push('/login?registered=true');
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
       
       // Handle different types of errors
-      if (error.username) {
-        setFieldErrors({ username: error.username[0] });
-      } else if (error.password) {
-        setError(error.password);
+      if (error && typeof error === 'object' && 'username' in error) {
+        const errorObj = error as Record<string, string[]>;
+        setFieldErrors({ username: errorObj.username[0] });
+      } else if (error && typeof error === 'object' && 'password' in error) {
+        const errorObj = error as Record<string, string>;
+        setError(errorObj.password);
       } else {
-        setError(error.detail || 'Registration failed. Please try again.');
+        const errorMessage = error && typeof error === 'object' && 'detail' in error 
+          ? (error as { detail: string }).detail 
+          : 'Registration failed. Please try again.';
+        setError(errorMessage);
       }
     } finally {
       setIsLoading(false);

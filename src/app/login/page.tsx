@@ -48,13 +48,14 @@ export default function LoginPage() {
         // Handle unexpected response format
         setError("Login failed. Please try again.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error during login:", error);
       
       // Handle specific error messages from API
-      if (error.message && error.message.includes("No active account found")) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      if (errorMessage.includes("No active account found")) {
         setError("Invalid username or password. Please check your credentials.");
-      } else if (error.message && error.message.includes("detail")) {
+      } else if (errorMessage.includes("detail")) {
         // Try to extract the detail message from API response
         setError("Login failed. Please check your credentials.");
       } else {

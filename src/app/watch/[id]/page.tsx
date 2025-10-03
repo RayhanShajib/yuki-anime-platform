@@ -228,7 +228,7 @@ export default function WatchPage() {
       setSelectedIframeServer(1);
       setServerType('iframe');
     }
-  }, [videoSources, iframeSources]);
+  }, [videoSources, iframeSources, selectedServer, serverType]);
 
   // -- Handle Video Server Switch with Time Continuity --
   const handleServerSwitch = (serverNumber: number) => {

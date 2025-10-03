@@ -23,16 +23,27 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Mock user data
-const userData = {
-  username: "AnimeExplorer",
-  email: "user@example.com",
-  avatar: "https://i.pravatar.cc/150?img=5",
-  joinDate: "2023-01-15",
-  totalWatched: 156,
-  totalHours: 3892,
-  favoriteGenres: ["Action", "Adventure", "Drama"],
-  exp: 8750,
+// Profile data interface
+interface ProfileData {
+  username: string;
+  email: string;
+  avatar: string;
+  joinDate: string;
+  totalWatched: number;
+  totalHours: number;
+  favoriteGenres: string[];
+  exp: number;
+  role?: string;
+  notifications?: Array<{
+    id: number;
+    text?: string;
+    message?: string;
+    date?: string;
+    time?: string;
+    created_at?: string;
+    type?: "Anime" | "Community";
+  }>;
+  watchlist?: Record<string, unknown>;
   nextLevelExp: 10000,
   stats: {
     episodesWatched: 3247,
@@ -54,7 +65,7 @@ const userLists = {
 export default function ProfilePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
-  const [profileData, setProfileData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   type Notification = {
@@ -82,11 +93,12 @@ export default function ProfilePage() {
 
         const data = await pageApi.getProfilePageData(token);
         setProfileData(data);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching profile:', error);
         
         // Handle token validation errors
-        if (error.message.includes('token_not_valid') || error.message.includes('401')) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        if (errorMessage.includes('token_not_valid') || errorMessage.includes('401')) {
           setError("Your session has expired. Please log in again.");
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
@@ -107,7 +119,7 @@ export default function ProfilePage() {
   
   useEffect(() => {
     if (profileData?.notifications) {
-      const formattedNotifications = profileData.notifications.map((notif: any, index: number) => ({
+      const formattedNotifications = profileData.notifications.map((notif, index: number) => ({
         id: index + 1,
         text: notif.message || notif.text || "New notification",
         date: new Date(notif.created_at || Date.now()).toLocaleDateString(),
@@ -121,17 +133,6 @@ export default function ProfilePage() {
     }
   }, [profileData]);
 
-  // Mock notification for fallback
-  const mockNotification = {
-      id: 1,
-      text: "New episode released for One Piece!",
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "Anime" as "Anime" | "Community",
-    };
   const handleRemoveNotif = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
