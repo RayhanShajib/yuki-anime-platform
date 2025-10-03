@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from 'next/navigation';
-import { adminApi } from "@/lib/api/adminApi";
+import { adminApi, UpdateAnimeData } from "@/lib/api/adminApi";
 import { Loader2 } from "lucide-react";
 
 interface AnimeDetails {
@@ -141,14 +141,54 @@ export default function AdminEditAnimePage() {
     }));
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving(true);
-    // TODO: Implement actual API call to update anime
-    setTimeout(() => {
+    setError(null);
+
+    try {
+      // Transform form data to match API format
+      const updateData: UpdateAnimeData = {
+        title: form.title,
+        title_japanese: form.title_japanese,
+        synopsis: form.synopsis,
+        background_history: form.background_history,
+        // Convert comma-separated strings back to array format with objects
+        genre: form.genre ? form.genre.split(',').map(name => ({ name: name.trim() })) : [],
+        theme: form.theme ? form.theme.split(',').map(name => ({ name: name.trim() })) : [],
+        producer: form.producer ? form.producer.split(',').map(name => ({ name: name.trim() })) : [],
+        studio: form.studio ? form.studio.split(',').map(name => ({ name: name.trim() })) : [],
+        released_date: form.released_date,
+        status: form.status,
+        anime_type: form.anime_type,
+        image: form.image,
+        background_banner: form.background_banner,
+        number_of_episodes: form.number_of_episodes,
+        score: form.score,
+        rating: form.rating,
+        popularity: form.popularity,
+        members: form.members,
+        favourites: form.favourites,
+      };
+
+      // Remove empty fields to avoid overwriting with empty data
+      Object.keys(updateData).forEach(key => {
+        const value = updateData[key as keyof UpdateAnimeData];
+        if (value === '' || value === 0 || (Array.isArray(value) && value.length === 0)) {
+          delete updateData[key as keyof UpdateAnimeData];
+        }
+      });
+
+      await adminApi.updateAnime(animeId, updateData);
+      
+      // Redirect to view page after successful update
+      router.push(`/admin/anime/${animeId}`);
+    } catch (err) {
+      console.error('Error updating anime:', err);
+      setError('Failed to update anime. Please try again.');
+    } finally {
       setSaving(false);
-      alert("Anime updated successfully! (Note: This is a mock update)");
-    }, 1000);
+    }
   }
 
   if (loading) {
