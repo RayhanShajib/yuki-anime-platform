@@ -13,6 +13,8 @@ const mockStats = {
   issues: { count: 2, critical: 1, moderate: 1 },
 };
 
+
+
 const mockActivity = [
   { type: "user", text: "New user registered: OtakuQueen", time: "2m ago" },
   { type: "anime", text: "Added anime: Jujutsu Kaisen", time: "10m ago" },
