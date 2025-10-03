@@ -174,4 +174,10 @@ export const pageApi = {
       next: { revalidate: 0 }, // Don't cache profile data for security
     });
   }),
+
+  // Get Random Anime ID
+  getRandomAnimeId: async() => {
+    const endpoint = '/random/';
+    return fetchFromApi(endpoint);
+  }
 };
