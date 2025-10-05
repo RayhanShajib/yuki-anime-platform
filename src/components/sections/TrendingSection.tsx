@@ -10,8 +10,15 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
+interface TrendingData {
+  now: Anime[];
+  day: Anime[];
+  week: Anime[];
+  month: Anime[];
+}
+
 interface TrendingSectionProps {
-  trendingAnime: Anime[];
+  trendingData: TrendingData;
 }
 
 type TimeFilter = "now" | "day" | "week" | "month";
@@ -24,10 +31,15 @@ const timeFilters: { key: TimeFilter; label: string; icon: React.ReactNode }[] =
     { key: "month", label: "Month", icon: <Timer className="h-4 w-4" /> },
   ];
 
-export function TrendingSection({ trendingAnime }: TrendingSectionProps) {
-  const [activeFilter, setActiveFilter] = useState<TimeFilter>("now");
-  // In a real app, this would filter the data based on the time period
-  const filteredAnime: Anime[] = trendingAnime.slice(0, 10);
+export function TrendingSection({ trendingData }: TrendingSectionProps) {
+  const [activeFilter, setActiveFilter] = useState<TimeFilter>("day");
+  
+  // Filter the data based on the selected time period
+  const getFilteredAnime = (filter: TimeFilter): Anime[] => {
+    return trendingData[filter] || [];
+  };
+  
+  const filteredAnime: Anime[] = getFilteredAnime(activeFilter).slice(0, 10);
 
   return (
     <section className="py-3 sm:py-12 backdrop-blur-sm relative">

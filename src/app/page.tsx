@@ -41,7 +41,7 @@ export default async function Home() {
         <ContinueWatchingSection continueWatching={continueWatching} />
 
         {/* Trending Section */}
-        <TrendingSection trendingAnime={transformTrendingData(homeData.trending || { now: [], day: [], week: [], month: [] })} />
+        <TrendingSection trendingData={transformTrendingData(homeData.trending || { now: [], day: [], week: [], month: [] })} />
 
         {/* Latest Anime Section */}
         <LatestSection latestAnime={transformLatestData(homeData.latest || { sub: [], dub: [] })} />

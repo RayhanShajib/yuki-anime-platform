@@ -36,6 +36,9 @@ interface ApiAnimeItem {
 
 interface ApiTrendingData {
   now?: ApiAnimeItem[];
+  day?: ApiAnimeItem[];
+  week?: ApiAnimeItem[];
+  month?: ApiAnimeItem[];
   [key: string]: unknown;
 }
 
@@ -74,9 +77,12 @@ export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
 
 // Helper function to transform trending data structure
 export const transformTrendingData = (trendingData: ApiTrendingData) => {
-  // For now, just use the 'now' data as the trending anime
-  // In a real implementation, you'd want to modify TrendingSection to handle all time periods
-  return transformAnimeListData(trendingData.now || []);
+  return {
+    now: transformAnimeListData(trendingData.now || []),
+    day: transformAnimeListData(trendingData.day || []),
+    week: transformAnimeListData(trendingData.week || []),
+    month: transformAnimeListData(trendingData.month || []),
+  };
 };
 
 // Helper function to transform anime list data
