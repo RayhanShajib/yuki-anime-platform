@@ -1,5 +1,6 @@
 "use client";
 
+import { pageApi } from "@/lib/api/pageApi";
 import {
   Bell,
   BookOpen,
@@ -14,7 +15,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { NotificationDropdown } from "../ui/NotificationDropdown";
-import { pageApi } from "@/lib/api/pageApi";
 interface NavigationProps {
   isLandingPage?: boolean;
 }
@@ -23,6 +23,7 @@ interface NavigationProps {
 interface ProfileData {
   username: string;
   avatar: string;
+  role?: string;
 }
 
 export function Navigation({ isLandingPage = false }: NavigationProps) {
@@ -527,6 +528,14 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                         <User className="h-4 w-4 mr-3" />
                         Profile Page
                       </Link>
+                      {profileData?.role === "admin" && (
+                        <Link
+                          href="/admin"
+                          className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-800 bg-purple-800/30">
+                          <Settings className="h-4 w-4 mr-3" />
+                          Admin Panel
+                        </Link>
+                      )}
                       <Link
                         href="/profile/edit"
                         className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-800">
