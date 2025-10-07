@@ -388,19 +388,17 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 onClick={(e) => e.stopPropagation()}>
                 <div className="absolute inset-0 bg-black rounded-t-2xl overflow-hidden">
                   {anime.trailer ? (
-                    <video
-                      src={anime.trailer}
+                    <iframe
+                      src={`https://www.youtube.com/embed/${anime.trailer}?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&cc_load_policy=0&playsinline=1&enablejsapi=0&origin=${window.location.origin}`}
                       title={`${anime.title} Trailer`}
                       className="w-full h-full absolute inset-0 object-cover rounded-t-2xl"
                       style={{
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
+                        pointerEvents: "none",
                       }}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
+                      allow="autoplay; encrypted-media"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-800">
