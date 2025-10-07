@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { adminApi, type EpisodeApiResponse, type EpisodeData } from "@/lib/api/adminApi";
+import { adminApi, type EpisodeApiResponse } from "@/lib/api/adminApi";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
