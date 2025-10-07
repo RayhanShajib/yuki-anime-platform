@@ -22,7 +22,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoggedIn] = useState(false);
+  const [isLoggedIn] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
   const [language, setLanguage] = useState<"en" | "jp">("en");
 
@@ -88,6 +88,8 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   // Ref for notification dropdown
   const notificationRef = useRef<HTMLDivElement>(null);
+  // Ref for user menu dropdown
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -126,6 +128,23 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showNotification]);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    if (!isUserMenuOpen) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isUserMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -334,13 +353,35 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 </button>
               </div>
             </div>
-
+            {/* Notification Icon and Dropdown */}
+            <div className="relative" ref={notificationRef}>
+              <button
+                className="text-white transition-colors relative"
+                onClick={() => setShowNotification(!showNotification)}
+                title="Notifications">
+                <Bell className="h-5.5 w-5.5" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-red-500 rounded-full text-xs flex items-center justify-center text-white/90">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+              {showNotification && (
+                <div className="pt-2 mt-2 absolute top-full right-0 z-50 w-[min(80vw,350px)]">
+                  <NotificationDropdown
+                    notifications={notifications}
+                    onRemove={handleRemoveNotif}
+                    onClose={() => setShowNotification(true)}
+                  />
+                </div>
+              )}
+            </div>
             {isLoggedIn ? (
-              <div className="relative">
+              <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center space-x-2 text-white hover:text-blue-400 transition-colors">
-                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  className="flex items-center space-x-2 text-white hover:text-purple-400 transition-colors">
+                  <div className="w-8 h-8 btn-purple rounded-full flex items-center justify-center">
                     <User className="h-4 w-4" />
                   </div>
                   <span className="hidden md:inline">Username</span>
@@ -348,11 +389,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
                 {isUserMenuOpen && (
                   <div
-                    className={`absolute top-full right-0 mt-2 w-56 rounded-md shadow-lg transition-all duration-200 ${
-                      isScrolled
-                        ? "bg-gray-900/95 backdrop-blur-md border border-gray-700/50"
-                        : "bg-gray-900"
-                    }`}>
+                    className={`absolute top-full right-0 mt-2 w-56 rounded-md shadow-lg transition-all duration-200 bg-purple`}>
                     <div className="py-2">
                       <Link
                         href="/profile"

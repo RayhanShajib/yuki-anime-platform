@@ -254,7 +254,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "12",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -276,7 +276,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "13",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -299,7 +299,7 @@ export const mockAnime: Anime[] = [
   },
 
   {
-    id: "7",
+    id: "29",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -321,7 +321,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "15",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -343,7 +343,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "16",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -365,7 +365,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "17",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -387,7 +387,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "18",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -409,7 +409,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "19",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -431,7 +431,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "20",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -453,7 +453,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "21",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -475,7 +475,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "22",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -497,7 +497,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "23",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -519,7 +519,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "24",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -541,7 +541,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "25",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -563,7 +563,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "26",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -585,7 +585,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "27",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
@@ -607,7 +607,7 @@ export const mockAnime: Anime[] = [
     dubEpisodes: 12,
   },
   {
-    id: "7",
+    id: "28",
     title: "Akira",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",

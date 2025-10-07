@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { Tags } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const statusFilters = [
   { key: "all", label: "All Status" },
@@ -31,34 +31,191 @@ const typeFilters = [
   { key: "ova", label: "OVAs" },
 ];
 
-// Correct type for Next.js App Router page props
+// Multi-Select Component
+interface MultiSelectProps {
+  options: string[] | { key: string; label: string }[];
+  selectedValues: string[];
+  onChange: (values: string[]) => void;
+  className?: string;
+}
+
+const MultiSelect: React.FC<MultiSelectProps> = ({
+  options,
+  selectedValues,
+  onChange,
+  className = "",
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Normalize options to have consistent structure
+  const normalizedOptions = options.map((option) =>
+    typeof option === "string"
+      ? { key: option, label: option.charAt(0).toUpperCase() + option.slice(1) }
+      : option
+  );
+
+  const handleToggleOption = (optionKey: string) => {
+    if (optionKey === "all") {
+      // If "all" is selected, clear all other selections
+      onChange(["all"]);
+    } else {
+      // Remove "all" if present and toggle the option
+      const filteredValues = selectedValues.filter((val) => val !== "all");
+
+      if (filteredValues.includes(optionKey)) {
+        // Remove the option
+        const newValues = filteredValues.filter((val) => val !== optionKey);
+        onChange(newValues.length === 0 ? ["all"] : newValues);
+      } else {
+        // Add the option
+        onChange([...filteredValues, optionKey]);
+      }
+    }
+  };
+
+  const getDisplayText = () => {
+    if (selectedValues.includes("all") || selectedValues.length === 0) {
+      const firstOption = normalizedOptions.find((opt) => opt.key === "all");
+      return firstOption?.label || "All";
+    }
+
+    if (selectedValues.length === 1) {
+      const option = normalizedOptions.find(
+        (opt) => opt.key === selectedValues[0]
+      );
+      return option?.label || selectedValues[0];
+    }
+
+    const firstOption = normalizedOptions.find(
+      (opt) => opt.key === selectedValues[0]
+    );
+    return `${firstOption?.label || selectedValues[0]} + ${
+      selectedValues.length - 1
+    } more`;
+  };
+
+  return (
+    <div className={`relative ${className}`} ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 text-left flex items-center justify-between hover:bg-gray-700 focus:outline-none">
+        <span>{getDisplayText()}</span>
+        <svg
+          className={`w-4 h-4 transition-transform ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          {normalizedOptions.map((option) => (
+            <label
+              key={option.key}
+              className="flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer transition-colors">
+              <span className="relative mr-3 inline-block w-4 h-4 align-middle">
+                <input
+                  type="checkbox"
+                  checked={selectedValues.includes(option.key)}
+                  onChange={() => handleToggleOption(option.key)}
+                  className="w-4 h-4 rounded focus:outline-none appearance-none border border-gray-400"
+                  style={
+                    selectedValues.includes(option.key)
+                      ? { backgroundColor: "#7760a9", borderColor: "#7760a9" }
+                      : { backgroundColor: "#1f2937", borderColor: "#6b7280" }
+                  }
+                />
+                {selectedValues.includes(option.key) && (
+                  <span
+                    className="absolute left-0 top-0 w-4 h-4 flex items-center justify-center text-white text-xs pointer-events-none select-none"
+                    style={{ lineHeight: "1rem", fontWeight: 700 }}>
+                    ✓
+                  </span>
+                )}
+              </span>
+              <span className="text-white">{option.label}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function GenrePage() {
-  const seasonOptions = ["Summer", "Spring", "Winter", "Fall"];
+  const seasonOptions = ["all", "Summer", "Spring", "Winter", "Fall"];
   const params = useParams();
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
-  // Temporary filter states for UI
-  const [tempGenre, setTempGenre] = useState("all");
-  const [tempType, setTempType] = useState("all");
-  const [tempStatus, setTempStatus] = useState("all");
+  // Temporary filter states for UI (now arrays for multi-selection)
+  const [tempGenre, setTempGenre] = useState<string[]>(["all"]);
+  const [tempType, setTempType] = useState<string[]>(["all"]);
+  const [tempStatus, setTempStatus] = useState<string[]>(["all"]);
   // Actual filter states used for filtering
-  const [selectedSeason, setSelectedSeason] = useState("all");
+  const [selectedSeason, setSelectedSeason] = useState<string[]>(["all"]);
   const [sortBy] = useState("popularity");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<string[]>(["all"]);
+  const [typeFilter, setTypeFilter] = useState<string[]>(["all"]);
   const [viewMode] = useState<"grid" | "list">("grid");
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   const [searchTerm, setSearchTerm] = useState("");
   // Removed unused selectedGenre state
-  const [selectedRating, setSelectedRating] = useState("all");
-  const [selectedYear, setSelectedYear] = useState("all");
+  const [selectedRating, setSelectedRating] = useState<string[]>(["all"]);
+  const [selectedYear, setSelectedYear] = useState<string[]>(["all"]);
   const [selectedCountry, setSelectedCountry] = useState<string[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<string[]>([]);
   const [pendingStudio, setPendingStudio] = useState("");
   const [pendingSort, setPendingSort] = useState("popularity");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const router = useRouter();
+  const advancedFilterRef = useRef<HTMLDivElement>(null);
+
+  // Close advanced filter when clicking outside
+  useEffect(() => {
+    if (!showAdvanced) return;
+    function handleClickOutside(event: MouseEvent) {
+      const dropdown = advancedFilterRef.current;
+      if (dropdown && !dropdown.contains(event.target as Node)) {
+        setShowAdvanced(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showAdvanced]);
 
   // Example genre, rating, year, country, language options
   const genreOptions = [
@@ -118,8 +275,21 @@ export default function GenrePage() {
       );
       if (!hasGenre) return false;
 
-      if (statusFilter !== "all" && anime.status !== statusFilter) return false;
-      if (typeFilter !== "all" && anime.type !== typeFilter) return false;
+      // Multi-selection status filter
+      if (
+        statusFilter.length > 0 &&
+        !statusFilter.includes("all") &&
+        !statusFilter.includes(anime.status)
+      )
+        return false;
+
+      // Multi-selection type filter
+      if (
+        typeFilter.length > 0 &&
+        !typeFilter.includes("all") &&
+        !typeFilter.includes(anime.type)
+      )
+        return false;
 
       return true;
     })
@@ -178,17 +348,27 @@ export default function GenrePage() {
                 placeholder="Search anime..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none w-full"
+                className="px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 focus:outline-none w-full"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && searchTerm.trim() !== "") {
                     const params = new URLSearchParams();
-                    if (tempGenre !== "all") params.append("genre", tempGenre);
-                    if (selectedRating !== "all")
-                      params.append("rating", selectedRating);
-                    if (selectedYear !== "all")
-                      params.append("year", selectedYear);
-                    if (selectedSeason !== "all")
-                      params.append("season", selectedSeason);
+                    if (tempGenre.length > 0 && !tempGenre.includes("all"))
+                      params.append("genre", tempGenre.join(","));
+                    if (
+                      selectedRating.length > 0 &&
+                      !selectedRating.includes("all")
+                    )
+                      params.append("rating", selectedRating.join(","));
+                    if (
+                      selectedYear.length > 0 &&
+                      !selectedYear.includes("all")
+                    )
+                      params.append("year", selectedYear.join(","));
+                    if (
+                      selectedSeason.length > 0 &&
+                      !selectedSeason.includes("all")
+                    )
+                      params.append("season", selectedSeason.join(","));
                     if (
                       selectedCountry.length > 0 &&
                       !selectedCountry.includes("all")
@@ -199,52 +379,41 @@ export default function GenrePage() {
                       !selectedLanguage.includes("all")
                     )
                       params.append("language", selectedLanguage.join(","));
-                    if (tempStatus !== "all")
-                      params.append("status", tempStatus);
-                    if (tempType !== "all") params.append("type", tempType);
+                    if (tempStatus.length > 0 && !tempStatus.includes("all"))
+                      params.append("status", tempStatus.join(","));
+                    if (tempType.length > 0 && !tempType.includes("all"))
+                      params.append("type", tempType.join(","));
                     params.append("search", searchTerm);
                     router.push(`/search?${params.toString()}`);
                   }
                 }}
               />
-              {/* Type Dropdown */}
-              <select
-                value={tempType}
-                onChange={(e) => setTempType(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
-                {typeFilters.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {/* Genre Dropdown */}
-              <select
-                value={tempGenre}
-                onChange={(e) => setTempGenre(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
-                {genreOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
-                  </option>
-                ))}
-              </select>
-              {/* Status Dropdown */}
-              <select
-                value={tempStatus}
-                onChange={(e) => setTempStatus(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
-                {statusFilters.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              {/* Type Multi-Select */}
+              <MultiSelect
+                options={typeFilters}
+                selectedValues={tempType}
+                onChange={setTempType}
+                className="w-full"
+              />
+              {/* Genre Multi-Select */}
+              <MultiSelect
+                options={genreOptions}
+                selectedValues={tempGenre}
+                onChange={setTempGenre}
+                className="w-full"
+              />
+              {/* Status Multi-Select */}
+              <MultiSelect
+                options={statusFilters}
+                selectedValues={tempStatus}
+                onChange={setTempStatus}
+                className="w-full"
+              />
               {/* Sort Dropdown */}
               <select
                 value={pendingSort}
                 onChange={(e) => setPendingSort(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 w-full">
+                className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 text-left flex items-center justify-between hover:bg-gray-700 focus:outline-none">
                 {sortOptions.map((option) => (
                   <option key={option.key} value={option.key}>
                     {option.label}
@@ -256,7 +425,7 @@ export default function GenrePage() {
                 <button
                   type="button"
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="p-2 rounded-lg bg-gray-800 text-white border border-gray-700 hover:bg-gray-700 cursor-pointer flex w-full justify-center"
+                  className="p-2 rounded-lg btn-pink text-white cursor-pointer flex justify-center w-full"
                   aria-label="Show advanced filters">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -279,13 +448,23 @@ export default function GenrePage() {
                     setTypeFilter(tempType);
                     setStatusFilter(tempStatus);
                     const params = new URLSearchParams();
-                    if (tempGenre !== "all") params.append("genre", tempGenre);
-                    if (selectedRating !== "all")
-                      params.append("rating", selectedRating);
-                    if (selectedYear !== "all")
-                      params.append("year", selectedYear);
-                    if (selectedSeason !== "all")
-                      params.append("season", selectedSeason);
+                    if (tempGenre.length > 0 && !tempGenre.includes("all"))
+                      params.append("genre", tempGenre.join(","));
+                    if (
+                      selectedRating.length > 0 &&
+                      !selectedRating.includes("all")
+                    )
+                      params.append("rating", selectedRating.join(","));
+                    if (
+                      selectedYear.length > 0 &&
+                      !selectedYear.includes("all")
+                    )
+                      params.append("year", selectedYear.join(","));
+                    if (
+                      selectedSeason.length > 0 &&
+                      !selectedSeason.includes("all")
+                    )
+                      params.append("season", selectedSeason.join(","));
                     if (
                       selectedCountry.length > 0 &&
                       !selectedCountry.includes("all")
@@ -296,9 +475,10 @@ export default function GenrePage() {
                       !selectedLanguage.includes("all")
                     )
                       params.append("language", selectedLanguage.join(","));
-                    if (tempStatus !== "all")
-                      params.append("status", tempStatus);
-                    if (tempType !== "all") params.append("type", tempType);
+                    if (tempStatus.length > 0 && !tempStatus.includes("all"))
+                      params.append("status", tempStatus.join(","));
+                    if (tempType.length > 0 && !tempType.includes("all"))
+                      params.append("type", tempType.join(","));
                     if (pendingSort !== "popularity")
                       params.append("sort", pendingSort);
                     if (searchTerm.trim() !== "")
@@ -309,55 +489,45 @@ export default function GenrePage() {
                 </button>
                 {/* Advanced Dropdown - position absolute */}
                 {showAdvanced && (
-                  <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 mt-2 absolute top-full right-0 z-50 w-[min(90vw,600px)] shadow-xl">
+                  <div
+                    className="bg-gray-900 border border-gray-700 rounded-lg p-4 mt-2 absolute top-full right-0 z-50 w-[min(90vw,600px)] shadow-xl"
+                    ref={advancedFilterRef}>
                     <div className="flex justify-between items-center gap-4">
-                      {/* Rating Dropdown */}
+                      {/* Rating Multi-Select */}
                       <div className="w-full">
                         <label className="block text-gray-300 text-sm mb-1">
                           Rating
                         </label>
-                        <select
-                          value={selectedRating}
-                          onChange={(e) => setSelectedRating(e.target.value)}
-                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700">
-                          {ratingOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
+                        <MultiSelect
+                          options={ratingOptions}
+                          selectedValues={selectedRating}
+                          onChange={setSelectedRating}
+                          className="w-full"
+                        />
                       </div>
-                      {/* Year Dropdown */}
+                      {/* Year Multi-Select */}
                       <div className="w-full">
                         <label className="block text-gray-300 text-sm mb-1">
                           Year
                         </label>
-                        <select
-                          value={selectedYear}
-                          onChange={(e) => setSelectedYear(e.target.value)}
-                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700">
-                          {yearOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
+                        <MultiSelect
+                          options={yearOptions}
+                          selectedValues={selectedYear}
+                          onChange={setSelectedYear}
+                          className="w-full"
+                        />
                       </div>
-                      {/* Season Dropdown */}
+                      {/* Season Multi-Select */}
                       <div className="w-full">
                         <label className="block text-gray-300 text-sm mb-1">
                           Season
                         </label>
-                        <select
-                          value={selectedSeason}
-                          onChange={(e) => setSelectedSeason(e.target.value)}
-                          className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700">
-                          {seasonOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
+                        <MultiSelect
+                          options={seasonOptions}
+                          selectedValues={selectedSeason}
+                          onChange={setSelectedSeason}
+                          className="w-full"
+                        />
                       </div>
                     </div>
                     {/* Studio Input Field */}
@@ -445,10 +615,7 @@ export default function GenrePage() {
                 <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-5">
                   {paginatedAnime.map((anime) => (
                     <div key={anime.id} className="relative">
-                      <AnimeCard
-                        anime={anime}
-                        showPopup={true}
-                      />
+                      <AnimeCard anime={anime} showPopup={true} />
                     </div>
                   ))}
                 </div>
@@ -547,8 +714,8 @@ export default function GenrePage() {
                                 anime.status === "ongoing"
                                   ? "text-green-400"
                                   : anime.status === "completed"
-                                    ? "text-blue-400"
-                                    : "text-yellow-400"
+                                  ? "text-blue-400"
+                                  : "text-yellow-400"
                               )}>
                               {anime.status}
                             </span>
