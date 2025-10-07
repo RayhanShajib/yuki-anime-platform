@@ -14,25 +14,63 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { NotificationDropdown } from "../ui/NotificationDropdown";
+import { pageApi } from "@/lib/api/pageApi";
 interface NavigationProps {
   isLandingPage?: boolean;
+}
+
+// Profile data interface
+interface ProfileData {
+  username: string;
+  avatar: string;
 }
 
 export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [language, setLanguage] = useState<"en" | "jp">("en");
   const [currentData, setCurrentData] = useState<{
     title: string;
   }>({
-    title: "Yuki Anime Platform"
+    title: "Yuki Anime Platform",
   });
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
 
   // Initialize and load data from localStorage
   useEffect(() => {
+    // Fetch profile data on component mount
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          console.log("Please log in to view your profile");
+          return;
+        }
+
+        const data = await pageApi.getProfilePageData(token);
+        setProfileData(data);
+      } catch (error: unknown) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchProfile();
+
+    // Check for access token and update login state
+    const accessToken = localStorage.getItem("access_token");
+    console.log("Access Token:", accessToken);
+
+    if (accessToken) {
+      console.log("Access token found - User is logged in");
+      setIsLoggedIn(true);
+    } else {
+      console.log("No access token found - User is not logged in");
+      setIsLoggedIn(false);
+    }
+
     const existingData = localStorage.getItem("yuki-multilingual-data");
     if (!existingData) {
       const LanguageData = {
@@ -81,6 +119,15 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
     } catch (error) {
       console.error("Error loading data from localStorage:", error);
     }
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    setIsLoggedIn(false);
+    console.log("Access token removed - User logged out");
+    // Optionally redirect to login page or home page
+    // window.location.href = "/login";
   };
 
   // Handle language change
@@ -430,38 +477,44 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 </button>
               </div>
             </div>
-            {/* Notification Icon and Dropdown */}
-            <div className="relative" ref={notificationRef}>
-              <button
-                className="text-white transition-colors relative"
-                onClick={() => setShowNotification(!showNotification)}
-                title="Notifications">
-                <Bell className="h-5.5 w-5.5" />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-red-500 rounded-full text-xs flex items-center justify-center text-white/90">
-                    {notifications.length}
-                  </span>
-                )}
-              </button>
-              {showNotification && (
-                <div className="pt-2 mt-2 absolute top-full right-0 z-50 w-[min(80vw,350px)]">
-                  <NotificationDropdown
-                    notifications={notifications}
-                    onRemove={handleRemoveNotif}
-                    onClose={() => setShowNotification(true)}
-                  />
-                </div>
-              )}
-            </div>
+
             {isLoggedIn ? (
-              <div className="relative" ref={userMenuRef}>
+              <div
+                className="relative flex items-center gap-5"
+                ref={userMenuRef}>
+                {/* Notification Icon and Dropdown */}
+                <div className="relative" ref={notificationRef}>
+                  <button
+                    className="text-white transition-colors relative"
+                    onClick={() => setShowNotification(!showNotification)}
+                    title="Notifications">
+                    <Bell className="h-5.5 w-5.5" />
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-red-500 rounded-full text-xs flex items-center justify-center text-white/90">
+                        {notifications.length}
+                      </span>
+                    )}
+                  </button>
+                  {showNotification && (
+                    <div className="pt-2 mt-2 absolute top-full right-0 z-50 w-[min(80vw,350px)]">
+                      <NotificationDropdown
+                        notifications={notifications}
+                        onRemove={handleRemoveNotif}
+                        onClose={() => setShowNotification(true)}
+                      />
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center space-x-2 text-white hover:text-purple-400 transition-colors">
                   <div className="w-8 h-8 btn-purple rounded-full flex items-center justify-center">
                     <User className="h-4 w-4" />
                   </div>
-                  <span className="hidden md:inline">Username</span>
+                  <span className="hidden md:inline">
+                    {" "}
+                    {profileData?.username || "Loading..."}
+                  </span>
                 </button>
 
                 {isUserMenuOpen && (
@@ -511,7 +564,9 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                         Settings
                       </Link>
                       <hr className="my-2 border-gray-700" />
-                      <button className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-gray-800">
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-gray-800">
                         <LogOut className="h-4 w-4 mr-3" />
                         Logout
                       </button>
@@ -858,7 +913,9 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                     <Settings className="h-5 w-5 mr-3" />
                     Settings
                   </Link>
-                  <button className="flex items-center w-full text-white hover:text-purple-400 transition-colors py-2">
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center w-full text-white hover:text-purple-400 transition-colors py-2">
                     <LogOut className="h-5 w-5 mr-3" />
                     Logout
                   </button>
