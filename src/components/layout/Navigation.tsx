@@ -25,6 +25,83 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   const [isLoggedIn] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
   const [language, setLanguage] = useState<"en" | "jp">("en");
+  const [currentData, setCurrentData] = useState<{
+    title: string;
+  }>({
+    title: "Yuki Anime Platform"
+  });
+
+  // Initialize and load data from localStorage
+  useEffect(() => {
+    const existingData = localStorage.getItem("yuki-multilingual-data");
+    if (!existingData) {
+      const LanguageData = {
+        en: {
+          title: "Yuki Anime Platform",
+        },
+        jp: {
+          title: "雪アニメプラットフォーム",
+        },
+      };
+      localStorage.setItem(
+        "yuki-multilingual-data",
+        JSON.stringify(LanguageData)
+      );
+    }
+
+    // Load saved language preference or default to 'en'
+    const savedLanguage = localStorage.getItem("yuki-language") as
+      | "en"
+      | "jp"
+      | null;
+    if (savedLanguage && (savedLanguage === "en" || savedLanguage === "jp")) {
+      setLanguage(savedLanguage);
+      loadDataFromLocalStorage(savedLanguage);
+      console.log("Loaded saved language:", savedLanguage);
+    } else {
+      localStorage.setItem("yuki-language", "en");
+      loadDataFromLocalStorage("en");
+      console.log("Default language set to: en");
+    }
+  }, []);
+
+  // Function to load data from localStorage
+  const loadDataFromLocalStorage = (lang: "en" | "jp") => {
+    try {
+      const storedData = localStorage.getItem("yuki-multilingual-data");
+      if (storedData) {
+        const multilingualData = JSON.parse(storedData);
+        setCurrentData(multilingualData[lang]);
+        console.log(
+          `Loaded ${lang} data from localStorage:`,
+          multilingualData[lang]
+        );
+        console.log("Title:", multilingualData[lang].title);
+      }
+    } catch (error) {
+      console.error("Error loading data from localStorage:", error);
+    }
+  };
+
+  // Handle language change
+  const handleLanguageChange = (newLanguage: "en" | "jp") => {
+    setLanguage(newLanguage);
+    localStorage.setItem("yuki-language", newLanguage);
+    loadDataFromLocalStorage(newLanguage);
+    console.log("Language changed to:", newLanguage);
+  };
+
+  // Expose current data to window for testing
+  useEffect(() => {
+    (
+      window as unknown as { getCurrentYukiData: () => typeof currentData }
+    ).getCurrentYukiData = () => {
+      console.log("Current Language:", language);
+      console.log("Current Data:", currentData);
+      console.log("Title:", currentData.title);
+      return currentData;
+    };
+  }, [language, currentData]);
 
   type Notification = {
     id: number;
@@ -337,7 +414,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       ? "btn-purple text-white"
                       : "bg-gray-700 text-blue-200 hover:bg-[#7760A9] hover:text-white"
                   }`}
-                  onClick={() => setLanguage("en")}
+                  onClick={() => handleLanguageChange("en")}
                   aria-pressed={language === "en"}>
                   EN
                 </button>
@@ -347,7 +424,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       ? "btn-purple text-white"
                       : "bg-gray-700 text-white hover:bg-[#7760A9] hover:text-white"
                   }`}
-                  onClick={() => setLanguage("jp")}
+                  onClick={() => handleLanguageChange("jp")}
                   aria-pressed={language === "jp"}>
                   JP
                 </button>
