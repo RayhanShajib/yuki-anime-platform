@@ -965,141 +965,147 @@ export default function WatchPage() {
               </Link>
             </div>
           </section>
-          {/* Relations Section */}
-          <div className="w-full max-w-7xl mx-auto mt-3 px-4 sm:px-6 lg:px-8 py-4 sm:py-8 pb-4 sm:pb-16">
-            <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
-            <Swiper
-              modules={[SwiperNavigation]}
-              spaceBetween={20}
-              slidesPerView={2}
-              navigation={true}
-              autoplay={{
-                delay: 3000,
-                disableOnInteraction: false,
-              }}
-              breakpoints={{
-                640: {
-                  slidesPerView: 3,
-                  spaceBetween: 20,
-                },
-                768: {
-                  slidesPerView: 4,
-                  spaceBetween: 25,
-                },
-                1024: {
-                  slidesPerView: 5,
-                  spaceBetween: 25,
-                },
-                1280: {
-                  slidesPerView: 8,
-                  spaceBetween: 30,
-                },
-                1536: {
-                  slidesPerView: 8,
-                  spaceBetween: 30,
-                },
-              }}
-              className="relations-swiper">
-              {watchData?.relatedAnime?.slice(0, 10).map((anime) => (
-                <SwiperSlide key={anime.id}>
-                  <div className="relative">
-                    <AnimeCard
-                      anime={{
-                        id: anime.id,
-                        title: anime.title,
-                        synopsis: anime.synopsis,
-                        poster: anime.poster,
-                        banner: anime.banner,
-                        genres: anime.genres,
-                        studio: "Unknown",
-                        releaseYear: new Date().getFullYear(),
-                        status: anime.isAiring
-                          ? ("ongoing" as const)
-                          : ("completed" as const),
-                        type:
-                          anime.type.toLowerCase() === "movie"
-                            ? ("movie" as const)
-                            : ("series" as const),
-                        totalEpisodes: anime.episodeCount,
-                        rating: 0,
-                        popularity: 0,
-                        language: ["sub" as const],
-                      }}
-                      showPopup={true}
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-          {/* Recommended Section */}
-          <div className="w-full max-w-7xl mx-auto mt-4 sm:mt-10 px-4 sm:px-6 lg:px-8 py-8 pb-5 sm:pb-16">
-            <h2 className="text-2xl font-bold text-white mb-6">Recommended</h2>
-            <Swiper
-              modules={[SwiperNavigation]}
-              spaceBetween={20}
-              slidesPerView={2}
-              navigation={true}
-              autoplay={{
-                delay: 4000,
-                disableOnInteraction: false,
-              }}
-              breakpoints={{
-                640: {
-                  slidesPerView: 3,
-                  spaceBetween: 20,
-                },
-                768: {
-                  slidesPerView: 4,
-                  spaceBetween: 25,
-                },
-                1024: {
-                  slidesPerView: 6,
-                  spaceBetween: 25,
-                },
-                1280: {
-                  slidesPerView: 8,
-                  spaceBetween: 30,
-                },
-                1536: {
-                  slidesPerView: 8,
-                  spaceBetween: 30,
-                },
-              }}
-              className="recommended-swiper">
-              {watchData?.similarAnime?.slice(0, 10).map((anime) => (
-                <SwiperSlide key={anime.id}>
-                  <div className="flex-shrink-0 overflow-visible  relative">
-                    <AnimeCard
-                      anime={{
-                        id: anime.id,
-                        title: anime.title,
-                        synopsis: anime.synopsis,
-                        poster: anime.poster,
-                        banner: anime.banner,
-                        genres: anime.genres,
-                        studio: "Unknown",
-                        releaseYear: new Date().getFullYear(),
-                        status: anime.isAiring
-                          ? ("ongoing" as const)
-                          : ("completed" as const),
-                        type:
-                          anime.type.toLowerCase() === "movie"
-                            ? ("movie" as const)
-                            : ("series" as const),
-                        totalEpisodes: anime.episodeCount,
-                        rating: 0,
-                        popularity: 0,
-                        language: ["sub" as const],
-                      }}
-                      showPopup={true}
-                      className="h-auto overflow-visible"
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+          {/* Relations Section - Only show if relatedAnime data is available */}
+          {watchData?.relatedAnime && watchData.relatedAnime.length > 0 && (
+            <div className="w-full max-w-7xl mx-auto mt-3 px-4 sm:px-6 lg:px-8 py-4 sm:py-8 pb-4 sm:pb-16">
+              <h2 className="text-2xl font-bold text-white mb-6">Relations</h2>
+              <Swiper
+                modules={[SwiperNavigation]}
+                spaceBetween={20}
+                slidesPerView={2}
+                navigation={true}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                  },
+                  768: {
+                    slidesPerView: 4,
+                    spaceBetween: 25,
+                  },
+                  1024: {
+                    slidesPerView: 5,
+                    spaceBetween: 25,
+                  },
+                  1280: {
+                    slidesPerView: 8,
+                    spaceBetween: 30,
+                  },
+                  1536: {
+                    slidesPerView: 8,
+                    spaceBetween: 30,
+                  },
+                }}
+                className="relations-swiper">
+                {watchData.relatedAnime.slice(0, 10).map((anime) => (
+                  <SwiperSlide key={anime.id}>
+                    <div className="relative">
+                      <AnimeCard
+                        anime={{
+                          id: anime.id,
+                          title: anime.title,
+                          synopsis: anime.synopsis,
+                          poster: anime.poster,
+                          banner: anime.banner,
+                          genres: anime.genres,
+                          studio: "Unknown",
+                          releaseYear: new Date().getFullYear(),
+                          status: anime.isAiring
+                            ? ("ongoing" as const)
+                            : ("completed" as const),
+                          type:
+                            anime.type.toLowerCase() === "movie"
+                              ? ("movie" as const)
+                              : ("series" as const),
+                          totalEpisodes: anime.episodeCount,
+                          rating: 0,
+                          popularity: 0,
+                          language: ["sub" as const],
+                        }}
+                        showPopup={true}
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          )}
+          {/* Recommended Section - Only show if similarAnime data is available */}
+          {watchData?.similarAnime && watchData.similarAnime.length > 0 && (
+            <div className="w-full max-w-7xl mx-auto mt-4 sm:mt-10 px-4 sm:px-6 lg:px-8 py-8 pb-5 sm:pb-16">
+              <h2 className="text-2xl font-bold text-white mb-6">
+                Recommended
+              </h2>
+              <Swiper
+                modules={[SwiperNavigation]}
+                spaceBetween={20}
+                slidesPerView={2}
+                navigation={true}
+                autoplay={{
+                  delay: 4000,
+                  disableOnInteraction: false,
+                }}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                  },
+                  768: {
+                    slidesPerView: 4,
+                    spaceBetween: 25,
+                  },
+                  1024: {
+                    slidesPerView: 6,
+                    spaceBetween: 25,
+                  },
+                  1280: {
+                    slidesPerView: 8,
+                    spaceBetween: 30,
+                  },
+                  1536: {
+                    slidesPerView: 8,
+                    spaceBetween: 30,
+                  },
+                }}
+                className="recommended-swiper">
+                {watchData.similarAnime.slice(0, 10).map((anime) => (
+                  <SwiperSlide key={anime.id}>
+                    <div className="flex-shrink-0 overflow-visible  relative">
+                      <AnimeCard
+                        anime={{
+                          id: anime.id,
+                          title: anime.title,
+                          synopsis: anime.synopsis,
+                          poster: anime.poster,
+                          banner: anime.banner,
+                          genres: anime.genres,
+                          studio: "Unknown",
+                          releaseYear: new Date().getFullYear(),
+                          status: anime.isAiring
+                            ? ("ongoing" as const)
+                            : ("completed" as const),
+                          type:
+                            anime.type.toLowerCase() === "movie"
+                              ? ("movie" as const)
+                              : ("series" as const),
+                          totalEpisodes: anime.episodeCount,
+                          rating: 0,
+                          popularity: 0,
+                          language: ["sub" as const],
+                        }}
+                        showPopup={true}
+                        className="h-auto overflow-visible"
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          )}
 
           {/* --- Comments Section --- */}
           <section className="comments-section grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
