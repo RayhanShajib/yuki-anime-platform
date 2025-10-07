@@ -111,7 +111,7 @@ export const CommentSection: React.FC = () => {
       .replace(/""(.*?)""/g, '<span class="text-blue-300">"$1"</span>')
       .replace(
         /\|\|(.*?)\|\|/g,
-        `<span class="spoiler bg-[#1A1F25] text-[#1A1F25] rounded px-1 cursor-pointer" onclick="this.classList.remove('bg-red-600','text-red-600',);this.style.background='transparent';this.style.color='white';">$1</span>`
+        `<span class="spoiler rounded px-1 cursor-pointer select-none relative inline-block" style="background: #1A1F25; color: transparent; text-shadow: none; -webkit-text-stroke: 0;" onclick="this.style.background='transparent';this.style.color='white';this.classList.add('revealed');">$1</span>`
       );
   }
 
@@ -444,7 +444,7 @@ export const CommentSection: React.FC = () => {
                 />
               </div>
             )}
-            <div className="bg-navbar rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
+            <div className="bg-[#2d2341] rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
               <div className="flex flex-wrap items-center">
                 <button
                   onClick={() => applyReplyFormatting("bold", comment.id)}
@@ -535,7 +535,7 @@ export const CommentSection: React.FC = () => {
         <select
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
-          className="bg-navbar text-white px-2 py-1 rounded-md text-sm focus:outline-none">
+          className="bg-[#1e1434] text-white px-2 py-1 rounded-md text-sm focus:outline-none">
           <option value="newest">Newest</option>
           <option value="oldest">Oldest</option>
         </select>
@@ -550,7 +550,7 @@ export const CommentSection: React.FC = () => {
           height={40}
           className="rounded-full object-cover"
         />
-        <div className="flex-1">
+        <div className="flex flex-col flex-1">
           {showPreview ? (
             <div
               className="bg-[#20272E] p-2 min-h-[80px] text-white border border-gray-600 rounded-t-xl"
@@ -561,23 +561,15 @@ export const CommentSection: React.FC = () => {
               }}
             />
           ) : (
-            <div
-              style={{
-                background:
-                  "linear-gradient(to right, #000000 0%, #1a0e26 50%, #000000 100%)",
-                padding: "2px",
-                borderRadius: "0.75rem 0.75rem 0 0",
-              }}>
-              <textarea
-                id="comment-input"
-                className="bg-purple p-2 w-full min-h-[80px] text-white rounded-t-xl focus:outline-none border-0"
-                placeholder="Add a comment..."
-                value={commentInput}
-                onChange={(e) => setCommentInput(e.target.value)}
-              />
-            </div>
+            <textarea
+              id="comment-input"
+              className="bg-purple p-2 w-full min-h-[80px] text-white rounded-t-xl focus:outline-none border border-[#1e1434]"
+              placeholder="Add a comment..."
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+            />
           )}
-          <div className="bg-navbar rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
+          <div className="bg-[#1e1434] rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
             <div className="flex flex-wrap items-center">
               <button
                 onClick={() => applyCommentFormatting("bold")}

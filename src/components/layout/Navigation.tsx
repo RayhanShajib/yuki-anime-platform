@@ -68,7 +68,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   // Function to load data from localStorage
   const loadDataFromLocalStorage = (lang: "en" | "jp") => {
     try {
-      const storedData = localStorage.getItem("yuki-multilingual-data");
+      const storedData = localStorage.getItem("yuki-language-data");
       if (storedData) {
         const multilingualData = JSON.parse(storedData);
         setCurrentData(multilingualData[lang]);
