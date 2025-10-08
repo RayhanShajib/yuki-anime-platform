@@ -23,8 +23,14 @@ export function formatDuration(minutes: number): string {
 }
 
 export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength).trim() + "...";
+  const cleanText = text
+    .replace(/<[^>]*>/g, "")
+    .replace(/&[^;]+;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return cleanText.length <= maxLength
+    ? cleanText
+    : cleanText.substring(0, maxLength).trim() + "...";
 }
 
 export function formatViewCount(count: number): string {
