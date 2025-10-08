@@ -152,13 +152,14 @@ export default function WatchPage() {
   }, [watchData, audioType]);
 
   // --- Episodes Data from API ---
-  type Episode = { ep: number; title: string; thumbnail: string };
+  type Episode = { id: number; ep: number; title: string; thumbnail: string };
 
   const episodes = useMemo<Episode[]>(() => {
     if (!watchData) return [];
 
     const episodeList = watchData.episodes[audioType];
     return episodeList.map((ep) => ({
+      id: ep.id,
       ep: ep.episodeNumber,
       title: ep.title || `Episode ${ep.episodeNumber}`,
       thumbnail: ep.thumbnail,
@@ -173,6 +174,20 @@ export default function WatchPage() {
       (ep) => ep.title.toLowerCase().includes(q) || String(ep.ep).includes(q)
     );
   }, [episodes, searchQuery]);
+
+  // --- Handle Episode Click (Client-side navigation without reload) ---
+  const handleEpisodeClick = (episodeId: number, episodeNumber: number) => {
+    // Update URL without page reload using shallow routing
+    const url = `/watch/${episodeId}`;
+    window.history.replaceState({ ...window.history.state, url }, "", url);
+
+    // Update selected episode state
+    setSelectedEpisode(episodeNumber);
+
+    // No need to fetch new data since we're staying within the same anime
+    // The video sources and other episode data should already be available
+  };
+
   // --- Server Selection State ---
   const [selectedServer, setSelectedServer] = React.useState(1);
   const [selectedIframeServer, setSelectedIframeServer] = React.useState<
@@ -304,6 +319,12 @@ export default function WatchPage() {
   const currentAnime =
     watchData?.relatedAnime?.[0] || watchData?.similarAnime?.[0];
 
+  // Get current episode title
+  const currentEpisodeTitle = useMemo(() => {
+    const episode = episodes.find((ep) => ep.ep === selectedEpisode);
+    return episode?.title || `Episode ${selectedEpisode}`;
+  }, [episodes, selectedEpisode]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -378,7 +399,10 @@ export default function WatchPage() {
                 )}
                 <span className="mx-2">&gt;</span>
                 <span className="text-white font-semibold">
-                  {currentAnime?.title || "Anime Name"}
+                  {episodes.find((ep) => ep.ep === selectedEpisode)?.title &&
+                    ` - ${
+                      episodes.find((ep) => ep.ep === selectedEpisode)?.title
+                    }`}
                 </span>
               </nav>
               <div className="aspect-video w-full rounded-lg mb-6">
@@ -410,7 +434,7 @@ export default function WatchPage() {
                     }
                     videoTitle={`${
                       currentAnime?.title || "Anime"
-                    } - Episode ${selectedEpisode}`}
+                    } - ${currentEpisodeTitle}`}
                     subtitles={[
                       {
                         file: "https://brenopolanski.github.io/html5-video-webvtt-example/MIB2-subtitles-pt-BR.vtt",
@@ -477,11 +501,7 @@ export default function WatchPage() {
               <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
                   <p className="text-lg text-white">
-                    You are watching Episode {selectedEpisode}
-                    {episodes.find((ep) => ep.ep === selectedEpisode)?.title &&
-                      ` - ${
-                        episodes.find((ep) => ep.ep === selectedEpisode)?.title
-                      }`}
+                    You are watching {currentEpisodeTitle}
                   </p>
                   <p className="text-sm text-gray-500 mt-3">
                     If the current server is not working, please try switching{" "}
@@ -692,7 +712,7 @@ export default function WatchPage() {
                 }
                 style={isListView ? { display: "block" } : { display: "grid" }}>
                 {/* Episodes List */}
-                {filteredEpisodes.map(({ ep, title, thumbnail }) => (
+                {filteredEpisodes.map(({ id, ep, title, thumbnail }) => (
                   <div
                     key={ep}
                     className={
@@ -708,13 +728,13 @@ export default function WatchPage() {
                               : "border-transparent"
                           }`
                     }
-                    onClick={() => setSelectedEpisode(ep)}
+                    onClick={() => handleEpisodeClick(id, ep)}
                     tabIndex={0}
                     role="button"
                     aria-label={`Play Episode ${ep}`}>
                     {isListView ? (
                       <>
-                        <div className="w-22 h-17 flex-shrink-0 rounded overflow-hidden relative">
+                        <div className="w-20 h-18 flex-shrink-0 rounded overflow-hidden relative">
                           <Image
                             src={
                               thumbnail ||
@@ -729,7 +749,7 @@ export default function WatchPage() {
                           <span className="text-white text-sm font-semibold">
                             Ep {ep}
                           </span>
-                          <span className="text-pink text-md mt-1">
+                          <span className="text-pink text-sm mt-1">
                             {title}
                           </span>
                         </div>
