@@ -469,7 +469,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
 
                 {/* Description */}
                 <div className="mb-3">
-                  <p className="text-gray-300 text-sm sm:text-base leading-[22px] line-clamp-4 overflow-hidden">
+                  <p className="text-gray-300 text-sm sm:text-base leading-[22px] line-clamp-3 overflow-hidden">
                     {anime.synopsis ||
                       "No description available for this anime."}
                   </p>
