@@ -11,6 +11,7 @@ export default function AdminEpisodesPage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Calculate offset based on current page and items per page
   const offset = (currentPage - 1) * itemsPerPage;
@@ -62,6 +63,48 @@ export default function AdminEpisodesPage() {
     setItemsPerPage(newLimit);
     setCurrentPage(1); // Reset to first page when changing items per page
   };
+
+  // Handle delete episode
+  const handleDeleteEpisode = async (episodeId: number, episodeTitle: string) => {
+    if (!confirm(`Are you sure you want to delete "Episode ${episodeTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setDeletingId(episodeId);
+      
+      // Get token from localStorage 
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('Authentication required. Please log in.');
+      }
+
+      await adminApi.deleteEpisode(episodeId.toString(), token);
+      
+      // Refresh the data after successful deletion
+      const response = await adminApi.getEpisodeList(itemsPerPage, offset, token);
+      setEpisodeData(response);
+      
+      // If current page is empty and we're not on page 1, go to previous page
+      if (response.results.length === 0 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+    } catch (err) {
+      console.error('Error deleting episode:', err);
+      if (err instanceof Error) {
+        if (err.message.includes('permission') || err.message.includes('401') || err.message.includes('403')) {
+          alert('Access denied. Admin privileges required.');
+        } else {
+          alert('Failed to delete episode. Please try again.');
+        }
+      } else {
+        alert('Failed to delete episode. Please try again.');
+      }
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto w-full">
       <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
@@ -135,7 +178,19 @@ export default function AdminEpisodesPage() {
                     <td className="p-3 flex gap-2 flex-wrap">
                       <Link href={`/admin/episodes/${episode.id}`} className="px-2 py-1 bg-gray-700 hover:bg-gray-800 text-white rounded text-xs">View</Link>
                       <Link href={`/admin/episodes/${episode.id}/edit`} className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs">Edit</Link>
-                      <button className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs">Delete</button>
+                      <button 
+                        onClick={() => handleDeleteEpisode(episode.id, episode.title)}
+                        disabled={deletingId === episode.id}
+                        className="px-2 py-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white rounded text-xs flex items-center gap-1">
+                        {deletingId === episode.id ? (
+                          <>
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                            Deleting
+                          </>
+                        ) : (
+                          'Delete'
+                        )}
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -158,7 +213,19 @@ export default function AdminEpisodesPage() {
                   <div className="flex gap-2 flex-wrap">
                     <Link href={`/admin/episodes/${episode.id}`} className="px-2 py-1 bg-gray-700 hover:bg-gray-800 text-white rounded text-xs">View</Link>
                     <Link href={`/admin/episodes/${episode.id}/edit`} className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs">Edit</Link>
-                    <button className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs">Delete</button>
+                    <button 
+                      onClick={() => handleDeleteEpisode(episode.id, episode.title)}
+                      disabled={deletingId === episode.id}
+                      className="px-2 py-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white rounded text-xs flex items-center gap-1">
+                      {deletingId === episode.id ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          Deleting
+                        </>
+                      ) : (
+                        'Delete'
+                      )}
+                    </button>
                   </div>
                 </div>
               ))}
