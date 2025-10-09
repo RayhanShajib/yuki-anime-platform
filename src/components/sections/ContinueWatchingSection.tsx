@@ -4,7 +4,7 @@ import { Play, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-// Mock data with random images and progress - updated to match AnimeCard format
+// Mock data with random images and progress
 const mockContinueWatching = [
   {
     id: "1",
