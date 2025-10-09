@@ -24,12 +24,18 @@ export interface UpdateEpisodeData {
   aired_date?: string;
   title?: string;
   description?: string | null;
-  vidsrces?: Array<{
-    srctype: string;
-    iframe: string[];
-    m3u8: string[];
-    private: string;
-  }>;
+  vidsrces?: {
+    sub?: Array<{
+      iframe: string[];
+      m3u8: string[];
+      private: string;
+    }>;
+    dub?: Array<{
+      iframe: string[];
+      m3u8: string[];
+      private: string;
+    }>;
+  };
 }
 
 export interface EpisodeDetailData {

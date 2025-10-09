@@ -12,8 +12,10 @@ interface EpisodeForm {
   aired_date: string;
   image: string;
   view_count: number;
-  iframe_urls: string;
-  private_key: string;
+  sub_iframe_urls: string;
+  sub_private_key: string;
+  dub_iframe_urls: string;
+  dub_private_key: string;
 }
 
 export default function AdminEditEpisodePage() {
@@ -32,8 +34,10 @@ export default function AdminEditEpisodePage() {
     aired_date: "",
     image: "",
     view_count: 0,
-    iframe_urls: "",
-    private_key: "",
+    sub_iframe_urls: "",
+    sub_private_key: "",
+    dub_iframe_urls: "",
+    dub_private_key: "",
   });
 
   // Fetch episode data on load
@@ -54,7 +58,9 @@ export default function AdminEditEpisodePage() {
         
         // Populate form with episode data
         const subSources = response.vidsrces?.sub?.[0];
+        const dubSources = response.vidsrces?.dub?.[0];
         console.log('Sub sources:', subSources); // Debug log
+        console.log('Dub sources:', dubSources); // Debug log
         
         const formData = {
           ep_no: response.ep_no || 0,
@@ -63,8 +69,10 @@ export default function AdminEditEpisodePage() {
           aired_date: response.aired_date || "",
           image: response.image || "",
           view_count: response.view_count || 0,
-          iframe_urls: subSources?.iframe?.join('\n') || "",
-          private_key: subSources?.private || "",
+          sub_iframe_urls: subSources?.iframe?.join('\n') || "",
+          sub_private_key: subSources?.private || "",
+          dub_iframe_urls: dubSources?.iframe?.join('\n') || "",
+          dub_private_key: dubSources?.private || "",
         };
         
         console.log('Form data to be set:', formData); // Debug log
@@ -110,6 +118,26 @@ export default function AdminEditEpisodePage() {
       }
 
       // Prepare update data
+      const vidsrces: any = {};
+      
+      // Add SUB sources if they exist
+      if (form.sub_iframe_urls.trim()) {
+        vidsrces.sub = [{
+          iframe: form.sub_iframe_urls.split('\n').filter((url: string) => url.trim()),
+          m3u8: [],
+          private: form.sub_private_key,
+        }];
+      }
+      
+      // Add DUB sources if they exist
+      if (form.dub_iframe_urls.trim()) {
+        vidsrces.dub = [{
+          iframe: form.dub_iframe_urls.split('\n').filter((url: string) => url.trim()),
+          m3u8: [],
+          private: form.dub_private_key,
+        }];
+      }
+
       const updateData: UpdateEpisodeData = {
         ep_no: form.ep_no,
         title: form.title,
@@ -117,12 +145,7 @@ export default function AdminEditEpisodePage() {
         aired_date: form.aired_date,
         image: form.image || null,
         view_count: form.view_count,
-        vidsrces: form.iframe_urls ? [{
-          srctype: "sub",
-          iframe: form.iframe_urls.split('\n').filter(url => url.trim()),
-          m3u8: [],
-          private: form.private_key,
-        }] : [],
+        vidsrces: Object.keys(vidsrces).length > 0 ? vidsrces : undefined,
       };
 
       await adminApi.updateEpisode(episodeId, updateData, token);
@@ -248,27 +271,66 @@ export default function AdminEditEpisodePage() {
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2 text-gray-200">Video Sources (One per line)</label>
-          <textarea 
-            name="iframe_urls" 
-            value={form.iframe_urls} 
-            onChange={handleChange} 
-            rows={6}
-            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" 
-            placeholder="Enter iframe URLs, one per line..."
-          />
+        {/* SUB Video Sources */}
+        <div className="border border-green-600/30 rounded-lg p-4 bg-green-900/10">
+          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">SUB</span>
+            Subtitled Sources
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-200">SUB Video URLs (One per line)</label>
+              <textarea 
+                name="sub_iframe_urls" 
+                value={form.sub_iframe_urls} 
+                onChange={handleChange} 
+                rows={6}
+                className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" 
+                placeholder="Enter SUB iframe URLs, one per line..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-200">SUB Private Key</label>
+              <input 
+                name="sub_private_key" 
+                value={form.sub_private_key} 
+                onChange={handleChange} 
+                className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" 
+                placeholder="Private key for SUB video sources"
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-2 text-gray-200">Private Key</label>
-          <input 
-            name="private_key" 
-            value={form.private_key} 
-            onChange={handleChange} 
-            className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" 
-            placeholder="Private key for video sources"
-          />
+        {/* DUB Video Sources */}
+        <div className="border border-orange-600/30 rounded-lg p-4 bg-orange-900/10">
+          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <span className="bg-orange-600 text-white px-2 py-1 rounded text-xs">DUB</span>
+            Dubbed Sources
+          </h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-200">DUB Video URLs (One per line)</label>
+              <textarea 
+                name="dub_iframe_urls" 
+                value={form.dub_iframe_urls} 
+                onChange={handleChange} 
+                rows={6}
+                className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" 
+                placeholder="Enter DUB iframe URLs, one per line..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-200">DUB Private Key</label>
+              <input 
+                name="dub_private_key" 
+                value={form.dub_private_key} 
+                onChange={handleChange} 
+                className="w-full px-3 py-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" 
+                placeholder="Private key for DUB video sources"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-4">
