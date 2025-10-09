@@ -512,10 +512,6 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                   <div className="w-8 h-8 btn-purple rounded-full flex items-center justify-center">
                     <User className="h-4 w-4" />
                   </div>
-                  <span className="hidden md:inline">
-                    {" "}
-                    {profileData?.username || "Loading..."}
-                  </span>
                 </button>
 
                 {isUserMenuOpen && (
