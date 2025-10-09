@@ -550,7 +550,7 @@ export default function WatchPage() {
                         serverType === "video" &&
                         selectedServer === serverNumber;
 
-                      let label = `Server ${serverNumber}`;
+                      const label = `Server ${serverNumber}`;
 
                       return (
                         <button
