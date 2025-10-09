@@ -94,6 +94,9 @@ export default function WatchPage() {
   useEffect(() => {
     if (!watchData) return;
 
+    // Reset auto-selection flag when audio type changes so servers can be auto-selected for new audio type
+    setHasAutoSelected(false);
+
     // Update selected episode when audio type changes
     const availableEpisodes = watchData.episodes[audioType];
     if (availableEpisodes.length > 0) {
@@ -267,32 +270,54 @@ export default function WatchPage() {
     return sourceGroup.iframeUrls || [];
   }, [watchData, audioType]);
 
-  // --- Auto-select First Working Server ---
+  // --- Auto-select First Working Server (Only on Initial Load) ---
+  const [hasAutoSelected, setHasAutoSelected] = React.useState(false);
+  
   useEffect(() => {
-    if (Object.keys(videoSources).length > 0) {
-      // Find the first available video server
-      const serverNumbers = Object.keys(videoSources)
-        .map(Number)
-        .sort((a, b) => a - b);
-      const firstAvailableServer = serverNumbers[0];
-
-      if (
-        firstAvailableServer &&
-        (selectedServer !== firstAvailableServer || serverType !== "video")
-      ) {
-        setSelectedServer(firstAvailableServer);
-        setServerType("video");
-        setSelectedIframeServer(null);
+    // Only auto-select if we haven't done it before and sources are available
+    if (!hasAutoSelected) {
+      // First check for private video sources (preferred)
+      if (privateVideoSources.length > 0 && Object.keys(videoSources).length > 0) {
+        // Find the first private server (should be server 1)
+        const firstPrivateServer = 1;
+        if (videoSources[firstPrivateServer]) {
+          setSelectedServer(firstPrivateServer);
+          setServerType("video");
+          setSelectedIframeServer(null);
+          setHasAutoSelected(true);
+          return;
+        }
       }
-    } else if (iframeSources.length > 0) {
+      
+      // Then check for any video sources
+      if (Object.keys(videoSources).length > 0) {
+        const serverNumbers = Object.keys(videoSources)
+          .map(Number)
+          .sort((a, b) => a - b);
+        const firstAvailableServer = serverNumbers[0];
+
+        if (firstAvailableServer) {
+          setSelectedServer(firstAvailableServer);
+          setServerType("video");
+          setSelectedIframeServer(null);
+          setHasAutoSelected(true);
+          return;
+        }
+      }
+      
       // Fallback to iframe if no video sources available
-      setSelectedIframeServer(1);
-      setServerType("iframe");
+      if (iframeSources.length > 0) {
+        setSelectedIframeServer(1);
+        setServerType("iframe");
+        setHasAutoSelected(true);
+      }
     }
-  }, [videoSources, iframeSources, selectedServer, serverType]);
+  }, [videoSources, iframeSources, privateVideoSources, hasAutoSelected]);
 
   // -- Handle Video Server Switch with Time Continuity --
   const handleServerSwitch = (serverNumber: number) => {
+    console.log("Server switch clicked:", serverNumber);
+    
     // Get current time for continuity (if video player exists)
     const currentTime = videoPlayerRef.current?.getCurrentTime() || 0;
 
@@ -301,11 +326,16 @@ export default function WatchPage() {
     setServerType("video");
     setSelectedIframeServer(null);
 
+    console.log("Server state updated to:", serverNumber);
+
     // Handle video source loading with time continuity for HLS sources
     const newSource = videoSources[serverNumber as keyof typeof videoSources];
     if (videoPlayerRef.current && newSource) {
       // All video sources use HLS with proxy
       videoPlayerRef.current.loadNewSource(newSource, currentTime);
+      console.log("Video source loaded:", newSource);
+    } else {
+      console.log("No video source found for server:", serverNumber);
     }
   };
 
@@ -521,11 +551,6 @@ export default function WatchPage() {
                         selectedServer === serverNumber;
 
                       let label = `Server ${serverNumber}`;
-                      if (isPrivate) {
-                        if (serverNumber === 1) label += " (HQ)";
-                        else if (serverNumber === 2) label += " (HD)";
-                        else if (serverNumber === 3) label += " (SD)";
-                      }
 
                       return (
                         <button
