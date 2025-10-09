@@ -822,15 +822,21 @@ export default function WatchPage() {
           <section className="entity-section w-full max-w-7xl mx-auto mt-5 px-4 sm:px-6 lg:px-8 py-3 sm:py-8">
             <div className="poster-wrap flex flex-col md:flex-row items-center md:items-start">
               <div className="poster flex justify-center items-center">
-                <Image
-                  itemProp="image"
-                  src="https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg"
-                  alt="Wind Breaker Season 2"
-                  width={160}
-                  height={224}
-                  className="rounded-lg shadow-lg w-55 h-70 object-cover"
-                  priority
-                />
+                {currentAnime?.poster && currentAnime.poster.trim() !== "" ? (
+                  <Image
+                    itemProp="image"
+                    src={currentAnime.poster}
+                    alt={currentAnime.title || "Anime Poster"}
+                    width={160}
+                    height={224}
+                    className="rounded-lg shadow-lg w-55 h-70 object-cover"
+                    priority
+                  />
+                ) : (
+                  <div className="w-[200px] h-[350px] bg-gray-600 flex items-center justify-center">
+                    <span className="text-gray-300 text-sm">No Image</span>
+                  </div>
+                )}
               </div>
               <div className="main-entity md:ml-8 mt-6 md:mt-0 w-full">
                 <div className="flex items-center justify-end mb-2 flex-wrap-reverse gap-4">
