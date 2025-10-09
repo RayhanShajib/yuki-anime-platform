@@ -17,6 +17,21 @@ export interface EpisodeApiResponse {
   results: EpisodeData[];
 }
 
+export interface UpdateEpisodeData {
+  ep_no?: number;
+  view_count?: number;
+  image?: string | null;
+  aired_date?: string;
+  title?: string;
+  description?: string | null;
+  vidsrces?: Array<{
+    srctype: string;
+    iframe: string[];
+    m3u8: string[];
+    private: string;
+  }>;
+}
+
 export interface UpdateAnimeData {
   title?: string;
   title_japanese?: string;
@@ -144,13 +159,26 @@ export const adminApi = {
         });
     },
 
-    // Get episode list - Requires admin authorization
+        // Get episode list - Requires admin authorization
     getEpisodeList: async (limit = 20, offset = 0, token: string) => {
         const endpoint = `/episode/?limit=${limit}&offset=${offset}`;
         return fetchFromApi(endpoint, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
+        });
+    },
+
+    // Update episode data - Requires admin authorization
+    updateEpisode: async (episodeId: string, data: UpdateEpisodeData, token: string) => {
+        const endpoint = `/episode/${episodeId}/`;
+        return fetchFromApi(endpoint, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            next: { revalidate: 0 }, // Don't cache update operations
         });
     },
 
