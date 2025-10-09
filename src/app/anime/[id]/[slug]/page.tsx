@@ -258,17 +258,19 @@ const transformApiDataToComponent = (
 };
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
     slug: string;
-  };
+  }>;
 }
 
 export default async function AnimeInfoPage({ params }: PageProps) {
   try {
+    // Await params in Next.js 15
+    const resolvedParams = await params;
     // Fetch anime data on the server
     const apiResponse: ApiAnimeInfoResponse =
-      await pageApi.getAnimeInfoPageData(params.id);
+      await pageApi.getAnimeInfoPageData(resolvedParams.id);
     const animeData = transformApiDataToComponent(apiResponse);
 
     return (

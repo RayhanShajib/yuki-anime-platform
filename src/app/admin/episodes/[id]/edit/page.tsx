@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { adminApi, type EpisodeDetailData, type UpdateEpisodeData } from "@/lib/api/adminApi";
+import { type ApiVideoSources } from "@/types/api";
 import { Loader2 } from "lucide-react";
 
 interface EpisodeForm {
@@ -118,7 +119,7 @@ export default function AdminEditEpisodePage() {
       }
 
       // Prepare update data
-      const vidsrces: any = {};
+      const vidsrces: ApiVideoSources = {};
       
       // Add SUB sources if they exist
       if (form.sub_iframe_urls.trim()) {
