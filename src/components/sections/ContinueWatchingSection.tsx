@@ -77,6 +77,11 @@ export function ContinueWatchingSection({
                       </div>
                     </div>
 
+
+
+
+                    
+
                     {/* Progress Bar */}
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/50">
                       <div
