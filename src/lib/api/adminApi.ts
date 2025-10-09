@@ -32,6 +32,44 @@ export interface UpdateEpisodeData {
   }>;
 }
 
+export interface EpisodeDetailData {
+  id: number;
+  anime: number;
+  ep_no: number;
+  view_count: number;
+  image: string | null;
+  aired_date: string;
+  title: string;
+  description: string | null;
+  vidsrces: {
+    sub?: Array<{
+      iframe: string[];
+      m3u8: string[];
+      private: string;
+    }>;
+    dub?: Array<{
+      iframe: string[];
+      m3u8: string[];
+      private: string;
+    }>;
+  };
+  related_animes: Array<{
+    id: number;
+    title: string;
+    image: string;
+    rating: string;
+    number_of_episodes: number;
+    title_japanese: string;
+    synopsis: string;
+    trailer_yt_id: string;
+    genre: Array<{ name: string }>;
+    background_banner: string;
+    sub_total: number;
+    dub_total: number;
+    raw_total: number;
+  }>;
+}
+
 export interface UpdateAnimeData {
   title?: string;
   title_japanese?: string;
@@ -169,9 +207,19 @@ export const adminApi = {
         });
     },
 
+    // Get single episode details - Requires admin authorization
+    getSingleEpisodeDetails: async (episodeId: string, token: string) => {
+        const endpoint = `/episode/${episodeId}`;
+        return fetchFromApi(endpoint, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+    },
+
     // Update episode data - Requires admin authorization
     updateEpisode: async (episodeId: string, data: UpdateEpisodeData, token: string) => {
-        const endpoint = `/episode/${episodeId}/`;
+        const endpoint = `/episode/${episodeId}`;
         return fetchFromApi(endpoint, {
             method: 'PUT',
             body: JSON.stringify(data),
