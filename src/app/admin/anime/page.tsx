@@ -36,6 +36,7 @@ export default function AdminAnimePage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Calculate offset based on current page and items per page
   const offset = (currentPage - 1) * itemsPerPage;
@@ -71,6 +72,39 @@ export default function AdminAnimePage() {
   const handleItemsPerPageChange = (newLimit: number) => {
     setItemsPerPage(newLimit);
     setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
+  // Handle delete anime
+  const handleDeleteAnime = async (animeId: number, animeTitle: string) => {
+    if (!confirm(`Are you sure you want to delete "${animeTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setDeletingId(animeId);
+      
+      // Get token from localStorage 
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('Authentication required. Please log in.');
+      }
+
+      await adminApi.deleteAnime(animeId.toString(), token);
+      
+      // Refresh the data after successful deletion
+      const response = await adminApi.getAnimeList(itemsPerPage, offset);
+      setAnimeData(response);
+      
+      // If current page is empty and we're not on page 1, go to previous page
+      if (response.results.length === 0 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+    } catch (err) {
+      console.error('Error deleting anime:', err);
+      alert('Failed to delete anime. Please try again.');
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -169,7 +203,19 @@ export default function AdminAnimePage() {
                   <td className="p-3 flex gap-2 flex-wrap">
                     <Link href={`/admin/anime/${anime.id}`} className="px-2 py-1 bg-gray-700 hover:bg-gray-800 text-white rounded text-xs">View</Link>
                     <Link href={`/admin/anime/${anime.id}/edit`} className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs">Edit</Link>
-                    <button className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs">Delete</button>
+                    <button 
+                      onClick={() => handleDeleteAnime(anime.id, anime.title)}
+                      disabled={deletingId === anime.id}
+                      className="px-2 py-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white rounded text-xs flex items-center gap-1">
+                      {deletingId === anime.id ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          Deleting
+                        </>
+                      ) : (
+                        'Delete'
+                      )}
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -201,7 +247,19 @@ export default function AdminAnimePage() {
                   <div className="flex gap-2 mt-2 flex-wrap">
                     <Link href={`/admin/anime/${anime.id}`} className="px-2 py-1 bg-gray-700 hover:bg-gray-800 text-white rounded text-xs">View</Link>
                     <Link href={`/admin/anime/${anime.id}/edit`} className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs">Edit</Link>
-                    <button className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs">Delete</button>
+                    <button 
+                      onClick={() => handleDeleteAnime(anime.id, anime.title)}
+                      disabled={deletingId === anime.id}
+                      className="px-2 py-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white rounded text-xs flex items-center gap-1">
+                      {deletingId === anime.id ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          Deleting
+                        </>
+                      ) : (
+                        'Delete'
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>

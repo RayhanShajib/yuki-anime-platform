@@ -132,6 +132,18 @@ export const adminApi = {
         });
     },
 
+    // Delete anime - Requires admin authorization
+    deleteAnime: async (animeId: string, token: string) => {
+        const endpoint = `/anime/${animeId}/`;
+        return fetchFromApi(endpoint, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            next: { revalidate: 0 }, // Don't cache delete operations
+        });
+    },
+
     // Get episode list - Requires admin authorization
     getEpisodeList: async (limit = 20, offset = 0, token: string) => {
         const endpoint = `/episode/?limit=${limit}&offset=${offset}`;
@@ -139,6 +151,18 @@ export const adminApi = {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
+        });
+    },
+
+    // Delete episode - Requires admin authorization
+    deleteEpisode: async (episodeId: string, token: string) => {
+        const endpoint = `/episode/${episodeId}/`;
+        return fetchFromApi(endpoint, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            next: { revalidate: 0 }, // Don't cache delete operations
         });
     },
 };
