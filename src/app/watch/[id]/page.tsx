@@ -494,14 +494,15 @@ export default function WatchPage() {
               </nav>
               {/* Resume Button */}
               {showResumeButton && existingProgress && (
-                <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 mb-4">
+                <div className="bg-purple-600/20 border border-purple-500/30 rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                      <h3 className="text-white font-semibold text-lg">
+                      <h3 className="text-white font-semibold text-lg flex items-center gap-2">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                         Continue Watching
                       </h3>
-                      <p className="text-blue-200 text-sm">
-                        {getResumeMessage(existingProgress.currentTime)} • {Math.round(existingProgress.progress)}% watched
+                      <p className="text-purple-200 text-sm">
+                        {getResumeMessage(existingProgress.currentTime)} • <span className="text-pink font-medium">{Math.round(existingProgress.progress)}% watched</span>
                       </p>
                     </div>
                     <div className="flex gap-3">
@@ -512,7 +513,7 @@ export default function WatchPage() {
                       </button>
                       <button
                         onClick={handleResume}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium">
+                        className="px-4 py-2 btn-purple hover:bg-purple-600 text-white rounded-md transition-colors text-sm font-medium">
                         Resume
                       </button>
                     </div>

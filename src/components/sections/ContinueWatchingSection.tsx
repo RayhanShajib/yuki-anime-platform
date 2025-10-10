@@ -112,7 +112,7 @@ export function ContinueWatchingSection() {
                   <span>
                     {formatTime(item.currentTime)}/{formatTime(item.totalTime)}
                   </span>
-                  <span className="text-green-400 font-medium">
+                  <span className="text-pink font-medium">
                     {Math.round(item.progress)}%
                   </span>
                 </div>
@@ -120,7 +120,7 @@ export function ContinueWatchingSection() {
                 {/* Progress Bar - positioned below time */}
                 <div className="w-full bg-gray-700 rounded-full h-1 mt-1">
                   <div
-                    className="h-full bg-gradient-to-r from-green-500 to-blue-500 transition-all duration-300 rounded-full"
+                    className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 rounded-full"
                     style={{ width: `${Math.min(item.progress, 100)}%` }}
                   />
                 </div>
