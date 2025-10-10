@@ -276,43 +276,43 @@ export default function WatchPage() {
   useEffect(() => {
     // Only auto-select if we haven't done it before and sources are available
     if (!hasAutoSelected) {
-      // First check for private video sources (preferred)
-      if (privateVideoSources.length > 0 && Object.keys(videoSources).length > 0) {
-        // Find the first private server (should be server 1)
-        const firstPrivateServer = 1;
-        if (videoSources[firstPrivateServer]) {
-          setSelectedServer(firstPrivateServer);
-          setServerType("video");
-          setSelectedIframeServer(null);
-          setHasAutoSelected(true);
-          return;
-        }
+      console.log("Auto-selecting server...", {
+        videoSourcesCount: Object.keys(videoSources).length,
+        privateSourcesCount: privateVideoSources.length,
+        iframeSourcesCount: iframeSources.length,
+        privateSourcesLoading
+      });
+
+      // Wait for private sources to load if they're still loading
+      if (privateSourcesLoading) {
+        console.log("Waiting for private sources to load...");
+        return;
       }
-      
-      // Then check for any video sources
+
+      // First priority: Video sources (private or public)
       if (Object.keys(videoSources).length > 0) {
         const serverNumbers = Object.keys(videoSources)
           .map(Number)
           .sort((a, b) => a - b);
         const firstAvailableServer = serverNumbers[0];
 
-        if (firstAvailableServer) {
-          setSelectedServer(firstAvailableServer);
-          setServerType("video");
-          setSelectedIframeServer(null);
-          setHasAutoSelected(true);
-          return;
-        }
+        console.log("Selecting first video server:", firstAvailableServer);
+        setSelectedServer(firstAvailableServer);
+        setServerType("video");
+        setSelectedIframeServer(null);
+        setHasAutoSelected(true);
+        return;
       }
       
       // Fallback to iframe if no video sources available
       if (iframeSources.length > 0) {
+        console.log("No video sources, falling back to iframe server 1");
         setSelectedIframeServer(1);
         setServerType("iframe");
         setHasAutoSelected(true);
       }
     }
-  }, [videoSources, iframeSources, privateVideoSources, hasAutoSelected]);
+  }, [videoSources, iframeSources, privateVideoSources, hasAutoSelected, privateSourcesLoading]);
 
   // -- Handle Video Server Switch with Time Continuity --
   const handleServerSwitch = (serverNumber: number) => {
