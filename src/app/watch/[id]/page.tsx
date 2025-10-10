@@ -22,7 +22,7 @@ import type {
 import { Grid, List, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import "plyr-react/plyr.css";
 import React, { useEffect, useMemo, useState } from "react";
 import "swiper/css";
@@ -33,6 +33,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 export default function WatchPage() {
   const params = useParams();
+  const router = useRouter();
   const episodeId = params?.id as string;
 
   // --- API Data State ---
@@ -190,17 +191,10 @@ export default function WatchPage() {
     );
   }, [episodes, searchQuery]);
 
-  // --- Handle Episode Click (Client-side navigation without reload) ---
-  const handleEpisodeClick = (episodeId: number, episodeNumber: number) => {
-    // Update URL without page reload using shallow routing
-    const url = `/watch/${episodeId}`;
-    window.history.replaceState({ ...window.history.state, url }, "", url);
-
-    // Update selected episode state
-    setSelectedEpisode(episodeNumber);
-
-    // No need to fetch new data since we're staying within the same anime
-    // The video sources and other episode data should already be available
+  // --- Handle Episode Click (Client-side navigation) ---
+  const handleEpisodeClick = (newEpisodeId: string, episodeNumber: number) => {
+    // Navigate to the new episode using Next.js router
+    router.push(`/watch/${newEpisodeId}`);
   };
 
   // --- Server Selection State ---
@@ -361,21 +355,40 @@ export default function WatchPage() {
   const currentAnime =
     watchData?.relatedAnime?.[0] || watchData?.similarAnime?.[0];
 
-  // Get current episode title
+  // Find current episode based on URL episodeId parameter
+  const currentEpisode = useMemo(() => {
+    if (!watchData || !episodeId) return null;
+    
+    // Search in current audio type episodes
+    const episodeList = watchData.episodes[audioType];
+    return episodeList.find((ep) => ep.id.toString() === episodeId) || null;
+  }, [watchData, episodeId, audioType]);
+
+  // Get current episode title and number from the matched episode
   const currentEpisodeTitle = useMemo(() => {
-    const episode = episodes.find((ep) => ep.ep === selectedEpisode);
-    return episode?.title || `Episode ${selectedEpisode}`;
-  }, [episodes, selectedEpisode]);
+    return currentEpisode?.title || `Episode ${currentEpisode?.episodeNumber || 'Unknown'}`;
+  }, [currentEpisode]);
+
+  const currentEpisodeNumber = useMemo(() => {
+    return currentEpisode?.episodeNumber || 1;
+  }, [currentEpisode]);
+
+  // Update selectedEpisode when currentEpisode changes
+  useEffect(() => {
+    if (currentEpisode && currentEpisode.episodeNumber) {
+      setSelectedEpisode(currentEpisode.episodeNumber);
+    }
+  }, [currentEpisode]);
 
   // --- Watch Progress Tracking ---
   const handleProgressUpdate = React.useCallback((currentTime: number, duration: number) => {
-    if (!watchData || !currentAnime) return;
+    if (!watchData || !currentAnime || !currentEpisode) return;
 
     const progressData = {
       animeId: currentAnime.id,
       episodeId: episodeId,
       animeTitle: currentAnime.title,
-      episodeNumber: selectedEpisode,
+      episodeNumber: currentEpisode.episodeNumber,
       poster: currentAnime.poster || currentAnime.banner || '',
       currentTime: currentTime,
       totalTime: duration,
@@ -383,7 +396,7 @@ export default function WatchPage() {
     };
 
     saveWatchProgress(progressData);
-  }, [watchData, currentAnime, episodeId, selectedEpisode, audioType]);
+  }, [watchData, currentAnime, episodeId, currentEpisode, audioType]);
 
   // Check for existing progress when episode or audio type changes
   useEffect(() => {
@@ -486,10 +499,7 @@ export default function WatchPage() {
                 )}
                 <span className="mx-2">&gt;</span>
                 <span className="text-white font-semibold">
-                  {episodes.find((ep) => ep.ep === selectedEpisode)?.title &&
-                    ` - ${
-                      episodes.find((ep) => ep.ep === selectedEpisode)?.title
-                    }`}
+                  {currentEpisode?.title && ` - ${currentEpisode.title}`}
                 </span>
               </nav>
               {/* Resume Button */}
@@ -841,7 +851,7 @@ export default function WatchPage() {
                               : "border-transparent"
                           }`
                     }
-                    onClick={() => handleEpisodeClick(id, ep)}
+                    onClick={() => handleEpisodeClick(id.toString(), ep)}
                     tabIndex={0}
                     role="button"
                     aria-label={`Play Episode ${ep}`}>
@@ -958,10 +968,9 @@ export default function WatchPage() {
                     className="title text-2xl md:text-3xl font-bold text-white flex-grow"
                     data-jp="WIND BREAKER Season 2">
                     {infoType === "anime"
-                      ? "Wind Breaker Season 2"
-                      : `Episode ${selectedEpisode}: ${
-                          episodes.find((ep) => ep.ep === selectedEpisode)
-                            ?.title || "Episode Title"
+                      ? currentAnime?.title || "Anime Title"
+                      : `Episode ${currentEpisode?.episodeNumber || selectedEpisode}: ${
+                          currentEpisode?.title || "Episode Title"
                         }`}
                   </h1>
 
@@ -989,8 +998,8 @@ export default function WatchPage() {
                 </div>
                 <small className="al-title text-gray-300 block mb-2">
                   {infoType === "anime"
-                    ? "Wind Breaker Season 2; WIND BREAKER Season 2; Winbre; WBK"
-                    : `Episode ${selectedEpisode} of Wind Breaker Season 2`}
+                    ? currentAnime?.title || "Anime Title"
+                    : `Episode ${currentEpisode?.episodeNumber || selectedEpisode} of ${currentAnime?.title || "Anime Title"}`}
                 </small>
                 <div className="info flex gap-4 mb-2 text-sm text-gray-300 items-center">
                   <span>
