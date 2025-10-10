@@ -8,6 +8,13 @@ import IframeVideoPlayer from "@/components/ui/IframeVideoPlayer";
 import VideoPlayer, { VideoPlayerRef } from "@/components/ui/VideoPlayer";
 import { pageApi } from "@/lib/api/pageApi";
 import { transformWatchPageData } from "@/lib/transformers";
+import { 
+  saveWatchProgress, 
+  getEpisodeProgress, 
+  formatTime, 
+  getResumeMessage,
+  type WatchHistoryItem 
+} from "@/lib/watchHistory";
 import type {
   PrivateVideoSourceResponse,
   TransformedWatchPageData,
@@ -48,6 +55,11 @@ export default function WatchPage() {
 
   // --- Episode Search State ---
   const [searchQuery, setSearchQuery] = React.useState("");
+
+  // --- Watch History State ---
+  const [existingProgress, setExistingProgress] = useState<WatchHistoryItem | null>(null);
+  const [showResumeButton, setShowResumeButton] = useState(false);
+  const [resumeTime, setResumeTime] = useState(0);
 
   // --- Info Section Toggle State ---
   const [infoType, setInfoType] = React.useState<"anime" | "episode">(
@@ -355,6 +367,51 @@ export default function WatchPage() {
     return episode?.title || `Episode ${selectedEpisode}`;
   }, [episodes, selectedEpisode]);
 
+  // --- Watch Progress Tracking ---
+  const handleProgressUpdate = React.useCallback((currentTime: number, duration: number) => {
+    if (!watchData || !currentAnime) return;
+
+    const progressData = {
+      animeId: currentAnime.id,
+      episodeId: episodeId,
+      animeTitle: currentAnime.title,
+      episodeNumber: selectedEpisode,
+      poster: currentAnime.poster || currentAnime.banner || '',
+      currentTime: currentTime,
+      totalTime: duration,
+      audioType: audioType,
+    };
+
+    saveWatchProgress(progressData);
+  }, [watchData, currentAnime, episodeId, selectedEpisode, audioType]);
+
+  // Check for existing progress when episode or audio type changes
+  useEffect(() => {
+    if (!episodeId) return;
+
+    const progress = getEpisodeProgress(episodeId, audioType);
+    setExistingProgress(progress);
+    
+    if (progress && progress.progress < 98 && progress.currentTime > 30) {
+      setShowResumeButton(true);
+      setResumeTime(progress.currentTime);
+    } else {
+      setShowResumeButton(false);
+      setResumeTime(0);
+    }
+  }, [episodeId, audioType]);
+
+  // Handle resume functionality
+  const handleResume = () => {
+    setShowResumeButton(false);
+    // The VideoPlayer will handle seeking to resumeTime via initialTime prop
+  };
+
+  const handleStartFromBeginning = () => {
+    setShowResumeButton(false);
+    setResumeTime(0);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -435,6 +492,34 @@ export default function WatchPage() {
                     }`}
                 </span>
               </nav>
+              {/* Resume Button */}
+              {showResumeButton && existingProgress && (
+                <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-4 mb-4">
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                      <h3 className="text-white font-semibold text-lg">
+                        Continue Watching
+                      </h3>
+                      <p className="text-blue-200 text-sm">
+                        {getResumeMessage(existingProgress.currentTime)} • {Math.round(existingProgress.progress)}% watched
+                      </p>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleStartFromBeginning}
+                        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition-colors text-sm">
+                        Start from Beginning
+                      </button>
+                      <button
+                        onClick={handleResume}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium">
+                        Resume
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="aspect-video w-full rounded-lg mb-6">
                 {serverType === "iframe" && selectedIframeServer ? (
                   <IframeVideoPlayer
@@ -473,6 +558,8 @@ export default function WatchPage() {
                         default: true,
                       },
                     ]}
+                    onProgressUpdate={handleProgressUpdate}
+                    initialTime={showResumeButton ? 0 : resumeTime}
                     // Don't pass thumbnailsVttUrl - let it use the built-in placeholder system
                     // thumbnailsVttUrl will be undefined, so it will use the fallback
                   />

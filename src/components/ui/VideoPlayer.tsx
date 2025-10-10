@@ -81,6 +81,8 @@ interface VideoPlayerProps {
     default?: boolean;
   }>;
   thumbnailsVttUrl?: string; // URL to your server-generated VTT file
+  onProgressUpdate?: (currentTime: number, duration: number) => void; // For watch progress tracking
+  initialTime?: number; // For resuming playback
 }
 
 export interface VideoPlayerRef {
@@ -94,15 +96,50 @@ const VideoPlayer = React.forwardRef<VideoPlayerRef, VideoPlayerProps>(({
   posterImage, 
   videoTitle, 
   subtitles, 
-  thumbnailsVttUrl 
+  thumbnailsVttUrl,
+  onProgressUpdate,
+  initialTime = 0
 }: VideoPlayerProps = {}, ref) => {
   const playerRef = useRef<HTMLDivElement | null>(null);
   const jwPlayerRef = useRef<JWPlayerInstance | null>(null);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const hasStartedRef = useRef(false);
+
+  // Progress tracking functions
+  const saveProgress = React.useCallback(() => {
+    if (jwPlayerRef.current && onProgressUpdate) {
+      const currentTime = jwPlayerRef.current.getPosition();
+      const duration = jwPlayerRef.current.getDuration();
+      if (duration > 0) {
+        onProgressUpdate(Math.floor(currentTime), Math.floor(duration));
+      }
+    }
+  }, [onProgressUpdate]);
+
+  const startProgressTracking = React.useCallback(() => {
+    // Clear existing interval
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+    
+    // Start new interval for every 30 seconds
+    progressIntervalRef.current = setInterval(() => {
+      saveProgress();
+    }, 30000); // 30 seconds
+  }, [saveProgress]);
+
+  const stopProgressTracking = React.useCallback(() => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  }, []);
 
   // Expose methods to parent component
   useImperativeHandle(ref, () => ({
     loadNewSource: (url: string, startTime: number = 0) => {
       if (jwPlayerRef.current) {
+        hasStartedRef.current = false; // Reset for new source
         jwPlayerRef.current.load([{
           file: url,
           type: "hls",
@@ -431,6 +468,17 @@ https://picsum.photos/160/90?random=12`;
 
         // Add event listeners for custom functionality
         jwPlayerRef.current.on("ready", () => {
+          console.log("Player ready, initial time:", initialTime);
+          
+          // Seek to initial time for resume functionality
+          if (initialTime > 0 && jwPlayerRef.current) {
+            setTimeout(() => {
+              if (jwPlayerRef.current) {
+                jwPlayerRef.current.seek(initialTime);
+                console.log("Resumed to time:", initialTime);
+              }
+            }, 1000);
+          }
           
           // Custom thumbnail positioning
           const progressBar = document.querySelector('.jw-slider-time');
@@ -501,11 +549,29 @@ https://picsum.photos/160/90?random=12`;
         });
 
         jwPlayerRef.current.on("play", () => {
-          // Video started playing
+          console.log("Video started playing");
+          
+          // Save progress at start (0 seconds) - only once per video
+          if (!hasStartedRef.current) {
+            hasStartedRef.current = true;
+            // Small delay to ensure duration is available
+            setTimeout(() => {
+              saveProgress();
+            }, 1000);
+          }
+          
+          // Start progress tracking interval
+          startProgressTracking();
         });
 
         jwPlayerRef.current.on("pause", () => {
-          // Video paused
+          console.log("Video paused");
+          
+          // Save progress on pause
+          saveProgress();
+          
+          // Stop progress tracking interval
+          stopProgressTracking();
         });
 
         jwPlayerRef.current.on("error", (e) => {
@@ -516,10 +582,22 @@ https://picsum.photos/160/90?random=12`;
 
     document.head.appendChild(script);
 
+    // Add beforeunload event to save progress on page close
+    const handleBeforeUnload = () => {
+      saveProgress();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
       // Cleanup
+      stopProgressTracking();
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      
       if (jwPlayerRef.current) {
         try {
+          // Save final progress before cleanup
+          saveProgress();
           jwPlayerRef.current.remove();
         } catch (error) {
           console.error("Error removing JW Player:", error);
