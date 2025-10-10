@@ -273,7 +273,7 @@ https://picsum.photos/160/90?random=12`;
           }
           
           .jw-controls {
-            background: linear-gradient(transparent, rgba(10,10,10,0.9)) !important;
+            
           }
           
           .jw-button-color {
@@ -299,13 +299,13 @@ https://picsum.photos/160/90?random=12`;
           }
           
           .jw-progress-bar, .jw-slider-horizontal .jw-progress {
-            background: #3b82f6 !important;
+            background: linear-gradient(90deg, #a855f7, #ec4899) !important;
           }
           
           .jw-knob, .jw-slider-horizontal .jw-knob {
-            background: #3b82f6 !important;
+            background: #ec4899 !important;
             border: 2px solid #ededed !important;
-            box-shadow: 0 0 0 1px #3b82f6 !important;
+            box-shadow: 0 0 0 1px #a855f7 !important;
           }
 
           .jw-text {
@@ -313,19 +313,21 @@ https://picsum.photos/160/90?random=12`;
             font-family: "Inter", sans-serif !important;
             font-size: 12px !important;
           }
-          
+          .jw-tooltip-time .jw-text{
+            color: #000000ff !important;
+          }
           .jw-tooltip {
             background: rgba(31,41,55,0.95) !important;
             color: #ededed !important;
             border-radius: 6px !important;
-            border: 1px solid rgba(59,130,246,0.3) !important;
+            border: 1px solid rgba(168,85,247,0.3) !important;
             font-family: "Inter", sans-serif !important;
           }
           
           .jw-menu {
             background: rgba(31,41,55,0.98) !important;
             border-radius: 8px !important;
-            border: 1px solid rgba(59,130,246,0.2) !important;
+            border: 1px solid rgba(168,85,247,0.2) !important;
             backdrop-filter: blur(10px);
           }
           
@@ -340,30 +342,30 @@ https://picsum.photos/160/90?random=12`;
           }
           
           .jw-option.jw-active-option {
-            background: #3b82f6 !important;
+            background: #a855f7 !important;
             color: #ededed !important;
           }
           
           .jw-settings-menu {
             background: rgba(31,41,55,0.98) !important;
-            border: 1px solid rgba(59,130,246,0.2) !important;
+            border: 1px solid rgba(168,85,247,0.2) !important;
           }
           
           .jw-volume-tip {
-            background: #3b82f6 !important;
+            
           }
           
           .jw-time-tip {
             background: rgba(31,41,55,0.95) !important;
-            border: 1px solid rgba(59,130,246,0.3) !important;
+            border: 1px solid rgba(168,85,247,0.3) !important;
           }
 
           /* Thumbnail preview styling - override JW Player defaults */
           .jw-tooltip-thumbnail {
             background: transparent !important;
-            border: 2px solid rgba(59,130,246,0.6) !important;
+            border: 2px solid rgba(168,85,247,0.6) !important;
             border-radius: 8px !important;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 20px rgba(168,85,247,0.3) !important;
             overflow: hidden !important;
             backdrop-filter: blur(10px) !important;
             padding: 0 !important;
@@ -429,7 +431,28 @@ https://picsum.photos/160/90?random=12`;
           
           /* Loading and buffering states */
           .jw-icon-buffer {
-            border-color: #3b82f6 transparent transparent transparent !important;
+            border-color: #a855f7 transparent transparent transparent !important;
+          }
+          
+          /* Hover states with purple/pink accent */
+          .jw-button-container:hover .jw-icon,
+          .jw-controlbar .jw-icon:hover {
+            
+          }
+          
+          /* Volume slider */
+          .jw-slider-vertical .jw-progress {
+            
+          }
+          
+          /* Loading spinner */
+          .jw-icon-buffer {
+            animation: jw-spin 2s linear infinite;
+          }
+          
+          @keyframes jw-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
           
           /* Custom accent color for special elements */
