@@ -526,7 +526,7 @@ export default function WatchPage() {
                   <IframeVideoPlayer
                     src={
                       iframeSources[selectedIframeServer - 1] ||
-                      "https://www.youtube.com/embed/dQw4w9WgXcQ"
+                      ""
                     }
                   />
                 ) : (
