@@ -11,7 +11,6 @@ import { transformWatchPageData } from "@/lib/transformers";
 import { 
   saveWatchProgress, 
   getEpisodeProgress, 
-  formatTime, 
   getResumeMessage,
   type WatchHistoryItem 
 } from "@/lib/watchHistory";
@@ -192,7 +191,7 @@ export default function WatchPage() {
   }, [episodes, searchQuery]);
 
   // --- Handle Episode Click (Client-side navigation) ---
-  const handleEpisodeClick = (newEpisodeId: string, episodeNumber: number) => {
+  const handleEpisodeClick = (newEpisodeId: string) => {
     // Navigate to the new episode using Next.js router
     router.push(`/watch/${newEpisodeId}`);
   };
@@ -367,10 +366,6 @@ export default function WatchPage() {
   // Get current episode title and number from the matched episode
   const currentEpisodeTitle = useMemo(() => {
     return currentEpisode?.title || `Episode ${currentEpisode?.episodeNumber || 'Unknown'}`;
-  }, [currentEpisode]);
-
-  const currentEpisodeNumber = useMemo(() => {
-    return currentEpisode?.episodeNumber || 1;
   }, [currentEpisode]);
 
   // Update selectedEpisode when currentEpisode changes
@@ -851,7 +846,7 @@ export default function WatchPage() {
                               : "border-transparent"
                           }`
                     }
-                    onClick={() => handleEpisodeClick(id.toString(), ep)}
+                    onClick={() => handleEpisodeClick(id.toString())}
                     tabIndex={0}
                     role="button"
                     aria-label={`Play Episode ${ep}`}>

@@ -2,13 +2,11 @@
 
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
-import { AnimeCard } from "@/components/ui/AnimeCard";
 import { getWatchHistory, formatTime, type WatchHistoryItem } from "@/lib/watchHistory";
 import {
   Clock,
   Grid3X3,
   List,
-  MoreVertical,
   Play,
   Search,
   Trash2,

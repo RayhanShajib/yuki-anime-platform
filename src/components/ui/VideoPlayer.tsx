@@ -627,7 +627,7 @@ https://picsum.photos/160/90?random=12`;
         }
       }
     };
-  }, [videoSources, posterImage, videoTitle, subtitles, thumbnailsVttUrl]);
+  }, [videoSources, posterImage, videoTitle, subtitles, thumbnailsVttUrl, initialTime, saveProgress, startProgressTracking, stopProgressTracking]);
 
   return (
     <div className="w-full">
