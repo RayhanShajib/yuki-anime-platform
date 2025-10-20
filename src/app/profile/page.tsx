@@ -79,9 +79,9 @@ export default function ProfilePage() {
     on_hold: 0,
     completed: 0,
   });
-  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; animeId: number | null; animeTitle: string }>({
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; watchStatusId: number | null; animeTitle: string }>({
     show: false,
-    animeId: null,
+    watchStatusId: null,
     animeTitle: "",
   });
   const [watchHistory, setWatchHistory] = useState<WatchHistoryItem[]>([]);
@@ -215,16 +215,16 @@ export default function ProfilePage() {
   };
 
   // Handle delete anime from watchlist
-  const handleDeleteFromWatchlist = async (animeId: number) => {
+  const handleDeleteFromWatchlist = async (watchStatusId: number) => {
     const token = localStorage.getItem("access_token");
     if (!token) return;
 
     try {
-      await pageApi.removeFromWatchlist(token, animeId);
+      await pageApi.removeFromWatchlist(token, watchStatusId);
       // Refresh watchlist
       const updatedWatchlist = await pageApi.getWatchlist(token);
       setWatchlistData(updatedWatchlist);
-      setDeleteConfirm({ show: false, animeId: null, animeTitle: "" });
+      setDeleteConfirm({ show: false, watchStatusId: null, animeTitle: "" });
     } catch (error) {
       console.error("Error deleting from watchlist:", error);
     }
@@ -291,7 +291,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <button
-                onClick={() => setDeleteConfirm({ show: true, animeId: anime.id, animeTitle: anime.title })}
+                onClick={() => setDeleteConfirm({ show: true, watchStatusId: anime.id, animeTitle: anime.title })}
                 className="text-red-500 hover:text-red-400 transition-colors flex-shrink-0"
                 title="Delete from watchlist"
               >
@@ -1042,13 +1042,13 @@ export default function ProfilePage() {
             </p>
             <div className="flex gap-3 justify-end">
               <button
-                onClick={() => setDeleteConfirm({ show: false, animeId: null, animeTitle: "" })}
+                onClick={() => setDeleteConfirm({ show: false, watchStatusId: null, animeTitle: "" })}
                 className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-medium transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={() => handleDeleteFromWatchlist(deleteConfirm.animeId!)}
+                onClick={() => handleDeleteFromWatchlist(deleteConfirm.watchStatusId!)}
                 className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
               >
                 Remove
