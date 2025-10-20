@@ -7,6 +7,7 @@ import { NotificationDropdown } from "@/components/ui/NotificationDropdown";
 
 import { pageApi } from "@/lib/api/pageApi";
 import { mockAnime } from "@/lib/mockData";
+import { getWatchHistory, type WatchHistoryItem } from "@/lib/watchHistory";
 import {
   Bell,
   Bookmark,
@@ -15,8 +16,10 @@ import {
   Copy,
   Edit3,
   Import,
+  Play,
   PlayCircle,
   Settings,
+  Trash2,
   User,
 } from "lucide-react";
 import Image from "next/image";
@@ -67,8 +70,22 @@ export default function ProfilePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [watchlistData, setWatchlistData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentPages, setCurrentPages] = useState<Record<string, number>>({
+    watching: 0,
+    plan_to_watch: 0,
+    on_hold: 0,
+    completed: 0,
+  });
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; animeId: number | null; animeTitle: string }>({
+    show: false,
+    animeId: null,
+    animeTitle: "",
+  });
+  const [watchHistory, setWatchHistory] = useState<WatchHistoryItem[]>([]);
+
   type Notification = {
     id: number;
     text: string;
@@ -92,8 +109,17 @@ export default function ProfilePage() {
           return;
         }
 
-        const data = await pageApi.getProfilePageData(token);
-        setProfileData(data);
+        const [profileRes, watchlistRes] = await Promise.all([
+          pageApi.getProfilePageData(token),
+          pageApi.getWatchlist(token),
+        ]);
+        
+        setProfileData(profileRes);
+        setWatchlistData(watchlistRes);
+        
+        // Load watch history from localStorage
+        const history = getWatchHistory();
+        setWatchHistory(history);
       } catch (error: unknown) {
         console.error("Error fetching profile:", error);
 
@@ -171,6 +197,159 @@ export default function ProfilePage() {
     } catch (err) {
       console.error("Failed to copy:", err);
     }
+  };
+
+  // Helper function to get paginated data
+  const getPaginatedData = (status: string) => {
+    if (!watchlistData?.results?.[status]) return [];
+    const items = watchlistData.results[status];
+    const page = currentPages[status] || 0;
+    const start = page * 10;
+    return items.slice(start, start + 10);
+  };
+
+  // Helper function to get total pages
+  const getTotalPages = (status: string) => {
+    if (!watchlistData?.results?.[status]) return 0;
+    return Math.ceil(watchlistData.results[status].length / 10);
+  };
+
+  // Handle delete anime from watchlist
+  const handleDeleteFromWatchlist = async (animeId: number) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    try {
+      await pageApi.removeFromWatchlist(token, animeId);
+      // Refresh watchlist
+      const updatedWatchlist = await pageApi.getWatchlist(token);
+      setWatchlistData(updatedWatchlist);
+      setDeleteConfirm({ show: false, animeId: null, animeTitle: "" });
+    } catch (error) {
+      console.error("Error deleting from watchlist:", error);
+    }
+  };
+
+  // Get slug from title
+  const getSlugFromTitle = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  };
+
+  // Render watchlist section with pagination
+  const renderWatchlistSection = (status: string, title: string) => {
+    const paginatedData = getPaginatedData(status);
+    const totalPages = getTotalPages(status);
+    const currentPage = currentPages[status] || 0;
+
+    if (!watchlistData?.results?.[status] || watchlistData.results[status].length === 0) {
+      return (
+        <div className="text-center py-8 text-gray-400">
+          No items found in {title}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        {/* List Items */}
+        <div className="space-y-3">
+          {paginatedData.map((anime: any) => (
+            <div
+              key={anime.id}
+              className="bg-[#1c243b] p-4 rounded-md flex items-center gap-4 justify-between hover:bg-[#2a3450] transition-colors"
+            >
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <Image
+                  src={anime.image || "/placeholder-anime.jpg"}
+                  alt={anime.title}
+                  width={60}
+                  height={80}
+                  className="rounded-md object-cover flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <Link
+                    href={`/anime/${anime.id}/${getSlugFromTitle(anime.title)}`}
+                    className="text-white font-semibold hover:text-purple-400 transition-colors block truncate"
+                  >
+                    {anime.title}
+                  </Link>
+                  <div className="flex gap-2 mt-2">
+                    {anime.sub_total > 0 && (
+                      <span className="btn-pink text-white/90 px-2 py-0.5 rounded text-xs font-medium">
+                        SUB {anime.sub_total}
+                      </span>
+                    )}
+                    {anime.dub_total > 0 && (
+                      <span className="btn-purple text-white/90 px-2 py-0.5 rounded text-xs font-medium">
+                        DUB {anime.dub_total}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setDeleteConfirm({ show: true, animeId: anime.id, animeTitle: anime.title })}
+                className="text-red-500 hover:text-red-400 transition-colors flex-shrink-0"
+                title="Delete from watchlist"
+              >
+                <Trash2 className="h-5 w-5" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <button
+              onClick={() =>
+                setCurrentPages((prev) => ({
+                  ...prev,
+                  [status]: Math.max(0, currentPage - 1),
+                }))
+              }
+              disabled={currentPage === 0}
+              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+            >
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() =>
+                  setCurrentPages((prev) => ({
+                    ...prev,
+                    [status]: i,
+                  }))
+                }
+                className={`px-3 py-1 rounded transition-colors ${
+                  currentPage === i
+                    ? "btn-purple text-white"
+                    : "bg-gray-700 text-white hover:bg-gray-600"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() =>
+                setCurrentPages((prev) => ({
+                  ...prev,
+                  [status]: Math.min(totalPages - 1, currentPage + 1),
+                }))
+              }
+              disabled={currentPage === totalPages - 1}
+              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -302,6 +481,12 @@ export default function ProfilePage() {
                       label: "Bookmarks",
                       shortLabel: "bookmark",
                       icon: Bookmark,
+                    },
+                    {
+                      key: "completed",
+                      label: "Completed",
+                      shortLabel: "Completed",
+                      icon: PlayCircle,
                     },
                     {
                       key: "notifications",
@@ -735,44 +920,6 @@ export default function ProfilePage() {
                         </div>
                       </div>
                     </div>
-
-                    {/* <!-- Watch List --> */}
-                    <div className="bg-purple p-5 rounded-lg w-full max-w-sm border border-[#1d2a47]">
-                      <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-bold flex items-center gap-2">
-                          <span className="text-purple-400">📋</span> Watch List
-                        </h2>
-                        <a
-                          href="#"
-                          className="text-white hover:text-blue-400 text-sm">
-                          🔗
-                        </a>
-                      </div>
-
-                      <div className="bg-[#1c243b] rounded-md p-3 flex gap-3 items-center">
-                        <Image
-                          src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Koupenchan.png/220px-Koupenchan.png"
-                          alt="Koupen-chan"
-                          className="w-16 h-20 object-cover rounded-md"
-                          width={16}
-                          height={20}
-                        />
-                        <div>
-                          <h3 className="font-semibold">Koupen-chan</h3>
-                          <div className="mt-1">
-                            <div className="flex flex-wrap gap-2">
-                              <span className="btn-pink text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
-                                SUB 23
-                              </span>
-                              <span className="btn-purple text-white/90 px-2 py-0.5 rounded-full text-xs font-medium">
-                                DUB 12
-                              </span>
-                              <span className="text-sm text-gray-400">TV</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
 
                   {/* Recently Watched */}
@@ -780,7 +927,7 @@ export default function ProfilePage() {
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="text-2xl font-bold text-white flex items-center">
                         <Clock className="h-6 w-6 text-pink mr-3" />
-                        Recently Watched
+                        Recently Watched ({watchHistory.slice(0, 8).length})
                       </h2>
                       <Link
                         href="/continue-watching"
@@ -789,13 +936,55 @@ export default function ProfilePage() {
                         <ChevronRight className="h-4 w-4" />
                       </Link>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-3 sm:gap-4">
-                      {userLists.recentlyWatched.map((anime) => (
-                        <div key={anime.id} className="relative">
-                          <AnimeCard anime={anime} showPopup={true} />
-                        </div>
-                      ))}
-                    </div>
+                    {watchHistory.length > 0 ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-3 sm:gap-4">
+                        {watchHistory.slice(0, 8).map((item) => (
+                          <Link
+                            key={`${item.episodeId}-${item.audioType}`}
+                            href={`/watch/${item.episodeId}`}
+                            className="relative group"
+                          >
+                            {/* Poster */}
+                            <div className="aspect-[3/4] rounded-lg overflow-hidden bg-gray-800">
+                              <Image
+                                src={item.poster || '/placeholder-anime.jpg'}
+                                alt={item.animeTitle}
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                              
+                              {/* Play Overlay */}
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
+                                <Play className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              </div>
+
+                              {/* Progress Badge */}
+                              <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                {Math.round(item.progress)}%
+                              </div>
+
+                              {/* Audio Type Badge */}
+                              <div className="absolute top-2 left-2 bg-purple-600 text-white text-xs px-2 py-1 rounded uppercase font-medium">
+                                {item.audioType}
+                              </div>
+                            </div>
+
+                            {/* Info */}
+                            <div className="mt-2">
+                              <h3 className="text-white text-sm font-medium truncate mb-1">
+                                {item.animeTitle}
+                              </h3>
+                              <p className="text-gray-400 text-xs">Ep {item.episodeNumber}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 bg-gray-800/30 rounded-lg border border-gray-700">
+                        <Clock className="h-12 w-12 text-gray-600 mx-auto mb-3" />
+                        <p className="text-gray-400">No anime in progress yet</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -804,54 +993,71 @@ export default function ProfilePage() {
                 <div>
                   <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
                     <PlayCircle className="h-6 w-6 text-pink mr-3" />
-                    Currently Watching ({userLists.recentlyWatched.length})
+                    Currently Watching ({watchlistData?.results?.watching?.length || 0})
                   </h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-4">
-                    {userLists.recentlyWatched.map((anime) => (
-                      <div key={anime.id} className="relative">
-                        <AnimeCard anime={anime} showPopup={true} />
-                        <div className="mt-2 bg-gray-800/50 rounded p-2">
-                          <div className="text-xs sm:text-sm text-gray-300 mb-1">
-                            Episode {Math.floor(Math.random() * 20) + 1} /{" "}
-                            {/* {anime.episodes || "?"} */}
-                          </div>
-                          <div className="w-full bg-gray-700 rounded-full h-2">
-                            <div
-                              className="bg-green-500 h-2 rounded-full"
-                              style={{
-                                width: `${Math.random() * 100}%`,
-                              }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  {renderWatchlistSection("watching", "Currently Watching")}
                 </div>
               )}
 
               {activeTab === "bookmark" && (
+                <div className="space-y-12">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                      <Bookmark className="h-6 w-6 text-pink mr-3" />
+                      Plan to Watch ({watchlistData?.results?.plan_to_watch?.length || 0})
+                    </h2>
+                    {renderWatchlistSection("plan_to_watch", "Plan to Watch")}
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                      <Clock className="h-6 w-6 text-pink mr-3" />
+                      On Hold ({watchlistData?.results?.on_hold?.length || 0})
+                    </h2>
+                    {renderWatchlistSection("on_hold", "On Hold")}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "completed" && (
                 <div>
                   <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                    <Bookmark className="h-6 w-6 text-pink mr-3" />
-                    Plan to Watch (
-                    {profileData?.watchlist
-                      ? Object.keys(profileData.watchlist).length
-                      : 0}
-                    )
+                    <PlayCircle className="h-6 w-6 text-pink mr-3" />
+                    Completed ({watchlistData?.results?.completed?.length || 0})
                   </h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 sm:gap-4">
-                    {userLists.bookmark.map((anime) => (
-                      <div key={anime.id} className="relative">
-                        <AnimeCard anime={anime} showPopup={true} />
-                      </div>
-                    ))}
-                  </div>
+                  {renderWatchlistSection("completed", "Completed")}
                 </div>
               )}
             </>
           )}
         </div>
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      {deleteConfirm.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded-lg p-8 max-w-md w-full mx-4 border border-purple-500/30">
+            <h3 className="text-xl font-bold text-white mb-4">Remove from Watchlist?</h3>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to remove <span className="font-semibold text-pink">{deleteConfirm.animeTitle}</span> from your watchlist?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteConfirm({ show: false, animeId: null, animeTitle: "" })}
+                className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteFromWatchlist(deleteConfirm.animeId!)}
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <FooterSection />
     </div>
   );
