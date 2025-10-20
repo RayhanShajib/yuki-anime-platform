@@ -175,6 +175,75 @@ export const pageApi = {
     });
   }),
 
+  // Add to watchlist - Requires authentication
+  addToWatchlist: async (
+    token: string,
+    animeId: number,
+    status: 'watching' | 'completed' | 'drop' | 'on_hold' | 'plan_to_watch',
+    episodeId?: number | null
+  ) => {
+    const endpoint = `/account/watch-status/`;
+    const body = {
+      status,
+      anime_id: animeId,
+      episode_id: episodeId,
+    };
+
+    return fetchFromApi(endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+      next: { revalidate: 0 }, // Don't cache watchlist modifications
+    });
+  },
+
+  // Update watchlist - Requires authentication
+  updateWatchlist: async (
+    token: string,
+    animeId: number,
+    status: 'watching' | 'completed' | 'drop' | 'on_hold' | 'plan_to_watch',
+    episodeId?: number | null
+  ) => {
+    const endpoint = `/account/watch-status/${animeId}/`;
+    const body = {
+      status,
+      episode_id: episodeId,
+    };
+    
+    return fetchFromApi(endpoint, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+      next: { revalidate: 0 }, // Don't cache watchlist modifications
+    });
+  },
+
+  // Get Watchlist - Requires authentication
+  getWatchlist: cache(async (token: string) => {
+    const endpoint = '/account/watch-status/';
+    return fetchFromApi(endpoint, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      next: { revalidate: 60 }, // Cache watchlist for 1 minute
+    });
+  }),
+  // Remove from watchlist - Requires authentication
+  removeFromWatchlist: async (token: string, id: number) => {
+    const endpoint = `/account/watch-status/${id}/`;
+    return fetchFromApi(endpoint, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      next: { revalidate: 0 }, // Don't cache watchlist modifications
+    });
+  },
+
   // Get Random Anime ID
   getRandomAnimeId: async() => {
     const endpoint = '/random/';
