@@ -5,11 +5,11 @@ import Link from "next/link";
 
 import { formatRating, truncateText } from "@/lib/utils";
 import { Anime } from "@/types/anime";
+import { WatchlistDropdown } from "@/components/ui/WatchlistDropdown";
 import {
   ChevronLeft,
   ChevronRight,
   Play,
-  Plus,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -102,11 +102,10 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
                 <span>Watch Now</span>
               </Link>
 
-              <button className="flex items-center space-x-1 sm:space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-pink">
-                <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Add to List</span>
-                <span className="sm:hidden">Add List</span>
-              </button>
+              <WatchlistDropdown 
+                animeId={10} // Anime id missing on api data
+                episodeId={currentAnime.id || 0}
+              />
             </div>
           </div>
         </div>
