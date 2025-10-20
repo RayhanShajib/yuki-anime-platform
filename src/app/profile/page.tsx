@@ -4,6 +4,7 @@ import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { NotificationDropdown } from "@/components/ui/NotificationDropdown";
+import { StatusChangeDropdown } from "@/components/ui/StatusChangeDropdown";
 
 import { pageApi } from "@/lib/api/pageApi";
 import { mockAnime } from "@/lib/mockData";
@@ -11,6 +12,7 @@ import { getWatchHistory, type WatchHistoryItem } from "@/lib/watchHistory";
 import {
   Bell,
   Bookmark,
+  CheckCircle,
   ChevronRight,
   Clock,
   Copy,
@@ -21,6 +23,7 @@ import {
   Settings,
   Trash2,
   User,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -290,13 +293,28 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => setDeleteConfirm({ show: true, watchStatusId: anime.id, animeTitle: anime.title })}
-                className="text-red-500 hover:text-red-400 transition-colors flex-shrink-0"
-                title="Delete from watchlist"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <StatusChangeDropdown
+                  animeId={anime.anime_id || anime.id}
+                  watchStatusId={anime.id}
+                  animeTitle={anime.title}
+                  currentStatus={status}
+                  onStatusChanged={async () => {
+                    const token = localStorage.getItem("access_token");
+                    if (token) {
+                      const updatedWatchlist = await pageApi.getWatchlist(token);
+                      setWatchlistData(updatedWatchlist);
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => setDeleteConfirm({ show: true, watchStatusId: anime.id, animeTitle: anime.title })}
+                  className="text-red-500 hover:text-red-400 transition-colors"
+                  title="Delete from watchlist"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

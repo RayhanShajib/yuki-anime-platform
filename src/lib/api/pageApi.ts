@@ -202,15 +202,22 @@ export const pageApi = {
   // Update watchlist - Requires authentication
   updateWatchlist: async (
     token: string,
-    animeId: number,
+    watchStatusId: number,
     status: 'watching' | 'completed' | 'drop' | 'on_hold' | 'plan_to_watch',
+    animeId?: number | null,
     episodeId?: number | null
   ) => {
-    const endpoint = `/account/watch-status/${animeId}/`;
-    const body = {
+    const endpoint = `/account/watch-status/${watchStatusId}/`;
+    const body: Record<string, any> = {
       status,
-      episode_id: episodeId,
     };
+    
+    if (animeId) {
+      body.anime_id = animeId;
+    }
+    if (episodeId) {
+      body.episode_id = episodeId;
+    }
     
     return fetchFromApi(endpoint, {
       method: 'PUT',
