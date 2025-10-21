@@ -83,11 +83,64 @@ export const pageApi = {
   }),
 
   // Search Page - No cache for search results
-  getSearchPageData: async (query: string, filters?: Record<string, string>) => {
-    const params = new URLSearchParams({
-      q: query,
-      ...filters,
-    });
+  getSearchPageData: async (
+    query?: string,
+    filters?: {
+      title?: string;
+      genres?: string | string[];
+      type?: string | string[];
+      status?: string | string[];
+      min_score?: number | string;
+      rated?: string;
+    }
+  ) => {
+    const params = new URLSearchParams();
+    
+    // Add query if provided
+    if (query) {
+      params.append('q', query);
+    }
+    
+    if (filters) {
+      // Handle title
+      if (filters.title) {
+        params.append('title', filters.title);
+      }
+      
+      // Handle genres (can be array or single value)
+      if (filters.genres) {
+        const genres = Array.isArray(filters.genres) ? filters.genres : [filters.genres];
+        genres.forEach(genre => {
+          if (genre) params.append('genres', genre);
+        });
+      }
+      
+      // Handle type (can be array or single value)
+      if (filters.type) {
+        const types = Array.isArray(filters.type) ? filters.type : [filters.type];
+        types.forEach(t => {
+          if (t) params.append('type', t);
+        });
+      }
+      
+      // Handle status (can be array or single value)
+      if (filters.status) {
+        const statuses = Array.isArray(filters.status) ? filters.status : [filters.status];
+        statuses.forEach(s => {
+          if (s) params.append('status', s);
+        });
+      }
+      
+      // Handle min_score
+      if (filters.min_score) {
+        params.append('min_score', filters.min_score.toString());
+      }
+      
+      // Handle rated
+      if (filters.rated) {
+        params.append('rated', filters.rated);
+      }
+    }
     
     return fetchFromApi(`/search?${params.toString()}`, {
       next: { revalidate: 0 }, // Don't cache search results
