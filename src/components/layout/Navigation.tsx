@@ -159,51 +159,50 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
     type: "Anime" | "Community";
   };
 
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      text: "New episode released for One Piece!",
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "Anime",
-    },
-    {
-      id: 2,
-      text: "Your post received a new comment.",
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "Community",
-    },
-    {
-      id: 3,
-      text: "Attack on Titan finale airs this week!",
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "Anime",
-    },
-    {
-      id: 4,
-      text: "You have a new follower in the community.",
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      type: "Community",
-    },
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const handleRemoveNotif = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
+
+  // Format notifications from profile data
+  useEffect(() => {
+    if (profileData && (profileData as any)?.notifications) {
+      const notificationsArray = (profileData as any).notifications;
+      
+      if (Array.isArray(notificationsArray) && notificationsArray.length > 0) {
+        const formattedNotifications = notificationsArray.map(
+          (notif: any, index: number) => {
+            // Map source/type to display categories
+            let notificationType: "Anime" | "Community" = "Anime";
+            const source = notif.source || notif.type || "Anime";
+            
+            // Map API source values to display types
+            if (source.toLowerCase() === "admin" || source.toLowerCase() === "community" || source.toLowerCase() === "system") {
+              notificationType = "Community";
+            } else if (source.toLowerCase() === "anime" || source.toLowerCase() === "episode") {
+              notificationType = "Anime";
+            }
+            
+            return {
+              id: notif.id || index + 1,
+              text: notif.content || notif.message || notif.text || "New notification",
+              date: new Date(notif.created_at || Date.now()).toLocaleDateString(),
+              time: new Date(notif.created_at || Date.now()).toLocaleTimeString(
+                [],
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              ),
+              type: notificationType,
+            };
+          }
+        );
+        setNotifications(formattedNotifications);
+      }
+    }
+  }, [profileData]);
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileBrowseOpen, setMobileBrowseOpen] = useState(false);
   const [mobileGenresOpen, setMobileGenresOpen] = useState(false);

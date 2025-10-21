@@ -32,34 +32,69 @@ import { useEffect, useState } from "react";
 
 // Profile data interface
 interface ProfileData {
+  id?: number;
   username: string;
   email: string;
-  avatar: string;
-  joinDate: string;
-  totalWatched: number;
-  totalHours: number;
-  favoriteGenres: string[];
-  exp: number;
+  avatar: string | null;
   role?: string;
+  joinDate?: string;
+  totalWatched?: number;
+  totalHours?: number;
+  favoriteGenres?: string[];
+  exp?: number;
   notifications?: Array<{
-    id: number;
+    source?: string;
+    content?: string;
+    created_at?: string;
+    is_read?: boolean;
+    id?: number;
     text?: string;
     message?: string;
     date?: string;
     time?: string;
+    type?: "Anime" | "Community";
+  }>;
+  user_notifications?: Array<{
+    source?: string;
+    content?: string;
     created_at?: string;
+    is_read?: boolean;
+    id?: number;
+    text?: string;
+    message?: string;
+    date?: string;
+    time?: string;
+    type?: "Anime" | "Community";
+  }>;
+  alerts?: Array<{
+    source?: string;
+    content?: string;
+    created_at?: string;
+    is_read?: boolean;
+    id?: number;
+    text?: string;
+    message?: string;
+    date?: string;
+    time?: string;
     type?: "Anime" | "Community";
   }>;
   watchlist?: Record<string, unknown>;
-  nextLevelExp: 10000;
-  stats: {
-    episodesWatched: 3247;
-    minutesWatched: 233640;
-    averageRating: 8.4;
-    droppedSeries: 12;
-    onHoldSeries: 8;
-    planToWatch: 45;
+  nextLevelExp?: number;
+  preferred_title_lang?: string;
+  preferred_video_lang?: string;
+  skip_seconds?: number;
+  bookmarks_per_page?: number;
+  hide_bookmarks?: boolean;
+  hide_profile_activities?: boolean;
+  stats?: {
+    episodesWatched: number;
+    minutesWatched: number;
+    averageRating: number;
+    droppedSeries: number;
+    onHoldSeries: number;
+    planToWatch: number;
   };
+  [key: string]: any; // Allow any additional fields from API
 }
 
 // Mock user's anime lists
@@ -95,6 +130,8 @@ export default function ProfilePage() {
     date: string;
     time: string;
     type: "Anime" | "Community";
+    source?: string; // Original source from API
+    isRead?: boolean;
   };
 
   // Fetch profile data on component mount
@@ -152,23 +189,48 @@ export default function ProfilePage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    if (profileData?.notifications) {
-      const formattedNotifications = profileData.notifications.map(
-        (notif, index: number) => ({
-          id: index + 1,
-          text: notif.message || notif.text || "New notification",
-          date: new Date(notif.created_at || Date.now()).toLocaleDateString(),
-          time: new Date(notif.created_at || Date.now()).toLocaleTimeString(
-            [],
-            {
-              hour: "2-digit",
-              minute: "2-digit",
-            }
-          ),
-          type: notif.type || ("Anime" as "Anime" | "Community"),
-        })
+    // Check various possible notification field names
+    const notificationsArray = 
+      profileData?.notifications || 
+      profileData?.user_notifications ||
+      profileData?.alerts ||
+      [];
+    
+    if (Array.isArray(notificationsArray) && notificationsArray.length > 0) {
+      const formattedNotifications = notificationsArray.map(
+        (notif, index: number) => {
+          // Map source/type to display categories
+          let notificationType: "Anime" | "Community" = "Anime";
+          const source = notif.source || notif.type || "Anime";
+          
+          // Map API source values to display types
+          if (source.toLowerCase() === "admin" || source.toLowerCase() === "community" || source.toLowerCase() === "system") {
+            notificationType = "Community";
+          } else if (source.toLowerCase() === "anime" || source.toLowerCase() === "episode") {
+            notificationType = "Anime";
+          }
+          
+          const formatted = {
+            id: notif.id || index + 1,
+            text: notif.content || notif.message || notif.text || "New notification",
+            date: new Date(notif.created_at || Date.now()).toLocaleDateString(),
+            time: new Date(notif.created_at || Date.now()).toLocaleTimeString(
+              [],
+              {
+                hour: "2-digit",
+                minute: "2-digit",
+              }
+            ),
+            type: notificationType,
+            source: source, // Keep original source for debugging
+            isRead: notif.is_read || false,
+          };
+          return formatted;
+        }
       );
       setNotifications(formattedNotifications);
+    } else {
+      setNotifications([]);
     }
   }, [profileData]);
 
@@ -877,69 +939,6 @@ export default function ProfilePage() {
               {/* Tab Content */}
               {activeTab === "overview" && (
                 <div className="space-y-8">
-                  <div className="flex gap-8 flex-wrap justify-center">
-                    {/* <!-- Activities Card --> */}
-                    <div className="bg-purple p-5 rounded-lg w-full max-w-3xl border border-[#1d2a47]">
-                      <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                        <span className="text-blue-400">🕒</span> ACTIVITIES
-                      </h2>
-
-                      {/* <!-- Activity Items --> */}
-                      <div className="space-y-3">
-                        <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
-                          <span className="w-2 h-2 bg-pink-400 rounded-full"></span>
-                          <span className="text-sm text-gray-400">
-                            3 minutes ago
-                          </span>
-                          <span className="font-semibold text-white/90">
-                            xs9yj7to4
-                          </span>
-                          <span className="text-sm text-gray-400">watched</span>
-                          <a href="#" className="text-pink hover:underline">
-                            EP 1134
-                          </a>
-                          <span className="text-sm text-white/90">
-                            of One Piece
-                          </span>
-                        </div>
-
-                        <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
-                          <span className="w-2 h-2 bg-pink-400 rounded-full"></span>
-                          <span className="text-sm text-gray-400">
-                            26 minutes ago
-                          </span>
-                          <span className="font-semibold text-white/90">
-                            xs9yj7to4
-                          </span>
-                          <span className="text-sm text-gray-400">watched</span>
-                          <a href="#" className="text-pink hover:underline">
-                            EP 13
-                          </a>
-                          <span className="text-sm text-white/90">
-                            of LAZARUS
-                          </span>
-                        </div>
-
-                        <div className="bg-[#1c243b] p-4 rounded-md flex items-center gap-2 flex-wrap">
-                          <span className="w-2 h-2 bg-pink-400 rounded-full"></span>
-                          <span className="text-sm text-gray-400">
-                            26 minutes ago
-                          </span>
-                          <span className="font-semibold text-white/90">
-                            xs9yj7to4
-                          </span>
-                          <span className="text-sm text-gray-400">watched</span>
-                          <a href="#" className="text-pink hover:underline">
-                            EP 12
-                          </a>
-                          <span className="text-sm text-white/90">
-                            of Shirohiyo - Reincarnated as a Neglected Noble:
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Recently Watched */}
                   <div>
                     <div className="flex items-center justify-between mb-6">

@@ -6,6 +6,7 @@ interface Notification {
   date: string;
   time: string;
   type?: "Anime" | "Community";
+  isRead?: boolean;
 }
 
 interface NotificationDropdownProps {
@@ -54,7 +55,7 @@ export function NotificationDropdown({
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
             onClick={() => setSelectedType("Anime")}>
-            Anime
+            Anime ({notifications.filter(n => (n.type || "Anime") === "Anime").length})
           </button>
           <button
             className={`px-2 py-1 rounded text-md font-medium transition-colors w-[150px] txt-small ${
@@ -63,7 +64,7 @@ export function NotificationDropdown({
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
             onClick={() => setSelectedType("Community")}>
-            Community
+            Community ({notifications.filter(n => (n.type || "Anime") === "Community").length})
           </button>
         </div>
         {filteredNotifications.length === 0 ? (
@@ -74,15 +75,22 @@ export function NotificationDropdown({
           filteredNotifications.map((notif) => (
             <div
               key={notif.id}
-              className="flex items-center justify-between px-2 py-2 hover:bg-gray-800 rounded transition-colors group">
-              <div>
-                <div className="text-white/90 text-sm txt-small">{notif.text}</div>
+              className={`flex items-center justify-between px-2 py-2 rounded transition-colors group ${
+                notif.isRead ? 'hover:bg-gray-800' : 'bg-gray-800/50 hover:bg-gray-800 border-l-2 border-pink-500'
+              }`}>
+              <div className="flex-1">
+                <div className={`text-sm txt-small flex items-center gap-2 ${
+                  notif.isRead ? 'text-white/90' : 'text-white font-semibold'
+                }`}>
+                  {!notif.isRead && <span className="inline-block w-2 h-2 bg-pink-500 rounded-full"></span>}
+                  {notif.text}
+                </div>
                 <div className="text-xs text-gray-400 mt-1">
                   {notif.date} {notif.time}
                 </div>
               </div>
               <button
-                className="ml-2 text-gray-400 hover:text-red-500 transition-colors txt-small"
+                className="ml-2 text-gray-400 hover:text-red-500 transition-colors txt-small flex-shrink-0"
                 title="Remove notification"
                 onClick={() => onRemove(notif.id)}>
                 <svg
