@@ -1,14 +1,15 @@
-import { cache } from 'react';
+import { cache } from "react";
 
 // Base fetch function
 const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
-  const baseUrl = process.env.API_BASE_URL || 'https://serverloader1.yukiwatch.fr/api/v1';
+  const baseUrl =
+    process.env.API_BASE_URL || "https://serverloader1.yukiwatch.fr/api/v1";
   const url = `${baseUrl}${endpoint}`;
-  
+
   const response = await fetch(url, {
     ...init,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...init?.headers,
     },
     next: {
@@ -27,24 +28,32 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
 export const pageApi = {
   // Home Page - Featured, Trending, Latest, Schedule
   getHomePageData: cache(async () => {
-    const homeData = await fetchFromApi('/home-agg/')
-        .then(data => {
-          // Ensure all required fields are present
-          if (!data || !data.airing || !data.trending || !data.latest || !data.completed || !data.spotlight || !data.favourite || !data.popular) {
-            throw new Error('Invalid home page data structure');
-          }
-          return data;
-        })
-        .catch(error => {
-          console.error('Error fetching home page data:', error);
-          throw new Error('Failed to fetch home page data');
-        });
+    const homeData = await fetchFromApi("/home-agg/")
+      .then((data) => {
+        // Ensure all required fields are present
+        if (
+          !data ||
+          !data.airing ||
+          !data.trending ||
+          !data.latest ||
+          !data.completed ||
+          !data.spotlight ||
+          !data.favourite ||
+          !data.popular
+        ) {
+          throw new Error("Invalid home page data structure");
+        }
+        return data;
+      })
+      .catch((error) => {
+        console.error("Error fetching home page data:", error);
+        throw new Error("Failed to fetch home page data");
+      });
     return homeData;
   }),
 
   // Popular Page - with filters
   getPopularPageData: cache(async (limit = 20, offset = 0) => {
-
     return fetchFromApi(`/popular/?limit=${limit}&offset=${offset}`);
   }),
 
@@ -54,7 +63,7 @@ export const pageApi = {
   }),
 
   // Movies Page
-  getMoviesPageData: cache(async (page = 1, sort = 'popularity') => {
+  getMoviesPageData: cache(async (page = 1, sort = "popularity") => {
     return fetchFromApi(`/movies?page=${page}&sort=${sort}`);
   }),
 
@@ -65,7 +74,7 @@ export const pageApi = {
 
   // Schedule Page
   getSchedulePageData: cache(async () => {
-    const endpoint = '/schedule/';
+    const endpoint = "/schedule/";
     return fetchFromApi(endpoint);
   }),
 
@@ -84,22 +93,22 @@ export const pageApi = {
 
   // Search Page - No cache for search results
   getSearchPageData: async (
+<<<<<<< HEAD
     query?: string,
     filters?: {
       title?: string;
       genres?: string | string[];
-      anime_type?: string | string[];
-      rating?: number | string;
-      srctype?: string;
+      type?: string | string[];
+      status?: string | string[];
+      min_score?: number | string;
       rated?: string;
-      producers?: string | string[];
     }
   ) => {
     const params = new URLSearchParams();
     
     // Add query if provided
     if (query) {
-      params.append('title', query);
+      params.append('q', query);
     }
     
     if (filters) {
@@ -116,38 +125,43 @@ export const pageApi = {
         });
       }
       
-      // Handle anime_type (can be array or single value)
-      if (filters.anime_type) {
-        const types = Array.isArray(filters.anime_type) ? filters.anime_type : [filters.anime_type];
+      // Handle type (can be array or single value)
+      if (filters.type) {
+        const types = Array.isArray(filters.type) ? filters.type : [filters.type];
         types.forEach(t => {
-          if (t) params.append('anime_type', t);
+          if (t) params.append('type', t);
         });
       }
       
-      // Handle rating (minimum score/rating)
-      if (filters.rating) {
-        params.append('rating', filters.rating.toString());
+      // Handle status (can be array or single value)
+      if (filters.status) {
+        const statuses = Array.isArray(filters.status) ? filters.status : [filters.status];
+        statuses.forEach(s => {
+          if (s) params.append('status', s);
+        });
       }
       
-      // Handle srctype (source type: sub, dub, etc)
-      if (filters.srctype) {
-        params.append('srctype', filters.srctype);
+      // Handle min_score
+      if (filters.min_score) {
+        params.append('min_score', filters.min_score.toString());
       }
       
-      // Handle rated (content rating)
+      // Handle rated
       if (filters.rated) {
         params.append('rated', filters.rated);
       }
-      
-      // Handle producers (can be array or single value)
-      if (filters.producers) {
-        const producers = Array.isArray(filters.producers) ? filters.producers : [filters.producers];
-        producers.forEach(producer => {
-          if (producer) params.append('producers', producer);
-        });
-      }
     }
     
+=======
+    query: string,
+    filters?: Record<string, string>
+  ) => {
+    const params = new URLSearchParams({
+      q: query,
+      ...filters,
+    });
+
+>>>>>>> 5569d89da38d2946e9101db0c50b158d7b97b3a0
     return fetchFromApi(`/search?${params.toString()}`, {
       next: { revalidate: 0 }, // Don't cache search results
     });
@@ -155,15 +169,13 @@ export const pageApi = {
 
   // Anime Info Page
   getAnimeInfoPageData: cache(async (id: string) => {
-    const [details] = await Promise.all([
-      fetchFromApi(`/anime/${id}/`)
-    ]);
+    const [details] = await Promise.all([fetchFromApi(`/anime/${id}/`)]);
 
     return details;
   }),
 
   // Watch Page
-   getWatchPageData: cache(async (episodeId: string) => {
+  getWatchPageData: cache(async (episodeId: string) => {
     const endpoint = `/episode/${episodeId}`;
     return fetchFromApi(endpoint);
   }),
@@ -188,7 +200,7 @@ export const pageApi = {
 
   // Continue Watching Page - Requires authentication
   getContinueWatchingPageData: cache(async () => {
-    return fetchFromApi('/user/continue-watching', {
+    return fetchFromApi("/user/continue-watching", {
       headers: {
         // Add auth header here when implemented
       },
@@ -197,27 +209,32 @@ export const pageApi = {
 
   // Auth Token
   getAuthToken: async (username: string, password: string) => {
-    const endpoint = '/account/token/';
+    const endpoint = "/account/token/";
     return fetchFromApi(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         username,
-        password
+        password,
       }),
       next: { revalidate: 0 }, // Don't cache auth requests
     });
   },
 
   // Register Account
-  registerAccount: async (username: string, email: string, password: string, password2: string) => {
-    const endpoint = '/account/register/';
+  registerAccount: async (
+    username: string,
+    email: string,
+    password: string,
+    password2: string
+  ) => {
+    const endpoint = "/account/register/";
     return fetchFromApi(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         username,
         email,
         password,
-        password2
+        password2,
       }),
       next: { revalidate: 0 }, // Don't cache registration requests
     });
@@ -225,10 +242,10 @@ export const pageApi = {
 
   // Profile Page - Requires authentication
   getProfilePageData: cache(async (token: string) => {
-    const endpoint = '/account/profile/';
+    const endpoint = "/account/profile/";
     return fetchFromApi(endpoint, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       next: { revalidate: 0 }, // Don't cache profile data for security
     });
@@ -238,7 +255,7 @@ export const pageApi = {
   addToWatchlist: async (
     token: string,
     animeId: number,
-    status: 'watching' | 'completed' | 'drop' | 'on_hold' | 'plan_to_watch',
+    status: "watching" | "completed" | "drop" | "on_hold" | "plan_to_watch",
     episodeId?: number | null
   ) => {
     const endpoint = `/account/watch-status/`;
@@ -249,9 +266,9 @@ export const pageApi = {
     };
 
     return fetchFromApi(endpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
       next: { revalidate: 0 }, // Don't cache watchlist modifications
@@ -262,26 +279,26 @@ export const pageApi = {
   updateWatchlist: async (
     token: string,
     watchStatusId: number,
-    status: 'watching' | 'completed' | 'drop' | 'on_hold' | 'plan_to_watch',
+    status: "watching" | "completed" | "drop" | "on_hold" | "plan_to_watch",
     animeId?: number | null,
     episodeId?: number | null
   ) => {
     const endpoint = `/account/watch-status/${watchStatusId}/`;
-    const body: Record<string, any> = {
+    const body: Record<string, string | number> = {
       status,
     };
-    
+
     if (animeId) {
       body.anime_id = animeId;
     }
     if (episodeId) {
       body.episode_id = episodeId;
     }
-    
+
     return fetchFromApi(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
       next: { revalidate: 0 }, // Don't cache watchlist modifications
@@ -290,10 +307,10 @@ export const pageApi = {
 
   // Get Watchlist - Requires authentication
   getWatchlist: cache(async (token: string) => {
-    const endpoint = '/account/watch-status/';
+    const endpoint = "/account/watch-status/";
     return fetchFromApi(endpoint, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       next: { revalidate: 60 }, // Cache watchlist for 1 minute
     });
@@ -302,17 +319,17 @@ export const pageApi = {
   removeFromWatchlist: async (token: string, id: number) => {
     const endpoint = `/account/watch-status/${id}/`;
     return fetchFromApi(endpoint, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       next: { revalidate: 0 }, // Don't cache watchlist modifications
     });
   },
 
   // Get Random Anime ID
-  getRandomAnimeId: async() => {
-    const endpoint = '/random/';
+  getRandomAnimeId: async () => {
+    const endpoint = "/random/";
     return fetchFromApi(endpoint);
-  }
+  },
 };
