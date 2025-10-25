@@ -2,17 +2,15 @@
 
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
-import { AnimeCard } from "@/components/ui/AnimeCard";
 import { NotificationDropdown } from "@/components/ui/NotificationDropdown";
 import { StatusChangeDropdown } from "@/components/ui/StatusChangeDropdown";
 
 import { pageApi } from "@/lib/api/pageApi";
-import { mockAnime } from "@/lib/mockData";
+
 import { getWatchHistory, type WatchHistoryItem } from "@/lib/watchHistory";
 import {
   Bell,
   Bookmark,
-  CheckCircle,
   ChevronRight,
   Clock,
   Copy,
@@ -23,12 +21,32 @@ import {
   Settings,
   Trash2,
   User,
-  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+// Watchlist anime item interface
+interface WatchlistAnime {
+  id: number;
+  anime_id?: number;
+  title: string;
+  image?: string;
+  sub_total: number;
+  dub_total: number;
+}
+
+// Watchlist data interface
+interface WatchlistData {
+  results: {
+    watching?: WatchlistAnime[];
+    plan_to_watch?: WatchlistAnime[];
+    on_hold?: WatchlistAnime[];
+    completed?: WatchlistAnime[];
+    [key: string]: WatchlistAnime[] | undefined;
+  };
+}
 
 // Profile data interface
 interface ProfileData {
@@ -97,18 +115,13 @@ interface ProfileData {
   [key: string]: any; // Allow any additional fields from API
 }
 
-// Mock user's anime lists
-const userLists = {
-  recentlyWatched: mockAnime.slice(0, 8),
-  favorites: mockAnime.slice(6, 12),
-  bookmark: mockAnime.slice(12, 18),
-};
-
 export default function ProfilePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [watchlistData, setWatchlistData] = useState<any>(null);
+  const [watchlistData, setWatchlistData] = useState<WatchlistData | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentPages, setCurrentPages] = useState<Record<string, number>>({
@@ -117,7 +130,11 @@ export default function ProfilePage() {
     on_hold: 0,
     completed: 0,
   });
-  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; watchStatusId: number | null; animeTitle: string }>({
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    show: boolean;
+    watchStatusId: number | null;
+    animeTitle: string;
+  }>({
     show: false,
     watchStatusId: null,
     animeTitle: "",
@@ -153,10 +170,10 @@ export default function ProfilePage() {
           pageApi.getProfilePageData(token),
           pageApi.getWatchlist(token),
         ]);
-        
+
         setProfileData(profileRes);
         setWatchlistData(watchlistRes);
-        
+
         // Load watch history from localStorage
         const history = getWatchHistory();
         setWatchHistory(history);
@@ -309,7 +326,10 @@ export default function ProfilePage() {
     const totalPages = getTotalPages(status);
     const currentPage = currentPages[status] || 0;
 
-    if (!watchlistData?.results?.[status] || watchlistData.results[status].length === 0) {
+    if (
+      !watchlistData?.results?.[status] ||
+      watchlistData.results[status].length === 0
+    ) {
       return (
         <div className="text-center py-8 text-gray-400">
           No items found in {title}
@@ -321,11 +341,10 @@ export default function ProfilePage() {
       <div className="space-y-4">
         {/* List Items */}
         <div className="space-y-3">
-          {paginatedData.map((anime: any) => (
+          {paginatedData.map((anime: WatchlistAnime) => (
             <div
               key={anime.id}
-              className="bg-[#1c243b] p-4 rounded-md flex items-center gap-4 justify-between hover:bg-[#2a3450] transition-colors"
-            >
+              className="bg-[#1c243b] p-4 rounded-md flex items-center gap-4 justify-between hover:bg-[#2a3450] transition-colors">
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 <Image
                   src={anime.image || "/placeholder-anime.jpg"}
@@ -337,8 +356,7 @@ export default function ProfilePage() {
                 <div className="flex-1 min-w-0">
                   <Link
                     href={`/anime/${anime.id}/${getSlugFromTitle(anime.title)}`}
-                    className="text-white font-semibold hover:text-purple-400 transition-colors block truncate"
-                  >
+                    className="text-white font-semibold hover:text-purple-400 transition-colors block truncate">
                     {anime.title}
                   </Link>
                   <div className="flex gap-2 mt-2">
@@ -364,16 +382,23 @@ export default function ProfilePage() {
                   onStatusChanged={async () => {
                     const token = localStorage.getItem("access_token");
                     if (token) {
-                      const updatedWatchlist = await pageApi.getWatchlist(token);
+                      const updatedWatchlist = await pageApi.getWatchlist(
+                        token
+                      );
                       setWatchlistData(updatedWatchlist);
                     }
                   }}
                 />
                 <button
-                  onClick={() => setDeleteConfirm({ show: true, watchStatusId: anime.id, animeTitle: anime.title })}
+                  onClick={() =>
+                    setDeleteConfirm({
+                      show: true,
+                      watchStatusId: anime.id,
+                      animeTitle: anime.title,
+                    })
+                  }
                   className="text-red-500 hover:text-red-400 transition-colors"
-                  title="Delete from watchlist"
-                >
+                  title="Delete from watchlist">
                   <Trash2 className="h-5 w-5" />
                 </button>
               </div>
@@ -392,8 +417,7 @@ export default function ProfilePage() {
                 }))
               }
               disabled={currentPage === 0}
-              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
-            >
+              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors">
               Prev
             </button>
             {Array.from({ length: totalPages }, (_, i) => (
@@ -409,8 +433,7 @@ export default function ProfilePage() {
                   currentPage === i
                     ? "btn-purple text-white"
                     : "bg-gray-700 text-white hover:bg-gray-600"
-                }`}
-              >
+                }`}>
                 {i + 1}
               </button>
             ))}
@@ -422,8 +445,7 @@ export default function ProfilePage() {
                 }))
               }
               disabled={currentPage === totalPages - 1}
-              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
-            >
+              className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors">
               Next
             </button>
           </div>
@@ -959,17 +981,16 @@ export default function ProfilePage() {
                           <Link
                             key={`${item.episodeId}-${item.audioType}`}
                             href={`/watch/${item.episodeId}`}
-                            className="relative group"
-                          >
+                            className="relative group">
                             {/* Poster */}
                             <div className="aspect-[3/4] rounded-lg overflow-hidden bg-gray-800">
                               <Image
-                                src={item.poster || '/placeholder-anime.jpg'}
+                                src={item.poster || "/placeholder-anime.jpg"}
                                 alt={item.animeTitle}
                                 fill
                                 className="object-cover transition-transform duration-300 group-hover:scale-105"
                               />
-                              
+
                               {/* Play Overlay */}
                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
                                 <Play className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -991,7 +1012,9 @@ export default function ProfilePage() {
                               <h3 className="text-white text-sm font-medium truncate mb-1">
                                 {item.animeTitle}
                               </h3>
-                              <p className="text-gray-400 text-xs">Ep {item.episodeNumber}</p>
+                              <p className="text-gray-400 text-xs">
+                                Ep {item.episodeNumber}
+                              </p>
                             </div>
                           </Link>
                         ))}
@@ -999,7 +1022,9 @@ export default function ProfilePage() {
                     ) : (
                       <div className="text-center py-8 bg-gray-800/30 rounded-lg border border-gray-700">
                         <Clock className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-                        <p className="text-gray-400">No anime in progress yet</p>
+                        <p className="text-gray-400">
+                          No anime in progress yet
+                        </p>
                       </div>
                     )}
                   </div>
@@ -1010,7 +1035,8 @@ export default function ProfilePage() {
                 <div>
                   <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
                     <PlayCircle className="h-6 w-6 text-pink mr-3" />
-                    Currently Watching ({watchlistData?.results?.watching?.length || 0})
+                    Currently Watching (
+                    {watchlistData?.results?.watching?.length || 0})
                   </h2>
                   {renderWatchlistSection("watching", "Currently Watching")}
                 </div>
@@ -1021,7 +1047,8 @@ export default function ProfilePage() {
                   <div>
                     <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
                       <Bookmark className="h-6 w-6 text-pink mr-3" />
-                      Plan to Watch ({watchlistData?.results?.plan_to_watch?.length || 0})
+                      Plan to Watch (
+                      {watchlistData?.results?.plan_to_watch?.length || 0})
                     </h2>
                     {renderWatchlistSection("plan_to_watch", "Plan to Watch")}
                   </div>
@@ -1053,21 +1080,33 @@ export default function ProfilePage() {
       {deleteConfirm.show && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-900 rounded-lg p-8 max-w-md w-full mx-4 border border-purple-500/30">
-            <h3 className="text-xl font-bold text-white mb-4">Remove from Watchlist?</h3>
+            <h3 className="text-xl font-bold text-white mb-4">
+              Remove from Watchlist?
+            </h3>
             <p className="text-gray-300 mb-6">
-              Are you sure you want to remove <span className="font-semibold text-pink">{deleteConfirm.animeTitle}</span> from your watchlist?
+              Are you sure you want to remove{" "}
+              <span className="font-semibold text-pink">
+                {deleteConfirm.animeTitle}
+              </span>{" "}
+              from your watchlist?
             </p>
             <div className="flex gap-3 justify-end">
               <button
-                onClick={() => setDeleteConfirm({ show: false, watchStatusId: null, animeTitle: "" })}
-                className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-medium transition-colors"
-              >
+                onClick={() =>
+                  setDeleteConfirm({
+                    show: false,
+                    watchStatusId: null,
+                    animeTitle: "",
+                  })
+                }
+                className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-medium transition-colors">
                 Cancel
               </button>
               <button
-                onClick={() => handleDeleteFromWatchlist(deleteConfirm.watchStatusId!)}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
-              >
+                onClick={() =>
+                  handleDeleteFromWatchlist(deleteConfirm.watchStatusId!)
+                }
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors">
                 Remove
               </button>
             </div>
