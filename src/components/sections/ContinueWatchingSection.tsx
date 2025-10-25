@@ -49,8 +49,8 @@ export function ContinueWatchingSection() {
     <section className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-5">
-          <h2 className="text-3xl font-bold text-white flex items-center txt-heading">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-white flex items-center">
             <Play className="h-8 w-8 text-[#F5B9D4] mr-3" />
             Continue Watching
           </h2>

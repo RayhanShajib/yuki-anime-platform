@@ -271,7 +271,7 @@ button {
     margin: auto;
   }
   .carousel-content {
-    margin-top: 190px !important;
+    margin-top: 100px !important;
   }
 
   .txt-heading {
@@ -352,13 +352,6 @@ button {
   .min-w-full {
     margin: auto !important;
   }
-}
-
-@media screen and (max-width: 280px) {
-  .hero-carousel-watch-btn{
-    margin-right: 20px;
-  }
-  
 }
 
 /* Modal Animations */
