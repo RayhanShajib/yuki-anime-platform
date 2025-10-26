@@ -92,22 +92,27 @@ export const pageApi = {
       rating?: number | string;
       srctype?: string;
       rated?: string;
+      season?: string;
       producers?: string | string[];
-    }
+      studio?: string | string[];
+      released_year?: number | string;
+    },
+    limit: number = 20,
+    offset: number = 0
   ) => {
     const params = new URLSearchParams();
     
-    // Add query if provided
-    if (query) {
-      params.append('title', query);
+    // Add pagination parameters
+    params.append('limit', limit.toString());
+    params.append('offset', offset.toString());
+    
+    // Add title if provided (either from query or filters.title, filters.title takes priority)
+    const titleParam = filters?.title || query;
+    if (titleParam) {
+      params.append('title', titleParam);
     }
     
     if (filters) {
-      // Handle title
-      if (filters.title) {
-        params.append('title', filters.title);
-      }
-      
       // Handle genres (can be array or single value)
       if (filters.genres) {
         const genres = Array.isArray(filters.genres) ? filters.genres : [filters.genres];
@@ -139,12 +144,30 @@ export const pageApi = {
         params.append('rated', filters.rated);
       }
       
+      // Handle season
+      if (filters.season) {
+        params.append('season', filters.season);
+      }
+      
       // Handle producers (can be array or single value)
       if (filters.producers) {
         const producers = Array.isArray(filters.producers) ? filters.producers : [filters.producers];
         producers.forEach(producer => {
           if (producer) params.append('producers', producer);
         });
+      }
+      
+      // Handle studio (can be array or single value)
+      if (filters.studio) {
+        const studios = Array.isArray(filters.studio) ? filters.studio : [filters.studio];
+        studios.forEach(studio => {
+          if (studio) params.append('studio', studio);
+        });
+      }
+      
+      // Handle released_year
+      if (filters.released_year) {
+        params.append('released_year', filters.released_year.toString());
       }
     }
     
