@@ -1,67 +1,74 @@
 "use client";
 
 import { AnimeCard } from "@/components/ui/AnimeCard";
-import { mockAnime } from "@/lib/mockData";
+import { pageApi } from "@/lib/api/pageApi";
 import { Tags } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const statusFilters = [
-  { key: "all", label: "All Status" },
-  { key: "ongoing", label: "Ongoing" },
-  { key: "completed", label: "Completed" },
-  { key: "upcoming", label: "Upcoming" },
-];
-
 const typeFilters = [
   { key: "all", label: "All Types" },
-  { key: "series", label: "Series" },
-  { key: "movie", label: "Movies" },
-  { key: "ova", label: "OVAs" },
+  { key: "TV", label: "TV" },
+  { key: "Movie", label: "Movie" },
+  { key: "OVA", label: "OVA" },
+  { key: "Special", label: "Special" },
 ];
 
 const genreOptions = [
-  "all",
-  "action",
-  "adventure",
-  "comedy",
-  "drama",
-  "fantasy",
-  "horror",
-  "romance",
-  "sci-fi",
+  "Action",
+  "Adventure",
+  "Comedy",
+  "Drama",
+  "Fantasy",
+  "Horror",
+  "Romance",
+  "Sci-Fi",
+  "Slice of Life",
+  "Sports",
+  "Thriller",
+  "Mystery",
+  "Supernatural",
 ];
+
 const ratingOptions = [
-  "all",
-  "9+",
-  "8+",
-  "7+",
-  "6+",
-  "5+",
-  "4+",
-  "3+",
-  "2+",
-  "1+",
+  "9",
+  "8",
+  "7",
+  "6",
+  "5",
+  "4",
+  "3",
+  "2",
+  "1",
 ];
+
 const yearOptions = [
-  "all",
   "2025",
   "2024",
   "2023",
   "2022",
   "2021",
   "2020",
-  "2010-2019",
-  "2000-2009",
-  "1990-1999",
+  "2019",
+  "2018",
+  "2017",
+  "2016",
+  "2015",
 ];
-const seasonOptions = ["all", "Summer", "Spring", "Winter", "Fall"];
-const sortOptions = [
-  { key: "popularity", label: "Trending" },
-  { key: "updated", label: "Updated Date" },
-  { key: "release", label: "Release Date" },
-  { key: "title", label: "A to Z" },
-  { key: "end", label: "End Date" },
-  { key: "views", label: "Total Views" },
+
+const ratedOptions = [
+  { key: "G", label: "G" },
+  { key: "PG", label: "PG" },
+  { key: "PG-13 - Teens 13 or older", label: "PG-13" },
+  { key: "R - 17+ (violence & profanity)", label: "R" },
+  { key: "R+ - Mild Nudity", label: "R+" },
+  { key: "Rx - Hentai", label: "Rx" },
+];
+
+const seasonOptions = ["Spring", "Summer", "Fall", "Winter"];
+
+const srcTypeOptions = [
+  { key: "sub", label: "Subtitle" },
+  { key: "dub", label: "Dubbed" },
 ];
 
 import { Navigation } from "@/components/layout/Navigation";
@@ -215,25 +222,32 @@ function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // API State
+  const [results, setResults] = useState<any[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Pagination
+  const itemsPerPage = 20;
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Pending filter states (controlled by UI)
   const [pendingSearchTerm, setPendingSearchTerm] = useState("");
   const [pendingType, setPendingType] = useState<string[]>(["all"]);
-  const [pendingStatus, setPendingStatus] = useState<string[]>(["all"]);
   const [pendingGenre, setPendingGenre] = useState<string[]>(["all"]);
   const [pendingRating, setPendingRating] = useState<string[]>(["all"]);
   const [pendingYear, setPendingYear] = useState<string[]>(["all"]);
-  const [pendingCountry, setPendingCountry] = useState<string[]>([]);
-  const [pendingLanguage, setPendingLanguage] = useState<string[]>([]);
   const [pendingSeason, setPendingSeason] = useState<string[]>(["all"]);
-  const [pendingSort, setPendingSort] = useState("popularity");
+  const [pendingRated, setPendingRated] = useState<string[]>(["all"]);
   const [pendingStudio, setPendingStudio] = useState("");
-  const [pendingProducer, setPendingProducer] = useState("");
-  const [pendingAudio, setPendingAudio] = useState("");
+  const [pendingProducers, setPendingProducers] = useState("");
+  const [pendingSrcType, setPendingSrcType] = useState<string[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const advancedFilterRef = useRef<HTMLDivElement>(null);
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Close advanced filter when clicking outside (notification style)
+  // Close advanced filter when clicking outside
   useEffect(() => {
     if (!showAdvanced) return;
     function handleClickOutside(event: MouseEvent) {
@@ -253,196 +267,94 @@ function SearchPageContent() {
     };
   }, [showAdvanced]);
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
-
-  // Applied filter states (from URL)
-  const [appliedFilters, setAppliedFilters] = useState({
-    search: "",
-    type: [] as string[],
-    status: [] as string[],
-    genre: [] as string[],
-    rating: [] as string[],
-    year: [] as string[],
-    country: [] as string[],
-    language: [] as string[],
-    season: [] as string[],
-    sort: "popularity",
-    studio: "",
-    alpha: "",
-  });
-
-  // Sync applied filters from URL on mount or URL change
+  // Sync filters from URL on mount
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
-    setAppliedFilters({
-      search: params.search || "",
-      type: params.type ? params.type.split(",") : ["all"],
-      status: params.status ? params.status.split(",") : ["all"],
-      genre: params.genre ? params.genre.split(",") : ["all"],
-      rating: params.rating ? params.rating.split(",") : ["all"],
-      year: params.year ? params.year.split(",") : ["all"],
-      country: params.country ? (params.country.split(",") as string[]) : [],
-      language: params.language ? (params.language.split(",") as string[]) : [],
-      season: params.season ? params.season.split(",") : ["all"],
-      sort: params.sort || "popularity",
-      studio: params.studio || "",
-      alpha: params.alpha || "",
-    });
-    // Also update pending states so UI reflects URL
     setPendingSearchTerm(params.search || "");
-    setPendingType(params.type ? params.type.split(",") : ["all"]);
-    setPendingStatus(params.status ? params.status.split(",") : ["all"]);
-    setPendingGenre(params.genre ? params.genre.split(",") : ["all"]);
-    setPendingRating(params.rating ? params.rating.split(",") : ["all"]);
-    setPendingYear(params.year ? params.year.split(",") : ["all"]);
-    setPendingCountry(params.country ? params.country.split(",") : []);
-    setPendingLanguage(params.language ? params.language.split(",") : []);
-    setPendingSeason(params.season ? params.season.split(",") : ["all"]);
-    setPendingSort(params.sort || "popularity");
+    setPendingType(params.anime_type ? params.anime_type.split(",") : ["all"]);
+    setPendingGenre(params.genres ? params.genres.split(",") : ["all"]);
+    setPendingRating(params.rating ? [params.rating] : ["all"]);
+    setPendingYear(params.released_year ? [params.released_year] : ["all"]);
+    setPendingSeason(params.season ? [params.season] : ["all"]);
+    setPendingRated(params.rated ? [params.rated] : ["all"]);
     setPendingStudio(params.studio || "");
-    setPendingProducer(params.producer || "");
-    setPendingAudio(params.audio || "");
-
-    // Reset to page 1 when URL changes (filters change)
+    setPendingProducers(params.producers || "");
+    setPendingSrcType(params.srctype ? [params.srctype] : []);
     setCurrentPage(1);
   }, [searchParams]);
 
   // Handle Filter button click
-  const handleApplyFilters = () => {
+  const handleApplyFilters = async () => {
     const params = new URLSearchParams();
+    
     if (pendingSearchTerm) params.set("search", pendingSearchTerm);
     if (pendingType.length > 0 && !pendingType.includes("all"))
-      params.set("type", pendingType.join(","));
-    if (pendingStatus.length > 0 && !pendingStatus.includes("all"))
-      params.set("status", pendingStatus.join(","));
+      params.set("anime_type", pendingType.join(","));
     if (pendingGenre.length > 0 && !pendingGenre.includes("all"))
-      params.set("genre", pendingGenre.join(","));
+      params.set("genres", pendingGenre.join(","));
     if (pendingRating.length > 0 && !pendingRating.includes("all"))
-      params.set("rating", pendingRating.join(","));
+      params.set("rating", pendingRating[0]);
     if (pendingYear.length > 0 && !pendingYear.includes("all"))
-      params.set("year", pendingYear.join(","));
-    if (pendingCountry.length > 0 && !pendingCountry.includes("all"))
-      params.set("country", pendingCountry.join(","));
-    if (pendingLanguage.length > 0 && !pendingLanguage.includes("all"))
-      params.set("language", pendingLanguage.join(","));
+      params.set("released_year", pendingYear[0]);
     if (pendingSeason.length > 0 && !pendingSeason.includes("all"))
-      params.set("season", pendingSeason.join(","));
-    if (pendingSort !== "popularity") params.set("sort", pendingSort);
+      params.set("season", pendingSeason[0]);
+    if (pendingRated.length > 0 && !pendingRated.includes("all"))
+      params.set("rated", pendingRated[0]);
     if (pendingStudio) params.set("studio", pendingStudio);
-    if (pendingProducer) params.set("producer", pendingProducer);
-    if (pendingAudio) params.set("audio", pendingAudio);
+    if (pendingProducers.trim())
+      params.set("producers", pendingProducers.trim().split(" ").join(","));
+    if (pendingSrcType.length > 0)
+      params.set("srctype", pendingSrcType[0]);
 
-    // Reset to page 1 when applying new filters
     setCurrentPage(1);
-
     router.replace(`/search?${params.toString()}`);
   };
 
-  // Filtering logic (use appliedFilters)
-  const filteredAnime = mockAnime
-    .filter((anime) => {
-      // Alphabet filter
-      if (appliedFilters.alpha && appliedFilters.alpha !== "") {
-        if (appliedFilters.alpha === "0-9") {
-          if (!anime.title || !/^[0-9]/.test(anime.title)) return false;
-        } else {
-          if (
-            !anime.title ||
-            anime.title[0].toUpperCase() !== appliedFilters.alpha.toUpperCase()
-          )
-            return false;
-        }
+  // Fetch data when URL changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const params = Object.fromEntries(searchParams.entries());
+        const offset = (currentPage - 1) * itemsPerPage;
+
+        const filters: any = {};
+        if (params.genres) filters.genres = params.genres.split(",");
+        if (params.anime_type) filters.anime_type = params.anime_type.split(",");
+        if (params.rating) filters.rating = parseFloat(params.rating);
+        if (params.rated) filters.rated = params.rated;
+        if (params.season) filters.season = params.season;
+        if (params.released_year) filters.released_year = parseInt(params.released_year);
+        if (params.studio) filters.studio = params.studio;
+        if (params.producers) filters.producers = params.producers.split(",").filter((p: string) => p.trim());
+        if (params.srctype) filters.srctype = params.srctype;
+
+        const data = await pageApi.getSearchPageData(
+          params.search,
+          filters,
+          itemsPerPage,
+          offset
+        );
+
+        setResults(data.results || []);
+        setTotalCount(data.count || 0);
+      } catch (err) {
+        console.error("Error fetching search results:", err);
+        setError(err instanceof Error ? err.message : "Failed to fetch results");
+        setResults([]);
+        setTotalCount(0);
+      } finally {
+        setIsLoading(false);
       }
-      if (
-        appliedFilters.search &&
-        !anime.title.toLowerCase().includes(appliedFilters.search.toLowerCase())
-      )
-        return false;
-      if (
-        appliedFilters.genre.length > 0 &&
-        !appliedFilters.genre.includes("all") &&
-        !anime.genres.some((g) =>
-          appliedFilters.genre.some((selectedGenre) =>
-            g.toLowerCase().includes(selectedGenre.toLowerCase())
-          )
-        )
-      )
-        return false;
-      if (
-        appliedFilters.type.length > 0 &&
-        !appliedFilters.type.includes("all") &&
-        !appliedFilters.type.includes(anime.type)
-      )
-        return false;
-      if (
-        appliedFilters.status.length > 0 &&
-        !appliedFilters.status.includes("all") &&
-        !appliedFilters.status.includes(anime.status)
-      )
-        return false;
-      if (
-        appliedFilters.rating.length > 0 &&
-        !appliedFilters.rating.includes("all") &&
-        !appliedFilters.rating.some((ratingFilter) => {
-          const ratingValue = parseInt(ratingFilter);
-          return anime.rating >= ratingValue;
-        })
-      )
-        return false;
-      if (
-        appliedFilters.year.length > 0 &&
-        !appliedFilters.year.includes("all") &&
-        !appliedFilters.year.some((yearFilter) => {
-          if (yearFilter.includes("-")) {
-            const [startYear, endYear] = yearFilter.split("-");
-            return (
-              anime.releaseYear >= parseInt(startYear) &&
-              anime.releaseYear <= parseInt(endYear)
-            );
-          }
-          return anime.releaseYear.toString() === yearFilter;
-        })
-      )
-        return false;
-      if (
-        appliedFilters.studio &&
-        (!anime.studio ||
-          !anime.studio
-            .toLowerCase()
-            .includes(appliedFilters.studio.toLowerCase()))
-      )
-        return false;
-      // Remove country, language, and season filter logic since mockAnime does not have these properties
-      return true;
-    })
-    .sort((a, b) => {
-      switch (appliedFilters.sort) {
-        case "title":
-          return a.title.localeCompare(b.title);
-        case "release":
-          return b.releaseYear - a.releaseYear;
-        case "updated":
-          // Assuming we have an updatedAt field, fallback to popularity for now
-          return b.popularity - a.popularity;
-        case "end":
-          // Assuming we have an endDate field, fallback to popularity for now
-          return b.popularity - a.popularity;
-        case "views":
-          // Assuming we have a views field, fallback to popularity for now
-          return b.popularity - a.popularity;
-        case "popularity":
-        default:
-          return b.popularity - a.popularity;
-      }
-    });
+    };
+
+    fetchData();
+  }, [searchParams, currentPage]);
 
   // Pagination calculations
-  const totalPages = Math.ceil(filteredAnime.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentAnime = filteredAnime.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   // Pagination handlers
   const handlePageChange = (page: number) => {
@@ -532,24 +444,13 @@ function SearchPageContent() {
                 onChange={setPendingGenre}
                 className="w-full"
               />
-              {/* Status Multi-Select */}
+              {/* Rating Multi-Select */}
               <MultiSelect
-                options={statusFilters}
-                selectedValues={pendingStatus}
-                onChange={setPendingStatus}
+                options={ratingOptions}
+                selectedValues={pendingRating}
+                onChange={setPendingRating}
                 className="w-full"
               />
-              {/* Sort Dropdown */}
-              <select
-                value={pendingSort}
-                onChange={(e) => setPendingSort(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 w-full">
-                {sortOptions.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
               {/* Filter Icon & Button (relative container) */}
               <div className="flex items-center gap-2 relative">
                 <button
@@ -581,21 +482,9 @@ function SearchPageContent() {
                 {/* Advanced Dropdown - position absolute */}
                 {showAdvanced && (
                   <div className="bg-purple border border-gray-700 rounded-lg p-4 mt-2 absolute top-full right-0 z-50 w-[min(90vw,600px)] shadow-xl">
-                    <div className="flex justify-between items-center gap-4">
-                      {/* Rating Multi-Select */}
-                      <div className="w-full">
-                        <label className="block text-gray-300 text-sm mb-1">
-                          Rating
-                        </label>
-                        <MultiSelect
-                          options={ratingOptions}
-                          selectedValues={pendingRating}
-                          onChange={setPendingRating}
-                          className="w-full"
-                        />
-                      </div>
+                    <div className="flex justify-between items-center gap-4 flex-wrap">
                       {/* Year Multi-Select */}
-                      <div className="w-full">
+                      <div className="w-full md:w-auto flex-1">
                         <label className="block text-gray-300 text-sm mb-1">
                           Year
                         </label>
@@ -607,7 +496,7 @@ function SearchPageContent() {
                         />
                       </div>
                       {/* Season Multi-Select */}
-                      <div className="w-full">
+                      <div className="w-full md:w-auto flex-1">
                         <label className="block text-gray-300 text-sm mb-1">
                           Season
                         </label>
@@ -618,10 +507,22 @@ function SearchPageContent() {
                           className="w-full"
                         />
                       </div>
+                      {/* Rated Multi-Select */}
+                      <div className="w-full md:w-auto flex-1">
+                        <label className="block text-gray-300 text-sm mb-1">
+                          Rating
+                        </label>
+                        <MultiSelect
+                          options={ratedOptions}
+                          selectedValues={pendingRated}
+                          onChange={setPendingRated}
+                          className="w-full"
+                        />
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center justify-between flex-wrap gap-4 mt-4">
                       {/* Studio Input Field */}
-                      <div className="mt-4">
+                      <div className="flex-1 min-w-[200px]">
                         <label className="block text-gray-300 text-md mb-1">
                           Studio
                         </label>
@@ -633,42 +534,34 @@ function SearchPageContent() {
                           className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700"
                         />
                       </div>
-                      {/* Producer Input Field */}
-                      <div className="mt-4">
+                      {/* Producers Input Field */}
+                      <div className="flex-1 min-w-[200px]">
                         <label className="block text-gray-300 text-md mb-1">
-                          Producer
+                          Producers
                         </label>
                         <input
                           type="text"
-                          value={pendingProducer}
-                          onChange={(e) => setPendingProducer(e.target.value)}
-                          placeholder="Enter producer name"
+                          value={pendingProducers}
+                          onChange={(e) => setPendingProducers(e.target.value)}
+                          placeholder="Space-separated producers"
                           className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700"
                         />
                       </div>
                     </div>
-                    {/* Sub/Dub Toggle Buttons */}
-                    <div className="mt-4 flex gap-4 items-center flex-wrap">
-                      <button
-                        type="button"
-                        className={`px-6 py-2 rounded-lg font-medium border border-gray-700 ${
-                          pendingAudio === "sub"
-                            ? "btn-purple text-white"
-                            : "bg-purple text-gray-300"
-                        }`}
-                        onClick={() => setPendingAudio("sub")}>
-                        Sub
-                      </button>
-                      <button
-                        type="button"
-                        className={`px-6 py-2 rounded-lg font-medium border border-gray-700 ${
-                          pendingAudio === "dub"
-                            ? "btn-purple text-white"
-                            : "bg-purple text-gray-300"
-                        }`}
-                        onClick={() => setPendingAudio("dub")}>
-                        Dub
-                      </button>
+                    {/* Source Type & Producers */}
+                    <div className="mt-4 gap-4 flex items-end flex-wrap">
+                      {/* Source Type */}
+                      <div className="flex-1 min-w-[200px]">
+                        <label className="block text-gray-300 text-md mb-1">
+                          Source Type
+                        </label>
+                        <MultiSelect
+                          options={srcTypeOptions}
+                          selectedValues={pendingSrcType}
+                          onChange={setPendingSrcType}
+                          className="w-full"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -676,13 +569,42 @@ function SearchPageContent() {
             </div>
           </div>
           {/* Content Grid/List */}
-          {filteredAnime.length > 0 ? (
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple"></div>
+              </div>
+              <p className="text-gray-400 mt-4">Loading results...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <div className="bg-red-900/20 border border-red-700 rounded-lg p-4 inline-block">
+                <p className="text-red-400">Error: {error}</p>
+              </div>
+            </div>
+          ) : results.length > 0 ? (
             <>
-              {/* Always show grid view, since viewMode is removed */}
+              {/* Always show grid view */}
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 gap-5">
-                {currentAnime.map((anime) => (
+                {results.map((anime: any) => (
                   <div key={anime.id} className="relative">
-                    <AnimeCard anime={anime} showPopup={true} />
+                    <AnimeCard 
+                      anime={{
+                        id: anime.id.toString(),
+                        title: anime.title,
+                        poster: anime.image,
+                        synopsis: anime.synopsis || '',
+                        genres: anime.genres || [],
+                        studio: '',
+                        releaseYear: 2024,
+                        status: 'ongoing',
+                        type: anime.number_of_episodes ? 'series' : 'movie',
+                        rating: anime.score || 0,
+                        popularity: 0,
+                        language: ['sub'],
+                      }}
+                      showPopup={true}
+                    />
                   </div>
                 ))}
               </div>
