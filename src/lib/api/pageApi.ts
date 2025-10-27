@@ -256,7 +256,27 @@ export const pageApi = {
       next: { revalidate: 0 }, // Don't cache profile data for security
     });
   }),
-
+  // Update profile info - Requires authentication
+  updateProfileInfo: async (token: string, profileData: {
+    username?: string;
+    email?: string;
+    watchlist?: {
+      watching?: number[];
+      on_hold?: number[];
+      plan_to_watch?: number[];
+      completed?: number[];
+    };
+  }) => {
+    const endpoint = '/account/profile/';
+    return fetchFromApi(endpoint, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+      next: { revalidate: 0 }, // Don't cache profile modifications
+    });
+  },
   // Add to watchlist - Requires authentication
   addToWatchlist: async (
     token: string,
