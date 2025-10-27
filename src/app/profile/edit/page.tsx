@@ -2,6 +2,7 @@
 
 import { Navigation } from "@/components/layout/Navigation";
 import { FooterSection } from "@/components/sections/FooterSection";
+import { pageApi } from "@/lib/api/pageApi";
 import {
   ArrowLeft,
   Calendar,
@@ -17,38 +18,27 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-// Mock user data
-const initialUserData = {
-  username: "AnimeExplorer",
-  email: "user@example.com",
-  avatar: "https://i.pravatar.cc/150?img=5",
-  bio: "Passionate anime enthusiast who loves exploring different genres and discovering hidden gems. Always up for a good discussion about character development and plot twists!",
-  location: "Tokyo, Japan",
-  website: "https://myanimeblog.com",
-  joinDate: "2023-01-15",
-  birthday: "1995-03-15",
-  gender: "prefer-not-to-say",
-  socialLinks: {
-    twitter: "animeexplorer",
-    github: "animeexplorer",
-    instagram: "anime_explorer_95",
-  },
+// Default user data structure (based on API response)
+const defaultUserData = {
+  username: "",
+  email: "",
+  avatar: "/placeholder-avatar.jpg",
   preferences: {
-    profileVisibility: "public",
-    showEmail: false,
-    showBirthday: false,
-    showLocation: true,
-    allowMessages: true,
-    showActivity: true,
-    showFavorites: true,
-    showStats: true,
+    preferred_title_lang: "en",
+    preferred_video_lang: "sub",
+    skip_seconds: 10,
+    bookmarks_per_page: 25,
+    hide_bookmarks: false,
+    hide_profile_activities: false,
   },
 };
 
 export default function ProfileEditPage() {
-  const [userData, setUserData] = useState(initialUserData);
+  const [userData, setUserData] = useState(defaultUserData);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -59,9 +49,53 @@ export default function ProfileEditPage() {
   });
   const [passwordError, setPasswordError] = useState("");
 
+  // Load profile data on component mount
+  useEffect(() => {
+    const loadProfileData = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem("access_token");
+        
+        if (!token) {
+          setError("Please log in to edit your profile");
+          setIsLoading(false);
+          return;
+        }
+
+        const profileData = await pageApi.getProfilePageData(token);
+        
+        // Map API response to form state
+        setUserData((prev) => ({
+          ...prev,
+          username: profileData.username || "",
+          email: profileData.email || "",
+          avatar: profileData.avatar || "/placeholder-avatar.jpg",
+          preferences: {
+            ...prev.preferences,
+            preferred_title_lang: profileData.preferred_title_lang || "en",
+            preferred_video_lang: profileData.preferred_video_lang || "sub",
+            skip_seconds: profileData.skip_seconds || 10,
+            bookmarks_per_page: profileData.bookmarks_per_page || 25,
+            hide_bookmarks: profileData.hide_bookmarks || false,
+            hide_profile_activities: profileData.hide_profile_activities || false,
+          },
+        }));
+
+        console.log("Profile data loaded:", profileData);
+      } catch (err) {
+        console.error("Error loading profile:", err);
+        setError("Failed to load profile data. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProfileData();
+  }, []);
+
   const handleInputChange = (
     field: string,
-    value: string | boolean,
+    value: string | boolean | number,
     category?: string
   ) => {
     if (category) {
@@ -70,7 +104,7 @@ export default function ProfileEditPage() {
         [category]: {
           ...(prev[category as keyof typeof prev] as Record<
             string,
-            string | boolean
+            string | boolean | number
           >),
           [field]: value,
         },
@@ -123,6 +157,23 @@ export default function ProfileEditPage() {
 
       <main className="pt-16">
         <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 mb-6 flex items-center space-x-3">
+              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+              <span className="text-red-400">{error}</span>
+            </div>
+          )}
+
+          {!isLoading && (
+            <>
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
             <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
@@ -323,152 +374,133 @@ export default function ProfileEditPage() {
                     />
                   </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Birthday
-                  </label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="date"
-                      value={userData.birthday}
-                      onChange={(e) =>
-                        handleInputChange("birthday", e.target.value)
-                      }
-                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Location
-                  </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={userData.location}
-                      onChange={(e) =>
-                        handleInputChange("location", e.target.value)
-                      }
-                      placeholder="City, Country"
-                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Website
-                </label>
-                <div className="relative w-full">
-                  <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <input
-                    type="url"
-                    value={userData.website}
-                    onChange={(e) =>
-                      handleInputChange("website", e.target.value)
-                    }
-                    placeholder="https://your-website.com"
-                    className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Bio
-                </label>
-                <textarea
-                  value={userData.bio}
-                  onChange={(e) => handleInputChange("bio", e.target.value)}
-                  rows={4}
-                  placeholder="Tell us about yourself and your anime interests..."
-                  className="w-full bg-purple border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500 resize-none"
-                />
-                <p className="text-gray-400 text-sm mt-2">
-                  {userData.bio.length}/500 characters
-                </p>
               </div>
             </div>
 
-            {/* Social Links */}
+            {/* Preferences */}
             <div className="bg-purple rounded-lg p-6 border border-gray-700">
               <h2 className="text-xl font-bold text-white mb-6">
-                Social Links
+                Preferences
               </h2>
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Twitter
+                    Preferred Title Language
                   </label>
-                  <div className="relative">
-                    <Twitter className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={userData.socialLinks.twitter}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "twitter",
-                          e.target.value,
-                          "socialLinks"
-                        )
-                      }
-                      placeholder="username"
-                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                    />
-                  </div>
+                  <select
+                    value={userData.preferences.preferred_title_lang}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "preferred_title_lang",
+                        e.target.value,
+                        "preferences"
+                      )
+                    }
+                    className="w-full bg-purple border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
+                    <option value="en">English</option>
+                    <option value="jp">Japanese (Romaji)</option>
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    GitHub
+                    Preferred Video Language
                   </label>
-                  <div className="relative">
-                    <Github className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={userData.socialLinks.github}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "github",
-                          e.target.value,
-                          "socialLinks"
-                        )
-                      }
-                      placeholder="username"
-                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                    />
-                  </div>
+                  <select
+                    value={userData.preferences.preferred_video_lang}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "preferred_video_lang",
+                        e.target.value,
+                        "preferences"
+                      )
+                    }
+                    className="w-full bg-purple border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
+                    <option value="sub">Subtitled</option>
+                    <option value="dub">Dubbed</option>
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Instagram
+                    Skip Intro/Outro (seconds)
                   </label>
-                  <div className="relative">
-                    <Instagram className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={userData.socialLinks.instagram}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "instagram",
-                          e.target.value,
-                          "socialLinks"
-                        )
-                      }
-                      placeholder="username"
-                      className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
-                    />
-                  </div>
+                  <input
+                    type="number"
+                    min="0"
+                    max="120"
+                    value={userData.preferences.skip_seconds}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "skip_seconds",
+                        parseInt(e.target.value),
+                        "preferences"
+                      )
+                    }
+                    className="w-full bg-purple border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Bookmarks Per Page
+                  </label>
+                  <select
+                    value={userData.preferences.bookmarks_per_page}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "bookmarks_per_page",
+                        parseInt(e.target.value),
+                        "preferences"
+                      )
+                    }
+                    className="w-full bg-purple border border-gray-600 rounded-lg px-3 py-2 text-white/90 focus:outline-none focus:border-purple-500">
+                    <option value="10">10 per page</option>
+                    <option value="25">25 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                  </select>
                 </div>
               </div>
+
+              <div className="mt-6 space-y-3">
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={userData.preferences.hide_bookmarks}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "hide_bookmarks",
+                        e.target.checked,
+                        "preferences"
+                      )
+                    }
+                    className="w-4 h-4 rounded border-gray-600 bg-purple"
+                  />
+                  <span className="text-gray-300">Hide Bookmarks</span>
+                </label>
+
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={userData.preferences.hide_profile_activities}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "hide_profile_activities",
+                        e.target.checked,
+                        "preferences"
+                      )
+                    }
+                    className="w-4 h-4 rounded border-gray-600 bg-purple"
+                  />
+                  <span className="text-gray-300">Hide Profile Activities</span>
+                </label>
+              </div>
             </div>
+
           </div>
+            </>
+          )}
         </div>
       </main>
       <FooterSection />
