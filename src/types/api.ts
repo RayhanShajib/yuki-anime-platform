@@ -17,8 +17,8 @@ export interface AnimeBase {
   title: string;
   altTitles?: string[];
   synopsis?: string;
-  type: 'TV' | 'Movie' | 'OVA' | 'ONA' | 'Special';
-  status: 'Ongoing' | 'Completed' | 'Upcoming';
+  type: "TV" | "Movie" | "OVA" | "ONA" | "Special";
+  status: "Ongoing" | "Completed" | "Upcoming";
   releaseYear: number;
   genres: string[];
   rating?: number;
@@ -199,4 +199,71 @@ export interface TransformedAnimeData {
     raw: number;
   };
   genres: string[];
+}
+
+// Profile and User Data Types
+export interface ApiProfileData {
+  id: number;
+  username: string;
+  email: string;
+  avatar: string | null;
+  role?: string;
+  joinDate?: string;
+  totalWatched?: number;
+  totalHours?: number;
+  favoriteGenres?: string[];
+  exp?: number;
+  nextLevelExp?: number;
+  preferred_title_lang?: string;
+  preferred_video_lang?: string;
+  skip_seconds?: number;
+  bookmarks_per_page?: number;
+  hide_bookmarks?: boolean;
+  hide_profile_activities?: boolean;
+  notifications?: ApiNotification[];
+  user_notifications?: ApiNotification[];
+  alerts?: ApiNotification[];
+  watchlist?: Record<string, unknown>;
+  stats?: {
+    episodesWatched: number;
+    minutesWatched: number;
+    averageRating: number;
+    droppedSeries: number;
+    onHoldSeries: number;
+    planToWatch: number;
+  };
+  [key: string]: unknown; // Allow additional API fields
+}
+
+export interface ApiNotification {
+  id: number;
+  source?: string;
+  content?: string;
+  created_at?: string;
+  is_read?: boolean;
+  text?: string;
+  message?: string;
+  date?: string;
+  time?: string;
+  type?: "Anime" | "Community";
+}
+
+export interface ApiWatchlistResponse {
+  results: {
+    watching: ApiWatchlistItem[];
+    plan_to_watch: ApiWatchlistItem[];
+    on_hold: ApiWatchlistItem[];
+    completed: ApiWatchlistItem[];
+    dropped?: ApiWatchlistItem[];
+  };
+}
+
+export interface ApiWatchlistItem {
+  id: number;
+  anime_id: number;
+  title: string;
+  image: string;
+  sub_total: number;
+  dub_total: number;
+  status: "watching" | "completed" | "drop" | "on_hold" | "plan_to_watch";
 }

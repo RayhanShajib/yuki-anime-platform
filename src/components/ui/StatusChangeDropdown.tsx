@@ -52,7 +52,6 @@ const statusOptions: StatusOption[] = [
 export function StatusChangeDropdown({
   animeId,
   watchStatusId,
-  animeTitle,
   currentStatus,
   onStatusChanged,
 }: StatusChangeDropdownProps) {

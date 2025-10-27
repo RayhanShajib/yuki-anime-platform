@@ -5,15 +5,9 @@ import { FooterSection } from "@/components/sections/FooterSection";
 import { pageApi } from "@/lib/api/pageApi";
 import {
   ArrowLeft,
-  Calendar,
-  Github,
-  Globe,
-  Instagram,
   Lock,
   Mail,
-  MapPin,
   Save,
-  Twitter,
   User,
 } from "lucide-react";
 import Image from "next/image";
