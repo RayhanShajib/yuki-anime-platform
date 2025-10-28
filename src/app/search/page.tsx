@@ -5,6 +5,29 @@ import { pageApi } from "@/lib/api/pageApi";
 import { Tags } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+// Define interfaces for the search result data
+interface SearchResultAnime {
+  id: number;
+  title: string;
+  image: string;
+  synopsis?: string;
+  genres?: string[];
+  number_of_episodes?: number;
+  score?: number;
+}
+
+interface SearchFilters {
+  genres?: string[];
+  anime_type?: string[];
+  rating?: number;
+  rated?: string;
+  season?: string;
+  released_year?: number;
+  studio?: string;
+  producers?: string[];
+  srctype?: string;
+}
+
 const typeFilters = [
   { key: "all", label: "All Types" },
   { key: "TV", label: "TV" },
@@ -29,17 +52,7 @@ const genreOptions = [
   "Supernatural",
 ];
 
-const ratingOptions = [
-  "9",
-  "8",
-  "7",
-  "6",
-  "5",
-  "4",
-  "3",
-  "2",
-  "1",
-];
+const ratingOptions = ["9", "8", "7", "6", "5", "4", "3", "2", "1"];
 
 const yearOptions = [
   "2025",
@@ -223,7 +236,7 @@ function SearchPageContent() {
   const searchParams = useSearchParams();
 
   // API State
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchResultAnime[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -286,7 +299,7 @@ function SearchPageContent() {
   // Handle Filter button click
   const handleApplyFilters = async () => {
     const params = new URLSearchParams();
-    
+
     if (pendingSearchTerm) params.set("search", pendingSearchTerm);
     if (pendingType.length > 0 && !pendingType.includes("all"))
       params.set("anime_type", pendingType.join(","));
@@ -303,8 +316,7 @@ function SearchPageContent() {
     if (pendingStudio) params.set("studio", pendingStudio);
     if (pendingProducers.trim())
       params.set("producers", pendingProducers.trim().split(" ").join(","));
-    if (pendingSrcType.length > 0)
-      params.set("srctype", pendingSrcType[0]);
+    if (pendingSrcType.length > 0) params.set("srctype", pendingSrcType[0]);
 
     setCurrentPage(1);
     router.replace(`/search?${params.toString()}`);
@@ -320,15 +332,20 @@ function SearchPageContent() {
         const params = Object.fromEntries(searchParams.entries());
         const offset = (currentPage - 1) * itemsPerPage;
 
-        const filters: any = {};
+        const filters: SearchFilters = {};
         if (params.genres) filters.genres = params.genres.split(",");
-        if (params.anime_type) filters.anime_type = params.anime_type.split(",");
+        if (params.anime_type)
+          filters.anime_type = params.anime_type.split(",");
         if (params.rating) filters.rating = parseFloat(params.rating);
         if (params.rated) filters.rated = params.rated;
         if (params.season) filters.season = params.season;
-        if (params.released_year) filters.released_year = parseInt(params.released_year);
+        if (params.released_year)
+          filters.released_year = parseInt(params.released_year);
         if (params.studio) filters.studio = params.studio;
-        if (params.producers) filters.producers = params.producers.split(",").filter((p: string) => p.trim());
+        if (params.producers)
+          filters.producers = params.producers
+            .split(",")
+            .filter((p: string) => p.trim());
         if (params.srctype) filters.srctype = params.srctype;
 
         const data = await pageApi.getSearchPageData(
@@ -342,7 +359,9 @@ function SearchPageContent() {
         setTotalCount(data.count || 0);
       } catch (err) {
         console.error("Error fetching search results:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch results");
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch results"
+        );
         setResults([]);
         setTotalCount(0);
       } finally {
@@ -586,22 +605,22 @@ function SearchPageContent() {
             <>
               {/* Always show grid view */}
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 gap-5">
-                {results.map((anime: any) => (
+                {results.map((anime: SearchResultAnime) => (
                   <div key={anime.id} className="relative">
-                    <AnimeCard 
+                    <AnimeCard
                       anime={{
                         id: anime.id.toString(),
                         title: anime.title,
                         poster: anime.image,
-                        synopsis: anime.synopsis || '',
+                        synopsis: anime.synopsis || "",
                         genres: anime.genres || [],
-                        studio: '',
+                        studio: "",
                         releaseYear: 2024,
-                        status: 'ongoing',
-                        type: anime.number_of_episodes ? 'series' : 'movie',
+                        status: "ongoing",
+                        type: anime.number_of_episodes ? "series" : "movie",
                         rating: anime.score || 0,
                         popularity: 0,
-                        language: ['sub'],
+                        language: ["sub"],
                       }}
                       showPopup={true}
                     />

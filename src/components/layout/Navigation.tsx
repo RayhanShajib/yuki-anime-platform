@@ -1,6 +1,7 @@
 "use client";
 
 import { pageApi } from "@/lib/api/pageApi";
+import { ApiNotification } from "@/types/api";
 import {
   Bell,
   BookOpen,
@@ -24,6 +25,7 @@ interface ProfileData {
   username: string;
   avatar: string;
   role?: string;
+  notifications?: ApiNotification[];
 }
 
 export function Navigation({ isLandingPage = false }: NavigationProps) {
@@ -166,27 +168,40 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
   // Format notifications from profile data
   useEffect(() => {
-    if (profileData && (profileData as any)?.notifications) {
-      const notificationsArray = (profileData as any).notifications;
-      
+    if (profileData?.notifications) {
+      const notificationsArray = profileData.notifications;
+
       if (Array.isArray(notificationsArray) && notificationsArray.length > 0) {
         const formattedNotifications = notificationsArray.map(
-          (notif: any, index: number) => {
+          (notif: ApiNotification, index: number) => {
             // Map source/type to display categories
             let notificationType: "Anime" | "Community" = "Anime";
             const source = notif.source || notif.type || "Anime";
-            
+
             // Map API source values to display types
-            if (source.toLowerCase() === "admin" || source.toLowerCase() === "community" || source.toLowerCase() === "system") {
+            if (
+              source.toLowerCase() === "admin" ||
+              source.toLowerCase() === "community" ||
+              source.toLowerCase() === "system"
+            ) {
               notificationType = "Community";
-            } else if (source.toLowerCase() === "anime" || source.toLowerCase() === "episode") {
+            } else if (
+              source.toLowerCase() === "anime" ||
+              source.toLowerCase() === "episode"
+            ) {
               notificationType = "Anime";
             }
-            
+
             return {
               id: notif.id || index + 1,
-              text: notif.content || notif.message || notif.text || "New notification",
-              date: new Date(notif.created_at || Date.now()).toLocaleDateString(),
+              text:
+                notif.content ||
+                notif.message ||
+                notif.text ||
+                "New notification",
+              date: new Date(
+                notif.created_at || Date.now()
+              ).toLocaleDateString(),
               time: new Date(notif.created_at || Date.now()).toLocaleTimeString(
                 [],
                 {
