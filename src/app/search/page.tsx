@@ -325,6 +325,15 @@ function SearchPageContent() {
   // Fetch data when URL changes
   useEffect(() => {
     const fetchData = async () => {
+      // If no search parameters, don't make API call
+      if (searchParams.toString() === "") {
+        setIsLoading(false);
+        setError(null);
+        setResults([]);
+        setTotalCount(0);
+        return;
+      }
+
       try {
         setIsLoading(true);
         setError(null);
@@ -588,7 +597,17 @@ function SearchPageContent() {
             </div>
           </div>
           {/* Content Grid/List */}
-          {isLoading ? (
+          {searchParams.toString() === "" ? (
+            <div className="text-center py-12">
+              <Tags className="h-16 w-16 text-gray-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-400 mb-2">
+                No search available
+              </h3>
+              <p className="text-gray-500">
+                Please search your desired anime to get started.
+              </p>
+            </div>
+          ) : isLoading ? (
             <div className="text-center py-12">
               <div className="inline-block">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple"></div>
