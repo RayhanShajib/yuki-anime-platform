@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Calendar, Clock, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BookOpen, Calendar, Clock } from "lucide-react";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation as SwiperNavigation } from "swiper/modules";
+import { useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
+import { Navigation as SwiperNavigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 interface ApiAiringAnime {
   id: number | null;
@@ -36,22 +36,25 @@ interface ScheduleSectionProps {
 // Transform API airing data to schedule format
 const transformAiringData = (airingAnime: ApiAiringAnime[]) => {
   const transformedAnime = airingAnime
-    .filter((anime: ApiAiringAnime): anime is ApiAiringAnime & { id: number } => anime.id != null) // Filter out anime with null/undefined IDs
+    .filter(
+      (anime: ApiAiringAnime): anime is ApiAiringAnime & { id: number } =>
+        anime.id != null
+    ) // Filter out anime with null/undefined IDs
     .map((anime: ApiAiringAnime & { id: number }) => ({
       id: anime.id.toString(),
-      title: anime.title || 'Unknown Title',
-      episode: `Episode ${anime.sub_total || '?'}`,
-      episodeTitle: anime.title_japanese || '',
+      title: anime.title || "Unknown Title",
+      episode: `Episode ${anime.sub_total || "?"}`,
+      episodeTitle: anime.title_japanese || "",
       time: "TBA JST", // API doesn't seem to have time data
-      poster: anime.image || '/placeholder-anime.jpg',
+      poster: anime.image || "/placeholder-anime.jpg",
       isNew: anime.airing || false,
     }));
 
   // Generate dynamic day keys
-  const daysKeys = generateDaysOfWeek().map(day => day.key);
+  const daysKeys = generateDaysOfWeek().map((day) => day.key);
   const schedule: Record<string, typeof transformedAnime> = {};
-  
-  daysKeys.forEach(day => {
+
+  daysKeys.forEach((day) => {
     schedule[day] = [];
   });
 
@@ -71,23 +74,31 @@ const transformAiringData = (airingAnime: ApiAiringAnime[]) => {
 const generateDaysOfWeek = () => {
   const today = new Date();
   const days = [];
-  
+
   for (let i = 0; i < 7; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
-    
-    let label = '';
-    if (i === 0) label = 'Today';
-    else if (i === 1) label = 'Tomorrow';
-    else label = date.toLocaleDateString('en-US', { weekday: 'long' });
-    
+
+    let label = "";
+    if (i === 0) label = "Today";
+    else if (i === 1) label = "Tomorrow";
+    else label = date.toLocaleDateString("en-US", { weekday: "long" });
+
     days.push({
-      key: i === 0 ? 'today' : i === 1 ? 'tomorrow' : date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+      key:
+        i === 0
+          ? "today"
+          : i === 1
+          ? "tomorrow"
+          : date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase(),
       label,
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      date: date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
     });
   }
-  
+
   return days;
 };
 
@@ -95,10 +106,11 @@ const daysOfWeek = generateDaysOfWeek();
 
 export default function ScheduleSection({ airingAnime }: ScheduleSectionProps) {
   const [activeDay, setActiveDay] = useState("today");
-  
+
   // Transform API data to match the expected structure
   const transformedData = transformAiringData(airingAnime);
-  const currentSchedule = transformedData[activeDay as keyof typeof transformedData] || [];
+  const currentSchedule =
+    transformedData[activeDay as keyof typeof transformedData] || [];
 
   return (
     <div className="bg-gray-900/30 bg-schedule-section">
@@ -166,12 +178,12 @@ export default function ScheduleSection({ airingAnime }: ScheduleSectionProps) {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
                     className="w-6 h-6 text-white">
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M15.75 19.5L8.25 12 15.75 4.5"
                     />
                   </svg>
@@ -183,12 +195,12 @@ export default function ScheduleSection({ airingAnime }: ScheduleSectionProps) {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
                     className="w-6 h-6 text-white">
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M8.25 4.5l7.5 7.5-7.5 7.5"
                     />
                   </svg>
@@ -215,7 +227,7 @@ export default function ScheduleSection({ airingAnime }: ScheduleSectionProps) {
                         className="object-cover rounded-lg"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = '/placeholder-anime.jpg';
+                          target.src = "/placeholder-anime.jpg";
                         }}
                       />
                     </div>
