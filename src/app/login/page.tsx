@@ -27,21 +27,28 @@ export default function LoginPage() {
 
     try {
       // Call the login API
-      const response = await pageApi.getAuthToken(formData.username, formData.password);
-      
+      const response = await pageApi.getAuthToken(
+        formData.username,
+        formData.password
+      );
+
       // Check if response has access and refresh tokens (successful login)
       if (response.access && response.refresh) {
         // Store tokens in localStorage
         localStorage.setItem("access_token", response.access);
         localStorage.setItem("refresh_token", response.refresh);
-        
+
         // If remember me is checked, you might want to store tokens in cookies as well
         if (formData.rememberMe) {
           // Set cookies with longer expiration
-          document.cookie = `access_token=${response.access}; max-age=${30 * 24 * 60 * 60}; path=/`; // 30 days
-          document.cookie = `refresh_token=${response.refresh}; max-age=${30 * 24 * 60 * 60}; path=/`; // 30 days
+          document.cookie = `access_token=${response.access}; max-age=${
+            30 * 24 * 60 * 60
+          }; path=/`; // 30 days
+          document.cookie = `refresh_token=${response.refresh}; max-age=${
+            30 * 24 * 60 * 60
+          }; path=/`; // 30 days
         }
-        
+
         // Redirect to home page or intended page
         router.push("/");
       } else {
@@ -50,11 +57,14 @@ export default function LoginPage() {
       }
     } catch (error: unknown) {
       console.error("Error during login:", error);
-      
+
       // Handle specific error messages from API
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
       if (errorMessage.includes("No active account found")) {
-        setError("Invalid username or password. Please check your credentials.");
+        setError(
+          "Invalid username or password. Please check your credentials."
+        );
       } else if (errorMessage.includes("detail")) {
         // Try to extract the detail message from API response
         setError("Login failed. Please check your credentials.");
@@ -91,7 +101,15 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center">
           <Link href="/" className="inline-flex items-center space-x-2">
-            <div><Image width={200} height={100} src="/logo.png" alt="Logo" /></div>
+            <div className="relative h-[80px] w-[200px]">
+              <Image
+                className="text-transparent absolute -top-[26px] left-0 overflow-hidden"
+                width={200}
+                height={100}
+                src="/logo.png"
+                alt="Logo"
+              />
+            </div>
           </Link>
           <h2 className="mt-6 text-3xl font-bold text-white/90">
             Welcome back
@@ -214,9 +232,9 @@ export default function LoginPage() {
                 type="submit"
                 disabled={isLoading}
                 className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
-                  isLoading 
-                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                    : 'btn-purple hover:bg-blue-700'
+                  isLoading
+                    ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                    : "btn-purple hover:bg-blue-700"
                 }`}>
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
@@ -224,7 +242,7 @@ export default function LoginPage() {
                     <span>Signing in...</span>
                   </div>
                 ) : (
-                  'Sign in'
+                  "Sign in"
                 )}
               </button>
             </form>
@@ -293,9 +311,7 @@ export default function LoginPage() {
           <div className="text-center">
             <p className="text-sm text-gray-400">
               Don&#39;t have an account?{" "}
-              <Link
-                href="/register"
-                className="text-pink font-medium">
+              <Link href="/register" className="text-pink font-medium">
                 Sign up for free
               </Link>
             </p>

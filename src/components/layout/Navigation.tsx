@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { NotificationDropdown } from "../ui/NotificationDropdown";
 interface NavigationProps {
@@ -29,6 +30,7 @@ interface ProfileData {
 }
 
 export function Navigation({ isLandingPage = false }: NavigationProps) {
+  const router = useRouter();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,6 +59,15 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
         setProfileData(data);
       } catch (error: unknown) {
         console.error("Error fetching profile:", error);
+
+        // Check if the error is an unauthorized error
+        if (error instanceof Error && error.message.includes("Unauthorized")) {
+          console.log("Token is invalid or expired. Redirecting to login...");
+          // Remove the access token from localStorage
+          localStorage.removeItem("access_token");
+          // Redirect to login page
+          router.push("/login");
+        }
       }
     };
 
@@ -104,7 +115,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       loadDataFromLocalStorage("en");
       console.log("Default language set to: en");
     }
-  }, []);
+  }, [router]);
 
   // Function to load data from localStorage
   const loadDataFromLocalStorage = (lang: "en" | "jp") => {
