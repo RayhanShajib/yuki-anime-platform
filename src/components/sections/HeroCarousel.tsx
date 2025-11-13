@@ -103,7 +103,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
               </Link>
 
               <WatchlistDropdown 
-                animeId={10} // Anime id missing on api data
+                animeId={currentAnime.id || 0}
                 episodeId={currentAnime.id || 0}
               />
             </div>
