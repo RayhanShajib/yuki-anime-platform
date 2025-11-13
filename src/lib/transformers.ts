@@ -74,9 +74,9 @@ export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
         : new Date().getFullYear(),
       status: "ongoing" as const,
       type: item.type === "ANIME" ? ("series" as const) : ("series" as const),
-      totalEpisodes: 0,
-      rating: 8.5, // Default rating for display
-      popularity: 95, // Default popularity for display
+      totalEpisodes: item.number_of_episodes || 0,
+      rating: item.rating || 0,
+      popularity: item.popularity || 0,
       language: ["sub" as const],
       subEpisodes: item.sub_total || 0,
       dubEpisodes: item.dub_total || 0,
@@ -114,8 +114,8 @@ export const transformAnimeListData = (animeList: ApiAnimeItem[]) => {
       type:
         item.anime_type === "Movie" ? ("movie" as const) : ("series" as const),
       totalEpisodes: item.number_of_episodes || 0,
-      rating: 0,
-      popularity: 0,
+      rating: item.rating || 0,
+      popularity: item.popularity || 0,
       language: ["sub" as const],
       subEpisodes: item.sub_total || 0,
       dubEpisodes: item.dub_total || 0,
@@ -174,6 +174,7 @@ import type {
   TransformedWatchPageData,
   TransformedAnimeData as WatchTransformedAnimeData,
 } from "@/types/api";
+import { it } from "node:test";
 
 // Transform watch page API response to component interface
 export const transformWatchPageData = (
