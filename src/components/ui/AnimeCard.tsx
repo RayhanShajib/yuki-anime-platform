@@ -3,6 +3,7 @@
 import { cn, formatRating, generateSlug, truncateText } from "@/lib/utils";
 import { Anime } from "@/types/anime";
 import { Info, Play, Star, X } from "lucide-react";
+import { WatchlistDropdown } from "@/components/ui/WatchlistDropdown";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -484,23 +485,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                     <Play className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Link>
 
-                  <button
-                    className="bg-gray-700 hover:bg-gray-600 text-white/90 p-2 sm:p-3 rounded-full transition-colors"
-                    title="Add to Bookmarks"
-                    onClick={(e) => e.stopPropagation()}>
-                    <svg
-                      className="h-4 w-4 sm:h-5 sm:w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                      />
-                    </svg>
-                  </button>
+                  <WatchlistDropdown animeId={anime.id} episodeId={anime.episodeId ?? undefined} iconOnly />
 
                   <button
                     className="bg-gray-700 hover:bg-gray-600 text-white/90 p-2 sm:p-3 rounded-full transition-colors"

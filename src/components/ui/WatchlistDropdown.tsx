@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 interface WatchlistDropdownProps {
   animeId: string | number;
   episodeId?: string | number | null;
+  iconOnly?: boolean;
 }
 
 type WatchStatus =
@@ -55,6 +56,7 @@ const statusOptions: StatusOption[] = [
 export function WatchlistDropdown({
   animeId,
   episodeId,
+  iconOnly = false,
 }: WatchlistDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState<WatchStatus | null>(null);
@@ -235,26 +237,38 @@ export function WatchlistDropdown({
       )}
 
       {/* Add to List Button */}
-      <button
-        ref={buttonRef}
-        onClick={handleAddToList}
-        disabled={loadingStatus !== null}
-        className="flex items-center space-x-1 sm:space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-pink disabled:opacity-50 disabled:cursor-not-allowed">
-        <svg
-          className="h-3 w-3 sm:h-4 sm:w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 4v16m8-8H4"
-          />
-        </svg>
-        <span className="hidden sm:inline">Add to List</span>
-        <span className="sm:hidden">Add List</span>
-      </button>
+      {iconOnly ? (
+        <button
+          ref={buttonRef}
+          onClick={handleAddToList}
+          disabled={loadingStatus !== null}
+          title="Add to Bookmarks"
+          className="bg-gray-700 hover:bg-gray-600 text-white/90 p-2 sm:p-3 rounded-full transition-colors"
+        >
+          <Bookmark className="h-4 w-4 sm:h-5 sm:w-5" />
+        </button>
+      ) : (
+        <button
+          ref={buttonRef}
+          onClick={handleAddToList}
+          disabled={loadingStatus !== null}
+          className="flex items-center space-x-1 sm:space-x-2 bg-gray-700/80 backdrop-blur-sm text-white/90 px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-600/80 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-pink disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg
+            className="h-3 w-3 sm:h-4 sm:w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          <span className="hidden sm:inline">Add to List</span>
+          <span className="sm:hidden">Add List</span>
+        </button>
+      )}
 
       {/* Dropdown rendered as portal */}
       {dropdownPortal}

@@ -80,6 +80,8 @@ export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
       language: ["sub" as const],
       subEpisodes: item.sub_total || 0,
       dubEpisodes: item.dub_total || 0,
+      // Preserve ep_id when provided by API (some endpoints include ep_id)
+      episodeId: (item as any).ep_id ?? undefined,
     }));
 };
 
@@ -119,6 +121,8 @@ export const transformAnimeListData = (animeList: ApiAnimeItem[]) => {
       language: ["sub" as const],
       subEpisodes: item.sub_total || 0,
       dubEpisodes: item.dub_total || 0,
+      // Preserve ep_id when available on list items
+      episodeId: (item as any).ep_id ?? undefined,
     }));
 };
 

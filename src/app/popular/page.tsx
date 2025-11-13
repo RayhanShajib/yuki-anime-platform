@@ -66,6 +66,8 @@ const transformApiDataToAnime = (apiAnime: ApiAnimePopular): Anime => {
     totalEpisodes: apiAnime.number_of_episodes || undefined,
     subEpisodes: apiAnime.sub_total,
     dubEpisodes: apiAnime.dub_total,
+    // Preserve episode id from API when available
+    episodeId: apiAnime.ep_id,
     rating: 8.5, // Not provided by API, using default high rating for popular anime
     popularity: Math.floor(Math.random() * 50000) + 10000, // Generate random popularity for sorting
     language: getLanguageArray(apiAnime.sub_total, apiAnime.dub_total),

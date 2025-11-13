@@ -68,6 +68,8 @@ const transformApiDataToAnime = (apiAnime: ApiAnimeLatest): Anime => {
     totalEpisodes: apiAnime.number_of_episodes || undefined,
     subEpisodes: apiAnime.sub_total,
     dubEpisodes: apiAnime.dub_total,
+    // Preserve episode id from API when available
+    episodeId: apiAnime.ep_id,
     rating: 8.0, // Not provided by API, using default
     popularity: 1000, // Not provided by API, using default
     language: getLanguageArray(apiAnime.sub_total, apiAnime.dub_total),
