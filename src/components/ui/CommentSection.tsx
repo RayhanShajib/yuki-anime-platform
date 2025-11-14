@@ -54,43 +54,25 @@ function timeAgo(date: Date) {
 }
 
 // Generate random user data for demo purposes
+// Return a deterministic fallback user for locally created comments when
+// there's no authenticated user available. This avoids showing random demo
+// names/avatars in production.
 function generateRandomUser() {
-  const names = [
-    "Alex Johnson",
-    "Sarah Chen",
-    "Mike Wilson",
-    "Emma Davis",
-    "Chris Taylor",
-    "Lisa Wang",
-    "David Brown",
-    "Rachel Kim",
-    "Tom Anderson",
-    "Maria Garcia",
-    "James Lee",
-    "Sophie Miller",
-    "Ryan Clark",
-    "Amy Zhang",
-    "John Smith",
-  ];
-
-  const avatars = [
-    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1494790108755-2616b612b25c?w=50&h=50&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=50&h=50&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=50&h=50&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=50&h=50&fit=crop&crop=face",
-  ];
-
   return {
-    name: names[Math.floor(Math.random() * names.length)],
-    avatar: avatars[Math.floor(Math.random() * avatars.length)],
+    name: "Guest",
+    avatar:
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
   };
 }
 
-export const CommentSection: React.FC = () => {
+type CommentSectionProps = {
+  // Optional external comments (API response) to initialize the section
+  comments?: Array<any>;
+};
+
+export const CommentSection: React.FC<CommentSectionProps> = ({
+  comments: externalComments,
+}) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [commentInput, setCommentInput] = useState("");
@@ -102,6 +84,75 @@ export const CommentSection: React.FC = () => {
   const [replyPreviews, setReplyPreviews] = useState<Record<number, boolean>>(
     {}
   );
+
+  // If parent passes external comments (API response), map and initialize.
+  // Accept both: an array of comments or a paginated object { results: [] }.
+  React.useEffect(() => {
+    if (!externalComments) return;
+
+    const list: any[] = Array.isArray(externalComments)
+      ? externalComments
+      : Array.isArray((externalComments as any).results)
+      ? (externalComments as any).results
+      : [];
+
+    if (!list.length) {
+      setComments([]);
+      return;
+    }
+
+    const mapped = list.map((c: any) => {
+      // 'user' can be a string (username) or an object with details.
+      const userName =
+        typeof c.user === "string"
+          ? c.user
+          : c.user?.username || c.user?.name || "User";
+
+      const userAvatar =
+        typeof c.user === "object"
+          ? c.user?.avatar || c.user?.profile_picture
+          : undefined;
+
+      return {
+        id: c.id,
+        text: c.content || c.text || c.body || "",
+        timestamp: new Date(c.created_at || c.timestamp || Date.now()),
+        replies: Array.isArray(c.replies)
+          ? c.replies.map((r: any) => ({
+              id: r.id,
+              text: r.content || r.text || r.body || "",
+              timestamp: new Date(r.created_at || r.timestamp || Date.now()),
+              replies: [],
+              likes: r.likes_count || 0,
+              dislikes: r.dislikes_count || 0,
+              liked: !!r.liked,
+              disliked: !!r.disliked,
+              user: {
+                name:
+                  typeof r.user === "string"
+                    ? r.user
+                    : r.user?.username || r.user?.name || "User",
+                avatar:
+                  r.user?.avatar || r.user?.profile_picture ||
+                  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+              },
+            }))
+          : [],
+        likes: c.likes_count || 0,
+        dislikes: c.dislikes_count || 0,
+        liked: !!c.liked,
+        disliked: !!c.disliked,
+        user: {
+          name: userName,
+          avatar:
+            userAvatar ||
+            "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+        },
+      } as CommentType;
+    });
+
+    setComments(mapped);
+  }, [externalComments]);
 
   // Format text with bold, italic, quotes, and spoilers
   function formatText(text: string): string {

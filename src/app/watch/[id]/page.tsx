@@ -102,6 +102,41 @@ export default function WatchPage() {
     fetchWatchData();
   }, [episodeId]);
 
+  // --- Comments State & Fetch ---
+  const [commentsData, setCommentsData] = useState<any[] | null>(null);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentsError, setCommentsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!episodeId) return;
+
+    let mounted = true;
+
+    const fetchComments = async () => {
+      try {
+        setCommentsLoading(true);
+        setCommentsError(null);
+        const res = await pageApi.getCommentsForEpisode(episodeId);
+        if (!mounted) return;
+        // Expecting array of comments
+        setCommentsData(Array.isArray(res) ? res : []);
+      } catch (err) {
+        console.error("Failed to load comments:", err);
+        if (!mounted) return;
+        setCommentsError(err instanceof Error ? err.message : "Failed to load comments");
+        setCommentsData([]);
+      } finally {
+        if (mounted) setCommentsLoading(false);
+      }
+    };
+
+    fetchComments();
+
+    return () => {
+      mounted = false;
+    };
+  }, [episodeId]);
+
   // --- Handle Audio Type Change ---
   useEffect(() => {
     if (!watchData) return;
@@ -1252,7 +1287,15 @@ export default function WatchPage() {
 
           {/* --- Comments Section --- */}
           <section className="comments-section grid grid-cols-1 md:grid-cols-[3fr_1fr] justify-between max-w-7xl media-watch m-auto gap-[25px] px-4 sm:px-6 lg:px-8 py-8">
-            <CommentSection />
+            <div className="md:col-span-1 w-full">
+              {commentsLoading && (
+                <div className="text-gray-400 mb-4">Loading comments...</div>
+              )}
+              {commentsError && (
+                <div className="text-red-400 mb-4">{commentsError}</div>
+              )}
+              <CommentSection comments={commentsData || []} />
+            </div>
           </section>
         </main>
       )}

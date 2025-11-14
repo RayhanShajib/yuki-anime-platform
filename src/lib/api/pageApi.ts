@@ -571,4 +571,58 @@ export const pageApi = {
       next: { revalidate: 0 },
     });
   },
+
+  // Create comment
+  createComment: async (
+    token: string,
+    episode: string,
+    content: string
+  ) => {
+    const endpoint = `/comments/`;
+    return fetchFromApi(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ episode, content }),
+      next: { revalidate: 0 }, // Don't cache comment creation
+    });
+  },
+
+  // Fetch comments for an episode
+  getCommentsForEpisode: cache(async (episodeId: string) => {
+    const endpoint = `/episode/${episodeId}/comments/`;
+    return fetchFromApi(endpoint, {
+      next: { revalidate: 60 }, // Cache comments for 1 minute
+    });
+  }),
+
+  // Update comment
+  updateComment: async (
+    token: string,
+    commentId: number,
+    content: string
+  ) => {
+    const endpoint = `/comments/${commentId}/`;
+    return fetchFromApi(endpoint, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ content }),
+      next: { revalidate: 0 }, // Don't cache comment updates
+    });
+  },
+
+  // Delete comment
+  deleteComment: async (token: string, commentId: number) => {
+    const endpoint = `/comments/${commentId}/`;
+    return fetchFromApi(endpoint, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 0 }, // Don't cache comment deletions
+    });
+  },
 };
