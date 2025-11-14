@@ -388,4 +388,44 @@ export const pageApi = {
     const endpoint = "/random/";
     return fetchFromApi(endpoint);
   },
+
+  // Update profile settings
+  updateProfileSettings: async (
+    token: string,
+    settingsData: {
+      username?: string;
+      email?: string;
+      role?: string;
+      preferred_title_lang?: string;
+      preferred_video_lang?: string;
+      skip_seconds?: number;
+      bookmarks_per_page?: number;
+      hide_bookmarks?: boolean;
+      hide_profile_activities?: boolean;
+      dark_mode?: boolean;
+      notifications_enabled?: boolean;
+      [key: string]: unknown;
+    }
+  ) => {
+    const endpoint = "/account/profile/";
+
+    try {
+      // Forward settings payload to server
+      const res = await fetchFromApi(endpoint, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(settingsData),
+        next: { revalidate: 0 }, // Don't cache settings modifications
+      });
+
+      // Return server response (example includes updated profile object)
+      return res;
+    } catch (error) {
+      // Add helpful logging for debugging client/server mismatch
+      console.error("Failed to update profile settings:", error, settingsData);
+      throw error;
+    }
+  }
 };

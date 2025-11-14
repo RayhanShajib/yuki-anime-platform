@@ -113,11 +113,73 @@ export default function ProfileEditPage() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setError(null);
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        setError("Please log in to update your profile");
+        setIsSaving(false);
+        return;
+      }
+
+      // Build settings payload from form state
+      const settingsPayload = {
+        username: userData.username,
+        email: userData.email,
+        preferred_title_lang: userData.preferences.preferred_title_lang,
+        preferred_video_lang: userData.preferences.preferred_video_lang,
+        skip_seconds: userData.preferences.skip_seconds,
+        bookmarks_per_page: userData.preferences.bookmarks_per_page,
+        hide_bookmarks: userData.preferences.hide_bookmarks,
+        hide_profile_activities:
+          userData.preferences.hide_profile_activities,
+      } as Record<string, unknown>;
+
+      const updated = await pageApi.updateProfileSettings(
+        token,
+        settingsPayload
+      );
+
+      // Update local form state from server response where available
+      if (updated) {
+        setUserData((prev) => ({
+          ...prev,
+          username: (updated.username as string) || prev.username,
+          email: (updated.email as string) || prev.email,
+          avatar: (updated.avatar as string) || prev.avatar,
+          preferences: {
+            ...prev.preferences,
+            preferred_title_lang:
+              (updated.preferred_title_lang as string) ||
+              prev.preferences.preferred_title_lang,
+            preferred_video_lang:
+              (updated.preferred_video_lang as string) ||
+              prev.preferences.preferred_video_lang,
+            skip_seconds:
+              (updated.skip_seconds as number) || prev.preferences.skip_seconds,
+            bookmarks_per_page:
+              (updated.bookmarks_per_page as number) ||
+              prev.preferences.bookmarks_per_page,
+            hide_bookmarks:
+              typeof updated.hide_bookmarks === "boolean"
+                ? updated.hide_bookmarks
+                : prev.preferences.hide_bookmarks,
+            hide_profile_activities:
+              typeof updated.hide_profile_activities === "boolean"
+                ? updated.hide_profile_activities
+                : prev.preferences.hide_profile_activities,
+          },
+        }));
+      }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error("Failed to save profile settings:", err);
+      setError("Failed to save profile settings. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
   const handlePasswordInputChange = (field: string, value: string) => {
     setPasswordData((prev) => ({
