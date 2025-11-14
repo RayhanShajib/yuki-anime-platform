@@ -253,6 +253,17 @@ export default function ProfilePage() {
   const [importExportMode, setImportExportMode] = useState<
     "import" | "export" | "autosync"
   >("import");
+  const [exportLoading, setExportLoading] = useState(false);
+  // Import form state
+  const [malUsername, setMalUsername] = useState<string>("");
+  const [alUsername, setAlUsername] = useState<string>("");
+  const [malFile, setMalFile] = useState<File | null>(null);
+  const [alFile, setAlFile] = useState<File | null>(null);
+  const [importModeOption, setImportModeOption] =
+    useState<"merge" | "replace">("merge");
+  const [importLoading, setImportLoading] = useState(false);
+  const [importResult, setImportResult] = useState<string | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
 
   // State for copy tooltip
   const [copyTooltips, setCopyTooltips] = useState<Record<string, boolean>>({});
@@ -651,11 +662,12 @@ export default function ProfilePage() {
                     </div>
                     {importExportMode === "import" && (
                       <div>
-                        {/* ...existing import content... */}
+                        {/* Import form wired to pageApi.importWatchlist */}
                         <div className="bg-[#2b354a] p-4 rounded-md text-sm text-gray-400 mb-6">
                           <p>
                             Import your anime list from MAL (MyAnimeList) or AL
-                            (Anilist):
+                            (Anilist). You can provide a username or upload an
+                            export file for each service.
                           </p>
                           <ul className="list-disc ml-5 mt-2 space-y-1">
                             <li>Ensure your list is set to public.</li>
@@ -669,50 +681,79 @@ export default function ProfilePage() {
                             </li>
                           </ul>
                         </div>
+
                         <div className="mb-4">
                           <label className="block text-sm font-medium mb-1">
                             MAL username
                           </label>
                           <input
                             type="text"
+                            value={malUsername}
+                            onChange={(e) => setMalUsername(e.target.value)}
                             placeholder="MAL username"
                             className="w-full bg-[#2b354a] text-white p-3 rounded-md placeholder-gray-400 focus:outline-none"
                           />
                         </div>
+
                         <div className="mb-4">
                           <label className="block text-sm font-medium mb-1">
                             AL username
                           </label>
                           <input
                             type="text"
+                            value={alUsername}
+                            onChange={(e) => setAlUsername(e.target.value)}
                             placeholder="AL username"
                             className="w-full bg-[#2b354a] text-white p-3 rounded-md placeholder-gray-400 focus:outline-none"
                           />
                         </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium mb-1">
-                            File
-                          </label>
-                          <input
-                            type="file"
-                            className="block w-full text-sm text-gray-400 file:bg-[#3c4a63] file:text-white file:rounded-md file:px-4 file:py-2 file:border-0"
-                          />
+
+                        <div className="mb-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium mb-1">
+                              MAL file (optional)
+                            </label>
+                            <input
+                              type="file"
+                              accept="application/xml,text/xml,.xml,.txt"
+                              onChange={(e) =>
+                                setMalFile(e.target.files?.[0] || null)
+                              }
+                              className="block w-full text-sm text-gray-400 file:bg-[#3c4a63] file:text-white file:rounded-md file:px-4 file:py-2 file:border-0"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1">
+                              AL file (optional)
+                            </label>
+                            <input
+                              type="file"
+                              accept="application/json,text/plain,.json,.txt"
+                              onChange={(e) =>
+                                setAlFile(e.target.files?.[0] || null)
+                              }
+                              className="block w-full text-sm text-gray-400 file:bg-[#3c4a63] file:text-white file:rounded-md file:px-4 file:py-2 file:border-0"
+                            />
+                          </div>
                         </div>
+
                         <p className="text-xs text-gray-400 mt-1">
-                          You can upload a XML file that uses MAL format, or a
-                          text file (TXT) that contains a list of MAL/AL urls
-                          that you want to import.
+                          You can upload a MAL XML export, an AL JSON/TXT export,
+                          or provide usernames to import directly from the
+                          services.
                         </p>
+
                         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
                             <label className="block text-sm font-medium mb-2">
-                              From
+                              Source (optional)
                             </label>
                             <div className="flex items-center gap-3">
                               <label className="inline-flex items-center">
                                 <input
                                   type="radio"
                                   checked
+                                  readOnly
                                   name="source"
                                   className="text-orange-500"
                                 />
@@ -722,11 +763,25 @@ export default function ProfilePage() {
                                 <input
                                   type="radio"
                                   name="source"
+                                  readOnly
                                   className="text-orange-500"
                                 />
                                 <span className="ml-2">AL</span>
                               </label>
+                              <label className="inline-flex items-center">
+                                <input
+                                  type="radio"
+                                  name="source"
+                                  readOnly
+                                  className="text-orange-500"
+                                />
+                                <span className="ml-2">Both</span>
+                              </label>
                             </div>
+                            <p className="text-xs text-gray-400 mt-2">
+                              (Source selector is informational — we detect
+                              provided files/usernames automatically.)
+                            </p>
                           </div>
                           <div>
                             <label className="block text-sm font-medium mb-2">
@@ -736,8 +791,9 @@ export default function ProfilePage() {
                               <label className="inline-flex items-center">
                                 <input
                                   type="radio"
-                                  checked
                                   name="mode"
+                                  checked={importModeOption === "merge"}
+                                  onChange={() => setImportModeOption("merge")}
                                   className="text-orange-500"
                                 />
                                 <span className="ml-2">Merge</span>
@@ -746,6 +802,8 @@ export default function ProfilePage() {
                                 <input
                                   type="radio"
                                   name="mode"
+                                  checked={importModeOption === "replace"}
+                                  onChange={() => setImportModeOption("replace")}
                                   className="text-orange-500"
                                 />
                                 <span className="ml-2">Replace</span>
@@ -753,8 +811,107 @@ export default function ProfilePage() {
                             </div>
                           </div>
                         </div>
-                        <button className="btn-purple text-white/90 px-6 py-2 rounded-md font-medium w-full mt-7">
-                          Import
+
+                        {importError && (
+                          <div className="mt-4 text-sm text-red-400">
+                            {importError}
+                          </div>
+                        )}
+                        {importResult && (
+                          <div className="mt-4 text-sm text-green-400">
+                            {importResult}
+                          </div>
+                        )}
+
+                        <button
+                          onClick={async () => {
+                            setImportError(null);
+                            setImportResult(null);
+                            setImportLoading(true);
+
+                            try {
+                              const token = localStorage.getItem("access_token");
+                              if (!token) {
+                                setImportError("Please log in to import your list");
+                                setImportLoading(false);
+                                return;
+                              }
+
+                              // Build options for API
+                              const options: {
+                                mal_file?: File | null;
+                                al_file?: File | null;
+                                mode?: string;
+                                mal_username?: string | null;
+                                al_username?: string | null;
+                              } = {
+                                mal_file: malFile || undefined,
+                                al_file: alFile || undefined,
+                                mode: importModeOption,
+                                mal_username: malUsername || undefined,
+                                al_username: alUsername || undefined,
+                              };
+
+                              const res = await pageApi.importWatchlist(token, options);
+
+                              // Show a friendly result message if available
+                              if (res && typeof res === "object") {
+                                const msg =
+                                  (res as any).message ||
+                                  "Import completed. Check your watchlist.";
+                                setImportResult(String(msg));
+                              } else if (typeof res === "string") {
+                                setImportResult(res);
+                              } else {
+                                setImportResult("Import completed successfully.");
+                              }
+
+                              // Clear inputs on success
+                              setMalFile(null);
+                              setAlFile(null);
+                              setMalUsername("");
+                              setAlUsername("");
+                            } catch (err: unknown) {
+                              // If API returned structured error, surface details
+                              if (err && typeof err === "object" && (err as any).data) {
+                                const data = (err as any).data;
+                                // Try to extract a message or validation errors
+                                if (typeof data === "string") {
+                                  setImportError(data);
+                                } else if (data && typeof data === "object") {
+                                  // If server returns field-level errors, join them
+                                  const parts: string[] = [];
+                                  for (const k of Object.keys(data)) {
+                                    const val = (data as any)[k];
+                                    if (Array.isArray(val)) parts.push(`${k}: ${val.join(", ")}`);
+                                    else parts.push(`${k}: ${String(val)}`);
+                                  }
+                                  setImportError(parts.join("; ") || "Import failed");
+                                } else {
+                                  setImportError("Import failed. Please try again.");
+                                }
+                              } else {
+                                setImportError("Import failed. Please try again.");
+                                // eslint-disable-next-line no-console
+                                console.error("Import failed:", err);
+                              }
+                            } finally {
+                              setImportLoading(false);
+                              // Refresh watchlist if import was likely successful
+                              try {
+                                const token = localStorage.getItem("access_token");
+                                if (token) {
+                                  const updated = await pageApi.getWatchlist(token);
+                                  setWatchlistData(updated);
+                                }
+                              } catch (e) {
+                                // ignore refresh errors
+                              }
+                            }
+                          }}
+                          disabled={importLoading}
+                          className="btn-purple text-white/90 px-6 py-2 rounded-md font-medium w-full mt-7">
+                          {importLoading ? "Importing..." : "Import"}
                         </button>
                       </div>
                     )}
@@ -803,8 +960,73 @@ export default function ProfilePage() {
                             </label>
                           </div>
                         </div>
-                        <button className="btn-purple text-white px-6 py-2 rounded-md font-medium mt-4">
-                          Download Export
+                        <button
+                          onClick={async () => {
+                            setError("");
+                            setExportLoading(true);
+                            try {
+                              const token = localStorage.getItem("access_token");
+                              if (!token) {
+                                setError("Please log in to export your list");
+                                setExportLoading(false);
+                                return;
+                              }
+
+                              const result = await pageApi.exportWatchlist(
+                                token,
+                                exportFormat as "text" | "json"
+                              );
+
+                              // Prepare file content and mime
+                              let blob: Blob;
+                              let filename = `yuki-watchlist-${new Date()
+                                .toISOString()
+                                .slice(0, 10)}`;
+
+                              if (exportFormat === "json") {
+                                // result is parsed JSON
+                                const jsonText = JSON.stringify(result, null, 2);
+                                blob = new Blob([jsonText], {
+                                  type: "application/json;charset=utf-8",
+                                });
+                                filename += ".json";
+                              } else {
+                                // text/CSV
+                                const csvText = result as string;
+                                blob = new Blob([csvText], {
+                                  type: "text/csv;charset=utf-8",
+                                });
+                                filename += ".csv";
+                              }
+
+                              const url = window.URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = filename;
+                              document.body.appendChild(a);
+                              a.click();
+                              a.remove();
+                              window.URL.revokeObjectURL(url);
+                            } catch (err: unknown) {
+                              // If API returned structured error, surface it; otherwise generic
+                              if (
+                                err &&
+                                typeof err === "object" &&
+                                (err as any).data
+                              ) {
+                                setError("Failed to export: check your account");
+                              } else {
+                                setError("Failed to export watchlist. Please try again.");
+                                // eslint-disable-next-line no-console
+                                console.error("Export failed:", err);
+                              }
+                            } finally {
+                              setExportLoading(false);
+                            }
+                          }}
+                          disabled={exportLoading}
+                          className="btn-purple text-white px-6 py-2 rounded-md font-medium mt-4">
+                          {exportLoading ? "Downloading..." : "Download Export"}
                         </button>
                       </div>
                     )}

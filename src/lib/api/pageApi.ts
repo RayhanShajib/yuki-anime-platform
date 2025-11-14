@@ -43,6 +43,72 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
   return response.json();
 });
 
+// Helper to fetch text responses (CSV/Plain text). Similar error handling to fetchFromApi
+const fetchTextFromApi = async (endpoint: string, init?: RequestInit) => {
+  const baseUrl =
+    process.env.API_BASE_URL || "https://serverloader1.yukiwatch.fr/api/v1";
+  const url = `${baseUrl}${endpoint}`;
+
+  const response = await fetch(url, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+    next: {
+      revalidate: 60,
+    },
+  });
+
+  if (!response.ok) {
+    let errorBody: unknown = null;
+    try {
+      errorBody = await response.json();
+    } catch (e) {
+      // ignore
+    }
+    const err: any = new Error(response.statusText || "API error");
+    err.status = response.status;
+    err.data = errorBody;
+    throw err;
+  }
+
+  return response.text();
+};
+
+// Helper to submit FormData (file uploads) and return parsed JSON.
+// It preserves error parsing similar to other helpers.
+const fetchFormDataFromApi = async (endpoint: string, init?: RequestInit) => {
+  const baseUrl =
+    process.env.API_BASE_URL || "https://serverloader1.yukiwatch.fr/api/v1";
+  const url = `${baseUrl}${endpoint}`;
+
+  const response = await fetch(url, {
+    // DO NOT set Content-Type header for FormData; browser will set the boundary
+    ...init,
+    // ensure headers passed (Authorization) are preserved
+    headers: {
+      ...(init?.headers || {}),
+    },
+    next: init?.next ?? { revalidate: 60 },
+  });
+
+  if (!response.ok) {
+    let errorBody: unknown = null;
+    try {
+      errorBody = await response.json();
+    } catch (e) {
+      // ignore
+    }
+    const err: any = new Error(response.statusText || "API error");
+    err.status = response.status;
+    err.data = errorBody;
+    throw err;
+  }
+
+  return response.json();
+};
+
 // Page-specific data fetchers
 export const pageApi = {
   // Home Page - Featured, Trending, Latest, Schedule
@@ -445,5 +511,64 @@ export const pageApi = {
       }
       throw error;
     }
-  }
+  },
+
+  // Export watchlist - returns raw CSV or JSON text
+  exportWatchlist: async (
+    token: string,
+    fileType: "text" | "json" = "text"
+  ) => {
+    const endpoint = `/account/export-watchlist/?file_type=${encodeURIComponent(
+      fileType
+    )}`;
+    // If JSON requested, use fetchFromApi to return parsed JSON
+    if (fileType === "json") {
+      return fetchFromApi(endpoint, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        next: { revalidate: 0 }, // Don't cache watchlist export
+      });
+    }
+
+    // Default: return CSV/text
+    return fetchTextFromApi(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 0 }, // Don't cache watchlist export
+    });
+  },
+
+  // Import watchlist - accepts file uploads (mal_file/al_file) or usernames and mode
+  importWatchlist: async (
+    token: string,
+    options: {
+      mal_file?: File | null;
+      al_file?: File | null;
+      mode?: "replace" | "merge" | string;
+      mal_username?: string | null;
+      al_username?: string | null;
+    }
+  ) => {
+    const endpoint = `/account/import-watchlist/`;
+
+    // Build FormData payload
+    const form = new FormData();
+    if (options.mal_file) form.append("mal_file", options.mal_file);
+    if (options.al_file) form.append("al_file", options.al_file);
+    if (options.mode) form.append("mode", options.mode);
+    if (options.mal_username) form.append("mal_username", options.mal_username);
+    if (options.al_username) form.append("al_username", options.al_username);
+
+    // Use fetchFormDataFromApi which doesn't set Content-Type so boundary is handled
+    return fetchFormDataFromApi(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: form as unknown as BodyInit,
+      next: { revalidate: 0 },
+    });
+  },
 };
