@@ -576,15 +576,21 @@ export const pageApi = {
   createComment: async (
     token: string,
     episode: string,
-    content: string
+    content: string,
+    reply_to?: number | null
   ) => {
     const endpoint = `/comments/`;
+    const body: any = { episode, content };
+    if (typeof reply_to !== "undefined" && reply_to !== null) {
+      body.reply_to = reply_to;
+    }
+
     return fetchFromApi(endpoint, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ episode, content }),
+      body: JSON.stringify(body),
       next: { revalidate: 0 }, // Don't cache comment creation
     });
   },

@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { pageApi } from "@/lib/api/pageApi";
 import { FaRegThumbsDown, FaRegThumbsUp } from "react-icons/fa";
 import { MdCancel, MdSend } from "react-icons/md";
 
@@ -53,37 +55,60 @@ function timeAgo(date: Date) {
   return "Just now";
 }
 
-// Generate random user data for demo purposes
-// Return a deterministic fallback user for locally created comments when
-// there's no authenticated user available. This avoids showing random demo
-// names/avatars in production.
-function generateRandomUser() {
-  return {
-    name: "Guest",
-    avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
-  };
-}
+// No guest fallback: commenting requires authentication. We fetch the
+// authenticated user's profile and show their avatar in the input area.
 
 type CommentSectionProps = {
   // Optional external comments (API response) to initialize the section
   comments?: Array<any>;
+  // Episode id is required to create a comment using the API
+  episodeId?: string | number;
+  // Optional callback when a comment is created (parent can refresh)
+  onCommentCreated?: () => void;
 };
 
 export const CommentSection: React.FC<CommentSectionProps> = ({
   comments: externalComments,
+  episodeId,
+  onCommentCreated,
 }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [commentInput, setCommentInput] = useState("");
-  const inputAvatar =
-    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face";
+  
   const [replyInputs, setReplyInputs] = useState<Record<number, string>>({});
   const [showReply, setShowReply] = useState<Record<number, boolean>>({});
   const [showPreview, setShowPreview] = useState(false);
   const [replyPreviews, setReplyPreviews] = useState<Record<number, boolean>>(
     {}
   );
+
+  // Current logged-in user (to show avatar on the left of the input)
+  const [currentUser, setCurrentUser] = useState<{ name: string; avatar: string } | null>(null);
+  const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState<string | null>(null);
+
+  // Load current user's profile if token exists so we can show avatar next to input
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) return;
+        const profile = await pageApi.getProfilePageData(token);
+        if (profile) {
+          setCurrentUser({
+            name: profile.username || profile.user || "User",
+            avatar: profile.avatar || profile.profile_picture ||
+              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+          });
+        }
+      } catch (e) {
+        // ignore profile load errors, keep fallback
+      }
+    };
+
+    loadProfile();
+  }, []);
 
   // If parent passes external comments (API response), map and initialize.
   // Accept both: an array of comments or a paginated object { results: [] }.
@@ -302,48 +327,162 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // ---- COMMENT HANDLERS ----
   function addComment(text: string) {
-    const comment: CommentType = {
-      id: Date.now(),
-      text,
-      timestamp: new Date(),
-      replies: [],
-      likes: 0,
-      dislikes: 0,
-      liked: false,
-      disliked: false,
-      user: generateRandomUser(),
+    // If we have an episodeId and token, try to create via API
+    const tryCreate = async () => {
+      setPostError(null);
+      if (!episodeId) {
+        setPostError("Missing episode id");
+        return;
+      }
+
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        setPostError("Please log in to post comments.");
+        return;
+      }
+
+      try {
+        setPosting(true);
+        const res = await pageApi.createComment(token, String(episodeId), text);
+
+        // Map returned comment into local CommentType and prepend
+        const mapped: CommentType = {
+          id: res.id,
+          text: res.content || res.text || "",
+          timestamp: new Date(res.created_at || Date.now()),
+          replies: Array.isArray(res.replies)
+            ? res.replies.map((r: any) => ({
+                id: r.id,
+                text: r.content || r.text || "",
+                timestamp: new Date(r.created_at || Date.now()),
+                replies: [],
+                likes: r.likes_count || 0,
+                dislikes: r.dislikes_count || 0,
+                liked: !!r.liked,
+                disliked: !!r.disliked,
+                user: {
+                  name: typeof r.user === "string" ? r.user : r.user?.username || r.user?.name || "User",
+                  avatar: r.user?.avatar || r.user?.profile_picture ||
+                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+                },
+              }))
+            : [],
+          likes: res.likes_count || 0,
+          dislikes: res.dislikes_count || 0,
+          liked: !!res.liked,
+          disliked: !!res.disliked,
+          user: {
+            name: typeof res.user === "string" ? res.user : res.user?.username || res.user?.name || "User",
+            avatar: (res.user && res.user.avatar) || currentUser?.avatar ||
+              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+          },
+        };
+
+        setComments((prev) => [mapped, ...prev]);
+        setCommentInput("");
+        // Let parent know to refresh if it wants
+        if (onCommentCreated) onCommentCreated();
+      } catch (err: unknown) {
+        // Surface API validation errors or generic message
+        if (err && typeof err === "object" && (err as any).data) {
+          const d = (err as any).data;
+          if (typeof d === "string") setPostError(d);
+          else if (typeof d === "object") {
+            const parts: string[] = [];
+            for (const k of Object.keys(d)) {
+              const val = (d as any)[k];
+              if (Array.isArray(val)) parts.push(`${k}: ${val.join(", ")}`);
+              else parts.push(`${k}: ${String(val)}`);
+            }
+            setPostError(parts.join("; ") || "Failed to post comment");
+          } else setPostError("Failed to post comment");
+        } else {
+          setPostError("Failed to post comment. Please try again.");
+          // eslint-disable-next-line no-console
+          console.error("Create comment failed:", err);
+        }
+      } finally {
+        setPosting(false);
+      }
     };
-    setComments((prev) => [comment, ...prev]);
+
+    void tryCreate();
   }
 
   function addReply(parentId: number, text: string) {
-    setComments((prev) => {
-      const add = (comms: CommentType[]): CommentType[] =>
-        comms.map((c) =>
-          c.id === parentId
-            ? {
-                ...c,
-                replies: [
-                  ...c.replies,
-                  {
-                    id: Date.now(),
-                    text,
-                    timestamp: new Date(),
-                    replies: [],
-                    likes: 0,
-                    dislikes: 0,
-                    liked: false,
-                    disliked: false,
-                    user: generateRandomUser(),
-                  },
-                ],
-              }
-            : { ...c, replies: add(c.replies) }
-        );
-      return add(prev);
-    });
-    setReplyInputs((prev) => ({ ...prev, [parentId]: "" }));
-    setShowReply((prev) => ({ ...prev, [parentId]: false }));
+    // If we have episodeId and token, post reply to API; otherwise fall back to local reply
+    const tryReply = async () => {
+      if (!episodeId) {
+        setPostError("Missing episode id");
+        return;
+      }
+
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        setPostError("Please log in to reply.");
+        return;
+      }
+
+      try {
+        setPosting(true);
+        const res = await pageApi.createComment(token, String(episodeId), text, parentId);
+
+        // Map API response to local reply format
+        const mappedReply: CommentType = {
+          id: res.id,
+          text: res.content || res.text || "",
+          timestamp: new Date(res.created_at || Date.now()),
+          replies: [],
+          likes: res.likes_count || 0,
+          dislikes: res.dislikes_count || 0,
+          liked: !!res.liked,
+          disliked: !!res.disliked,
+          user: {
+            name: typeof res.user === "string" ? res.user : res.user?.username || res.user?.name || "User",
+            avatar: (res.user && res.user.avatar) || currentUser?.avatar ||
+              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+          },
+        };
+
+        // Insert reply into parent comment
+        setComments((prev) => {
+          const add = (comms: CommentType[]): CommentType[] =>
+            comms.map((c) =>
+              c.id === parentId
+                ? { ...c, replies: [...c.replies, mappedReply] }
+                : { ...c, replies: add(c.replies) }
+            );
+          return add(prev);
+        });
+
+        setReplyInputs((prev) => ({ ...prev, [parentId]: "" }));
+        setShowReply((prev) => ({ ...prev, [parentId]: false }));
+        if (onCommentCreated) onCommentCreated();
+      } catch (err: unknown) {
+        // surface error
+        if (err && typeof err === "object" && (err as any).data) {
+          const d = (err as any).data;
+          if (typeof d === "string") setPostError(d);
+          else if (typeof d === "object") {
+            const parts: string[] = [];
+            for (const k of Object.keys(d)) {
+              const val = (d as any)[k];
+              if (Array.isArray(val)) parts.push(`${k}: ${val.join(", ")}`);
+              else parts.push(`${k}: ${String(val)}`);
+            }
+            setPostError(parts.join("; ") || "Failed to post reply");
+          } else setPostError("Failed to post reply");
+        } else {
+          setPostError("Failed to post reply. Please try again.");
+          // eslint-disable-next-line no-console
+          console.error("Reply failed:", err);
+        }
+      } finally {
+        setPosting(false);
+      }
+    };
+
+    void tryReply();
   }
 
   function handleLike(id: number) {
@@ -594,13 +733,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
       {/* Input Box */}
       <div className="flex items-start space-x-3 mb-6">
-        <Image
-          src={inputAvatar}
-          alt="User Avatar"
-          width={40}
-          height={40}
-          className="rounded-full object-cover"
-        />
+          <Image
+            src={currentUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face"}
+            alt={currentUser?.name || "User Avatar"}
+            width={40}
+            height={40}
+            className="rounded-full object-cover"
+          />
         <div className="flex flex-col flex-1">
           {showPreview ? (
             <div
