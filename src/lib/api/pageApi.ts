@@ -25,7 +25,19 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
   });
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.statusText}`);
+    // Try to parse error body (validation errors or details) and attach to the thrown error
+    let errorBody: unknown = null;
+    try {
+      // Some error responses include JSON payloads with validation messages
+      errorBody = await response.json();
+    } catch (e) {
+      // ignore JSON parse errors
+    }
+
+    const err: any = new Error(response.statusText || "API error");
+    err.status = response.status;
+    err.data = errorBody;
+    throw err;
   }
 
   return response.json();
@@ -422,9 +434,15 @@ export const pageApi = {
 
       // Return server response (example includes updated profile object)
       return res;
-    } catch (error) {
-      // Add helpful logging for debugging client/server mismatch
-      console.error("Failed to update profile settings:", error, settingsData);
+    } catch (error: unknown) {
+      // If this is a validation error (fetchFromApi attaches .data), don't noisy-log it.
+      const isValidationError =
+        error && typeof error === "object" && (error as any).data;
+      if (!isValidationError) {
+        // Only log unexpected errors
+        // eslint-disable-next-line no-console
+        console.error("Failed to update profile settings:", error, settingsData);
+      }
       throw error;
     }
   }

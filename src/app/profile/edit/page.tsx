@@ -33,6 +33,9 @@ export default function ProfileEditPage() {
   const [userData, setUserData] = useState(defaultUserData);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string[]>
+  | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -112,8 +115,9 @@ export default function ProfileEditPage() {
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
-    setError(null);
+  setIsSaving(true);
+  setError(null);
+  setValidationErrors(null);
     try {
       const token = localStorage.getItem("access_token");
       if (!token) {
@@ -174,9 +178,21 @@ export default function ProfileEditPage() {
 
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      console.error("Failed to save profile settings:", err);
-      setError("Failed to save profile settings. Please try again.");
+    } catch (err: unknown) {
+      // If API returned validation errors in err.data, surface them inline
+      if (
+        err &&
+        typeof err === "object" &&
+        (err as any).data &&
+        typeof (err as any).data === "object"
+      ) {
+        setValidationErrors((err as any).data as Record<string, string[]>);
+      } else {
+        // Unexpected error - log for debugging and show generic message
+        // eslint-disable-next-line no-console
+        console.error("Failed to save profile settings:", err);
+        setError("Failed to save profile settings. Please try again.");
+      }
     } finally {
       setIsSaving(false);
     }
@@ -412,6 +428,11 @@ export default function ProfileEditPage() {
                       className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
+                  {validationErrors?.username && (
+                    <div className="text-red-400 text-sm mt-2">
+                      {validationErrors.username[0]}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -429,6 +450,11 @@ export default function ProfileEditPage() {
                       className="w-full bg-purple border border-gray-600 rounded-lg px-10 py-2 text-white/90 focus:outline-none focus:border-purple-500"
                     />
                   </div>
+                  {validationErrors?.email && (
+                    <div className="text-red-400 text-sm mt-2">
+                      {validationErrors.email[0]}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
