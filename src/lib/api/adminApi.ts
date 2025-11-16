@@ -262,12 +262,6 @@ export const adminApi = {
     },
 
   // Push notifications to users - Requires admin authorization
-  // Sample request expected by the endpoint:
-  // {
-  //   "source": "Admin",
-  //   "content": "This is a Test Notification for Selected Users!",
-  //   "users": ["alex", "john", "alice"]
-  // }
   pushNotification: async (
     source: string,
     content: string,
