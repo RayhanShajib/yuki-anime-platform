@@ -217,8 +217,21 @@ export default function ProfilePage() {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  const handleMarkReadNotif = (id: number) => {
+  const handleMarkReadNotif = async (id: number) => {
+    // Optimistic update
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    try {
+      await pageApi.markNotificationAsRead(token, id);
+    } catch (err) {
+      // Rollback optimistic update on failure
+      // eslint-disable-next-line no-console
+      console.error("Failed to mark notification as read:", err);
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: false } : n)));
+    }
   };
   // State for Hide your profile activities
   const [hideActivities, setHideActivities] = useState<"yes" | "no">("no");

@@ -644,4 +644,24 @@ export const pageApi = {
       next: { revalidate: 60 }, // Cache notifications for 1 minute
     });
   }),
+
+  // Mark notification(s) as read - Requires authentication
+  markNotificationAsRead: async (
+    token: string,
+    notificationIds: number | number[]
+  ) => {
+    const endpoint = `/account/notification/`;
+    const ids = Array.isArray(notificationIds)
+      ? notificationIds
+      : [notificationIds];
+
+    return fetchFromApi(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ notifications: ids }),
+      next: { revalidate: 0 }, // Don't cache notification updates
+    });
+  },
 };
