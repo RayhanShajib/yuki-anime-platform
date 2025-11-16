@@ -247,4 +247,41 @@ export const adminApi = {
             next: { revalidate: 0 }, // Don't cache delete operations
         });
     },
+
+    // Create new episode - Requires admin authorization
+    createEpisode: async (data: UpdateEpisodeData, token: string) => {
+        const endpoint = `/episode/`;
+        return fetchFromApi(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            next: { revalidate: 0 }, // Don't cache create operations
+        });
+    },
+
+  // Push notifications to users - Requires admin authorization
+  // Sample request expected by the endpoint:
+  // {
+  //   "source": "Admin",
+  //   "content": "This is a Test Notification for Selected Users!",
+  //   "users": ["alex", "john", "alice"]
+  // }
+  pushNotification: async (
+    source: string,
+    content: string,
+    users: string[],
+    token: string
+  ) => {
+    const endpoint = `/notification/`;
+    return fetchFromApi(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({ source, content, users }),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      next: { revalidate: 0 }, // Don't cache notification operations
+    });
+  }
 };
