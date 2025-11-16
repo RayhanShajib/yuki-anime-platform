@@ -631,4 +631,17 @@ export const pageApi = {
       next: { revalidate: 0 }, // Don't cache comment deletions
     });
   },
+
+  // Get Notifications - Requires authentication
+  getNotifications: cache(async (token: string, limit = 5, offset = 0) => {
+    const endpoint = `/account/notification/?limit=${encodeURIComponent(
+      String(limit)
+    )}&offset=${encodeURIComponent(String(offset))}`;
+    return fetchFromApi(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 60 }, // Cache notifications for 1 minute
+    });
+  }),
 };

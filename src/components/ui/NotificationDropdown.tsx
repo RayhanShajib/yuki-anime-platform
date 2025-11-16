@@ -12,11 +12,13 @@ interface Notification {
 interface NotificationDropdownProps {
   notifications: Notification[];
   onRemove: (id: number) => void;
+  onMarkRead?: (id: number) => void;
   onClose: () => void;
 }
 export function NotificationDropdown({
   notifications,
   onRemove,
+  onMarkRead,
   onClose,
 }: NotificationDropdownProps) {
   const [selectedType, setSelectedType] = useState<"Anime" | "Community">(
@@ -89,24 +91,32 @@ export function NotificationDropdown({
                   {notif.date} {notif.time}
                 </div>
               </div>
-              <button
-                className="ml-2 text-gray-400 hover:text-red-500 transition-colors txt-small flex-shrink-0"
-                title="Remove notification"
-                onClick={() => onRemove(notif.id)}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+              {!notif.isRead ? (
+                <button
+                  className="ml-2 text-gray-400 hover:text-green-400 transition-colors txt-small flex-shrink-0"
+                  title="Mark as read"
+                  onClick={() => {
+                    if (onMarkRead) {
+                      onMarkRead(notif.id);
+                      return;
+                    }
+                    onRemove && onRemove(notif.id);
+                  }}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+              ) : null}
             </div>
           ))
         )}

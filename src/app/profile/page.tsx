@@ -39,42 +39,7 @@ interface ProfileData {
   totalHours?: number;
   favoriteGenres?: string[];
   exp?: number;
-  notifications?: Array<{
-    source?: string;
-    content?: string;
-    created_at?: string;
-    is_read?: boolean;
-    id?: number;
-    text?: string;
-    message?: string;
-    date?: string;
-    time?: string;
-    type?: "Anime" | "Community";
-  }>;
-  user_notifications?: Array<{
-    source?: string;
-    content?: string;
-    created_at?: string;
-    is_read?: boolean;
-    id?: number;
-    text?: string;
-    message?: string;
-    date?: string;
-    time?: string;
-    type?: "Anime" | "Community";
-  }>;
-  alerts?: Array<{
-    source?: string;
-    content?: string;
-    created_at?: string;
-    is_read?: boolean;
-    id?: number;
-    text?: string;
-    message?: string;
-    date?: string;
-    time?: string;
-    type?: "Anime" | "Community";
-  }>;
+  // Notifications are now fetched from the notifications endpoint
   watchlist?: Record<string, unknown>;
   nextLevelExp?: number;
   preferred_title_lang?: string;
@@ -180,70 +145,81 @@ export default function ProfilePage() {
     fetchProfile();
   }, [router]);
 
-  // Initialize notifications from API data when profileData is loaded
+  // Notifications state (fetched from notifications endpoint)
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  // Fetch notifications from the dedicated notifications endpoint
   useEffect(() => {
-    // Check various possible notification field names
-    const notificationsArray =
-      profileData?.notifications ||
-      profileData?.user_notifications ||
-      profileData?.alerts ||
-      [];
+    if (!profileData) return;
 
-    if (Array.isArray(notificationsArray) && notificationsArray.length > 0) {
-      const formattedNotifications = notificationsArray.map(
-        (notif, index: number) => {
-          // Map source/type to display categories
+    const loadNotifications = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) return;
+
+        const res = await pageApi.getNotifications(token);
+
+        const list: any[] = Array.isArray(res)
+          ? res
+          : Array.isArray((res as any).results)
+          ? (res as any).results
+          : [];
+
+        if (!list.length) {
+          setNotifications([]);
+          return;
+        }
+
+        const formattedNotifications = list.map((notif: any, index: number) => {
+          const source = (notif.source || notif.type || "Anime") as string;
           let notificationType: "Anime" | "Community" = "Anime";
-          const source = notif.source || notif.type || "Anime";
 
-          // Map API source values to display types
           if (
-            source.toLowerCase() === "admin" ||
-            source.toLowerCase() === "community" ||
-            source.toLowerCase() === "system"
+            typeof source === "string" &&
+            ["admin", "community", "system"].includes(source.toLowerCase())
           ) {
             notificationType = "Community";
           } else if (
-            source.toLowerCase() === "anime" ||
-            source.toLowerCase() === "episode"
+            typeof source === "string" &&
+            ["anime", "episode"].includes(source.toLowerCase())
           ) {
             notificationType = "Anime";
           }
 
-          const formatted = {
-            id: notif.id || index + 1,
-            text:
-              notif.content ||
-              notif.message ||
-              notif.text ||
-              "New notification",
-            date: new Date(notif.created_at || Date.now()).toLocaleDateString(),
-            time: new Date(notif.created_at || Date.now()).toLocaleTimeString(
-              [],
-              {
-                hour: "2-digit",
-                minute: "2-digit",
-              }
-            ),
+          // Use created_at as the canonical timestamp. If server returns an id, use it;
+          // otherwise generate a stable-ish id from the timestamp (fallback to index).
+          const createdAt = notif.created_at ? new Date(notif.created_at) : new Date();
+          const id = notif.id ?? Number(createdAt?.getTime()) ?? index + 1;
+
+          return {
+            id,
+            text: notif.content ?? notif.message ?? notif.text ?? "New notification",
+            date: createdAt.toLocaleDateString(),
+            time: createdAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             type: notificationType,
-            source: source, // Keep original source for debugging
-            isRead: notif.is_read || false,
-          };
-          return formatted;
-        }
-      );
-      setNotifications(formattedNotifications);
-    } else {
-      setNotifications([]);
-    }
+            source,
+            isRead: !!notif.is_read,
+          } as Notification;
+        });
+
+        setNotifications(formattedNotifications);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to load notifications:", err);
+        setNotifications([]);
+      }
+    };
+
+    void loadNotifications();
   }, [profileData]);
 
   const handleRemoveNotif = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
+  const handleMarkReadNotif = (id: number) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+  };
   // State for Hide your profile activities
   const [hideActivities, setHideActivities] = useState<"yes" | "no">("no");
   // State for Hide your bookmarks
@@ -1168,6 +1144,7 @@ export default function ProfilePage() {
                   <NotificationDropdown
                     notifications={notifications}
                     onRemove={handleRemoveNotif}
+                    onMarkRead={handleMarkReadNotif}
                     onClose={() => {}}
                   />
                 </div>

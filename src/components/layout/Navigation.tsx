@@ -177,57 +177,72 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
-  // Format notifications from profile data
+  const handleMarkReadNotif = (id: number) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+    );
+  };
+
+  // Fetch notifications from dedicated notifications endpoint
   useEffect(() => {
-    if (profileData?.notifications) {
-      const notificationsArray = profileData.notifications;
+    const loadNotifications = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) return;
 
-      if (Array.isArray(notificationsArray) && notificationsArray.length > 0) {
-        const formattedNotifications = notificationsArray.map(
-          (notif: ApiNotification, index: number) => {
-            // Map source/type to display categories
-            let notificationType: "Anime" | "Community" = "Anime";
-            const source = notif.source || notif.type || "Anime";
+        const res = await pageApi.getNotifications(token);
+        const list: any[] = Array.isArray(res)
+          ? res
+          : Array.isArray((res as any).results)
+          ? (res as any).results
+          : [];
 
-            // Map API source values to display types
-            if (
-              source.toLowerCase() === "admin" ||
-              source.toLowerCase() === "community" ||
-              source.toLowerCase() === "system"
-            ) {
-              notificationType = "Community";
-            } else if (
-              source.toLowerCase() === "anime" ||
-              source.toLowerCase() === "episode"
-            ) {
-              notificationType = "Anime";
-            }
+        if (!list.length) {
+          setNotifications([]);
+          return;
+        }
 
-            return {
-              id: notif.id || index + 1,
-              text:
-                notif.content ||
-                notif.message ||
-                notif.text ||
-                "New notification",
-              date: new Date(
-                notif.created_at || Date.now()
-              ).toLocaleDateString(),
-              time: new Date(notif.created_at || Date.now()).toLocaleTimeString(
-                [],
-                {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }
-              ),
-              type: notificationType,
-            };
+        const formattedNotifications = list.map((notif: any, index: number) => {
+          const source = (notif.source || notif.type || "Anime") as string;
+          let notificationType: "Anime" | "Community" = "Anime";
+
+          if (
+            typeof source === "string" &&
+            ["admin", "community", "system"].includes(source.toLowerCase())
+          ) {
+            notificationType = "Community";
+          } else if (
+            typeof source === "string" &&
+            ["anime", "episode"].includes(source.toLowerCase())
+          ) {
+            notificationType = "Anime";
           }
-        );
+
+          const createdAt = notif.created_at ? new Date(notif.created_at) : new Date();
+          const id = notif.id ?? Number(createdAt?.getTime()) ?? index + 1;
+
+          return {
+            id,
+            text: notif.content ?? notif.message ?? notif.text ?? "New notification",
+            date: createdAt.toLocaleDateString(),
+            time: createdAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            type: notificationType,
+          } as Notification;
+        });
+
         setNotifications(formattedNotifications);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to load navbar notifications:", err);
+        setNotifications([]);
       }
+    };
+
+    // Load when component mounts and when login state changes
+    if (isLoggedIn) {
+      void loadNotifications();
     }
-  }, [profileData]);
+  }, [isLoggedIn]);
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileBrowseOpen, setMobileBrowseOpen] = useState(false);
@@ -526,7 +541,8 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       <NotificationDropdown
                         notifications={notifications}
                         onRemove={handleRemoveNotif}
-                        onClose={() => setShowNotification(true)}
+                        onMarkRead={handleMarkReadNotif}
+                        onClose={() => setShowNotification(false)}
                       />
                     </div>
                   )}
@@ -634,7 +650,8 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       <NotificationDropdown
                         notifications={notifications}
                         onRemove={handleRemoveNotif}
-                        onClose={() => setShowNotification(true)}
+                        onMarkRead={handleMarkReadNotif}
+                        onClose={() => setShowNotification(false)}
                       />
                     </div>
                   )}
