@@ -34,6 +34,7 @@ interface ApiAnimeLatest {
   raw_total: number;
   genre: string[];
   ep_id: number;
+  rating?: number;
 }
 
 const filterOptions = [
@@ -70,7 +71,7 @@ const transformApiDataToAnime = (apiAnime: ApiAnimeLatest): Anime => {
     dubEpisodes: apiAnime.dub_total,
     // Preserve episode id from API when available
     episodeId: apiAnime.ep_id,
-    rating: 8.0, // Not provided by API, using default
+    rating: apiAnime.rating || 0,
     popularity: 1000, // Not provided by API, using default
     language: getLanguageArray(apiAnime.sub_total, apiAnime.dub_total),
   };
@@ -409,10 +410,12 @@ export default function LatestPage() {
                             {anime.type}
                           </span>
                           <span className="text-gray-400">•</span>
-                          <div className="flex items-center space-x-1">
-                            <span className="text-yellow-400">⭐</span>
-                            <span className="text-white">{anime.rating}</span>
-                          </div>
+                          {anime.rating > 0 && (
+                            <div className="flex items-center space-x-1">
+                              <span className="text-yellow-400">⭐</span>
+                              <span className="text-white">{anime.rating}</span>
+                            </div>
+                          )}
                           <div className="flex space-x-1">
                             {anime.language.includes("sub") && (
                               <span className="px-2 py-1 bg-pink-400 text-white/90 text-xs font-bold rounded">
