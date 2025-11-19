@@ -101,6 +101,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
                 <Play className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Watch Now</span>
               </Link>
+              
 
               <WatchlistDropdown 
                 animeId={currentAnime.id || 0}
