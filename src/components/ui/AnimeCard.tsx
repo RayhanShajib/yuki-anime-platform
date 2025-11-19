@@ -294,14 +294,14 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               <div
                 className="absolute top-2 right-2 flex items-center space-x-1 justify-between w-[90%]"
                 suppressHydrationWarning={true}>
-                <div
+                {anime.rating > 0 && (<div
                   className="flex items-center space-x-1 bg-black/70 px-2 py-1 rounded"
                   suppressHydrationWarning={true}>
                   <Star className="h-3 w-3 text-yellow-400 fill-current" />
                   <span className="text-white/90 text-xs font-semibold">
                     {formatRating(anime.rating)}
                   </span>
-                </div>
+                </div>)}
 
                 {/* Info button - Always visible on mobile/tablet, hover on desktop */}
                 <div className="relative" suppressHydrationWarning={true}>

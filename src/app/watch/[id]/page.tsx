@@ -1200,7 +1200,7 @@ export default function WatchPage() {
                               ? ("movie" as const)
                               : ("series" as const),
                           totalEpisodes: anime.episodeCount,
-                          rating: 0,
+                          rating: anime.rating,
                           popularity: 0,
                           language: ["sub" as const],
                         }}
@@ -1271,7 +1271,7 @@ export default function WatchPage() {
                               ? ("movie" as const)
                               : ("series" as const),
                           totalEpisodes: anime.episodeCount,
-                          rating: 0,
+                          rating: anime.rating,
                           popularity: 0,
                           language: ["sub" as const],
                         }}

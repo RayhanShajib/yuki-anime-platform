@@ -229,6 +229,7 @@ const transformRelatedAnime = (
       raw: anime.raw_total,
     },
     genres: anime.genre,
+    rating: anime.rating || 0,
   };
 };
 

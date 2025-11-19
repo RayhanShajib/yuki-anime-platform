@@ -105,6 +105,7 @@ export interface ApiRelatedAnime {
   raw_total: number;
   genre: string[];
   ep_id: number | null;
+  rating?: number;
 }
 
 export interface ApiVideoSources {
@@ -199,6 +200,7 @@ export interface TransformedAnimeData {
     raw: number;
   };
   genres: string[];
+  rating: number;
 }
 
 // Profile and User Data Types
