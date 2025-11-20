@@ -1,4 +1,8 @@
 import { cache } from "react";
+import type {
+  CreateAnimeRequestPayload,
+  UpdateAnimeRequestPayload,
+} from "@/types/anime";
 
 // Interface for updateWatchlist request body
 interface UpdateWatchlistBody {
@@ -192,7 +196,7 @@ export const pageApi = {
       released_year?: number | string;
     },
     limit: number = 20,
-    offset: number = 0
+    offset: number = 0,
   ) => {
     const params = new URLSearchParams();
 
@@ -336,7 +340,7 @@ export const pageApi = {
     username: string,
     email: string,
     password: string,
-    password2: string
+    password2: string,
   ) => {
     const endpoint = "/account/register/";
     return fetchFromApi(endpoint, {
@@ -373,7 +377,7 @@ export const pageApi = {
         plan_to_watch?: number[];
         completed?: number[];
       };
-    }
+    },
   ) => {
     const endpoint = "/account/profile/";
     return fetchFromApi(endpoint, {
@@ -390,7 +394,7 @@ export const pageApi = {
     token: string,
     animeId: number,
     status: "watching" | "completed" | "drop" | "on_hold" | "plan_to_watch",
-    episodeId?: number | null
+    episodeId?: number | null,
   ) => {
     const endpoint = `/account/watch-status/`;
     const body = {
@@ -415,7 +419,7 @@ export const pageApi = {
     watchStatusId: number,
     status: "watching" | "completed" | "drop" | "on_hold" | "plan_to_watch",
     animeId?: number | null,
-    episodeId?: number | null
+    episodeId?: number | null,
   ) => {
     const endpoint = `/account/watch-status/${watchStatusId}/`;
     const body: UpdateWatchlistBody = {
@@ -483,7 +487,7 @@ export const pageApi = {
       dark_mode?: boolean;
       notifications_enabled?: boolean;
       [key: string]: unknown;
-    }
+    },
   ) => {
     const endpoint = "/account/profile/";
 
@@ -507,7 +511,11 @@ export const pageApi = {
       if (!isValidationError) {
         // Only log unexpected errors
         // eslint-disable-next-line no-console
-        console.error("Failed to update profile settings:", error, settingsData);
+        console.error(
+          "Failed to update profile settings:",
+          error,
+          settingsData,
+        );
       }
       throw error;
     }
@@ -516,10 +524,10 @@ export const pageApi = {
   // Export watchlist - returns raw CSV or JSON text
   exportWatchlist: async (
     token: string,
-    fileType: "text" | "json" = "text"
+    fileType: "text" | "json" = "text",
   ) => {
     const endpoint = `/account/export-watchlist/?file_type=${encodeURIComponent(
-      fileType
+      fileType,
     )}`;
     // If JSON requested, use fetchFromApi to return parsed JSON
     if (fileType === "json") {
@@ -549,7 +557,7 @@ export const pageApi = {
       mode?: "replace" | "merge" | string;
       mal_username?: string | null;
       al_username?: string | null;
-    }
+    },
   ) => {
     const endpoint = `/account/import-watchlist/`;
 
@@ -577,7 +585,7 @@ export const pageApi = {
     token: string,
     episode: string,
     content: string,
-    reply_to?: number | null
+    reply_to?: number | null,
   ) => {
     const endpoint = `/comments/`;
     const body: any = { episode, content };
@@ -604,11 +612,7 @@ export const pageApi = {
   }),
 
   // Update comment
-  updateComment: async (
-    token: string,
-    commentId: number,
-    content: string
-  ) => {
+  updateComment: async (token: string, commentId: number, content: string) => {
     const endpoint = `/comments/${commentId}/`;
     return fetchFromApi(endpoint, {
       method: "PATCH",
@@ -635,7 +639,7 @@ export const pageApi = {
   // Get Notifications - Requires authentication
   getNotifications: cache(async (token: string, limit = 5, offset = 0) => {
     const endpoint = `/account/notification/?limit=${encodeURIComponent(
-      String(limit)
+      String(limit),
     )}&offset=${encodeURIComponent(String(offset))}`;
     return fetchFromApi(endpoint, {
       headers: {
@@ -648,7 +652,7 @@ export const pageApi = {
   // Mark notification(s) as read - Requires authentication
   markNotificationAsRead: async (
     token: string,
-    notificationIds: number | number[]
+    notificationIds: number | number[],
   ) => {
     const endpoint = `/account/notification/`;
     const ids = Array.isArray(notificationIds)
@@ -664,4 +668,39 @@ export const pageApi = {
       next: { revalidate: 0 }, // Don't cache notification updates
     });
   },
+
+  /*** Request Endpoints ***/
+
+  createAnimeRequest: async (
+    token: string,
+    payload: CreateAnimeRequestPayload,
+  ) => {
+    const endpoint = "/anime-requests/";
+    return fetchFromApi(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+      next: { revalidate: 0 },
+    });
+  },
+
+  updateAnimeRequest: async (
+    token: string,
+    id: string | number,
+    payload: UpdateAnimeRequestPayload,
+  ) => {
+    const endpoint = `/anime-requests/${id}/`;
+    return fetchFromApi(endpoint, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+      next: { revalidate: 0 },
+    });
+  },
+
+  // Bulk update Anime request
 };

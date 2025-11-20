@@ -108,6 +108,18 @@ export interface AnimeRequest {
   updatedAt: string;
 }
 
+// Create Anime Request payload (snake_case keys for API)
+export interface CreateAnimeRequestPayload {
+  anime_name: string;
+  description: string;
+  reference_link: string;
+}
+
+// Update Anime Request payload (status updates)
+export interface UpdateAnimeRequestPayload {
+  status: "under_review" | "approved" | "rejected" | "completed";
+}
+
 export interface Notification {
   id: string;
   userId: string;
