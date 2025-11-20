@@ -685,7 +685,7 @@ export const pageApi = {
       next: { revalidate: 0 },
     });
   },
-
+  //  I will move it to the admin api later
   updateAnimeRequest: async (
     token: string,
     id: string | number,
@@ -701,6 +701,4 @@ export const pageApi = {
       next: { revalidate: 0 },
     });
   },
-
-  // Bulk update Anime request
 };
