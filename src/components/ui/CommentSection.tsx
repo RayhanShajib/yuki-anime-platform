@@ -3,9 +3,9 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { pageApi } from "@/lib/api/pageApi";
-import { FaRegThumbsDown, FaRegThumbsUp } from "react-icons/fa";
-import { MdCancel, MdSend } from "react-icons/md";
-import type { ApiComment, ApiCommentResponse, ApiUserVotesResponse } from "@/types/api";
+import { FaRegThumbsDown, FaRegThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
+import { MdCancel, MdSend, MdCheck } from "react-icons/md";
+import type { ApiComment, ApiCommentResponse, ApiVoteResponse } from "@/types/api";
 
 type CommentType = {
   id: number;
@@ -69,22 +69,28 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [comments, setComments] = useState<CommentType[]>([]);
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [commentInput, setCommentInput] = useState("");
-  
-  const [replyInputs, setReplyInputs] = useState<Record<number, string>>({});
-  const [showReply, setShowReply] = useState<Record<number, boolean>>({});
   const [showPreview, setShowPreview] = useState(false);
+  const [replyInputs, setReplyInputs] = useState<Record<number, string>>({});
   const [replyPreviews, setReplyPreviews] = useState<Record<number, boolean>>({});
-
-  // Current logged-in user (to show avatar on the left of the input)
-  const [currentUser, setCurrentUser] = useState<{ name: string; avatar: string } | null>(null);
-  const [posting, setPosting] = useState(false);
+  const [showReply, setShowReply] = useState<Record<number, boolean>>({});
   const [postError, setPostError] = useState<string | null>(null);
-
-  // New state for vote functionality
+  const [isPosting, setIsPosting] = useState(false);
+  const [userProfile, setUserProfile] = useState<{
+    username?: string;
+    name?: string;
+    avatar?: string;
+  } | null>(null);
+  
+  // Vote tracking
   const [votingComments, setVotingComments] = useState<Set<number>>(new Set());
-  const [userVotes, setUserVotes] = useState<ApiUserVotesResponse>({});
+  
+  // Edit/Delete state  
+  const [editingComments, setEditingComments] = useState<Set<number>>(new Set());
+  const [editInputs, setEditInputs] = useState<Record<number, string>>({});
+  const [deletingComments, setDeletingComments] = useState<Set<number>>(new Set());
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<Set<number>>(new Set());
 
-  // Load current user's profile if token exists so we can show avatar next to input
+  // Load current user's profile
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -92,7 +98,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         if (!token) return;
         const profile = await pageApi.getProfilePageData(token);
         if (profile) {
-          setCurrentUser({
+          setUserProfile({
+            username: profile.username || profile.user || "User",
             name: profile.username || profile.user || "User",
             avatar: profile.avatar || profile.profile_picture ||
               "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
@@ -106,23 +113,15 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     loadProfile();
   }, []);
 
-  // Load user votes for comments
-  useEffect(() => {
-    const loadUserVotes = async () => {
-      try {
-        const token = localStorage.getItem("access_token");
-        if (!token || !episodeId) return;
-        
-        const votes = await pageApi.getUserVotes(token, String(episodeId));
-        setUserVotes(votes || {});
-      } catch {
-        // Ignore vote loading errors, defaults to no votes
-        setUserVotes({});
-      }
-    };
+  // Permission helper functions
+  const canModifyComment = (comment: CommentType): boolean => {
+    return userProfile?.username === comment.user.name;
+  };
 
-    loadUserVotes();
-  }, [episodeId]);
+  const showEditButton = (comment: CommentType): boolean => canModifyComment(comment);
+  const showDeleteButton = (comment: CommentType): boolean => canModifyComment(comment);
+
+  // Comments will get vote state from API responses, no separate loading needed
 
   // If parent passes external comments (API response), map and initialize.
   React.useEffect(() => {
@@ -147,8 +146,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           replies: mapReplies(r.replies || []),
           likes: r.upvotes,
           dislikes: r.downvotes,
-          liked: userVotes[r.id.toString()] === "upvote",
-          disliked: userVotes[r.id.toString()] === "downvote",
+          liked: false, // Will be updated from API vote responses
+          disliked: false, // Will be updated from API vote responses  
           user: {
             name: r.user,
             avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
@@ -162,8 +161,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         replies: mapReplies(c.replies || []),
         likes: c.upvotes,
         dislikes: c.downvotes,
-        liked: userVotes[c.id.toString()] === "upvote",
-        disliked: userVotes[c.id.toString()] === "downvote",
+        liked: false, // Will be updated from API vote responses
+        disliked: false, // Will be updated from API vote responses
         user: {
           name: c.user,
           avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
@@ -172,7 +171,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     });
 
     setComments(mapped);
-  }, [externalComments, userVotes]);
+  }, [externalComments]);
 
   // Input validation function
   const validateComment = (text: string): string | null => {
@@ -329,27 +328,96 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     }, 0);
   }
 
-  // Helper function to update comment votes optimistically
-  function updateCommentVotes(
+  // Formatting for edit
+  function applyEditFormatting(
+    type: "bold" | "italic" | "quote" | "spoiler",
+    commentId: number
+  ) {
+    const textarea = document.querySelector(
+      `[data-edit-id="${commentId}"]`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const { selectionStart, selectionEnd, value } = textarea;
+    const selectedText = value.substring(selectionStart, selectionEnd);
+    let newText = "";
+    let newCursorPos = selectionEnd;
+
+    switch (type) {
+      case "bold":
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
+            `**${selectedText}**` +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
+            "****" +
+            value.substring(selectionEnd);
+        newCursorPos = selectionStart + 2;
+        break;
+
+      case "italic":
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
+            `*${selectedText}*` +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
+            "**" +
+            value.substring(selectionEnd);
+        newCursorPos = selectionStart + 1;
+        break;
+
+      case "quote":
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
+            `""${selectedText}""` +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
+            '""""' +
+            value.substring(selectionEnd);
+        newCursorPos = selectionStart + 2;
+        break;
+
+      case "spoiler":
+        newText = selectedText
+          ? value.substring(0, selectionStart) +
+            `||${selectedText}||` +
+            value.substring(selectionEnd)
+          : value.substring(0, selectionStart) +
+            "||||" +
+            value.substring(selectionEnd);
+        newCursorPos = selectionStart + 2;
+        break;
+    }
+
+    setEditInputs((prev) => ({ ...prev, [commentId]: newText }));
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    }, 0);
+  }
+
+  // Helper function to update comment text in the comments tree
+  function updateCommentText(
     comments: CommentType[], 
     targetId: number, 
-    likeChange: number, 
-    dislikeChange: number,
-    liked: boolean,
-    disliked: boolean
+    newText: string
   ): CommentType[] {
     return comments.map((c) => {
       if (c.id === targetId) {
-        return {
-          ...c,
-          likes: c.likes + likeChange,
-          dislikes: c.dislikes + dislikeChange,
-          liked,
-          disliked,
-        };
+        return { ...c, text: newText };
       }
-      return { ...c, replies: updateCommentVotes(c.replies, targetId, likeChange, dislikeChange, liked, disliked) };
+      return { ...c, replies: updateCommentText(c.replies, targetId, newText) };
     });
+  }
+
+  // Helper function to remove comment from the comments tree
+  function removeComment(
+    comments: CommentType[], 
+    targetId: number
+  ): CommentType[] {
+    return comments
+      .filter(c => c.id !== targetId)
+      .map(c => ({ ...c, replies: removeComment(c.replies, targetId) }));
   }
 
   // ---- COMMENT HANDLERS ----
@@ -375,7 +443,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       }
 
       try {
-        setPosting(true);
+        setIsPosting(true);
         const res = await pageApi.createComment(token, String(episodeId), text);
 
         // Map returned comment into local CommentType and prepend
@@ -384,9 +452,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           text: res.content || res.text || "",
           timestamp: new Date(res.created_at || Date.now()),
           replies: Array.isArray(res.replies)
-            ? res.replies.map((r: any) => ({
+            ? res.replies.map((r: ApiComment) => ({
                 id: r.id,
-                text: r.content || r.text || "",
+                text: r.content || "",
                 timestamp: new Date(r.created_at || Date.now()),
                 replies: [],
                 likes: r.upvotes || 0,
@@ -404,8 +472,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           liked: false,
           disliked: false,
           user: {
-            name: res.user || currentUser?.name || "User",
-            avatar: currentUser?.avatar ||
+            name: res.user || userProfile?.name || "User",
+            avatar: userProfile?.avatar ||
               "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
           },
         };
@@ -416,13 +484,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         if (onCommentCreated) onCommentCreated();
       } catch (err: unknown) {
         // Surface API validation errors or generic message
-        if (err && typeof err === "object" && (err as any).data) {
-          const d = (err as any).data;
+        if (err && typeof err === "object" && "data" in err) {
+          const errorObj = err as { data: unknown };
+          const d = errorObj.data;
           if (typeof d === "string") setPostError(d);
-          else if (typeof d === "object") {
+          else if (typeof d === "object" && d !== null) {
             const parts: string[] = [];
             for (const k of Object.keys(d)) {
-              const val = (d as any)[k];
+              const val = (d as Record<string, unknown>)[k];
               if (Array.isArray(val)) parts.push(`${k}: ${val.join(", ")}`);
               else parts.push(`${k}: ${String(val)}`);
             }
@@ -433,7 +502,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           console.error("Create comment failed:", err);
         }
       } finally {
-        setPosting(false);
+        setIsPosting(false);
       }
     };
 
@@ -461,7 +530,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       }
 
       try {
-        setPosting(true);
+        setIsPosting(true);
         const res = await pageApi.createComment(token, String(episodeId), text, parentId);
 
         // Map API response to local reply format
@@ -475,8 +544,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           liked: false,
           disliked: false,
           user: {
-            name: res.user || currentUser?.name || "User",
-            avatar: currentUser?.avatar ||
+            name: res.user || userProfile?.name || "User",
+            avatar: userProfile?.avatar ||
               "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
           },
         };
@@ -497,13 +566,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         if (onCommentCreated) onCommentCreated();
       } catch (err: unknown) {
         // surface error
-        if (err && typeof err === "object" && (err as any).data) {
-          const d = (err as any).data;
+        if (err && typeof err === "object" && "data" in err) {
+          const errorObj = err as { data: unknown };
+          const d = errorObj.data;
           if (typeof d === "string") setPostError(d);
-          else if (typeof d === "object") {
+          else if (typeof d === "object" && d !== null) {
             const parts: string[] = [];
             for (const k of Object.keys(d)) {
-              const val = (d as any)[k];
+              const val = (d as Record<string, unknown>)[k];
               if (Array.isArray(val)) parts.push(`${k}: ${val.join(", ")}`);
               else parts.push(`${k}: ${String(val)}`);
             }
@@ -514,11 +584,40 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           console.error("Reply failed:", err);
         }
       } finally {
-        setPosting(false);
+        setIsPosting(false);
       }
     };
 
     void tryReply();
+  }
+
+  // Update comment votes using actual API response data
+  function updateCommentVotesFromResponse(
+    comments: CommentType[], 
+    commentId: number, 
+    voteResponse: ApiVoteResponse
+  ): CommentType[] {
+    return comments.map(comment => {
+      if (comment.id === commentId) {
+        return {
+          ...comment,
+          likes: voteResponse.upvotes,
+          dislikes: voteResponse.downvotes,
+          liked: voteResponse.user_vote === "upvote",
+          disliked: voteResponse.user_vote === "downvote"
+        };
+      }
+      
+      // Also check replies
+      if (comment.replies.length > 0) {
+        return {
+          ...comment,
+          replies: updateCommentVotesFromResponse(comment.replies, commentId, voteResponse)
+        };
+      }
+      
+      return comment;
+    });
   }
 
   async function handleLike(id: number) {
@@ -533,22 +632,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     setVotingComments(prev => new Set([...prev, id]));
 
     try {
-      const currentVote = userVotes[id.toString()];
+      // Always send "U" - backend handles toggle logic
+      const response = await pageApi.voteComment(token, id, "U");
       
-      if (currentVote === "upvote") {
-        // Remove upvote
-        await pageApi.removeVote(token, id);
-        setUserVotes(prev => ({ ...prev, [id.toString()]: null }));
-        // Optimistic update
-        setComments(prev => updateCommentVotes(prev, id, -1, 0, false, false));
-      } else {
-        // Add upvote (and remove downvote if exists)
-        await pageApi.voteComment(token, id, "upvote");
-        setUserVotes(prev => ({ ...prev, [id.toString()]: "upvote" }));
-        // Optimistic update
-        const likeChange = 1;
-        const dislikeChange = currentVote === "downvote" ? -1 : 0;
-        setComments(prev => updateCommentVotes(prev, id, likeChange, dislikeChange, true, false));
+      // Update comment state with actual API response data
+      if (response) {
+        setComments(prev => updateCommentVotesFromResponse(prev, id, response));
       }
     } catch (err) {
       setPostError("Failed to vote on comment. Please try again.");
@@ -574,22 +663,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     setVotingComments(prev => new Set([...prev, id]));
 
     try {
-      const currentVote = userVotes[id.toString()];
+      // Always send "D" - backend handles toggle logic
+      const response = await pageApi.voteComment(token, id, "D");
       
-      if (currentVote === "downvote") {
-        // Remove downvote
-        await pageApi.removeVote(token, id);
-        setUserVotes(prev => ({ ...prev, [id.toString()]: null }));
-        // Optimistic update
-        setComments(prev => updateCommentVotes(prev, id, 0, -1, false, false));
-      } else {
-        // Add downvote (and remove upvote if exists)
-        await pageApi.voteComment(token, id, "downvote");
-        setUserVotes(prev => ({ ...prev, [id.toString()]: "downvote" }));
-        // Optimistic update
-        const likeChange = currentVote === "upvote" ? -1 : 0;
-        const dislikeChange = 1;
-        setComments(prev => updateCommentVotes(prev, id, likeChange, dislikeChange, false, true));
+      // Update comment state with actual API response data
+      if (response) {
+        setComments(prev => updateCommentVotesFromResponse(prev, id, response));
       }
     } catch (err) {
       setPostError("Failed to vote on comment. Please try again.");
@@ -603,6 +682,122 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     }
   }
 
+  // Edit functionality
+  function startEdit(comment: CommentType) {
+    setEditingComments(prev => new Set([...prev, comment.id]));
+    setEditInputs(prev => ({ ...prev, [comment.id]: comment.text }));
+  }
+
+  function cancelEdit(commentId: number) {
+    setEditingComments(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(commentId);
+      return newSet;
+    });
+    setEditInputs(prev => {
+      const newInputs = { ...prev };
+      delete newInputs[commentId];
+      return newInputs;
+    });
+  }
+
+  async function saveEdit(commentId: number) {
+    const newText = editInputs[commentId];
+    const validationError = validateComment(newText);
+    
+    if (validationError) {
+      setPostError(validationError);
+      return;
+    }
+
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setPostError("Please log in to edit comments.");
+      return;
+    }
+
+    try {
+      await pageApi.updateComment(token, commentId, newText);
+      
+      // Update comment in UI
+      setComments(prev => updateCommentText(prev, commentId, newText));
+      
+      // Exit edit mode
+      cancelEdit(commentId);
+      setPostError(null);
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "data" in err) {
+        const errorObj = err as { data: unknown };
+        const d = errorObj.data;
+        if (typeof d === "string") setPostError(d);
+        else if (typeof d === "object" && d !== null) {
+          const parts: string[] = [];
+          for (const k of Object.keys(d)) {
+            const val = (d as Record<string, unknown>)[k];
+            if (Array.isArray(val)) parts.push(`${k}: ${val.join(", ")}`);
+            else parts.push(`${k}: ${String(val)}`);
+          }
+          setPostError(parts.join("; ") || "Failed to update comment");
+        } else setPostError("Failed to update comment");
+      } else {
+        setPostError("Failed to update comment. Please try again.");
+        console.error("Update comment failed:", err);
+      }
+    }
+  }
+
+  // Delete functionality
+  function confirmDelete(commentId: number) {
+    setShowDeleteConfirm(prev => new Set([...prev, commentId]));
+  }
+
+  function cancelDelete(commentId: number) {
+    setShowDeleteConfirm(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(commentId);
+      return newSet;
+    });
+  }
+
+  async function deleteComment(commentId: number) {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setPostError("Please log in to delete comments.");
+      return;
+    }
+
+    // Prevent double-clicking
+    if (deletingComments.has(commentId)) return;
+    setDeletingComments(prev => new Set([...prev, commentId]));
+
+    try {
+      await pageApi.deleteComment(token, commentId);
+      
+      // Remove comment from UI
+      setComments(prev => removeComment(prev, commentId));
+      
+      // Clear delete confirmation
+      cancelDelete(commentId);
+      setPostError(null);
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "data" in err) {
+        const errorObj = err as { data: unknown };
+        const d = errorObj.data;
+        if (typeof d === "string") setPostError(d);
+        else setPostError("Failed to delete comment");
+      } else {
+        setPostError("Failed to delete comment. Please try again.");
+        console.error("Delete comment failed:", err);
+      }
+    } finally {
+      setDeletingComments(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(commentId);
+        return newSet;
+      });
+    }
+  }
+
   function totalComments(comms: CommentType[]): number {
     return comms.reduce((acc, c) => acc + 1 + totalComments(c.replies), 0);
   }
@@ -610,6 +805,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   // ---- RENDER COMMENT ----
   function renderComment(comment: CommentType, level = 0): React.ReactNode {
     const isVoting = votingComments.has(comment.id);
+    const isEditing = editingComments.has(comment.id);
+    const isDeleting = deletingComments.has(comment.id);
+    const showDeleteDialog = showDeleteConfirm.has(comment.id);
     
     return (
       <div
@@ -637,12 +835,80 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             <p className="text-gray-400 text-xs">
               {formatDateTime(comment.timestamp)}
             </p>
-            <div>
-              <div
-                className="text-white mb-2 mt-3"
-                dangerouslySetInnerHTML={{ __html: formatText(comment.text) }}
-              />
-              <div className="flex items-center space-x-4">
+            
+            {/* Comment content or edit form */}
+            <div className="mt-3">
+              {isEditing ? (
+                <div className="flex flex-col">
+                  <div
+                    style={{
+                      background:
+                        "linear-gradient(to right, #000000 0%, #1a0e26 50%, #000000 100%)",
+                      padding: "2px",
+                      borderRadius: "0.75rem 0.75rem 0 0",
+                    }}>
+                    <textarea
+                      data-edit-id={comment.id}
+                      className="bg-purple p-2 flex-grow focus:outline-none text-white rounded-t-xl border-0 w-full min-h-[80px]"
+                      value={editInputs[comment.id] || ""}
+                      onChange={(e) =>
+                        setEditInputs((prev) => ({
+                          ...prev,
+                          [comment.id]: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="bg-[#2d2341] rounded-b-xl p-1 flex justify-between gap-2 flex-wrap">
+                    <div className="flex flex-wrap items-center">
+                      <button
+                        onClick={() => applyEditFormatting("bold", comment.id)}
+                        className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md font-bold"
+                        title="Bold">
+                        <strong>B</strong>
+                      </button>
+                      <button
+                        onClick={() => applyEditFormatting("italic", comment.id)}
+                        className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md italic"
+                        title="Italic">
+                        <em>I</em>
+                      </button>
+                      <button
+                        onClick={() => applyEditFormatting("quote", comment.id)}
+                        className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md"
+                        title="Quote">
+                        &quot;&quot;
+                      </button>
+                      <button
+                        onClick={() => applyEditFormatting("spoiler", comment.id)}
+                        className="hover:bg-[#111418b5] text-[#888B8D] px-1.5 py-1 rounded text-md"
+                        title="Spoiler">
+                        S
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <button
+                        className="flex items-center justify-center"
+                        onClick={() => cancelEdit(comment.id)}>
+                        <MdCancel size={19} className="text-[#888B8D]" />
+                      </button>
+                      <button
+                        className="text-white flex justify-center"
+                        onClick={() => saveEdit(comment.id)}>
+                        <MdCheck size={19} className="text-green-400" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="text-white mb-2"
+                  dangerouslySetInnerHTML={{ __html: formatText(comment.text) }}
+                />
+              )}
+              
+              {/* Action buttons */}
+              <div className="flex items-center space-x-4 flex-wrap">
                 <button
                   className={`like-btn flex items-center ${
                     comment.liked ? "text-white" : "text-gray-500"
@@ -671,6 +937,45 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                   }>
                   Reply
                 </button>
+                
+                {/* Edit button for own comments */}
+                {showEditButton(comment) && !isEditing && (
+                  <button
+                    className="text-blue-400 hover:text-blue-300 flex items-center"
+                    onClick={() => startEdit(comment)}>
+                    <FaEdit className="mr-1" size={14} />
+                    Edit
+                  </button>
+                )}
+                
+                {/* Delete button for own comments */}
+                {showDeleteButton(comment) && !isEditing && (
+                  <>
+                    {showDeleteDialog ? (
+                      <div className="flex items-center space-x-2">
+                        <span className="text-red-400 text-sm">Delete?</span>
+                        <button
+                          className={`text-red-400 hover:text-red-300 ${isDeleting ? "opacity-50 cursor-not-allowed" : ""}`}
+                          onClick={() => !isDeleting && deleteComment(comment.id)}
+                          disabled={isDeleting}>
+                          Yes
+                        </button>
+                        <button
+                          className="text-gray-400 hover:text-gray-300"
+                          onClick={() => cancelDelete(comment.id)}>
+                          No
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className="text-red-400 hover:text-red-300 flex items-center"
+                        onClick={() => confirmDelete(comment.id)}>
+                        <FaTrash className="mr-1" size={14} />
+                        Delete
+                      </button>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -824,8 +1129,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       {/* Input Box */}
       <div className="flex items-start space-x-3 mb-6">
           <Image
-            src={currentUser?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face"}
-            alt={currentUser?.name || "User Avatar"}
+            src={userProfile?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face"}
+            alt={userProfile?.name || "User Avatar"}
             width={40}
             height={40}
             className="rounded-full object-cover"
@@ -891,13 +1196,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 <MdCancel size={19} className="text-[#888B8D]" />
               </button>
               <button
-                className={`text-white flex justify-center ${posting ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`text-white flex justify-center ${isPosting ? "opacity-50 cursor-not-allowed" : ""}`}
                 onClick={() => {
-                  if (commentInput.trim() && !posting) {
+                  if (commentInput.trim() && !isPosting) {
                     addComment(commentInput.trim());
                   }
                 }}
-                disabled={posting}>
+                disabled={isPosting}>
                 <MdSend size={19} className="text-[#888B8D]" />
               </button>
             </div>

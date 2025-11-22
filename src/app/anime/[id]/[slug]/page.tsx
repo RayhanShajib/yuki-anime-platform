@@ -231,7 +231,7 @@ const transformApiDataToComponent = (
       type:
         anime.anime_type === "Movie" ? ("movie" as const) : ("series" as const),
       totalEpisodes: anime.number_of_episodes,
-      rating: anime.rating,
+      rating: 0, // Default rating since not provided by API
       popularity: 0,
       language: anime.sub_total > 0 ? ["sub"] : ([] as ("sub" | "dub")[]),
     })),
@@ -247,7 +247,7 @@ const transformApiDataToComponent = (
       type:
         anime.anime_type === "Movie" ? ("movie" as const) : ("series" as const),
       totalEpisodes: anime.number_of_episodes,
-      rating: anime.rating,
+      rating: 0, // Default rating since not provided by API
       popularity: 0,
       language: anime.sub_total > 0 ? ["sub"] : ([] as ("sub" | "dub")[]),
     })),

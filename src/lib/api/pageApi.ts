@@ -33,7 +33,7 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
     try {
       // Some error responses include JSON payloads with validation messages
       errorBody = await response.json();
-    } catch (e) {
+    } catch {
       // ignore JSON parse errors
     }
 
@@ -43,6 +43,12 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
     throw err;
   }
 
+  // Handle 204 No Content responses specifically (empty body for delete operations)
+  if (response.status === 204) {
+    return null;
+  }
+
+  // All other responses should be JSON as before
   return response.json();
 });
 
@@ -635,11 +641,11 @@ export const pageApi = {
     });
   },
 
-  // Vote on comment
+  // Vote on comment (handles both voting and toggling)
   voteComment: async (
     token: string,
     commentId: number,
-    voteType: "upvote" | "downvote"
+    voteType: "U" | "D"
   ) => {
     const endpoint = `/comments/${commentId}/vote/`;
     return fetchFromApi(endpoint, {
@@ -648,18 +654,6 @@ export const pageApi = {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ vote_type: voteType }),
-      next: { revalidate: 0 },
-    });
-  },
-
-  // Remove vote from comment
-  removeVote: async (token: string, commentId: number) => {
-    const endpoint = `/comments/${commentId}/vote/`;
-    return fetchFromApi(endpoint, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       next: { revalidate: 0 },
     });
   },
