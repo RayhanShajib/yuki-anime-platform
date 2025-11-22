@@ -64,7 +64,7 @@ export default function AdminAddNotificationPage() {
         }
       }
       setError(msg);
-      // eslint-disable-next-line no-console
+       
       console.error("pushNotification failed:", err);
     } finally {
       setLoading(false);

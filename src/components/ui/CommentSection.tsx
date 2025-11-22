@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { pageApi } from "@/lib/api/pageApi";
 import { FaRegThumbsDown, FaRegThumbsUp } from "react-icons/fa";
 import { MdCancel, MdSend } from "react-icons/md";
+import type { ApiComment, ApiCommentResponse, ApiUserVotesResponse } from "@/types/api";
 
 type CommentType = {
   id: number;
@@ -55,15 +55,9 @@ function timeAgo(date: Date) {
   return "Just now";
 }
 
-// No guest fallback: commenting requires authentication. We fetch the
-// authenticated user's profile and show their avatar in the input area.
-
 type CommentSectionProps = {
-  // Optional external comments (API response) to initialize the section
-  comments?: Array<any>;
-  // Episode id is required to create a comment using the API
+  comments?: ApiCommentResponse | null;
   episodeId?: string | number;
-  // Optional callback when a comment is created (parent can refresh)
   onCommentCreated?: () => void;
 };
 
@@ -79,14 +73,16 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [replyInputs, setReplyInputs] = useState<Record<number, string>>({});
   const [showReply, setShowReply] = useState<Record<number, boolean>>({});
   const [showPreview, setShowPreview] = useState(false);
-  const [replyPreviews, setReplyPreviews] = useState<Record<number, boolean>>(
-    {}
-  );
+  const [replyPreviews, setReplyPreviews] = useState<Record<number, boolean>>({});
 
   // Current logged-in user (to show avatar on the left of the input)
   const [currentUser, setCurrentUser] = useState<{ name: string; avatar: string } | null>(null);
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
+
+  // New state for vote functionality
+  const [votingComments, setVotingComments] = useState<Set<number>>(new Set());
+  const [userVotes, setUserVotes] = useState<ApiUserVotesResponse>({});
 
   // Load current user's profile if token exists so we can show avatar next to input
   useEffect(() => {
@@ -102,7 +98,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
           });
         }
-      } catch (e) {
+      } catch {
         // ignore profile load errors, keep fallback
       }
     };
@@ -110,74 +106,81 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     loadProfile();
   }, []);
 
+  // Load user votes for comments
+  useEffect(() => {
+    const loadUserVotes = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token || !episodeId) return;
+        
+        const votes = await pageApi.getUserVotes(token, String(episodeId));
+        setUserVotes(votes || {});
+      } catch {
+        // Ignore vote loading errors, defaults to no votes
+        setUserVotes({});
+      }
+    };
+
+    loadUserVotes();
+  }, [episodeId]);
+
   // If parent passes external comments (API response), map and initialize.
-  // Accept both: an array of comments or a paginated object { results: [] }.
   React.useEffect(() => {
     if (!externalComments) return;
 
-    const list: any[] = Array.isArray(externalComments)
-      ? externalComments
-      : Array.isArray((externalComments as any).results)
-      ? (externalComments as any).results
-      : [];
+    // Handle paginated API response structure
+    const commentData = externalComments as ApiCommentResponse;
+    const apiComments = commentData?.results || [];
 
-    if (!list.length) {
+    if (!apiComments.length) {
       setComments([]);
       return;
     }
 
-    const mapped = list.map((c: any) => {
-      // 'user' can be a string (username) or an object with details.
-      const userName =
-        typeof c.user === "string"
-          ? c.user
-          : c.user?.username || c.user?.name || "User";
-
-      const userAvatar =
-        typeof c.user === "object"
-          ? c.user?.avatar || c.user?.profile_picture
-          : undefined;
+    const mapped = apiComments.map((c: ApiComment) => {
+      // Map replies recursively
+      const mapReplies = (replies: ApiComment[]): CommentType[] => 
+        replies.map((r: ApiComment) => ({
+          id: r.id,
+          text: r.content,
+          timestamp: new Date(r.created_at),
+          replies: mapReplies(r.replies || []),
+          likes: r.upvotes,
+          dislikes: r.downvotes,
+          liked: userVotes[r.id.toString()] === "upvote",
+          disliked: userVotes[r.id.toString()] === "downvote",
+          user: {
+            name: r.user,
+            avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+          },
+        }));
 
       return {
         id: c.id,
-        text: c.content || c.text || c.body || "",
-        timestamp: new Date(c.created_at || c.timestamp || Date.now()),
-        replies: Array.isArray(c.replies)
-          ? c.replies.map((r: any) => ({
-              id: r.id,
-              text: r.content || r.text || r.body || "",
-              timestamp: new Date(r.created_at || r.timestamp || Date.now()),
-              replies: [],
-              likes: r.likes_count || 0,
-              dislikes: r.dislikes_count || 0,
-              liked: !!r.liked,
-              disliked: !!r.disliked,
-              user: {
-                name:
-                  typeof r.user === "string"
-                    ? r.user
-                    : r.user?.username || r.user?.name || "User",
-                avatar:
-                  r.user?.avatar || r.user?.profile_picture ||
-                  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
-              },
-            }))
-          : [],
-        likes: c.likes_count || 0,
-        dislikes: c.dislikes_count || 0,
-        liked: !!c.liked,
-        disliked: !!c.disliked,
+        text: c.content,
+        timestamp: new Date(c.created_at),
+        replies: mapReplies(c.replies || []),
+        likes: c.upvotes,
+        dislikes: c.downvotes,
+        liked: userVotes[c.id.toString()] === "upvote",
+        disliked: userVotes[c.id.toString()] === "downvote",
         user: {
-          name: userName,
-          avatar:
-            userAvatar ||
-            "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+          name: c.user,
+          avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
         },
       } as CommentType;
     });
 
     setComments(mapped);
-  }, [externalComments]);
+  }, [externalComments, userVotes]);
+
+  // Input validation function
+  const validateComment = (text: string): string | null => {
+    if (!text.trim()) return "Comment cannot be empty";
+    if (text.length > 1000) return "Comment is too long (max 1000 characters)";
+    if (text.length < 3) return "Comment is too short (min 3 characters)";
+    return null;
+  };
 
   // Format text with bold, italic, quotes, and spoilers
   function formatText(text: string): string {
@@ -257,6 +260,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       textarea.setSelectionRange(newCursorPos, newCursorPos);
     }, 0);
   }
+
   // Formatting for reply
   function applyReplyFormatting(
     type: "bold" | "italic" | "quote" | "spoiler",
@@ -325,9 +329,38 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     }, 0);
   }
 
+  // Helper function to update comment votes optimistically
+  function updateCommentVotes(
+    comments: CommentType[], 
+    targetId: number, 
+    likeChange: number, 
+    dislikeChange: number,
+    liked: boolean,
+    disliked: boolean
+  ): CommentType[] {
+    return comments.map((c) => {
+      if (c.id === targetId) {
+        return {
+          ...c,
+          likes: c.likes + likeChange,
+          dislikes: c.dislikes + dislikeChange,
+          liked,
+          disliked,
+        };
+      }
+      return { ...c, replies: updateCommentVotes(c.replies, targetId, likeChange, dislikeChange, liked, disliked) };
+    });
+  }
+
   // ---- COMMENT HANDLERS ----
   function addComment(text: string) {
-    // If we have an episodeId and token, try to create via API
+    // Validate input
+    const validationError = validateComment(text);
+    if (validationError) {
+      setPostError(validationError);
+      return;
+    }
+
     const tryCreate = async () => {
       setPostError(null);
       if (!episodeId) {
@@ -356,24 +389,23 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 text: r.content || r.text || "",
                 timestamp: new Date(r.created_at || Date.now()),
                 replies: [],
-                likes: r.likes_count || 0,
-                dislikes: r.dislikes_count || 0,
-                liked: !!r.liked,
-                disliked: !!r.disliked,
+                likes: r.upvotes || 0,
+                dislikes: r.downvotes || 0,
+                liked: false,
+                disliked: false,
                 user: {
-                  name: typeof r.user === "string" ? r.user : r.user?.username || r.user?.name || "User",
-                  avatar: r.user?.avatar || r.user?.profile_picture ||
-                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
+                  name: r.user || "User",
+                  avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
                 },
               }))
             : [],
-          likes: res.likes_count || 0,
-          dislikes: res.dislikes_count || 0,
-          liked: !!res.liked,
-          disliked: !!res.disliked,
+          likes: res.upvotes || 0,
+          dislikes: res.downvotes || 0,
+          liked: false,
+          disliked: false,
           user: {
-            name: typeof res.user === "string" ? res.user : res.user?.username || res.user?.name || "User",
-            avatar: (res.user && res.user.avatar) || currentUser?.avatar ||
+            name: res.user || currentUser?.name || "User",
+            avatar: currentUser?.avatar ||
               "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
           },
         };
@@ -398,7 +430,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           } else setPostError("Failed to post comment");
         } else {
           setPostError("Failed to post comment. Please try again.");
-          // eslint-disable-next-line no-console
           console.error("Create comment failed:", err);
         }
       } finally {
@@ -410,7 +441,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   }
 
   function addReply(parentId: number, text: string) {
-    // If we have episodeId and token, post reply to API; otherwise fall back to local reply
+    // Validate input
+    const validationError = validateComment(text);
+    if (validationError) {
+      setPostError(validationError);
+      return;
+    }
+
     const tryReply = async () => {
       if (!episodeId) {
         setPostError("Missing episode id");
@@ -433,13 +470,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           text: res.content || res.text || "",
           timestamp: new Date(res.created_at || Date.now()),
           replies: [],
-          likes: res.likes_count || 0,
-          dislikes: res.dislikes_count || 0,
-          liked: !!res.liked,
-          disliked: !!res.disliked,
+          likes: res.upvotes || 0,
+          dislikes: res.downvotes || 0,
+          liked: false,
+          disliked: false,
           user: {
-            name: typeof res.user === "string" ? res.user : res.user?.username || res.user?.name || "User",
-            avatar: (res.user && res.user.avatar) || currentUser?.avatar ||
+            name: res.user || currentUser?.name || "User",
+            avatar: currentUser?.avatar ||
               "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop&crop=face",
           },
         };
@@ -474,7 +511,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           } else setPostError("Failed to post reply");
         } else {
           setPostError("Failed to post reply. Please try again.");
-          // eslint-disable-next-line no-console
           console.error("Reply failed:", err);
         }
       } finally {
@@ -485,50 +521,86 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     void tryReply();
   }
 
-  function handleLike(id: number) {
-    setComments((prev) => {
-      const update = (comms: CommentType[]): CommentType[] =>
-        comms.map((c) => {
-          if (c.id === id) {
-            if (c.liked) {
-              return { ...c, likes: c.likes - 1, liked: false };
-            } else {
-              return {
-                ...c,
-                likes: c.likes + 1,
-                liked: true,
-                dislikes: c.disliked ? c.dislikes - 1 : c.dislikes,
-                disliked: false,
-              };
-            }
-          }
-          return { ...c, replies: update(c.replies) };
-        });
-      return update(prev);
-    });
+  async function handleLike(id: number) {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setPostError("Please log in to vote on comments.");
+      return;
+    }
+
+    // Prevent double-clicking
+    if (votingComments.has(id)) return;
+    setVotingComments(prev => new Set([...prev, id]));
+
+    try {
+      const currentVote = userVotes[id.toString()];
+      
+      if (currentVote === "upvote") {
+        // Remove upvote
+        await pageApi.removeVote(token, id);
+        setUserVotes(prev => ({ ...prev, [id.toString()]: null }));
+        // Optimistic update
+        setComments(prev => updateCommentVotes(prev, id, -1, 0, false, false));
+      } else {
+        // Add upvote (and remove downvote if exists)
+        await pageApi.voteComment(token, id, "upvote");
+        setUserVotes(prev => ({ ...prev, [id.toString()]: "upvote" }));
+        // Optimistic update
+        const likeChange = 1;
+        const dislikeChange = currentVote === "downvote" ? -1 : 0;
+        setComments(prev => updateCommentVotes(prev, id, likeChange, dislikeChange, true, false));
+      }
+    } catch (err) {
+      setPostError("Failed to vote on comment. Please try again.");
+      console.error("Vote failed:", err);
+    } finally {
+      setVotingComments(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+    }
   }
 
-  function handleDislike(id: number) {
-    setComments((prev) => {
-      const update = (comms: CommentType[]): CommentType[] =>
-        comms.map((c) => {
-          if (c.id === id) {
-            if (c.disliked) {
-              return { ...c, dislikes: c.dislikes - 1, disliked: false };
-            } else {
-              return {
-                ...c,
-                dislikes: c.dislikes + 1,
-                disliked: true,
-                likes: c.liked ? c.likes - 1 : c.likes,
-                liked: false,
-              };
-            }
-          }
-          return { ...c, replies: update(c.replies) };
-        });
-      return update(prev);
-    });
+  async function handleDislike(id: number) {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setPostError("Please log in to vote on comments.");
+      return;
+    }
+
+    // Prevent double-clicking
+    if (votingComments.has(id)) return;
+    setVotingComments(prev => new Set([...prev, id]));
+
+    try {
+      const currentVote = userVotes[id.toString()];
+      
+      if (currentVote === "downvote") {
+        // Remove downvote
+        await pageApi.removeVote(token, id);
+        setUserVotes(prev => ({ ...prev, [id.toString()]: null }));
+        // Optimistic update
+        setComments(prev => updateCommentVotes(prev, id, 0, -1, false, false));
+      } else {
+        // Add downvote (and remove upvote if exists)
+        await pageApi.voteComment(token, id, "downvote");
+        setUserVotes(prev => ({ ...prev, [id.toString()]: "downvote" }));
+        // Optimistic update
+        const likeChange = currentVote === "upvote" ? -1 : 0;
+        const dislikeChange = 1;
+        setComments(prev => updateCommentVotes(prev, id, likeChange, dislikeChange, false, true));
+      }
+    } catch (err) {
+      setPostError("Failed to vote on comment. Please try again.");
+      console.error("Vote failed:", err);
+    } finally {
+      setVotingComments(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
+    }
   }
 
   function totalComments(comms: CommentType[]): number {
@@ -537,6 +609,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // ---- RENDER COMMENT ----
   function renderComment(comment: CommentType, level = 0): React.ReactNode {
+    const isVoting = votingComments.has(comment.id);
+    
     return (
       <div
         key={comment.id}
@@ -572,16 +646,18 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 <button
                   className={`like-btn flex items-center ${
                     comment.liked ? "text-white" : "text-gray-500"
-                  } hover:text-white`}
-                  onClick={() => handleLike(comment.id)}>
+                  } hover:text-white ${isVoting ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={() => !isVoting && handleLike(comment.id)}
+                  disabled={isVoting}>
                   <FaRegThumbsUp className="mr-1" size={18} />
                   {comment.likes}
                 </button>
                 <button
                   className={`dislike-btn flex items-center ${
                     comment.disliked ? "text-white" : "text-gray-500"
-                  } hover:text-white`}
-                  onClick={() => handleDislike(comment.id)}>
+                  } hover:text-white ${isVoting ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={() => !isVoting && handleDislike(comment.id)}
+                  disabled={isVoting}>
                   <FaRegThumbsDown className="mr-1" size={18} />
                   {comment.dislikes}
                 </button>
@@ -680,9 +756,11 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               </div>
               <div className="flex items-center gap-4 flex-wrap">
                 <button
-                  id="cancel-comment"
                   className="flex items-center justify-center"
-                  onClick={() => setCommentInput("")}>
+                  onClick={() => {
+                    setReplyInputs((prev) => ({ ...prev, [comment.id]: "" }));
+                    setShowReply((prev) => ({ ...prev, [comment.id]: false }));
+                  }}>
                   <MdCancel size={19} className="text-[#888B8D]" />
                 </button>
                 <button
@@ -730,6 +808,18 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           <option value="oldest">Oldest</option>
         </select>
       </div>
+
+      {/* Error Display */}
+      {postError && (
+        <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 mb-4">
+          <p className="text-red-200 text-sm">{postError}</p>
+          <button
+            onClick={() => setPostError(null)}
+            className="text-red-300 hover:text-red-100 text-xs mt-2">
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Input Box */}
       <div className="flex items-start space-x-3 mb-6">
@@ -796,19 +886,18 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             </div>
             <div className="flex items-center gap-4 flex-wrap">
               <button
-                id="cancel-comment"
                 className="flex items-center justify-center"
                 onClick={() => setCommentInput("")}>
                 <MdCancel size={19} className="text-[#888B8D]" />
               </button>
               <button
-                className="text-white flex justify-center"
+                className={`text-white flex justify-center ${posting ? "opacity-50 cursor-not-allowed" : ""}`}
                 onClick={() => {
-                  if (commentInput.trim()) {
+                  if (commentInput.trim() && !posting) {
                     addComment(commentInput.trim());
-                    setCommentInput("");
                   }
-                }}>
+                }}
+                disabled={posting}>
                 <MdSend size={19} className="text-[#888B8D]" />
               </button>
             </div>

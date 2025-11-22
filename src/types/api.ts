@@ -269,3 +269,33 @@ export interface ApiWatchlistItem {
   dub_total: number;
   status: "watching" | "completed" | "drop" | "on_hold" | "plan_to_watch";
 }
+
+// Comment System Types
+export interface ApiComment {
+  id: number;
+  episode: number;
+  user: string;
+  content: string;
+  reply_to: number | null;
+  upvotes: number;
+  downvotes: number;
+  created_at: string;
+  replies: ApiComment[];
+}
+
+export interface ApiCommentResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ApiComment[];
+}
+
+export interface ApiVoteResponse {
+  upvotes: number;
+  downvotes: number;
+  user_vote: "upvote" | "downvote" | null;
+}
+
+export interface ApiUserVotesResponse {
+  [commentId: string]: "upvote" | "downvote" | null;
+}

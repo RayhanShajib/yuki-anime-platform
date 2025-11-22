@@ -17,6 +17,7 @@ import {
 import type {
   PrivateVideoSourceResponse,
   TransformedWatchPageData,
+  ApiCommentResponse,
 } from "@/types/api";
 import { Grid, List, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -103,7 +104,7 @@ export default function WatchPage() {
   }, [episodeId]);
 
   // --- Comments State & Fetch ---
-  const [commentsData, setCommentsData] = useState<any[] | null>(null);
+  const [commentsData, setCommentsData] = useState<ApiCommentResponse | null>(null);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
 
@@ -118,13 +119,13 @@ export default function WatchPage() {
         setCommentsError(null);
         const res = await pageApi.getCommentsForEpisode(episodeId);
         if (!mounted) return;
-        // Expecting array of comments
-        setCommentsData(Array.isArray(res) ? res : []);
+        // API now returns ApiCommentResponse format
+        setCommentsData(res);
       } catch (err) {
         console.error("Failed to load comments:", err);
         if (!mounted) return;
         setCommentsError(err instanceof Error ? err.message : "Failed to load comments");
-        setCommentsData([]);
+        setCommentsData(null);
       } finally {
         if (mounted) setCommentsLoading(false);
       }
@@ -1294,7 +1295,7 @@ export default function WatchPage() {
               {commentsError && (
                 <div className="text-red-400 mb-4">{commentsError}</div>
               )}
-              <CommentSection comments={commentsData || []} episodeId={episodeId} />
+              <CommentSection comments={commentsData} episodeId={episodeId} />
             </div>
           </section>
         </main>

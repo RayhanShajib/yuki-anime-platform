@@ -204,7 +204,7 @@ export default function ProfilePage() {
 
         setNotifications(formattedNotifications);
       } catch (err) {
-        // eslint-disable-next-line no-console
+         
         console.error("Failed to load notifications:", err);
         setNotifications([]);
       }
@@ -228,7 +228,7 @@ export default function ProfilePage() {
       await pageApi.markNotificationAsRead(token, id);
     } catch (err) {
       // Rollback optimistic update on failure
-      // eslint-disable-next-line no-console
+       
       console.error("Failed to mark notification as read:", err);
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: false } : n)));
     }
@@ -881,7 +881,7 @@ export default function ProfilePage() {
                                 }
                               } else {
                                 setImportError("Import failed. Please try again.");
-                                // eslint-disable-next-line no-console
+                                 
                                 console.error("Import failed:", err);
                               }
                             } finally {
@@ -1006,7 +1006,7 @@ export default function ProfilePage() {
                                 setError("Failed to export: check your account");
                               } else {
                                 setError("Failed to export watchlist. Please try again.");
-                                // eslint-disable-next-line no-console
+                                 
                                 console.error("Export failed:", err);
                               }
                             } finally {

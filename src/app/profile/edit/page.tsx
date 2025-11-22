@@ -189,7 +189,7 @@ export default function ProfileEditPage() {
         setValidationErrors((err as any).data as Record<string, string[]>);
       } else {
         // Unexpected error - log for debugging and show generic message
-        // eslint-disable-next-line no-console
+         
         console.error("Failed to save profile settings:", err);
         setError("Failed to save profile settings. Please try again.");
       }

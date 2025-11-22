@@ -188,7 +188,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       await pageApi.markNotificationAsRead(token, id);
     } catch (err) {
       // Rollback optimistic update on failure
-      // eslint-disable-next-line no-console
+       
       console.error("Failed to mark notification as read:", err);
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: false } : n)));
     }
@@ -243,7 +243,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
         setNotifications(formattedNotifications);
       } catch (err) {
-        // eslint-disable-next-line no-console
+         
         console.error("Failed to load navbar notifications:", err);
         setNotifications([]);
       }

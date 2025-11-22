@@ -509,7 +509,7 @@ export const pageApi = {
         error && typeof error === "object" && (error as any).data;
       if (!isValidationError) {
         // Only log unexpected errors
-        // eslint-disable-next-line no-console
+         
         console.error(
           "Failed to update profile settings:",
           error,
@@ -634,6 +634,46 @@ export const pageApi = {
       next: { revalidate: 0 }, // Don't cache comment deletions
     });
   },
+
+  // Vote on comment
+  voteComment: async (
+    token: string,
+    commentId: number,
+    voteType: "upvote" | "downvote"
+  ) => {
+    const endpoint = `/comments/${commentId}/vote/`;
+    return fetchFromApi(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ vote_type: voteType }),
+      next: { revalidate: 0 },
+    });
+  },
+
+  // Remove vote from comment
+  removeVote: async (token: string, commentId: number) => {
+    const endpoint = `/comments/${commentId}/vote/`;
+    return fetchFromApi(endpoint, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 0 },
+    });
+  },
+
+  // Get user's votes for episode comments
+  getUserVotes: cache(async (token: string, episodeId: string) => {
+    const endpoint = `/episode/${episodeId}/user-votes/`;
+    return fetchFromApi(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 60 },
+    });
+  }),
 
   // Get Notifications - Requires authentication
   getNotifications: cache(async (token: string, limit = 5, offset = 0) => {
