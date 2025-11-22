@@ -1,4 +1,5 @@
 import { cache } from 'react';
+import { UpdateAnimeRequestPayload } from '@/types/anime';
 
 // TypeScript interfaces for API data
 export interface EpisodeData {
@@ -277,5 +278,51 @@ export const adminApi = {
       },
       next: { revalidate: 0 }, // Don't cache notification operations
     });
-  }
+  },
+
+  // Update anime Request status
+  updateAnimeRequest: async (
+    token: string,
+    id: string | number,
+    payload: UpdateAnimeRequestPayload,
+  ) => {
+    const endpoint = `/anime-requests/${id}/`;
+    return fetchFromApi(endpoint, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+      next: { revalidate: 60 },
+    });
+  },
+
+  // Get all anime requests
+  getAnimeRequests: async (
+    token: string,
+  ) => {
+    const endpoint = `/anime-requests/`;
+    return fetchFromApi(endpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 60 },
+    });
+  },
+
+  // Get single anime requests
+  getAnimeRequestDetails: async (
+    token: string,
+    id: number,
+  ) => {
+    const endpoint = `/anime-requests/${id}`;
+    return fetchFromApi(endpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 60 },
+    });
+  },
 };

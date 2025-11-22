@@ -1,7 +1,6 @@
 import { cache } from "react";
 import type {
   CreateAnimeRequestPayload,
-  UpdateAnimeRequestPayload,
 } from "@/types/anime";
 
 // Interface for updateWatchlist request body
@@ -685,20 +684,5 @@ export const pageApi = {
       next: { revalidate: 0 },
     });
   },
-  //  I will move it to the admin api later
-  updateAnimeRequest: async (
-    token: string,
-    id: string | number,
-    payload: UpdateAnimeRequestPayload,
-  ) => {
-    const endpoint = `/anime-requests/${id}/`;
-    return fetchFromApi(endpoint, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-      next: { revalidate: 0 },
-    });
-  },
+
 };
