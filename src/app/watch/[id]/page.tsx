@@ -1294,7 +1294,7 @@ export default function WatchPage() {
               {commentsError && (
                 <div className="text-red-400 mb-4">{commentsError}</div>
               )}
-              <CommentSection comments={commentsData || []} />
+              <CommentSection comments={commentsData || []} episodeId={episodeId} />
             </div>
           </section>
         </main>
