@@ -202,10 +202,10 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
         if (!token) return;
 
         const res = await pageApi.getNotifications(token);
-        const list: any[] = Array.isArray(res)
+        const list: unknown[] = Array.isArray(res)
           ? res
-          : Array.isArray((res as any).results)
-          ? (res as any).results
+          : Array.isArray((res as { results?: unknown[] }).results)
+          ? (res as { results: unknown[] }).results
           : [];
 
         if (!list.length) {
@@ -213,8 +213,18 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
           return;
         }
 
-        const formattedNotifications = list.map((notif: any, index: number) => {
-          const source = (notif.source || notif.type || "Anime") as string;
+        const formattedNotifications = list.map((notif: unknown, index: number) => {
+          const notification = notif as {
+            source?: string;
+            type?: string;
+            title?: string;
+            content?: string;
+            created_at?: string;
+            read?: boolean;
+            action_url?: string;
+          };
+          
+          const source = (notification.source || notification.type || "Anime") as string;
           let notificationType: "Anime" | "Community" = "Anime";
 
           if (
@@ -229,12 +239,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
             notificationType = "Anime";
           }
 
-          const createdAt = notif.created_at ? new Date(notif.created_at) : new Date();
-          const id = notif.id ?? Number(createdAt?.getTime()) ?? index + 1;
+          const createdAt = notification.created_at ? new Date(notification.created_at) : new Date();
+          const id = (notification as { id?: number }).id ?? Number(createdAt?.getTime()) ?? index + 1;
 
           return {
             id,
-            text: notif.content ?? notif.message ?? notif.text ?? "New notification",
+            text: notification.content ?? (notification as { message?: string; text?: string }).message ?? (notification as { text?: string }).text ?? "New notification",
             date: createdAt.toLocaleDateString(),
             time: createdAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             type: notificationType,

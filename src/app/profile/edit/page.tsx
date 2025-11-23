@@ -183,13 +183,12 @@ export default function ProfileEditPage() {
       if (
         err &&
         typeof err === "object" &&
-        (err as any).data &&
-        typeof (err as any).data === "object"
+        (err as { data?: unknown }).data &&
+        typeof (err as { data: unknown }).data === "object"
       ) {
-        setValidationErrors((err as any).data as Record<string, string[]>);
+        setValidationErrors((err as { data: Record<string, string[]> }).data);
       } else {
         // Unexpected error - log for debugging and show generic message
-         
         console.error("Failed to save profile settings:", err);
         setError("Failed to save profile settings. Please try again.");
       }

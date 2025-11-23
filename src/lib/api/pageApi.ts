@@ -1,4 +1,5 @@
 import { cache } from "react";
+import type { ApiError } from "@/types/api";
 import type {
   CreateAnimeRequestPayload,
 } from "@/types/anime";
@@ -37,7 +38,7 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
       // ignore JSON parse errors
     }
 
-    const err: any = new Error(response.statusText || "API error");
+    const err = new Error(response.statusText || "API error") as ApiError;
     err.status = response.status;
     err.data = errorBody;
     throw err;
@@ -73,10 +74,10 @@ const fetchTextFromApi = async (endpoint: string, init?: RequestInit) => {
     let errorBody: unknown = null;
     try {
       errorBody = await response.json();
-    } catch (e) {
+    } catch {
       // ignore
     }
-    const err: any = new Error(response.statusText || "API error");
+    const err = new Error(response.statusText || "API error") as ApiError;
     err.status = response.status;
     err.data = errorBody;
     throw err;
@@ -106,10 +107,10 @@ const fetchFormDataFromApi = async (endpoint: string, init?: RequestInit) => {
     let errorBody: unknown = null;
     try {
       errorBody = await response.json();
-    } catch (e) {
+    } catch {
       // ignore
     }
-    const err: any = new Error(response.statusText || "API error");
+    const err = new Error(response.statusText || "API error") as ApiError;
     err.status = response.status;
     err.data = errorBody;
     throw err;
@@ -512,7 +513,7 @@ export const pageApi = {
     } catch (error: unknown) {
       // If this is a validation error (fetchFromApi attaches .data), don't noisy-log it.
       const isValidationError =
-        error && typeof error === "object" && (error as any).data;
+        error && typeof error === "object" && (error as ApiError).data;
       if (!isValidationError) {
         // Only log unexpected errors
          
@@ -593,7 +594,7 @@ export const pageApi = {
     reply_to?: number | null,
   ) => {
     const endpoint = `/comments/`;
-    const body: any = { episode, content };
+    const body: { episode: string; content: string; reply_to?: number } = { episode, content };
     if (typeof reply_to !== "undefined" && reply_to !== null) {
       body.reply_to = reply_to;
     }

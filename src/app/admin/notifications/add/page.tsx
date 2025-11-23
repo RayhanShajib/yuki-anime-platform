@@ -48,15 +48,13 @@ export default function AdminAddNotificationPage() {
     } catch (err: unknown) {
       // Try to surface API error details
       let msg = "Failed to send notification.";
-      // @ts-ignore
-      if (err && typeof err === "object" && (err as any).data) {
-        // @ts-ignore
-        const d = (err as any).data;
+      if (err && typeof err === "object" && (err as { data?: unknown }).data) {
+        const d = (err as { data: unknown }).data;
         if (typeof d === "string") msg = d;
-        else if (typeof d === "object") {
+        else if (d && typeof d === "object") {
           const parts: string[] = [];
-          for (const k of Object.keys(d)) {
-            const val = (d as any)[k];
+          for (const k of Object.keys(d as object)) {
+            const val = (d as Record<string, unknown>)[k];
             if (Array.isArray(val)) parts.push(`${k}: ${val.join(", ")}`);
             else parts.push(`${k}: ${String(val)}`);
           }
