@@ -159,10 +159,10 @@ export default function ProfilePage() {
 
         const res = await pageApi.getNotifications(token);
 
-        const list: any[] = Array.isArray(res)
+        const list: unknown[] = Array.isArray(res)
           ? res
-          : Array.isArray((res as any).results)
-          ? (res as any).results
+          : Array.isArray((res as { results?: unknown[] }).results)
+          ? (res as { results: unknown[] }).results
           : [];
 
         if (!list.length) {
@@ -170,8 +170,18 @@ export default function ProfilePage() {
           return;
         }
 
-        const formattedNotifications = list.map((notif: any, index: number) => {
-          const source = (notif.source || notif.type || "Anime") as string;
+        const formattedNotifications = list.map((notif: unknown, index: number) => {
+          const notification = notif as {
+            source?: string;
+            type?: string;
+            content?: string;
+            message?: string;
+            text?: string;
+            created_at?: string;
+            id?: number;
+          };
+          
+          const source = (notification.source || notification.type || "Anime") as string;
           let notificationType: "Anime" | "Community" = "Anime";
 
           if (
@@ -188,17 +198,17 @@ export default function ProfilePage() {
 
           // Use created_at as the canonical timestamp. If server returns an id, use it;
           // otherwise generate a stable-ish id from the timestamp (fallback to index).
-          const createdAt = notif.created_at ? new Date(notif.created_at) : new Date();
-          const id = notif.id ?? Number(createdAt?.getTime()) ?? index + 1;
+          const createdAt = notification.created_at ? new Date(notification.created_at) : new Date();
+          const id = notification.id ?? Number(createdAt?.getTime()) ?? index + 1;
 
           return {
             id,
-            text: notif.content ?? notif.message ?? notif.text ?? "New notification",
+            text: notification.content ?? notification.message ?? notification.text ?? "New notification",
             date: createdAt.toLocaleDateString(),
             time: createdAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             type: notificationType,
             source,
-            isRead: !!notif.is_read,
+            isRead: !!(notification as { is_read?: boolean }).is_read,
           } as Notification;
         });
 
@@ -846,7 +856,7 @@ export default function ProfilePage() {
                               // Show a friendly result message if available
                               if (res && typeof res === "object") {
                                 const msg =
-                                  (res as any).message ||
+                                  (res as { message?: string }).message ||
                                   "Import completed. Check your watchlist.";
                                 setImportResult(String(msg));
                               } else if (typeof res === "string") {
@@ -862,8 +872,8 @@ export default function ProfilePage() {
                               setAlUsername("");
                             } catch (err: unknown) {
                               // If API returned structured error, surface details
-                              if (err && typeof err === "object" && (err as any).data) {
-                                const data = (err as any).data;
+                              if (err && typeof err === "object" && (err as { data?: unknown }).data) {
+                                const data = (err as { data: unknown }).data;
                                 // Try to extract a message or validation errors
                                 if (typeof data === "string") {
                                   setImportError(data);
@@ -871,7 +881,7 @@ export default function ProfilePage() {
                                   // If server returns field-level errors, join them
                                   const parts: string[] = [];
                                   for (const k of Object.keys(data)) {
-                                    const val = (data as any)[k];
+                                    const val = (data as Record<string, unknown>)[k];
                                     if (Array.isArray(val)) parts.push(`${k}: ${val.join(", ")}`);
                                     else parts.push(`${k}: ${String(val)}`);
                                   }
@@ -881,7 +891,6 @@ export default function ProfilePage() {
                                 }
                               } else {
                                 setImportError("Import failed. Please try again.");
-                                 
                                 console.error("Import failed:", err);
                               }
                             } finally {
@@ -893,7 +902,7 @@ export default function ProfilePage() {
                                   const updated = await pageApi.getWatchlist(token);
                                   setWatchlistData(updated);
                                 }
-                              } catch (e) {
+                              } catch {
                                 // ignore refresh errors
                               }
                             }
@@ -1001,7 +1010,7 @@ export default function ProfilePage() {
                               if (
                                 err &&
                                 typeof err === "object" &&
-                                (err as any).data
+                                (err as { data?: unknown }).data
                               ) {
                                 setError("Failed to export: check your account");
                               } else {

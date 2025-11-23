@@ -100,7 +100,9 @@ export function NotificationDropdown({
                       onMarkRead(notif.id);
                       return;
                     }
-                    onRemove && onRemove(notif.id);
+                    if (onRemove) {
+                      onRemove(notif.id);
+                    }
                   }}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

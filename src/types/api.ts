@@ -4,6 +4,11 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+export interface ApiError extends Error {
+  status: number;
+  data: unknown;
+}
+
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;
