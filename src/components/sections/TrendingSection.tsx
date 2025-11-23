@@ -18,7 +18,6 @@ interface TrendingData {
 }
 
 
-
 interface TrendingSectionProps {
   trendingData: TrendingData;
 }
