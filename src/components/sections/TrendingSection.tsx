@@ -17,7 +17,6 @@ interface TrendingData {
   month: Anime[];
 }
 
-
 interface TrendingSectionProps {
   trendingData: TrendingData;
 }

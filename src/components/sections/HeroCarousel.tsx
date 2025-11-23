@@ -143,13 +143,13 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             onClick={goToPrevious}
             className="p-1.5 sm:p-2 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
             aria-label="Previous slide">
-            <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+            <ChevronLeft className="h-5 w-5 sm:h-4 sm:w-4" />
           </button>
           <button
             onClick={goToNext}
             className="p-1.5 sm:p-2 btn-purple backdrop-blur-sm text-white/90 rounded-full transition-colors cursor-pointer"
             aria-label="Next slide">
-            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+            <ChevronRight className="h-5 w-5 sm:h-4 sm:w-4" />
           </button>
         </div>
       </div>
