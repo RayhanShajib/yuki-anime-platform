@@ -21,6 +21,8 @@ interface TrendingSectionProps {
   trendingData: TrendingData;
 }
 
+
+
 type TimeFilter = "now" | "day" | "week" | "month";
 
 const timeFilters: { key: TimeFilter; label: string; icon: React.ReactNode }[] =
