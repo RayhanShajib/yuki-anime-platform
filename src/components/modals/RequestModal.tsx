@@ -1,5 +1,6 @@
 "use client";
 
+import { pageApi } from "@/lib/api/pageApi";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { useState } from "react";
@@ -30,6 +31,7 @@ export function RequestModal({ open, onOpenChange }: RequestModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('submittting')
 
     if (!formData.animeName.trim()) {
       alert("Please enter an anime name");
@@ -44,8 +46,9 @@ export function RequestModal({ open, onOpenChange }: RequestModalProps) {
     setIsSubmitting(true);
 
     try {
-      // Here you would implement the actual API call
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+      await pageApi.createAnimeRequest(token, formData.animeName, formData.malLink, formData.additionalDetails)
 
       // Reset form and close modal on success
       setFormData({

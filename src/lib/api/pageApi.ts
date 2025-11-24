@@ -1,8 +1,6 @@
 import { cache } from "react";
 import type { ApiError } from "@/types/api";
-import type {
-  CreateAnimeRequestPayload,
-} from "@/types/anime";
+import type { CreateAnimeRequestPayload } from "@/types/anime";
 
 // Interface for updateWatchlist request body
 interface UpdateWatchlistBody {
@@ -173,7 +171,7 @@ export const pageApi = {
     return fetchFromApi(endpoint);
   }),
 
-  // Genre List 
+  // Genre List
   getGenres: cache(async () => {
     const endpoint = "/genre";
     return fetchFromApi(endpoint);
@@ -509,7 +507,7 @@ export const pageApi = {
         error && typeof error === "object" && (error as ApiError).data;
       if (!isValidationError) {
         // Only log unexpected errors
-         
+
         console.error(
           "Failed to update profile settings:",
           error,
@@ -587,7 +585,10 @@ export const pageApi = {
     reply_to?: number | null,
   ) => {
     const endpoint = `/comments/`;
-    const body: { episode: string; content: string; reply_to?: number } = { episode, content };
+    const body: { episode: string; content: string; reply_to?: number } = {
+      episode,
+      content,
+    };
     if (typeof reply_to !== "undefined" && reply_to !== null) {
       body.reply_to = reply_to;
     }
@@ -639,7 +640,7 @@ export const pageApi = {
   voteComment: async (
     token: string,
     commentId: number,
-    voteType: "U" | "D"
+    voteType: "U" | "D",
   ) => {
     const endpoint = `/comments/${commentId}/vote/`;
     return fetchFromApi(endpoint, {
@@ -700,7 +701,9 @@ export const pageApi = {
 
   createAnimeRequest: async (
     token: string,
-    payload: CreateAnimeRequestPayload,
+    animeName: string,
+    malLink: string,
+    additionalDetails: string,
   ) => {
     const endpoint = "/anime-requests/";
     return fetchFromApi(endpoint, {
@@ -708,7 +711,11 @@ export const pageApi = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        animeName,
+        additionalDetails,
+        malLink,
+      }),
       next: { revalidate: 0 },
     });
   },
@@ -716,8 +723,13 @@ export const pageApi = {
   createEpisodeReport: async (
     token: string,
     ep_id: number,
-    report_type: 'video_broken' | 'audio_not_synced' | 'subtitle_not_synced' | 'wron_skip_time' | 'other',
-    other_text: string
+    report_type:
+      | "video_broken"
+      | "audio_not_synced"
+      | "subtitle_not_synced"
+      | "wron_skip_time"
+      | "other",
+    other_text: string,
   ) => {
     const endpoint = `/episode/${ep_id}/report/`;
     return fetchFromApi(endpoint, {
@@ -731,5 +743,5 @@ export const pageApi = {
       }),
       next: { revalidate: 0 },
     });
-  }
+  },
 };
