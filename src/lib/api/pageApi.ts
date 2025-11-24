@@ -173,17 +173,10 @@ export const pageApi = {
     return fetchFromApi(endpoint);
   }),
 
-  // Genre Page
-  getGenrePageData: cache(async (slug: string, page = 1) => {
-    const [genre, animeList] = await Promise.all([
-      fetchFromApi(`/genres/${slug}`),
-      fetchFromApi(`/genres/${slug}/anime?page=${page}`),
-    ]);
-
-    return {
-      genre,
-      animeList,
-    };
+  // Genre List 
+  getGenres: cache(async () => {
+    const endpoint = "/genre";
+    return fetchFromApi(endpoint);
   }),
 
   // Search Page - No cache for search results
