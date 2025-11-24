@@ -3,6 +3,7 @@
 import { pageApi } from "@/lib/api/pageApi";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AlertCircle, CheckCircle, X } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { useState } from "react";
 
 interface RequestModalProps {
@@ -119,10 +120,17 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
 
       if (error && typeof error === "object") {
         const apiError = error as {
-          data?: unknown;
           status?: number;
           message?: string;
+          data?: unknown;
         };
+
+        // Log error details for debugging
+        console.error("API Error Details:", {
+          status: apiError.status,
+          message: apiError.message,
+          data: apiError.data,
+        });
 
         if (apiError.status === 400) {
           errorMessage =
@@ -133,9 +141,14 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
           errorMessage = "You don't have permission to submit requests.";
         } else if (apiError.status === 429) {
           errorMessage = "Too many requests. Please wait a moment and try again.";
+        } else if (apiError.status === 500) {
+          errorMessage = "Server error. Please try again later.";
         } else if (apiError.message) {
           errorMessage = apiError.message;
         }
+      } else if (error instanceof Error) {
+        console.error("Error message:", error.message);
+        errorMessage = error.message;
       }
 
       setNotification({
@@ -274,6 +287,22 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
                 <div className="text-right text-xs text-gray-400 mt-1">
                   {formData.additionalDetails.length}/1000 characters
                 </div>
+              </div>
+
+              {/* Cloudflare Turnstile CAPTCHA */}
+              <div className="w-full">
+                {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
+                  <Turnstile
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                    onSuccess={() => setCaptchaVerified(true)}
+                    onError={() => setCaptchaVerified(false)}
+                    onExpire={() => setCaptchaVerified(false)}
+                  />
+                ) : (
+                  <div className="bg-yellow-900/30 border border-yellow-700 rounded-md p-3 text-yellow-100 text-sm">
+                    CAPTCHA site key not configured. Please add NEXT_PUBLIC_TURNSTILE_SITE_KEY to .env.local
+                  </div>
+                )}
               </div>
 
               {/* CAPTCHA Notice */}

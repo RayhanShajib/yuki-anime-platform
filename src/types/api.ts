@@ -304,3 +304,18 @@ export interface ApiVoteResponse {
 export interface ApiUserVotesResponse {
   [commentId: string]: "upvote" | "downvote" | null;
 }
+
+// Anime Request Types
+export interface AnimeRequestPayload {
+  anime_name: string;
+  description: string;
+  reference_link: string;
+}
+
+export interface AnimeRequestResponse {
+  id: number;
+  anime_name: string;
+  status: "pending" | "approved" | "rejected";
+  created_at: string;
+  updated_at?: string;
+}

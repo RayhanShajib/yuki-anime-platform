@@ -1,8 +1,29 @@
+# Yuki Anime Platform
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+### 1. Environment Setup
+
+First, copy the environment template and add your configuration:
+
+```bash
+cp .env.example .env.local
+```
+
+Then edit `.env.local` and add:
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`: Required for Request Modal CAPTCHA verification
+  - Get from [Cloudflare Turnstile](https://dash.cloudflare.com/profile/api-tokens)
+  - Create a new site and copy the Site Key
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Run Development Server
 
 ```bash
 npm run dev
@@ -15,6 +36,15 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Features
+
+- **Request Modal**: Users can request new anime to be added to the platform
+  - Requires user authentication
+  - Includes CAPTCHA verification for security
+  - Validates input and provides feedback
+
+## Development
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
