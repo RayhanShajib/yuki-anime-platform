@@ -211,6 +211,19 @@ export const pageApi = {
     });
   },
 
+  // Create new genre - Requires authentication
+  createGenre: async (token: string, name: string) => {
+    const endpoint = "/genres/";
+    return fetchFromApi(endpoint, {
+      method: "POST", 
+      headers: { 
+        Authorization: `Bearer ${token}` 
+      },
+      body: JSON.stringify({ name }),
+      next: { revalidate: 0 }, // Don't cache genre creation
+    });
+  },
+
   // Search Page - No cache for search results
   getSearchPageData: async (
     query?: string,

@@ -66,10 +66,25 @@ export interface Character {
 }
 
 export interface Genre {
-  id: string;
+  id: number;
   name: string;
-  description?: string;
-  animeCount: number;
+  anime_count: number;
+  popularity: number | null;
+}
+
+export interface GenreListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Genre[];
+}
+
+export interface CreateGenrePayload {
+  name: string;
+}
+
+export interface UpdateGenrePayload {
+  name: string;
 }
 
 export interface SearchFilters {
