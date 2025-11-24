@@ -155,7 +155,7 @@ export function FooterSection() {
       {/* Request Modal */}
       <RequestModal
         open={isRequestModalOpen}
-        onOpenChange={setIsRequestModalOpen}
+        onOpenChangeAction={setIsRequestModalOpen}
       />
     </footer>
   );

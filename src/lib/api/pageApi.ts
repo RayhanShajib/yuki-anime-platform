@@ -1,6 +1,5 @@
 import { cache } from "react";
 import type { ApiError } from "@/types/api";
-import type { CreateAnimeRequestPayload } from "@/types/anime";
 
 // Interface for updateWatchlist request body
 interface UpdateWatchlistBody {
@@ -699,26 +698,26 @@ export const pageApi = {
 
   /*** Request Endpoints ***/
 
-  createAnimeRequest: async (
-    token: string,
-    animeName: string,
-    malLink: string,
-    additionalDetails: string,
-  ) => {
-    const endpoint = "/anime-requests/";
-    return fetchFromApi(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        animeName,
-        additionalDetails,
-        malLink,
-      }),
-      next: { revalidate: 0 },
-    });
-  },
+   createAnimeRequest: async (
+     token: string,
+     animeName: string,
+     malLink: string,
+     additionalDetails: string,
+   ) => {
+     const endpoint = "/anime-requests/";
+     return fetchFromApi(endpoint, {
+       method: "POST",
+       headers: {
+         Authorization: `Bearer ${token}`,
+       },
+       body: JSON.stringify({
+         anime_name: animeName,
+         description: additionalDetails,
+         reference_link: malLink,
+       }),
+       next: { revalidate: 0 },
+     });
+   },
 
   createEpisodeReport: async (
     token: string,
