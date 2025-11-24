@@ -171,10 +171,45 @@ export const pageApi = {
   }),
 
   // Genre List
-  getGenres: cache(async () => {
-    const endpoint = "/genre";
+  getGenres: cache(async (limit = 10, offset = 0, name?: string) => {
+    const params = new URLSearchParams();
+    params.append("limit", limit.toString());
+    params.append("offset", offset.toString());
+    if (name) {
+      params.append("name", name);
+    }
+    const endpoint = `/genres/?${params.toString()}`;
     return fetchFromApi(endpoint);
   }),
+
+  // Update genre - Requires authentication
+  updateGenre: async (
+    token: string,
+    genreId: number,
+    name: string,
+  ) => {
+    const endpoint = `/genres/${genreId}/`;
+    return fetchFromApi(endpoint, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name }),
+      next: { revalidate: 0 }, // Don't cache genre modifications
+    });
+  },
+
+  // Delete genre - Requires authentication
+  deleteGenre: async (token: string, genreId: number) => {
+    const endpoint = `/genres/${genreId}/`;
+    return fetchFromApi(endpoint, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 0 }, // Don't cache genre deletions
+    });
+  },
 
   // Search Page - No cache for search results
   getSearchPageData: async (
