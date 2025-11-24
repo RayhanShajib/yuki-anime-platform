@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { pageApi } from "@/lib/api/pageApi";
 import { useRouter } from "next/navigation";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,11 +20,19 @@ export default function LoginPage() {
     rememberMe: false,
   });
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [captchaVerified, setCaptchaVerified] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    // Validate CAPTCHA
+    if (!captchaVerified) {
+      setError("Please complete the CAPTCHA verification");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       // Call the login API
@@ -197,6 +206,22 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* CAPTCHA Verification */}
+              <div className="w-full">
+                {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
+                  <Turnstile
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                    onSuccess={() => setCaptchaVerified(true)}
+                    onError={() => setCaptchaVerified(false)}
+                    onExpire={() => setCaptchaVerified(false)}
+                  />
+                ) : (
+                  <div className="bg-yellow-900/30 border border-yellow-700 rounded-md p-3 text-yellow-100 text-sm">
+                    CAPTCHA site key not configured. Please add NEXT_PUBLIC_TURNSTILE_SITE_KEY to .env.local
+                  </div>
+                )}
+              </div>
+
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between flex-wrap gap-2.5">
                 <div className="flex items-center">
@@ -230,9 +255,9 @@ export default function LoginPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !captchaVerified}
                 className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
-                  isLoading
+                  isLoading || !captchaVerified
                     ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                     : "btn-purple hover:bg-blue-700"
                 }`}>
