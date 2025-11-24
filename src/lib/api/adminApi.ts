@@ -311,7 +311,7 @@ export const adminApi = {
     });
   },
 
-  // Get single anime requests
+  // Get single anime request
   getAnimeRequestDetails: async (
     token: string,
     id: number,
@@ -325,4 +325,38 @@ export const adminApi = {
       next: { revalidate: 60 },
     });
   },
+
+  // Get all episode reports
+  getAllEpisodeReports: async (
+    token: string,
+    severity: string,
+    limit: string,
+    offset: string
+  ) => {
+    const endpoint = `/reports/?severity=${severity}&limit=${limit}&offset=${offset}`;
+    return fetchFromApi(endpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 60 },
+    });
+  },
+
+  // Get single anime request
+  getEpisodeReportDetails: async (
+    token: string,
+    id: number,
+  ) => {
+    const endpoint = `/reports/${id}`;
+    return fetchFromApi(endpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 60 },
+    });
+  },
+
+
 };

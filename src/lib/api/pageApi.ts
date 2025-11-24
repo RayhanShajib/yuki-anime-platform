@@ -720,4 +720,23 @@ export const pageApi = {
     });
   },
 
+  createEpisodeReport: async (
+    token: string,
+    ep_id: number,
+    report_type: 'video_broken' | 'audio_not_synced' | 'subtitle_not_synced' | 'wron_skip_time' | 'other',
+    other_text: string
+  ) => {
+    const endpoint = `/episode/${ep_id}/report/`;
+    return fetchFromApi(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        report_type: report_type,
+        other_text: other_text,
+      }),
+      next: { revalidate: 0 },
+    });
+  }
 };
