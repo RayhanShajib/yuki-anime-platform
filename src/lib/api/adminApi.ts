@@ -136,6 +136,65 @@ export interface CreateAnimeData {
   background_banner?: string | null;
 }
 
+// User Management Interfaces
+export interface UserData {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+  avatar: string | null;
+  preferred_title_lang: string;
+  preferred_video_lang: string;
+  skip_seconds: number;
+  bookmarks_per_page: number;
+  hide_bookmarks: boolean;
+  hide_profile_activities: boolean;
+  is_banned?: boolean;
+  ban_expires?: string;
+  ban_type?: 'temporary' | 'permanent';
+}
+
+export interface UserListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: UserData[];
+}
+
+export interface UpdateUserData {
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  role?: string;
+  avatar?: string | null;
+  preferred_title_lang?: string;
+  preferred_video_lang?: string;
+  skip_seconds?: number;
+  bookmarks_per_page?: number;
+  hide_bookmarks?: boolean;
+  hide_profile_activities?: boolean;
+}
+
+export interface DeleteUserCredentials {
+  username: string;
+  password: string;
+}
+
+// Ban User Interfaces
+export interface BanUserData {
+  user: string;              // username (required)
+  days?: 7 | 30;            // optional: 7 or 30 days only
+  permanent_ban?: boolean;   // optional: default false
+}
+
+export interface BanResponse {
+  success: boolean;
+  message: string;
+  ban_expires?: string;     // ISO date string for temporary bans
+}
+
 // Base fetch function
 const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
   const baseUrl = process.env.API_BASE_URL || 'https://serverloader1.yukiwatch.fr/api/v1';
@@ -156,6 +215,14 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
     throw new Error(`API error: ${response.statusText}`);
   }
 
+  // Handle empty responses specifically for DELETE operations
+  if (init?.method === 'DELETE') {
+    // For DELETE operations, check if response has content
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  // For all other operations, parse as JSON normally
   return response.json();
 });
 
@@ -372,6 +439,58 @@ export const adminApi = {
       },
       body: JSON.stringify({ ids, action }),
       next: { revalidate: 0 }, // Don't cache bulk update operations
+    });
+  },
+
+  // User Management Functions
+
+  // Get user list - Requires admin authorization
+  getUserList: async (limit = 20, offset = 0, token: string): Promise<UserListResponse> => {
+    const endpoint = `/user-management/users/?limit=${limit}&offset=${offset}`;
+    return fetchFromApi(endpoint, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      next: { revalidate: 60 }, // Cache for 1 minute
+    });
+  },
+
+  // Update user - Requires admin authorization
+  updateUser: async (userId: number, data: UpdateUserData, token: string): Promise<UserData> => {
+    const endpoint = `/user-management/users/${userId}/`;
+    return fetchFromApi(endpoint, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+      next: { revalidate: 0 }, // Don't cache update operations
+    });
+  },
+
+  // Delete user - Requires admin authorization and credentials
+  deleteUser: async (userId: number, credentials: DeleteUserCredentials, token: string): Promise<void> => {
+    const endpoint = `/user-management/users/${userId}/`;
+    return fetchFromApi(endpoint, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(credentials),
+      next: { revalidate: 0 }, // Don't cache delete operations
+    });
+  },
+
+  // Ban user - Requires admin authorization
+  banUser: async (banData: BanUserData, token: string): Promise<BanResponse> => {
+    const endpoint = `/ban-user/`;
+    return fetchFromApi(endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(banData),
+      next: { revalidate: 0 }, // Don't cache ban operations
     });
   },
 
