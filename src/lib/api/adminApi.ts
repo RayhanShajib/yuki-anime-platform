@@ -316,7 +316,7 @@ export const adminApi = {
     token: string,
     id: number,
   ) => {
-    const endpoint = `/anime-requests/${id}`;
+    const endpoint = `/anime-requests/${id}/`;
     return fetchFromApi(endpoint, {
       method: "GET",
       headers: {
@@ -343,18 +343,35 @@ export const adminApi = {
     });
   },
 
-  // Get single anime request
+  // Get single episode report details
   getEpisodeReportDetails: async (
     token: string,
     id: number,
   ) => {
-    const endpoint = `/reports/${id}`;
+    const endpoint = `/reports/${id}/`;
     return fetchFromApi(endpoint, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
       next: { revalidate: 60 },
+    });
+  },
+
+  // Bulk update anime requests
+  bulkUpdateAnimeRequests: async (
+    token: string,
+    ids: number[],
+    action: 'approved' | 'rejected' | 'pending' | 'under_review'
+  ) => {
+    const endpoint = `/anime-requests/bulk-action/`;
+    return fetchFromApi(endpoint, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids, action }),
+      next: { revalidate: 0 }, // Don't cache bulk update operations
     });
   },
 

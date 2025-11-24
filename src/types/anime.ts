@@ -98,14 +98,21 @@ export interface UserPreferences {
 }
 
 export interface AnimeRequest {
-  id: string;
-  userId: string;
-  animeName: string;
+  id: string | number;
+  userId?: string;
+  user?: string; // Username for display
+  animeName?: string; // For backward compatibility
+  anime_name?: string; // API field
+  description?: string; // Additional details
   malLink?: string;
+  reference_link?: string; // API field
   additionalDetails?: string;
   status: "pending" | "under_review" | "approved" | "completed" | "rejected";
-  submittedAt: string;
-  updatedAt: string;
+  priority?: "high" | "medium" | "low"; // UI field
+  submittedAt?: string;
+  updatedAt?: string;
+  created_at?: string; // API field
+  updated_at?: string; // API field
 }
 
 // Create Anime Request payload (snake_case keys for API)
@@ -118,6 +125,12 @@ export interface CreateAnimeRequestPayload {
 // Update Anime Request payload (status updates)
 export interface UpdateAnimeRequestPayload {
   status: "under_review" | "approved" | "rejected" | "completed";
+}
+
+// Bulk update anime requests payload
+export interface BulkActionPayload {
+  ids: number[];
+  action: "approved" | "rejected" | "pending" | "under_review";
 }
 
 export interface Notification {
