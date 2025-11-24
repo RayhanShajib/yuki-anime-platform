@@ -79,6 +79,12 @@ const navSections = [
         icon: <FileText className="w-5 h-5 mr-2" />,
         href: "/admin/requests",
       },
+      {
+        key: "reports",
+        label: "Episode Reports",
+        icon: <Bell className="w-5 h-5 mr-2" />,
+        href: "/admin/reports",
+      },
     ],
   },
   {
@@ -124,6 +130,7 @@ function getSectionTitle(pathname: string) {
   if (pathname.startsWith("/admin/genres")) return "Genre Management";
   if (pathname.startsWith("/admin/users")) return "User Management";
   if (pathname.startsWith("/admin/requests")) return "Request Management";
+  if (pathname.startsWith("/admin/reports")) return "Episode Reports";
   if (pathname.startsWith("/admin/comments")) return "Comment Moderation";
   if (pathname.startsWith("/admin/notifications")) return "Notifications";
   if (pathname.startsWith("/admin/settings")) return "Settings";

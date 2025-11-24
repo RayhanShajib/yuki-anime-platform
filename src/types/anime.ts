@@ -144,6 +144,22 @@ export interface Notification {
   link?: string;
 }
 
+// Episode Report Types
+export type ReportType = "video_broken" | "audio_not_synced" | "subtitle_not_synced" | "wron_skip_time" | "other";
+
+export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
+  video_broken: "Video is Broken/Not Playing",
+  audio_not_synced: "Audio Not Synced with Subtitles",
+  subtitle_not_synced: "Subtitles Not Synced",
+  wron_skip_time: "Wrong Skip Time",
+  other: "Other Issue",
+};
+
+export interface EpisodeReportPayload {
+  report_type: ReportType;
+  other_text: string;
+}
+
 export interface SearchFilters {
   genres?: string[];
   type?: "series" | "movie" | "ova" | "special";
@@ -153,6 +169,34 @@ export interface SearchFilters {
   rating?: [number, number];
   sortBy?: "popularity" | "rating" | "release_date" | "title";
   sortOrder?: "asc" | "desc";
+}
+
+// Episode Report types for admin panel
+export type ReportSeverity = "high" | "medium" | "low";
+
+export interface EpisodeReport {
+  id: number;
+  episode: number;
+  report_type: ReportType;
+  other_text?: string;
+  user: string;  // Username
+  user_id?: number;
+  created_at: string;
+  updated_at?: string;
+  severity?: ReportSeverity;
+  // Additional episode/anime context fields
+  episode_title?: string;
+  anime_title?: string;
+  anime_id?: number;
+  episode_number?: number;
+  episode_thumbnail?: string;
+}
+
+export interface EpisodeReportListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: EpisodeReport[];
 }
 
 // Core reusable types

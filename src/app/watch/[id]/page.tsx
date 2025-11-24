@@ -19,7 +19,7 @@ import type {
   TransformedWatchPageData,
   ApiCommentResponse,
 } from "@/types/api";
-import { Grid, List, Loader2 } from "lucide-react";
+import { Grid, List, Loader2, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -30,6 +30,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation as SwiperNavigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import EpisodeReportModal from "@/components/modals/EpisodeReportModal";
+import { EpisodeReportPayload } from "@/types/anime";
 
 export default function WatchPage() {
   const params = useParams();
@@ -70,6 +72,11 @@ export default function WatchPage() {
   // --- Private Video Sources State ---
   const [privateVideoSources, setPrivateVideoSources] = useState<string[]>([]);
   const [privateSourcesLoading, setPrivateSourcesLoading] = useState(false);
+
+  // --- Episode Report Modal State ---
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportSubmitLoading, setReportSubmitLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   // --- Fetch Watch Page Data ---
   useEffect(() => {
@@ -456,6 +463,64 @@ export default function WatchPage() {
     setResumeTime(0);
   };
 
+  // --- Episode Report Handlers ---
+  
+  // Helper to get authentication token
+  const getAuthToken = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('access_token');
+    }
+    return null;
+  };
+
+  // Open report modal handler
+  const handleOpenReportModal = () => {
+    const token = getAuthToken();
+    if (!token) {
+      alert("Please log in to report issues");
+      return;
+    }
+    setReportModalOpen(true);
+    setReportError(null);
+  };
+
+  // Submit report handler
+  const handleSubmitReport = async (reportData: EpisodeReportPayload) => {
+    try {
+      setReportSubmitLoading(true);
+      setReportError(null);
+      
+      const token = getAuthToken();
+      if (!token || !currentEpisode) {
+        setReportError("Authentication required");
+        return;
+      }
+      
+      await pageApi.createEpisodeReport(
+        token,
+        currentEpisode.id,
+        reportData.report_type,
+        reportData.other_text
+      );
+      
+      alert("Thank you! Your report has been submitted successfully.");
+      setReportModalOpen(false);
+      // Reset form is handled by modal component
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to submit report";
+      setReportError(errorMessage);
+      console.error("Report submission error:", err);
+    } finally {
+      setReportSubmitLoading(false);
+    }
+  };
+
+  // Close report modal handler
+  const handleCloseReportModal = () => {
+    setReportModalOpen(false);
+    setReportError(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -561,6 +626,17 @@ export default function WatchPage() {
                   </div>
                 </div>
               )}
+
+              {/* Report Issue Button */}
+              <div className="mb-4 flex justify-end">
+                <button
+                  onClick={handleOpenReportModal}
+                  className="px-3 py-2 bg-red-600/20 hover:bg-red-600/40 border border-red-500/50 text-red-300 hover:text-red-200 rounded text-sm transition-colors flex items-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4" />
+                  Report Issue
+                </button>
+              </div>
 
               <div className="aspect-video w-full rounded-lg mb-6">
                 {serverType === "iframe" && selectedIframeServer ? (
@@ -1300,6 +1376,17 @@ export default function WatchPage() {
           </section>
         </main>
       )}
+
+      {/* Episode Report Modal */}
+      <EpisodeReportModal
+        isOpen={reportModalOpen}
+        onCloseAction={handleCloseReportModal}
+        onSubmitAction={handleSubmitReport}
+        episodeId={currentEpisode?.id || 0}
+        episodeTitle={currentEpisodeTitle}
+        isLoading={reportSubmitLoading}
+        error={reportError}
+      />
 
       <FooterSection />
     </div>
