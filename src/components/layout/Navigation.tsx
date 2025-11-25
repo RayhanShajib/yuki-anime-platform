@@ -1,6 +1,7 @@
 "use client";
 
 import { pageApi } from "@/lib/api/pageApi";
+import { usePopularGenreNames } from "@/lib/GenresContext";
 import { ApiNotification } from "@/types/api";
 import {
   Bell,
@@ -31,6 +32,7 @@ interface ProfileData {
 
 export function Navigation({ isLandingPage = false }: NavigationProps) {
   const router = useRouter();
+  const popularGenreNames = usePopularGenreNames(15);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -479,18 +481,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                     : "bg-gray-900"
                 }`}>
                 <div className="py-2 grid grid-cols-2 gap-1 p-4">
-                  {[
-                    "Action",
-                    "Adventure",
-                    "Comedy",
-                    "Drama",
-                    "Fantasy",
-                    "Horror",
-                    "Mystery",
-                    "Romance",
-                    "Sci-Fi",
-                    "Slice of Life",
-                  ].map((genre) => (
+                  {popularGenreNames.map((genre: string) => (
                     <Link
                       key={genre}
                       href={`/genre/${genre.toLowerCase()}`}
@@ -498,6 +489,11 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       {genre}
                     </Link>
                   ))}
+                  <Link
+                    href="/genres"
+                    className="block px-1 py-1 text-sm text-purple-400 hover:text-purple-300 rounded font-medium col-span-2 text-center mt-2 border-t border-gray-700 pt-2">
+                    View All Genres →
+                  </Link>
                 </div>
               </div>
             </div>
@@ -885,18 +881,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                 </button>
                 {mobileGenresOpen && (
                   <div className="grid grid-cols-2 gap-2 pl-4">
-                    {[
-                      "Action",
-                      "Adventure",
-                      "Comedy",
-                      "Drama",
-                      "Fantasy",
-                      "Horror",
-                      "Mystery",
-                      "Romance",
-                      "Sci-Fi",
-                      "Slice of Life",
-                    ].map((genre) => (
+                    {popularGenreNames.map((genre: string) => (
                       <Link
                         key={genre}
                         href={`/genre/${genre.toLowerCase()}`}
@@ -905,6 +890,12 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                         {genre}
                       </Link>
                     ))}
+                    <Link
+                      href="/genres"
+                      className="block text-purple-400 hover:text-purple-300 transition-colors py-1 text-sm font-medium col-span-2 text-center mt-2 border-t border-gray-700 pt-2"
+                      onClick={() => setIsMobileMenuOpen(false)}>
+                      View All Genres →
+                    </Link>
                   </div>
                 )}
               </div>

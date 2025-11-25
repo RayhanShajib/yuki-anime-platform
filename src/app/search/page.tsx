@@ -2,6 +2,7 @@
 
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { pageApi } from "@/lib/api/pageApi";
+import { useGenreNames } from "@/lib/GenresContext";
 import { Tags } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -34,22 +35,6 @@ const typeFilters = [
   { key: "Movie", label: "Movie" },
   { key: "OVA", label: "OVA" },
   { key: "Special", label: "Special" },
-];
-
-const genreOptions = [
-  "Action",
-  "Adventure",
-  "Comedy",
-  "Drama",
-  "Fantasy",
-  "Horror",
-  "Romance",
-  "Sci-Fi",
-  "Slice of Life",
-  "Sports",
-  "Thriller",
-  "Mystery",
-  "Supernatural",
 ];
 
 const ratingOptions = ["9", "8", "7", "6", "5", "4", "3", "2", "1"];
@@ -234,6 +219,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const genreOptions = useGenreNames();
 
   // API State
   const [results, setResults] = useState<SearchResultAnime[]>([]);

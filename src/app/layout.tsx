@@ -1,4 +1,5 @@
 import { ThemeProvider } from "@/lib/ThemeContext";
+import { GenresProvider } from "@/lib/GenresContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -21,7 +22,11 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased`}
         suppressHydrationWarning={true}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <GenresProvider>
+            {children}
+          </GenresProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

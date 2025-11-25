@@ -170,7 +170,7 @@ export const pageApi = {
     return fetchFromApi(endpoint);
   }),
 
-  // Genre List
+  // Genre List - Extended cache for public consumption
   getGenres: cache(async (limit = 10, offset = 0, name?: string) => {
     const params = new URLSearchParams();
     params.append("limit", limit.toString());
@@ -179,7 +179,9 @@ export const pageApi = {
       params.append("name", name);
     }
     const endpoint = `/genres/?${params.toString()}`;
-    return fetchFromApi(endpoint);
+    return fetchFromApi(endpoint, {
+      next: { revalidate: 7200 }, // Cache genres for 2 hours (7200 seconds)
+    });
   }),
 
   // Update genre - Requires authentication
