@@ -94,3 +94,31 @@ export function generateRandomId(): string {
     Math.random().toString(36).substring(2, 15)
   );
 }
+
+// Enhanced slug generation that works with dynamic titles
+export function generateSlugFromTitle(title: string | { english?: string; romaji?: string; japanese?: string }): string {
+  let titleString: string;
+  
+  if (typeof title === "object" && title !== null) {
+    titleString = title.english || title.romaji || title.japanese || "unknown";
+  } else {
+    titleString = title || "unknown";
+  }
+  
+  return generateSlug(titleString);
+}
+
+// Utility to safely get title from various anime objects
+export function extractTitleFromAnime(anime: unknown): string {
+  if (!anime || typeof anime !== "object") return "Unknown Title";
+  
+  const animeObj = anime as Record<string, unknown>;
+  
+  // Handle different anime object formats
+  if (typeof animeObj.title === "object" && animeObj.title !== null) {
+    const titleObj = animeObj.title as Record<string, unknown>;
+    return (titleObj.english as string) || (titleObj.romaji as string) || (titleObj.japanese as string) || "Unknown Title";
+  }
+  
+  return (animeObj.title as string) || (animeObj.anime_name as string) || (animeObj.name as string) || "Unknown Title";
+}

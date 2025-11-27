@@ -2,6 +2,7 @@
 
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/LanguageContext";
 import { Bookmark, Grid, List, Play, PlayCircle, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -97,6 +98,7 @@ interface InfoComponentProps {
 }
 
 export default function InfoComponent({ animeData }: InfoComponentProps) {
+  const { getTitle } = useLanguage();
   const [activeTab, setActiveTab] = useState("Overview");
   const [episodeLayout, setEpisodeLayout] = useState("flex"); // "flex" or "grid"
   const [audioType, setAudioType] = useState("sub"); // "sub" or "dub"
@@ -149,7 +151,7 @@ export default function InfoComponent({ animeData }: InfoComponentProps) {
               {animeData.poster && animeData.poster.trim() !== "" ? (
                 <Image
                   src={animeData.poster}
-                  alt={animeData.title || "Anime Poster"}
+                  alt={getTitle(animeData) || "Anime Poster"}
                   width={200}
                   height={350}
                   className="object-cover"
@@ -165,7 +167,7 @@ export default function InfoComponent({ animeData }: InfoComponentProps) {
           {/* Title & Actions */}
           <div className="w-full">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 mt-2 drop-shadow-lg">
-              {animeData.title}
+              {getTitle(animeData)}
             </h1>
             <span className="text-white font-normal mb-4">
               {animeData.type}

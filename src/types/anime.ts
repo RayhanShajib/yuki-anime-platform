@@ -1,6 +1,7 @@
 export interface Anime {
   id: string;
   title: string;
+  title_japanese?: string | null;
   alternativeTitles?: string[];
   synopsis: string;
   poster: string;

@@ -56,6 +56,7 @@ const transformApiDataToAnime = (apiAnime: ApiAnimeLatest): Anime => {
   return {
     id: apiAnime.id.toString(),
     title: apiAnime.title,
+    title_japanese: apiAnime.title_japanese,
     alternativeTitles: apiAnime.title_japanese ? [apiAnime.title_japanese] : [],
     synopsis: apiAnime.synopsis,
     poster: apiAnime.image,

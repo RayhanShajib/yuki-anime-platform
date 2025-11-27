@@ -2,6 +2,7 @@
 
 import { pageApi } from "@/lib/api/pageApi";
 import { usePopularGenreNames } from "@/lib/GenresContext";
+import { useLanguage } from "@/lib/LanguageContext";
 import { ApiNotification } from "@/types/api";
 import {
   Bell,
@@ -33,17 +34,12 @@ interface ProfileData {
 export function Navigation({ isLandingPage = false }: NavigationProps) {
   const router = useRouter();
   const popularGenreNames = usePopularGenreNames(15);
+  const { language, setLanguage } = useLanguage();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
-  const [language, setLanguage] = useState<"en" | "jp">("en");
-  const [currentData, setCurrentData] = useState<{
-    title: string;
-  }>({
-    title: "Yuki Anime Platform",
-  });
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
 
   // Initialize and load data from localStorage
@@ -86,56 +82,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
       console.log("No access token found - User is not logged in");
       setIsLoggedIn(false);
     }
-
-    const existingData = localStorage.getItem("yuki-multilingual-data");
-    if (!existingData) {
-      const LanguageData = {
-        en: {
-          title: "Yuki Anime Platform",
-        },
-        jp: {
-          title: "雪アニメプラットフォーム",
-        },
-      };
-      localStorage.setItem(
-        "yuki-multilingual-data",
-        JSON.stringify(LanguageData)
-      );
-    }
-
-    // Load saved language preference or default to 'en'
-    const savedLanguage = localStorage.getItem("yuki-language") as
-      | "en"
-      | "jp"
-      | null;
-    if (savedLanguage && (savedLanguage === "en" || savedLanguage === "jp")) {
-      setLanguage(savedLanguage);
-      loadDataFromLocalStorage(savedLanguage);
-      console.log("Loaded saved language:", savedLanguage);
-    } else {
-      localStorage.setItem("yuki-language", "en");
-      loadDataFromLocalStorage("en");
-      console.log("Default language set to: en");
-    }
   }, [router]);
-
-  // Function to load data from localStorage
-  const loadDataFromLocalStorage = (lang: "en" | "jp") => {
-    try {
-      const storedData = localStorage.getItem("yuki-language-data");
-      if (storedData) {
-        const multilingualData = JSON.parse(storedData);
-        setCurrentData(multilingualData[lang]);
-        console.log(
-          `Loaded ${lang} data from localStorage:`,
-          multilingualData[lang]
-        );
-        console.log("Title:", multilingualData[lang].title);
-      }
-    } catch (error) {
-      console.error("Error loading data from localStorage:", error);
-    }
-  };
 
   // Handle logout
   const handleLogout = () => {
@@ -145,26 +92,6 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
     // Optionally redirect to login page or home page
     // window.location.href = "/login";
   };
-
-  // Handle language change
-  const handleLanguageChange = (newLanguage: "en" | "jp") => {
-    setLanguage(newLanguage);
-    localStorage.setItem("yuki-language", newLanguage);
-    loadDataFromLocalStorage(newLanguage);
-    console.log("Language changed to:", newLanguage);
-  };
-
-  // Expose current data to window for testing
-  useEffect(() => {
-    (
-      window as unknown as { getCurrentYukiData: () => typeof currentData }
-    ).getCurrentYukiData = () => {
-      console.log("Current Language:", language);
-      console.log("Current Data:", currentData);
-      console.log("Title:", currentData.title);
-      return currentData;
-    };
-  }, [language, currentData]);
 
   type Notification = {
     id: number;
@@ -519,7 +446,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       ? "btn-purple text-white"
                       : "bg-gray-700 text-blue-200 hover:bg-[#7760A9] hover:text-white"
                   }`}
-                  onClick={() => handleLanguageChange("en")}
+                  onClick={() => setLanguage("en")}
                   aria-pressed={language === "en"}>
                   EN
                 </button>
@@ -529,7 +456,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                       ? "btn-purple text-white"
                       : "bg-gray-700 text-white hover:bg-[#7760A9] hover:text-white"
                   }`}
-                  onClick={() => handleLanguageChange("jp")}
+                  onClick={() => setLanguage("jp")}
                   aria-pressed={language === "jp"}>
                   JP
                 </button>

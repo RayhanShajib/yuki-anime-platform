@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { formatRating, truncateText } from "@/lib/utils";
+import { useLanguage } from "@/lib/LanguageContext";
 import { Anime } from "@/types/anime";
 import { WatchlistDropdown } from "@/components/ui/WatchlistDropdown";
 import {
@@ -18,6 +19,7 @@ interface HeroCarouselProps {
 }
 
 export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
+  const { getTitle } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying] = useState(true);
 
@@ -50,7 +52,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
       <div className="absolute inset-0">
         <Image
           src={currentAnime.banner || currentAnime.poster}
-          alt={currentAnime.title}
+          alt={getTitle(currentAnime)}
           fill
           className="w-full h-full object-cover"
           sizes="(max-width: 1800px) 100vw, 1800px"
@@ -67,7 +69,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex items-end">
           <div className="max-w-xl sm:max-w-2xl carousel-content">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-2 sm:mb-3 md:mb-4 animate-fadeIn txt-heading leading-tight">
-              {currentAnime.title}
+              {getTitle(currentAnime)}
             </h1>
 
             <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 mb-2 sm:mb-3 md:mb-4 text-white/80 flex-wrap">

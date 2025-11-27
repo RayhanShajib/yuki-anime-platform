@@ -1,3 +1,5 @@
+"use client";
+
 import { Navigation } from "@/components/layout/Navigation";
 import { ContinueWatchingSection } from "@/components/sections/ContinueWatchingSection";
 import { FooterSection } from "@/components/sections/FooterSection";
@@ -11,8 +13,11 @@ import {
   transformSpotlightData,
   transformTrendingData,
 } from "@/lib/transformers";
+import { useLanguage } from "@/lib/LanguageContext";
+import { generateSlugFromTitle } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 // Type for API anime items in home sections
 interface ApiAnimeItem {
@@ -25,9 +30,61 @@ interface ApiAnimeItem {
   [key: string]: unknown; // For additional properties we don't need to type
 }
 
-export default async function Home() {
-  // Fetch data directly on server
-  const homeData = await pageApi.getHomePageData();
+// Type for home page data
+interface HomePageData {
+  spotlight?: ApiAnimeItem[];
+  trending?: {
+    now: ApiAnimeItem[];
+    day: ApiAnimeItem[];
+    week: ApiAnimeItem[];
+    month: ApiAnimeItem[];
+  };
+  latest?: {
+    sub: ApiAnimeItem[];
+    dub: ApiAnimeItem[];
+  };
+  airing?: ApiAnimeItem[];
+  popular?: ApiAnimeItem[];
+  favourite?: ApiAnimeItem[];
+  completed?: ApiAnimeItem[];
+}
+
+export default function Home() {
+  const { getTitle } = useLanguage();
+  const [homeData, setHomeData] = useState<HomePageData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch data on client side
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const data = await pageApi.getHomePageData();
+        setHomeData(data);
+      } catch (error) {
+        console.error("Error fetching home page data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-purple flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!homeData) {
+    return (
+      <div className="min-h-screen bg-purple flex items-center justify-center">
+        <div className="text-white">Failed to load data</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-purple">
@@ -73,11 +130,9 @@ export default async function Home() {
                   {(homeData.airing || [])
                     .slice(0, 5)
                     .map((anime: ApiAnimeItem) => {
-                      // Create slug from title
-                      const slug = anime.title
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, "-")
-                        .replace(/^-|-$/g, "");
+                      // Create slug from title using utility
+                      const animeTitle = getTitle(anime);
+                      const slug = generateSlugFromTitle(animeTitle);
 
                       return (
                         <Link
@@ -87,14 +142,14 @@ export default async function Home() {
                           <div className="flex items-center space-x-4 border-b border-gray-700 pb-5 p-2">
                             <Image
                               src={anime.image || "/placeholder-anime.jpg"}
-                              alt={anime.title}
+                              alt={animeTitle}
                               width={70}
                               height={100}
                               className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
                             />
                             <div className="flex-1">
                               <h4 className="text-white font-semibold text-md hover:text-purple-400 transition-colors">
-                                {anime.title}
+                                {animeTitle}
                               </h4>
                               <div className="flex items-center gap-2 mt-2">
                                 <p className="text-gray-300 text-xs">
@@ -127,11 +182,9 @@ export default async function Home() {
                   {(homeData.popular || [])
                     .slice(0, 5)
                     .map((anime: ApiAnimeItem) => {
-                      // Create slug from title
-                      const slug = anime.title
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, "-")
-                        .replace(/^-|-$/g, "");
+                      // Create slug from title using utility
+                      const animeTitle = getTitle(anime);
+                      const slug = generateSlugFromTitle(animeTitle);
 
                       return (
                         <Link
@@ -141,14 +194,14 @@ export default async function Home() {
                           <div className="flex items-center space-x-4 border-b border-gray-700 pb-4 p-2">
                             <Image
                               src={anime.image || "/placeholder-anime.jpg"}
-                              alt={anime.title}
+                              alt={animeTitle}
                               width={70}
                               height={100}
                               className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
                             />
                             <div className="flex-1">
                               <h4 className="text-white font-semibold text-md hover:text-purple-400 transition-colors">
-                                {anime.title}
+                                {animeTitle}
                               </h4>
                               <div className="flex items-center gap-2 mt-2">
                                 <p className="text-gray-300 text-xs">
@@ -181,11 +234,9 @@ export default async function Home() {
                   {(homeData.favourite || [])
                     .slice(0, 5)
                     .map((anime: ApiAnimeItem) => {
-                      // Create slug from title
-                      const slug = anime.title
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, "-")
-                        .replace(/^-|-$/g, "");
+                      // Create slug from title using utility
+                      const animeTitle = getTitle(anime);
+                      const slug = generateSlugFromTitle(animeTitle);
 
                       return (
                         <Link
@@ -195,14 +246,14 @@ export default async function Home() {
                           <div className="flex items-center space-x-4 border-b border-gray-700 pb-4 p-2">
                             <Image
                               src={anime.image || "/placeholder-anime.jpg"}
-                              alt={anime.title}
+                              alt={animeTitle}
                               width={70}
                               height={100}
                               className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
                             />
                             <div className="flex-1">
                               <h4 className="text-white font-semibold text-md hover:text-purple-400 transition-colors">
-                                {anime.title}
+                                {animeTitle}
                               </h4>
                               <div className="flex items-center gap-2 mt-2">
                                 <p className="text-gray-300 text-xs">
@@ -235,11 +286,9 @@ export default async function Home() {
                   {(homeData.completed || [])
                     .slice(0, 5)
                     .map((anime: ApiAnimeItem) => {
-                      // Create slug from title
-                      const slug = anime.title
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, "-")
-                        .replace(/^-|-$/g, "");
+                      // Create slug from title using utility
+                      const animeTitle = getTitle(anime);
+                      const slug = generateSlugFromTitle(animeTitle);
 
                       return (
                         <Link
@@ -249,14 +298,14 @@ export default async function Home() {
                           <div className="flex items-center space-x-4 border-b border-gray-700 pb-4 p-2">
                             <Image
                               src={anime.image || "/placeholder-anime.jpg"}
-                              alt={anime.title}
+                              alt={animeTitle}
                               width={70}
                               height={100}
                               className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
                             />
                             <div className="flex-1">
                               <h4 className="text-white font-semibold text-md hover:text-purple-400 transition-colors">
-                                {anime.title}
+                                {animeTitle}
                               </h4>
                               <div className="flex items-center gap-2 mt-2">
                                 <p className="text-gray-300 text-xs">

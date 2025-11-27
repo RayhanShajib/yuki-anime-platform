@@ -7,8 +7,10 @@ interface ApiSpotlightItem {
     | {
         romaji?: string;
         english?: string;
+        japanese?: string;
       }
     | string;
+  title_japanese?: string;
   description?: string;
   banner?: string;
   trailer?: string | null;
@@ -23,6 +25,7 @@ interface ApiSpotlightItem {
 interface ApiAnimeItem {
   id: number | null;
   title?: string;
+  title_japanese?: string;
   synopsis?: string;
   image?: string;
   background_banner?: string;
@@ -57,33 +60,41 @@ export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
       (item: ApiSpotlightItem): item is ApiSpotlightItem & { id: number } =>
         item.id != null
     )
-    .map((item: ApiSpotlightItem & { id: number }) => ({
-      id: item.id.toString(),
-      title:
-        typeof item.title === "object" && item.title !== null
-          ? item.title.romaji || item.title.english || "Unknown Title"
-          : item.title || "Unknown Title",
-      synopsis: item.description || "",
-      poster: item.banner || "/placeholder-anime.jpg",
-      banner: item.banner || "/placeholder-anime.jpg",
-      trailer: item.trailer && item.trailer !== null ? item.trailer : undefined, // YouTube video ID
-      genres: item.genre || [],
-      studio: "Unknown Studio",
-      releaseYear: item.released_date
-        ? new Date(item.released_date).getFullYear()
-        : new Date().getFullYear(),
-      status: "ongoing" as const,
-      type: item.type === "ANIME" ? ("series" as const) : ("series" as const),
-      totalEpisodes: typeof item.number_of_episodes === 'number' ? item.number_of_episodes : 0,
-      rating: typeof item.rating === 'number' ? item.rating : 0,
-      popularity: typeof item.popularity === 'number' ? item.popularity : 0,
-      language: ["sub" as const],
-      subEpisodes: item.sub_total || 0,
-      dubEpisodes: item.dub_total || 0,
-      // Preserve ep_id when provided by API (some endpoints include ep_id)
-      episodeId: (item as ApiAnimeItem & { ep_id?: string }).ep_id ? 
-        Number((item as ApiAnimeItem & { ep_id?: string }).ep_id) : undefined,
-    }));
+    .map((item: ApiSpotlightItem & { id: number }) => {
+      const titleValue = typeof item.title === "object" && item.title !== null
+        ? item.title.romaji || item.title.english || "Unknown Title"
+        : item.title || "Unknown Title";
+      
+      const titleJapanese = typeof item.title === "object" && item.title !== null
+        ? item.title.japanese
+        : item.title_japanese;
+
+      return {
+        id: item.id.toString(),
+        title: titleValue,
+        title_japanese: titleJapanese,
+        synopsis: item.description || "",
+        poster: item.banner || "/placeholder-anime.jpg",
+        banner: item.banner || "/placeholder-anime.jpg",
+        trailer: item.trailer && item.trailer !== null ? item.trailer : undefined, // YouTube video ID
+        genres: item.genre || [],
+        studio: "Unknown Studio",
+        releaseYear: item.released_date
+          ? new Date(item.released_date).getFullYear()
+          : new Date().getFullYear(),
+        status: "ongoing" as const,
+        type: item.type === "ANIME" ? ("series" as const) : ("series" as const),
+        totalEpisodes: typeof item.number_of_episodes === 'number' ? item.number_of_episodes : 0,
+        rating: typeof item.rating === 'number' ? item.rating : 0,
+        popularity: typeof item.popularity === 'number' ? item.popularity : 0,
+        language: ["sub" as const],
+        subEpisodes: item.sub_total || 0,
+        dubEpisodes: item.dub_total || 0,
+        // Preserve ep_id when provided by API (some endpoints include ep_id)
+        episodeId: (item as ApiAnimeItem & { ep_id?: string }).ep_id ? 
+          Number((item as ApiAnimeItem & { ep_id?: string }).ep_id) : undefined,
+      };
+    });
 };
 
 // Helper function to transform trending data structure
@@ -106,6 +117,7 @@ export const transformAnimeListData = (animeList: ApiAnimeItem[]) => {
     .map((item: ApiAnimeItem & { id: number }) => ({
       id: item.id.toString(),
       title: item.title || "Unknown Title",
+      title_japanese: item.title_japanese,
       synopsis: item.synopsis || "",
       poster: item.image || "/placeholder-anime.jpg",
       banner: item.background_banner || item.image || "/placeholder-anime.jpg",

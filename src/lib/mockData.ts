@@ -4,6 +4,7 @@ export const mockAnime: Anime[] = [
   {
     id: "1",
     title: "Attack on Titan: Final Season",
+    title_japanese: "進撃の巨人",
     alternativeTitles: ["Shingeki no Kyojin", "AOT"],
     synopsis:
       "The final battle for humanity begins as Eren Yeager leads the Survey Corps in their ultimate mission to save what remains of mankind.",
@@ -29,6 +30,7 @@ export const mockAnime: Anime[] = [
   {
     id: "2",
     title: "Demon Slayer: Kimetsu no Yaiba",
+    title_japanese: "鬼滅の刃",
     synopsis:
       "Tanjiro Kamado joins the Demon Slayer Corps to save his sister Nezuko and avenge his family.",
     poster:
@@ -51,6 +53,7 @@ export const mockAnime: Anime[] = [
   {
     id: "3",
     title: "Jujutsu Kaisen",
+    title_japanese: "呪術廻戦",
     synopsis:
       "Yuji Itadori joins a secret organization of Jujutsu Sorcerers to kill a powerful Curse named Ryomen Sukuna.",
     poster:
@@ -74,6 +77,7 @@ export const mockAnime: Anime[] = [
   {
     id: "4",
     title: "Spirited Away",
+    title_japanese: "千と千尋の神隠し",
     synopsis:
       "A young girl enters a world ruled by gods and witches where humans are turned into beasts.",
     poster:
@@ -97,6 +101,7 @@ export const mockAnime: Anime[] = [
   {
     id: "5",
     title: "Your Name",
+    title_japanese: "君の名は。",
     synopsis:
       "Two teenagers share a profound, magical connection upon discovering they are swapping bodies.",
     poster:
@@ -120,6 +125,7 @@ export const mockAnime: Anime[] = [
   {
     id: "6",
     title: "Princess Mononoke",
+    title_japanese: "もののけ姫",
     synopsis:
       "A young warrior becomes embroiled in a struggle between the gods of a forest and the humans who consume its resources.",
     poster:
@@ -143,6 +149,7 @@ export const mockAnime: Anime[] = [
   {
     id: "7",
     title: "Akira",
+    title_japanese: "アキラ",
     synopsis:
       "A secret military project endangers Neo-Tokyo when it turns a biker gang member into a rampaging psychic psychopath.",
     poster:

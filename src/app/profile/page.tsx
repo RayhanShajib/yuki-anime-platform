@@ -6,6 +6,8 @@ import { NotificationDropdown } from "@/components/ui/NotificationDropdown";
 import { StatusChangeDropdown } from "@/components/ui/StatusChangeDropdown";
 
 import { pageApi } from "@/lib/api/pageApi";
+import { useLanguage } from "@/lib/LanguageContext";
+import { generateSlugFromTitle } from "@/lib/utils";
 import { getWatchHistory, type WatchHistoryItem } from "@/lib/watchHistory";
 import { type ApiWatchlistItem, type ApiWatchlistResponse } from "@/types/api";
 import {
@@ -61,6 +63,7 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { getTitle } = useLanguage();
   const [activeTab, setActiveTab] = useState("overview");
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [watchlistData, setWatchlistData] =
@@ -312,11 +315,9 @@ export default function ProfilePage() {
   };
 
   // Get slug from title
-  const getSlugFromTitle = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
+  const getSlugFromTitle = (anime: ApiWatchlistItem) => {
+    const title = getTitle(anime);
+    return generateSlugFromTitle(title);
   };
 
   // Render watchlist section with pagination
@@ -350,16 +351,16 @@ export default function ProfilePage() {
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 <Image
                   src={anime.image || "/placeholder-anime.jpg"}
-                  alt={anime.title}
+                  alt={getTitle(anime)}
                   width={60}
                   height={80}
                   className="rounded-md object-cover flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <Link
-                    href={`/anime/${anime.id}/${getSlugFromTitle(anime.title)}`}
+                    href={`/anime/${anime.id}/${getSlugFromTitle(anime)}`}
                     className="text-white font-semibold hover:text-purple-400 transition-colors block truncate">
-                    {anime.title}
+                    {getTitle(anime)}
                   </Link>
                   <div className="flex gap-2 mt-2">
                     {anime.sub_total > 0 && (
@@ -379,7 +380,7 @@ export default function ProfilePage() {
                 <StatusChangeDropdown
                   animeId={anime.anime_id || anime.id}
                   watchStatusId={anime.id}
-                  animeTitle={anime.title}
+                  animeTitle={getTitle(anime)}
                   currentStatus={status}
                   onStatusChanged={async () => {
                     const token = localStorage.getItem("access_token");
@@ -396,7 +397,7 @@ export default function ProfilePage() {
                     setDeleteConfirm({
                       show: true,
                       watchStatusId: anime.id,
-                      animeTitle: anime.title,
+                      animeTitle: getTitle(anime),
                     })
                   }
                   className="text-red-500 hover:text-red-400 transition-colors"

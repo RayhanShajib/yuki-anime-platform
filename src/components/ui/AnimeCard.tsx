@@ -1,6 +1,7 @@
 "use client";
 
-import { cn, formatRating, generateSlug, truncateText } from "@/lib/utils";
+import { cn, formatRating, truncateText, generateSlugFromTitle } from "@/lib/utils";
+import { useLanguage } from "@/lib/LanguageContext";
 import { Anime } from "@/types/anime";
 import { Info, Play, Star, X } from "lucide-react";
 import { WatchlistDropdown } from "@/components/ui/WatchlistDropdown";
@@ -15,6 +16,7 @@ interface AnimeCardProps {
 }
 
 export function AnimeCard({ anime, className }: AnimeCardProps) {
+  const { getTitle } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -170,7 +172,8 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
     }, 300);
   };
 
-  const animeSlug = generateSlug(anime.title);
+  const animeTitle = getTitle(anime);
+  const animeSlug = generateSlugFromTitle(animeTitle);
 
   // Handle popup opening/closing effects
   useEffect(() => {
@@ -282,7 +285,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
               suppressHydrationWarning={true}>
               <Image
                 src={anime.poster}
-                alt={anime.title}
+                alt={animeTitle}
                 width={340}
                 height={240}
                 className="w-full h-full object-cover"
@@ -325,7 +328,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
           className="w-full py-1 flex flex-col gap-1 mt-1"
           suppressHydrationWarning={true}>
           <h3 className="text-white font-bold text-base leading-tight">
-            {truncateText(anime.title, 40)}
+            {truncateText(animeTitle, 40)}
           </h3>
           <div
             className="flex items-center justify-between gap-2 mt-1"
@@ -391,7 +394,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                   {anime.trailer ? (
                     <iframe
                       src={`https://www.youtube.com/embed/${anime.trailer}?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0&cc_load_policy=0&playsinline=1&enablejsapi=0&origin=${window.location.origin}`}
-                      title={`${anime.title} Trailer`}
+                      title={`${animeTitle} Trailer`}
                       className="w-full h-full absolute inset-0 object-cover rounded-t-2xl"
                       style={{
                         width: "100%",
@@ -428,7 +431,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h2 className="text-[20px] font-bold text-white mb-2 leading-tight">
-                      {anime.title}
+                      {animeTitle}
                     </h2>
                     <div className="mb-3">
                       <div className="flex flex-wrap gap-2">

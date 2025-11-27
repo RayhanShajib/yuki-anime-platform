@@ -8,6 +8,7 @@ import IframeVideoPlayer from "@/components/ui/IframeVideoPlayer";
 import VideoPlayer, { VideoPlayerRef } from "@/components/ui/VideoPlayer";
 import { pageApi } from "@/lib/api/pageApi";
 import { transformWatchPageData } from "@/lib/transformers";
+import { useLanguage } from "@/lib/LanguageContext";
 import { 
   saveWatchProgress, 
   getEpisodeProgress, 
@@ -37,6 +38,7 @@ export default function WatchPage() {
   const params = useParams();
   const router = useRouter();
   const episodeId = params?.id as string;
+  const { getTitle } = useLanguage();
 
   // --- API Data State ---
   const [watchData, setWatchData] = useState<TransformedWatchPageData | null>(
@@ -425,7 +427,7 @@ export default function WatchPage() {
     const progressData = {
       animeId: currentAnime.id,
       episodeId: episodeId,
-      animeTitle: currentAnime.title,
+      animeTitle: getTitle(currentAnime),
       episodeNumber: currentEpisode.episodeNumber,
       poster: currentAnime.poster || currentAnime.banner || '',
       currentTime: currentTime,
@@ -434,7 +436,7 @@ export default function WatchPage() {
     };
 
     saveWatchProgress(progressData);
-  }, [watchData, currentAnime, episodeId, currentEpisode, audioType]);
+  }, [watchData, currentAnime, episodeId, currentEpisode, audioType, getTitle]);
 
   // Check for existing progress when episode or audio type changes
   useEffect(() => {
@@ -595,7 +597,7 @@ export default function WatchPage() {
                 )}
                 <span className="mx-2">&gt;</span>
                 <span className="text-white font-semibold">
-                  {currentEpisode?.title && ` - ${currentEpisode.title}`}
+                  {currentEpisode && getTitle(currentEpisode) && ` - ${getTitle(currentEpisode)}`}
                 </span>
               </nav>
               {/* Resume Button */}
@@ -666,7 +668,7 @@ export default function WatchPage() {
                       "https://cdn-w1.netlify.com/cagatayldzz.com/2020/pbgRkz.jpg"
                     }
                     videoTitle={`${
-                      currentAnime?.title || "Anime"
+                      (currentAnime && getTitle(currentAnime)) || "Anime"
                     } - ${currentEpisodeTitle}`}
                     subtitles={[
                       {
@@ -1056,7 +1058,7 @@ export default function WatchPage() {
                   <Image
                     itemProp="image"
                     src={currentAnime.poster}
-                    alt={currentAnime.title || "Anime Poster"}
+                    alt={(currentAnime && getTitle(currentAnime)) || "Anime Poster"}
                     width={160}
                     height={224}
                     className="rounded-lg shadow-lg w-55 h-70 object-cover"
@@ -1075,7 +1077,7 @@ export default function WatchPage() {
                     className="title text-2xl md:text-3xl font-bold text-white flex-grow"
                     data-jp="WIND BREAKER Season 2">
                     {infoType === "anime"
-                      ? currentAnime?.title || "Anime Title"
+                      ? (currentAnime && getTitle(currentAnime)) || "Anime Title"
                       : `Episode ${currentEpisode?.episodeNumber || selectedEpisode}: ${
                           currentEpisode?.title || "Episode Title"
                         }`}
@@ -1105,8 +1107,8 @@ export default function WatchPage() {
                 </div>
                 <small className="al-title text-gray-300 block mb-2">
                   {infoType === "anime"
-                    ? currentAnime?.title || "Anime Title"
-                    : `Episode ${currentEpisode?.episodeNumber || selectedEpisode} of ${currentAnime?.title || "Anime Title"}`}
+                    ? (currentAnime && getTitle(currentAnime)) || "Anime Title"
+                    : `Episode ${currentEpisode?.episodeNumber || selectedEpisode} of ${(currentAnime && getTitle(currentAnime)) || "Anime Title"}`}
                 </small>
                 <div className="info flex gap-4 mb-2 text-sm text-gray-300 items-center">
                   <span>
