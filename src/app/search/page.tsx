@@ -81,6 +81,8 @@ interface MultiSelectProps {
   selectedValues: string[];
   onChange: (values: string[]) => void;
   className?: string;
+  showCombinedAll?: boolean;
+  allLabel?: string;
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
@@ -88,6 +90,8 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   selectedValues,
   onChange,
   className = "",
+  showCombinedAll = false,
+  allLabel = "All",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -140,7 +144,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
   const getDisplayText = () => {
     if (selectedValues.includes("all") || selectedValues.length === 0) {
-      return "All Types";
+      return showCombinedAll ? allLabel : "All Types";
     }
 
     if (selectedValues.length === 1) {
@@ -434,7 +438,7 @@ function SearchPageContent() {
           </h1>
           <div className="mb-8">
             <div
-              className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-4 relative"
+              className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-4 relative"
               ref={advancedFilterRef}>
               {/* Search Bar */}
               <input
@@ -450,6 +454,8 @@ function SearchPageContent() {
                 selectedValues={pendingType}
                 onChange={setPendingType}
                 className="w-full"
+                showCombinedAll={true}
+                allLabel="All Types"
               />
               {/* Genre Multi-Select */}
               <MultiSelect
@@ -457,6 +463,8 @@ function SearchPageContent() {
                 selectedValues={pendingGenre}
                 onChange={setPendingGenre}
                 className="w-full"
+                showCombinedAll={true}
+                allLabel="All Genres"
               />
               {/* Rating Multi-Select */}
               <MultiSelect
@@ -464,6 +472,8 @@ function SearchPageContent() {
                 selectedValues={pendingRating}
                 onChange={setPendingRating}
                 className="w-full"
+                showCombinedAll={true}
+                allLabel="Ratings"
               />
               {/* Filter Icon & Button (relative container) */}
               <div className="flex items-center gap-2 relative">

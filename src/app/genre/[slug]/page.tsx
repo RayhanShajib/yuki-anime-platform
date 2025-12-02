@@ -10,25 +10,16 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const statusFilters = [
-  { key: "all", label: "All Status" },
-  { key: "ongoing", label: "Ongoing" },
-  { key: "completed", label: "Completed" },
-  { key: "upcoming", label: "Upcoming" },
-];
-const sortOptions = [
-  { key: "popularity", label: "Trending" },
-  { key: "updated", label: "Updated Date" },
-  { key: "release", label: "Release Date" },
-  { key: "title", label: "A to Z" },
-  { key: "end", label: "End Date" },
-  { key: "views", label: "Total Views" },
-];
 const typeFilters = [
   { key: "all", label: "All Types" },
   { key: "series", label: "Series" },
   { key: "movie", label: "Movies" },
   { key: "ova", label: "OVAs" },
+];
+
+const srcTypeOptions = [
+  { key: "sub", label: "Subtitle" },
+  { key: "dub", label: "Dubbed" },
 ];
 
 // Multi-Select Component
@@ -37,6 +28,7 @@ interface MultiSelectProps {
   selectedValues: string[];
   onChange: (values: string[]) => void;
   className?: string;
+  allLabel?: string;
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
@@ -44,6 +36,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   selectedValues,
   onChange,
   className = "",
+  allLabel,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -97,7 +90,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   const getDisplayText = () => {
     if (selectedValues.includes("all") || selectedValues.length === 0) {
       const firstOption = normalizedOptions.find((opt) => opt.key === "all");
-      return firstOption?.label || "All";
+      return firstOption?.label || allLabel || "All";
     }
 
     if (selectedValues.length === 1) {
@@ -180,11 +173,10 @@ export default function GenrePage() {
   // Temporary filter states for UI (now arrays for multi-selection)
   const [tempGenre, setTempGenre] = useState<string[]>(["all"]);
   const [tempType, setTempType] = useState<string[]>(["all"]);
-  const [tempStatus, setTempStatus] = useState<string[]>(["all"]);
+  const [pendingRating, setPendingRating] = useState<string[]>([]);
   // Actual filter states used for filtering
   const [selectedSeason, setSelectedSeason] = useState<string[]>(["all"]);
   const [sortBy] = useState("popularity");
-  const [statusFilter, setStatusFilter] = useState<string[]>(["all"]);
   const [typeFilter, setTypeFilter] = useState<string[]>(["all"]);
   const [viewMode] = useState<"grid" | "list">("grid");
   // Pagination state
@@ -194,10 +186,9 @@ export default function GenrePage() {
   // Removed unused selectedGenre state
   const [selectedRating, setSelectedRating] = useState<string[]>(["all"]);
   const [selectedYear, setSelectedYear] = useState<string[]>(["all"]);
-  const [selectedCountry, setSelectedCountry] = useState<string[]>([]);
-  const [selectedLanguage, setSelectedLanguage] = useState<string[]>([]);
   const [pendingStudio, setPendingStudio] = useState("");
-  const [pendingSort, setPendingSort] = useState("popularity");
+  const [pendingProducers, setPendingProducers] = useState("");
+  const [pendingSrcType, setPendingSrcType] = useState<string[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const router = useRouter();
   const advancedFilterRef = useRef<HTMLDivElement>(null);
@@ -228,18 +219,7 @@ export default function GenrePage() {
     "romance",
     "sci-fi",
   ];
-  const ratingOptions = [
-    "all",
-    "9+",
-    "8+",
-    "7+",
-    "6+",
-    "5+",
-    "4+",
-    "3+",
-    "2+",
-    "1+",
-  ];
+  const ratingOptions = ["9+", "8+", "7+", "6+", "5+", "4+", "3+", "2+", "1+"];
   const yearOptions = [
     "all",
     "2025",
@@ -251,15 +231,6 @@ export default function GenrePage() {
     "2010-2019",
     "2000-2009",
     "1990-1999",
-  ];
-  const countryOptions = ["all", "Japan", "Korea", "China", "USA", "Other"];
-  const languageOptions = [
-    "all",
-    "Japanese",
-    "English",
-    "Korean",
-    "Chinese",
-    "Other",
   ];
 
   const genre = slug ? slug.replace(/-/g, " ") : "";
@@ -274,14 +245,6 @@ export default function GenrePage() {
           genre.toLowerCase().includes(g.toLowerCase())
       );
       if (!hasGenre) return false;
-
-      // Multi-selection status filter
-      if (
-        statusFilter.length > 0 &&
-        !statusFilter.includes("all") &&
-        !statusFilter.includes(anime.status)
-      )
-        return false;
 
       // Multi-selection type filter
       if (
@@ -341,7 +304,7 @@ export default function GenrePage() {
           </div>
           {/* Advanced Filter Section */}
           <div className="mb-8">
-            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-4 relative">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-4 relative">
               {/* Search Bar */}
               <input
                 type="text"
@@ -370,20 +333,22 @@ export default function GenrePage() {
                     )
                       params.append("season", selectedSeason.join(","));
                     if (
-                      selectedCountry.length > 0 &&
-                      !selectedCountry.includes("all")
+                      pendingRating.length > 0 &&
+                      !pendingRating.includes("all")
                     )
-                      params.append("country", selectedCountry.join(","));
-                    if (
-                      selectedLanguage.length > 0 &&
-                      !selectedLanguage.includes("all")
-                    )
-                      params.append("language", selectedLanguage.join(","));
-                    if (tempStatus.length > 0 && !tempStatus.includes("all"))
-                      params.append("status", tempStatus.join(","));
+                      params.append("rating", pendingRating.join(","));
                     if (tempType.length > 0 && !tempType.includes("all"))
                       params.append("type", tempType.join(","));
                     params.append("search", searchTerm);
+                    if (pendingStudio.trim() !== "")
+                      params.append("studio", pendingStudio.trim());
+                    if (pendingProducers.trim() !== "")
+                      params.append(
+                        "producers",
+                        pendingProducers.trim().split(" ").join(",")
+                      );
+                    if (pendingSrcType.length > 0)
+                      params.append("srctype", pendingSrcType[0]);
                     router.push(`/search?${params.toString()}`);
                   }
                 }}
@@ -401,25 +366,16 @@ export default function GenrePage() {
                 selectedValues={tempGenre}
                 onChange={setTempGenre}
                 className="w-full"
+                allLabel="All Genres"
               />
-              {/* Status Multi-Select */}
+              {/* Rating Multi-Select */}
               <MultiSelect
-                options={statusFilters}
-                selectedValues={tempStatus}
-                onChange={setTempStatus}
+                options={ratingOptions}
+                selectedValues={pendingRating}
+                onChange={setPendingRating}
                 className="w-full"
+                allLabel="Ratings"
               />
-              {/* Sort Dropdown */}
-              <select
-                value={pendingSort}
-                onChange={(e) => setPendingSort(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 text-left flex items-center justify-between hover:bg-gray-700 focus:outline-none">
-                {sortOptions.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
               {/* Filter Icon & Button (relative container) */}
               <div className="flex items-center gap-2 relative">
                 <button
@@ -446,7 +402,6 @@ export default function GenrePage() {
                   className="px-6 py-2 rounded-lg btn-purple text-white/90 font-medium cursor-pointer w-full"
                   onClick={() => {
                     setTypeFilter(tempType);
-                    setStatusFilter(tempStatus);
                     const params = new URLSearchParams();
                     if (tempGenre.length > 0 && !tempGenre.includes("all"))
                       params.append("genre", tempGenre.join(","));
@@ -466,23 +421,23 @@ export default function GenrePage() {
                     )
                       params.append("season", selectedSeason.join(","));
                     if (
-                      selectedCountry.length > 0 &&
-                      !selectedCountry.includes("all")
+                      pendingRating.length > 0 &&
+                      !pendingRating.includes("all")
                     )
-                      params.append("country", selectedCountry.join(","));
-                    if (
-                      selectedLanguage.length > 0 &&
-                      !selectedLanguage.includes("all")
-                    )
-                      params.append("language", selectedLanguage.join(","));
-                    if (tempStatus.length > 0 && !tempStatus.includes("all"))
-                      params.append("status", tempStatus.join(","));
+                      params.append("rating", pendingRating.join(","));
                     if (tempType.length > 0 && !tempType.includes("all"))
                       params.append("type", tempType.join(","));
-                    if (pendingSort !== "popularity")
-                      params.append("sort", pendingSort);
                     if (searchTerm.trim() !== "")
                       params.append("search", searchTerm);
+                    if (pendingStudio.trim() !== "")
+                      params.append("studio", pendingStudio.trim());
+                    if (pendingProducers.trim() !== "")
+                      params.append(
+                        "producers",
+                        pendingProducers.trim().split(" ").join(",")
+                      );
+                    if (pendingSrcType.length > 0)
+                      params.append("srctype", pendingSrcType[0]);
                     router.push(`/search?${params.toString()}`);
                   }}>
                   Filter
@@ -530,76 +485,45 @@ export default function GenrePage() {
                         />
                       </div>
                     </div>
-                    {/* Studio Input Field */}
+                    <div className="flex items-center justify-between gap-4">
+                      {/* Studio Input Field */}
+                      <div className="mt-4 w-full">
+                        <label className="block text-gray-300 text-md mb-1">
+                          Studio
+                        </label>
+                        <input
+                          type="text"
+                          value={pendingStudio}
+                          onChange={(e) => setPendingStudio(e.target.value)}
+                          placeholder="Enter studio name"
+                          className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 outline-none"
+                        />
+                      </div>
+                      {/* Producers Input Field */}
+                      <div className="mt-4 w-full">
+                        <label className="block text-gray-300 text-md mb-1">
+                          Producers
+                        </label>
+                        <input
+                          type="text"
+                          value={pendingProducers}
+                          onChange={(e) => setPendingProducers(e.target.value)}
+                          placeholder="Space-separated producers"
+                          className="w-full px-4 py-2 rounded-lg bg-purple text-white border border-gray-700 outline-none"
+                        />
+                      </div>
+                    </div>
+                    {/* Source Type Multi-Select */}
                     <div className="mt-4">
                       <label className="block text-gray-300 text-md mb-1">
-                        Studio
+                        Source Type
                       </label>
-                      <input
-                        type="text"
-                        value={pendingStudio}
-                        onChange={(e) => setPendingStudio(e.target.value)}
-                        placeholder="Enter studio name"
-                        className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700"
+                      <MultiSelect
+                        options={srcTypeOptions}
+                        selectedValues={pendingSrcType}
+                        onChange={setPendingSrcType}
+                        className="w-full"
                       />
-                    </div>
-                    {/* Country Checkbox */}
-                    <div className="mt-4">
-                      <label className="block text-gray-300 text-md mb-1">
-                        Country
-                      </label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {countryOptions.map((option) => (
-                          <label
-                            key={option}
-                            className="flex items-center gap-1 text-gray-300 text-sm">
-                            <input
-                              type="checkbox"
-                              name="country"
-                              value={option}
-                              checked={selectedCountry.includes(option)}
-                              onChange={() => {
-                                setSelectedCountry((prev) =>
-                                  prev.includes(option)
-                                    ? prev.filter((c) => c !== option)
-                                    : [...prev, option]
-                                );
-                              }}
-                              className="accent-green-600"
-                            />
-                            {option}
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                    {/* Language Checkbox */}
-                    <div className="mt-4">
-                      <label className="block text-gray-300 text-md mb-1">
-                        Language
-                      </label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {languageOptions.map((option) => (
-                          <label
-                            key={option}
-                            className="flex items-center gap-1 text-gray-300 text-sm">
-                            <input
-                              type="checkbox"
-                              name="language"
-                              value={option}
-                              checked={selectedLanguage.includes(option)}
-                              onChange={() => {
-                                setSelectedLanguage((prev) =>
-                                  prev.includes(option)
-                                    ? prev.filter((l) => l !== option)
-                                    : [...prev, option]
-                                );
-                              }}
-                              className="accent-blue-600"
-                            />
-                            {option}
-                          </label>
-                        ))}
-                      </div>
                     </div>
                   </div>
                 )}
