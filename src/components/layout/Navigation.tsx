@@ -377,7 +377,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
                     On Going
                   </Link>
                   <Link
-                    href="/movies"
+                    href="/genres"
                     className="block px-4 py-2 text-sm text-white ">
                     Movies
                   </Link>
