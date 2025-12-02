@@ -357,7 +357,9 @@ export default function InfoComponent({ animeData }: InfoComponentProps) {
                           />
                         ) : (
                           <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                            <span className="text-gray-300 text-xs">No Image Available</span>
+                            <span className="text-gray-300 text-xs">
+                              No Image Available
+                            </span>
                           </div>
                         )}
                       </div>
@@ -385,7 +387,9 @@ export default function InfoComponent({ animeData }: InfoComponentProps) {
                             />
                           ) : (
                             <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                              <span className="text-gray-300 text-xs">No Image Available</span>
+                              <span className="text-gray-300 text-xs">
+                                No Image Available
+                              </span>
                             </div>
                           )}
                         </div>
@@ -411,8 +415,8 @@ export default function InfoComponent({ animeData }: InfoComponentProps) {
                   <button
                     className={`px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
                       audioType === "sub"
-                        ? "bg-blue-600 text-white/90"
-                        : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
+                        ? "btn-purple text-white/90"
+                        : "bg-gray-800 text-gray-300 hover:text-white hover:hover:bg-[#7760A9]"
                     }`}
                     onClick={() => setAudioType("sub")}>
                     <span>Sub</span>
@@ -423,8 +427,8 @@ export default function InfoComponent({ animeData }: InfoComponentProps) {
                   <button
                     className={`px-3 py-1 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
                       audioType === "dub"
-                        ? "bg-blue-600 text-white/90"
-                        : "bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700"
+                        ? "btn-purple text-white/90"
+                        : "bg-gray-800 text-gray-300 hover:text-white hover:hover:bg-[#7760A9]"
                     }`}
                     onClick={() => setAudioType("dub")}>
                     <span>Dub</span>
