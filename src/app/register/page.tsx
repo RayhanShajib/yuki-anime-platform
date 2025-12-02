@@ -90,7 +90,7 @@ export default function RegisterPage() {
       <div className="max-w-md w-full space-y-8">
         {/* Logo */}
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center space-x-2">
+          <Link href="/Home" className="inline-flex items-center space-x-2">
             <div className="relative h-[80px] w-[200px]">
               <Image
                 className="text-transparent absolute -top-[26px] left-0 overflow-hidden"

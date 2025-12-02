@@ -1,0 +1,339 @@
+"use client";
+
+import { Navigation } from "@/components/layout/Navigation";
+import { ContinueWatchingSection } from "@/components/sections/ContinueWatchingSection";
+import { FooterSection } from "@/components/sections/FooterSection";
+import { HeroCarousel } from "@/components/sections/HeroCarousel";
+import { LatestSection } from "@/components/sections/LatestSection";
+import ScheduleSection from "@/components/sections/ScheduleSection";
+import { TrendingSection } from "@/components/sections/TrendingSection";
+import { pageApi } from "@/lib/api/pageApi";
+import {
+  transformLatestData,
+  transformSpotlightData,
+  transformTrendingData,
+} from "@/lib/transformers";
+import { useLanguage } from "@/lib/LanguageContext";
+import { generateSlugFromTitle } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+// Type for API anime items in home sections
+interface ApiAnimeItem {
+  id: number;
+  title: string;
+  image: string;
+  anime_type: string;
+  airing: boolean;
+  number_of_episodes?: number;
+  [key: string]: unknown; // For additional properties we don't need to type
+}
+
+// Type for home page data
+interface HomePageData {
+  spotlight?: ApiAnimeItem[];
+  trending?: {
+    now: ApiAnimeItem[];
+    day: ApiAnimeItem[];
+    week: ApiAnimeItem[];
+    month: ApiAnimeItem[];
+  };
+  latest?: {
+    sub: ApiAnimeItem[];
+    dub: ApiAnimeItem[];
+  };
+  airing?: ApiAnimeItem[];
+  popular?: ApiAnimeItem[];
+  favourite?: ApiAnimeItem[];
+  completed?: ApiAnimeItem[];
+}
+
+export default function Home() {
+  const { getTitle } = useLanguage();
+  const [homeData, setHomeData] = useState<HomePageData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch data on client side
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const data = await pageApi.getHomePageData();
+        setHomeData(data);
+      } catch (error) {
+        console.error("Error fetching home page data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-purple flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!homeData) {
+    return (
+      <div className="min-h-screen bg-purple flex items-center justify-center">
+        <div className="text-white">Failed to load data</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-purple">
+      {/* Navigation - transparent background on home page */}
+      <Navigation isLandingPage={true} />
+
+      {/* Hero Carousel */}
+      <HeroCarousel
+        featuredAnime={transformSpotlightData(homeData.spotlight || [])}
+      />
+
+      {/* Main Content */}
+      <main className="relative z-10">
+        {/* Continue Watching Section - only shows if user has watch history */}
+        <ContinueWatchingSection />
+
+        {/* Trending Section */}
+        <TrendingSection
+          trendingData={transformTrendingData(
+            homeData.trending || { now: [], day: [], week: [], month: [] }
+          )}
+        />
+
+        {/* Latest Anime Section */}
+        <LatestSection
+          latestAnime={transformLatestData(
+            homeData.latest || { sub: [], dub: [] }
+          )}
+        />
+
+        <ScheduleSection airingAnime={homeData.airing || []} />
+
+        {/* Four-Section Content Grid */}
+        <section className="py-5 sm:py-10 bg-gray-900/30 grid-content">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Top Airing */}
+              <div className="rounded-lg">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                  Top Airing
+                </h3>
+                <div className="space-y-4 mb-4">
+                  {(homeData.airing || [])
+                    .slice(0, 5)
+                    .map((anime: ApiAnimeItem) => {
+                      // Create slug from title using utility
+                      const animeTitle = getTitle(anime);
+                      const slug = generateSlugFromTitle(animeTitle);
+
+                      return (
+                        <Link
+                          key={anime.id}
+                          href={`/anime/${anime.id}/${slug}`}
+                          className="block hover:bg-gray-800/50 rounded-md transition-colors">
+                          <div className="flex items-center space-x-4 border-b border-gray-700 pb-5 p-2">
+                            <Image
+                              src={anime.image || "/placeholder-anime.jpg"}
+                              alt={animeTitle}
+                              width={70}
+                              height={100}
+                              className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                            />
+                            <div className="flex-1">
+                              <h4 className="text-white font-semibold text-md hover:text-purple-400 transition-colors">
+                                {animeTitle}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-2">
+                                <p className="text-gray-300 text-xs">
+                                  Episode {anime.number_of_episodes || "?"}
+                                </p>
+                                •
+                                <p className="text-gray-200 text-sm">
+                                  {anime.anime_type}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                </div>
+                <a
+                  href="/ongoing"
+                  className="text-white hover:text-pink transition-colors">
+                  <button>View more..</button>
+                </a>
+              </div>
+
+              {/* Most Popular */}
+              <div className="rounded-lg">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                  Most Popular
+                </h3>
+                <div className="space-y-4 mb-4">
+                  {(homeData.popular || [])
+                    .slice(0, 5)
+                    .map((anime: ApiAnimeItem) => {
+                      // Create slug from title using utility
+                      const animeTitle = getTitle(anime);
+                      const slug = generateSlugFromTitle(animeTitle);
+
+                      return (
+                        <Link
+                          key={anime.id}
+                          href={`/anime/${anime.id}/${slug}`}
+                          className="block hover:bg-gray-800/50 rounded-md transition-colors">
+                          <div className="flex items-center space-x-4 border-b border-gray-700 pb-4 p-2">
+                            <Image
+                              src={anime.image || "/placeholder-anime.jpg"}
+                              alt={animeTitle}
+                              width={70}
+                              height={100}
+                              className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                            />
+                            <div className="flex-1">
+                              <h4 className="text-white font-semibold text-md hover:text-purple-400 transition-colors">
+                                {animeTitle}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-2">
+                                <p className="text-gray-300 text-xs">
+                                  Episode {anime.number_of_episodes || "?"}
+                                </p>
+                                •
+                                <p className="text-gray-200 text-sm">
+                                  {anime.anime_type}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                </div>
+                <a
+                  href="/popular"
+                  className="text-white hover:text-pink transition-colors">
+                  <button>View more..</button>
+                </a>
+              </div>
+
+              {/* Most Favorite */}
+              <div className="rounded-lg">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                  Most Favorite
+                </h3>
+                <div className="space-y-4 mb-4">
+                  {(homeData.favourite || [])
+                    .slice(0, 5)
+                    .map((anime: ApiAnimeItem) => {
+                      // Create slug from title using utility
+                      const animeTitle = getTitle(anime);
+                      const slug = generateSlugFromTitle(animeTitle);
+
+                      return (
+                        <Link
+                          key={anime.id}
+                          href={`/anime/${anime.id}/${slug}`}
+                          className="block hover:bg-gray-800/50 rounded-md transition-colors">
+                          <div className="flex items-center space-x-4 border-b border-gray-700 pb-4 p-2">
+                            <Image
+                              src={anime.image || "/placeholder-anime.jpg"}
+                              alt={animeTitle}
+                              width={70}
+                              height={100}
+                              className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                            />
+                            <div className="flex-1">
+                              <h4 className="text-white font-semibold text-md hover:text-purple-400 transition-colors">
+                                {animeTitle}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-2">
+                                <p className="text-gray-300 text-xs">
+                                  Episode {anime.number_of_episodes || "?"}
+                                </p>
+                                •
+                                <p className="text-gray-200 text-sm">
+                                  {anime.anime_type}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                </div>
+                <a
+                  href="/top-rated"
+                  className="text-white hover:text-pink transition-colors">
+                  <button>View more..</button>
+                </a>
+              </div>
+
+              {/* Latest Completed */}
+              <div className="rounded-lg">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                  Latest Completed
+                </h3>
+                <div className="space-y-4 mb-4">
+                  {(homeData.completed || [])
+                    .slice(0, 5)
+                    .map((anime: ApiAnimeItem) => {
+                      // Create slug from title using utility
+                      const animeTitle = getTitle(anime);
+                      const slug = generateSlugFromTitle(animeTitle);
+
+                      return (
+                        <Link
+                          key={anime.id}
+                          href={`/anime/${anime.id}/${slug}`}
+                          className="block hover:bg-gray-800/50 rounded-md transition-colors">
+                          <div className="flex items-center space-x-4 border-b border-gray-700 pb-4 p-2">
+                            <Image
+                              src={anime.image || "/placeholder-anime.jpg"}
+                              alt={animeTitle}
+                              width={70}
+                              height={100}
+                              className="object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                            />
+                            <div className="flex-1">
+                              <h4 className="text-white font-semibold text-md hover:text-purple-400 transition-colors">
+                                {animeTitle}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-2">
+                                <p className="text-gray-300 text-xs">
+                                  Episode {anime.number_of_episodes || "?"}
+                                </p>
+                                •
+                                <p className="text-gray-200 text-sm">
+                                  {anime.anime_type}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                </div>
+                <a
+                  href="/movies"
+                  className="text-white hover:text-pink transition-colors">
+                  <button>View more..</button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <FooterSection />
+    </div>
+  );
+}
