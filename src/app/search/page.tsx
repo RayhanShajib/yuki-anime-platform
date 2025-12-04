@@ -4,7 +4,7 @@ import { AnimeCard } from "@/components/ui/AnimeCard";
 import { pageApi } from "@/lib/api/pageApi";
 import { useGenreNames } from "@/lib/GenresContext";
 import { Tags } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Define interfaces for the search result data
 interface SearchResultAnime {
@@ -246,6 +246,7 @@ function SearchPageContent() {
   const [pendingStudio, setPendingStudio] = useState("");
   const [pendingProducers, setPendingProducers] = useState("");
   const [pendingSrcType, setPendingSrcType] = useState<string[]>([]);
+  const [shouldAutoApply, setShouldAutoApply] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const advancedFilterRef = useRef<HTMLDivElement>(null);
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
@@ -273,7 +274,23 @@ function SearchPageContent() {
   // Sync filters from URL on mount
   useEffect(() => {
     const params = Object.fromEntries(searchParams.entries());
-    setPendingSearchTerm(params.search || "");
+
+    // Handle alpha parameter - add it to search term
+    let searchTerm = params.search || "";
+    let hasAlpha = false;
+    if (params.alpha && params.alpha !== "All") {
+      hasAlpha = true;
+      // If alpha is a single letter, add it to search term
+      if (params.alpha === "0-9") {
+        searchTerm = searchTerm ? `${searchTerm} 0-9` : "0-9";
+      } else {
+        searchTerm = searchTerm
+          ? `${searchTerm} ${params.alpha}`
+          : params.alpha;
+      }
+    }
+
+    setPendingSearchTerm(searchTerm);
     setPendingType(params.anime_type ? params.anime_type.split(",") : ["all"]);
     setPendingGenre(params.genres ? params.genres.split(",") : ["all"]);
     setPendingRating(params.rating ? [params.rating] : ["all"]);
@@ -284,10 +301,13 @@ function SearchPageContent() {
     setPendingProducers(params.producers || "");
     setPendingSrcType(params.srctype ? [params.srctype] : []);
     setCurrentPage(1);
+
+    // Set auto-apply flag if alpha was detected
+    setShouldAutoApply(hasAlpha);
   }, [searchParams]);
 
   // Handle Filter button click
-  const handleApplyFilters = async () => {
+  const handleApplyFilters = useCallback(async () => {
     const params = new URLSearchParams();
 
     if (pendingSearchTerm) params.set("search", pendingSearchTerm);
@@ -310,7 +330,28 @@ function SearchPageContent() {
 
     setCurrentPage(1);
     router.replace(`/search?${params.toString()}`);
-  };
+  }, [
+    pendingSearchTerm,
+    pendingType,
+    pendingGenre,
+    pendingRating,
+    pendingYear,
+    pendingSeason,
+    pendingRated,
+    pendingStudio,
+    pendingProducers,
+    pendingSrcType,
+    router,
+  ]);
+
+  // Auto-apply filters when shouldAutoApply flag is set
+  useEffect(() => {
+    if (shouldAutoApply && pendingSearchTerm) {
+      // Apply filters immediately when search term is ready
+      handleApplyFilters();
+      setShouldAutoApply(false); // Reset the flag
+    }
+  }, [shouldAutoApply, pendingSearchTerm, handleApplyFilters]);
 
   // Fetch data when URL changes
   useEffect(() => {
@@ -347,20 +388,24 @@ function SearchPageContent() {
             .filter((p: string) => p.trim());
         if (params.srctype) filters.srctype = params.srctype;
 
-        const data = await pageApi.getSearchPageData(
-          params.search,
-          filters,
-          itemsPerPage,
-          offset
-        );
+        try {
+          const data = await pageApi.getSearchPageData(
+            params.search,
+            filters,
+            itemsPerPage,
+            offset
+          );
 
-        setResults(data.results || []);
-        setTotalCount(data.count || 0);
+          setResults(data.results || []);
+          setTotalCount(data.count || 0);
+          setError(null); // Clear any previous errors on success
+        } catch (apiErr) {
+          console.error("API Error:", apiErr);
+          throw apiErr; // Re-throw to be caught by outer catch
+        }
       } catch (err) {
         console.error("Error fetching search results:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch results"
-        );
+        setError("No search results available. Please try again later.");
         setResults([]);
         setTotalCount(0);
       } finally {
@@ -368,7 +413,14 @@ function SearchPageContent() {
       }
     };
 
-    fetchData();
+    // Call fetchData with error handling
+    fetchData().catch((err) => {
+      console.error("Unexpected error in fetchData:", err);
+      setError("Unable to load search results. Please try again.");
+      setResults([]);
+      setTotalCount(0);
+      setIsLoading(false);
+    });
   }, [searchParams, currentPage]);
 
   // Pagination calculations
@@ -593,7 +645,7 @@ function SearchPageContent() {
             </div>
           </div>
           {/* Content Grid/List */}
-          {searchParams.toString() === "" ? (
+          {searchParams.toString() === "" || error ? (
             <div className="text-center py-12">
               <Tags className="h-16 w-16 text-gray-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-400 mb-2">
@@ -609,12 +661,6 @@ function SearchPageContent() {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple"></div>
               </div>
               <p className="text-gray-400 mt-4">Loading results...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <div className="bg-red-900/20 border border-red-700 rounded-lg p-4 inline-block">
-                <p className="text-red-400">Error: {error}</p>
-              </div>
             </div>
           ) : results.length > 0 ? (
             <>
