@@ -941,10 +941,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 {/* Edit button for own comments */}
                 {showEditButton(comment) && !isEditing && (
                   <button
-                    className="text-blue-400 hover:text-blue-300 flex items-center"
+                    className="text-purple-400 hover:text-purple-300 flex items-center"
                     onClick={() => startEdit(comment)}>
                     <FaEdit className="mr-1" size={14} />
-                    Edit
                   </button>
                 )}
                 
@@ -953,9 +952,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                   <>
                     {showDeleteDialog ? (
                       <div className="flex items-center space-x-2">
-                        <span className="text-red-400 text-sm">Delete?</span>
+                        <span className="text-pink text-sm">Delete?</span>
                         <button
-                          className={`text-red-400 hover:text-red-300 ${isDeleting ? "opacity-50 cursor-not-allowed" : ""}`}
+                          className={`text-purple-400 hover:text-purple-300 ${isDeleting ? "opacity-50 cursor-not-allowed" : ""}`}
                           onClick={() => !isDeleting && deleteComment(comment.id)}
                           disabled={isDeleting}>
                           Yes
@@ -968,10 +967,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                       </div>
                     ) : (
                       <button
-                        className="text-red-400 hover:text-red-300 flex items-center"
+                        className="text-purple-400 hover:text-purple-300 flex items-center"
                         onClick={() => confirmDelete(comment.id)}>
                         <FaTrash className="mr-1" size={14} />
-                        Delete
                       </button>
                     )}
                   </>
