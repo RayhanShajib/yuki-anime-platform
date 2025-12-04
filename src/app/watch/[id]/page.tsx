@@ -1,26 +1,28 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import EpisodeReportModal from "@/components/modals/EpisodeReportModal";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
 import { CommentSection } from "@/components/ui/CommentSection";
 import IframeVideoPlayer from "@/components/ui/IframeVideoPlayer";
 import VideoPlayer, { VideoPlayerRef } from "@/components/ui/VideoPlayer";
 import { pageApi } from "@/lib/api/pageApi";
-import { transformWatchPageData } from "@/lib/transformers";
 import { useLanguage } from "@/lib/LanguageContext";
-import { 
-  saveWatchProgress, 
-  getEpisodeProgress, 
+import { transformWatchPageData } from "@/lib/transformers";
+import {
+  getEpisodeProgress,
   getResumeMessage,
-  type WatchHistoryItem 
+  saveWatchProgress,
+  type WatchHistoryItem,
 } from "@/lib/watchHistory";
+import { EpisodeReportPayload } from "@/types/anime";
 import type {
+  ApiCommentResponse,
   PrivateVideoSourceResponse,
   TransformedWatchPageData,
-  ApiCommentResponse,
 } from "@/types/api";
-import { Grid, List, Loader2, AlertCircle } from "lucide-react";
+import { AlertCircle, Grid, List, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -31,8 +33,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation as SwiperNavigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import EpisodeReportModal from "@/components/modals/EpisodeReportModal";
-import { EpisodeReportPayload } from "@/types/anime";
 
 export default function WatchPage() {
   const params = useParams();
@@ -62,7 +62,8 @@ export default function WatchPage() {
   const [searchQuery, setSearchQuery] = React.useState("");
 
   // --- Watch History State ---
-  const [existingProgress, setExistingProgress] = useState<WatchHistoryItem | null>(null);
+  const [existingProgress, setExistingProgress] =
+    useState<WatchHistoryItem | null>(null);
   const [showResumeButton, setShowResumeButton] = useState(false);
   const [resumeTime, setResumeTime] = useState(0);
 
@@ -79,6 +80,16 @@ export default function WatchPage() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportSubmitLoading, setReportSubmitLoading] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
+
+  // --- Thumbnail Error State ---
+  const [thumbnailErrors, setThumbnailErrors] = useState<Set<string>>(
+    new Set()
+  );
+
+  // Helper function to handle thumbnail error
+  const handleThumbnailError = (episodeId: string) => {
+    setThumbnailErrors((prev) => new Set([...prev, episodeId]));
+  };
 
   // --- Fetch Watch Page Data ---
   useEffect(() => {
@@ -113,7 +124,9 @@ export default function WatchPage() {
   }, [episodeId]);
 
   // --- Comments State & Fetch ---
-  const [commentsData, setCommentsData] = useState<ApiCommentResponse | null>(null);
+  const [commentsData, setCommentsData] = useState<ApiCommentResponse | null>(
+    null
+  );
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
 
@@ -133,7 +146,9 @@ export default function WatchPage() {
       } catch (err) {
         console.error("Failed to load comments:", err);
         if (!mounted) return;
-        setCommentsError(err instanceof Error ? err.message : "Failed to load comments");
+        setCommentsError(
+          err instanceof Error ? err.message : "Failed to load comments"
+        );
         setCommentsData(null);
       } finally {
         if (mounted) setCommentsLoading(false);
@@ -322,7 +337,7 @@ export default function WatchPage() {
 
   // --- Auto-select First Working Server (Only on Initial Load) ---
   const [hasAutoSelected, setHasAutoSelected] = React.useState(false);
-  
+
   useEffect(() => {
     // Only auto-select if we haven't done it before and sources are available
     if (!hasAutoSelected) {
@@ -330,7 +345,7 @@ export default function WatchPage() {
         videoSourcesCount: Object.keys(videoSources).length,
         privateSourcesCount: privateVideoSources.length,
         iframeSourcesCount: iframeSources.length,
-        privateSourcesLoading
+        privateSourcesLoading,
       });
 
       // Wait for private sources to load if they're still loading
@@ -353,7 +368,7 @@ export default function WatchPage() {
         setHasAutoSelected(true);
         return;
       }
-      
+
       // Fallback to iframe if no video sources available
       if (iframeSources.length > 0) {
         console.log("No video sources, falling back to iframe server 1");
@@ -362,12 +377,18 @@ export default function WatchPage() {
         setHasAutoSelected(true);
       }
     }
-  }, [videoSources, iframeSources, privateVideoSources, hasAutoSelected, privateSourcesLoading]);
+  }, [
+    videoSources,
+    iframeSources,
+    privateVideoSources,
+    hasAutoSelected,
+    privateSourcesLoading,
+  ]);
 
   // -- Handle Video Server Switch with Time Continuity --
   const handleServerSwitch = (serverNumber: number) => {
     console.log("Server switch clicked:", serverNumber);
-    
+
     // Get current time for continuity (if video player exists)
     const currentTime = videoPlayerRef.current?.getCurrentTime() || 0;
 
@@ -402,7 +423,7 @@ export default function WatchPage() {
   // Find current episode based on URL episodeId parameter
   const currentEpisode = useMemo(() => {
     if (!watchData || !episodeId) return null;
-    
+
     // Search in current audio type episodes
     const episodeList = watchData.episodes[audioType];
     return episodeList.find((ep) => ep.id.toString() === episodeId) || null;
@@ -410,7 +431,10 @@ export default function WatchPage() {
 
   // Get current episode title and number from the matched episode
   const currentEpisodeTitle = useMemo(() => {
-    return currentEpisode?.title || `Episode ${currentEpisode?.episodeNumber || 'Unknown'}`;
+    return (
+      currentEpisode?.title ||
+      `Episode ${currentEpisode?.episodeNumber || "Unknown"}`
+    );
   }, [currentEpisode]);
 
   // Update selectedEpisode when currentEpisode changes
@@ -421,22 +445,25 @@ export default function WatchPage() {
   }, [currentEpisode]);
 
   // --- Watch Progress Tracking ---
-  const handleProgressUpdate = React.useCallback((currentTime: number, duration: number) => {
-    if (!watchData || !currentAnime || !currentEpisode) return;
+  const handleProgressUpdate = React.useCallback(
+    (currentTime: number, duration: number) => {
+      if (!watchData || !currentAnime || !currentEpisode) return;
 
-    const progressData = {
-      animeId: currentAnime.id,
-      episodeId: episodeId,
-      animeTitle: getTitle(currentAnime),
-      episodeNumber: currentEpisode.episodeNumber,
-      poster: currentAnime.poster || currentAnime.banner || '',
-      currentTime: currentTime,
-      totalTime: duration,
-      audioType: audioType,
-    };
+      const progressData = {
+        animeId: currentAnime.id,
+        episodeId: episodeId,
+        animeTitle: getTitle(currentAnime),
+        episodeNumber: currentEpisode.episodeNumber,
+        poster: currentAnime.poster || currentAnime.banner || "",
+        currentTime: currentTime,
+        totalTime: duration,
+        audioType: audioType,
+      };
 
-    saveWatchProgress(progressData);
-  }, [watchData, currentAnime, episodeId, currentEpisode, audioType, getTitle]);
+      saveWatchProgress(progressData);
+    },
+    [watchData, currentAnime, episodeId, currentEpisode, audioType, getTitle]
+  );
 
   // Check for existing progress when episode or audio type changes
   useEffect(() => {
@@ -444,7 +471,7 @@ export default function WatchPage() {
 
     const progress = getEpisodeProgress(episodeId, audioType);
     setExistingProgress(progress);
-    
+
     if (progress && progress.progress < 98 && progress.currentTime > 30) {
       setShowResumeButton(true);
       setResumeTime(progress.currentTime);
@@ -466,11 +493,11 @@ export default function WatchPage() {
   };
 
   // --- Episode Report Handlers ---
-  
+
   // Helper to get authentication token
   const getAuthToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("access_token");
     }
     return null;
   };
@@ -491,25 +518,26 @@ export default function WatchPage() {
     try {
       setReportSubmitLoading(true);
       setReportError(null);
-      
+
       const token = getAuthToken();
       if (!token || !currentEpisode) {
         setReportError("Authentication required");
         return;
       }
-      
+
       await pageApi.createEpisodeReport(
         token,
         currentEpisode.id,
         reportData.report_type,
         reportData.other_text
       );
-      
+
       alert("Thank you! Your report has been submitted successfully.");
       setReportModalOpen(false);
       // Reset form is handled by modal component
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to submit report";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to submit report";
       setReportError(errorMessage);
       console.error("Report submission error:", err);
     } finally {
@@ -597,7 +625,9 @@ export default function WatchPage() {
                 )}
                 <span className="mx-2">&gt;</span>
                 <span className="text-white font-semibold">
-                  {currentEpisode && getTitle(currentEpisode) && ` - ${getTitle(currentEpisode)}`}
+                  {currentEpisode &&
+                    getTitle(currentEpisode) &&
+                    ` - ${getTitle(currentEpisode)}`}
                 </span>
               </nav>
               {/* Resume Button */}
@@ -610,7 +640,10 @@ export default function WatchPage() {
                         Continue Watching
                       </h3>
                       <p className="text-purple-200 text-sm">
-                        {getResumeMessage(existingProgress.currentTime)} • <span className="text-pink font-medium">{Math.round(existingProgress.progress)}% watched</span>
+                        {getResumeMessage(existingProgress.currentTime)} •{" "}
+                        <span className="text-pink font-medium">
+                          {Math.round(existingProgress.progress)}% watched
+                        </span>
                       </p>
                     </div>
                     <div className="flex gap-3">
@@ -633,8 +666,7 @@ export default function WatchPage() {
               <div className="mb-4 flex justify-end">
                 <button
                   onClick={handleOpenReportModal}
-                  className="px-3 py-2 bg-red-600/20 hover:bg-red-600/40 border border-red-500/50 text-red-300 hover:text-red-200 rounded text-sm transition-colors flex items-center gap-2"
-                >
+                  className="px-3 py-2 bg-red-600/20 hover:bg-red-600/40 border border-red-500/50 text-red-300 hover:text-red-200 rounded text-sm transition-colors flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
                   Report Issue
                 </button>
@@ -643,10 +675,7 @@ export default function WatchPage() {
               <div className="aspect-video w-full rounded-lg mb-6">
                 {serverType === "iframe" && selectedIframeServer ? (
                   <IframeVideoPlayer
-                    src={
-                      iframeSources[selectedIframeServer - 1] ||
-                      ""
-                    }
+                    src={iframeSources[selectedIframeServer - 1] || ""}
                   />
                 ) : (
                   <VideoPlayer
@@ -967,15 +996,23 @@ export default function WatchPage() {
                     {isListView ? (
                       <>
                         <div className="w-20 h-18 flex-shrink-0 rounded overflow-hidden relative">
-                          <Image
-                            src={
-                              thumbnail ||
-                              `https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`
-                            }
-                            alt={`Episode ${ep}`}
-                            fill
-                            className="object-cover"
-                          />
+                          {thumbnailErrors.has(id.toString()) ? (
+                            <div className="w-full h-full bg-gray-700 flex items-center justify-center">
+                              <div className="text-center text-gray-300">
+                                <div className="text-[13px]">Image not available</div>
+                              </div>
+                            </div>
+                          ) : (
+                            <Image
+                              src={thumbnail || ""}
+                              alt={`Episode ${ep}`}
+                              fill
+                              className="object-cover"
+                              onError={() =>
+                                handleThumbnailError(id.toString())
+                              }
+                            />
+                          )}
                         </div>
                         <div className="flex flex-col justify-center px-4 py-2 bg-transparent">
                           <span className="text-white text-sm font-semibold">
@@ -988,15 +1025,21 @@ export default function WatchPage() {
                       </>
                     ) : (
                       <>
-                        <Image
-                          src={
-                            thumbnail ||
-                            `https://static1.animekai.cc/c1/i/c/61/67eeaecf89bee.jpg`
-                          }
-                          alt={`Episode ${ep}`}
-                          fill
-                          className="object-cover transition duration-300 group-hover:brightness-75"
-                        />
+                        {thumbnailErrors.has(id.toString()) ? (
+                          <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">
+                            <div className="text-center text-gray-300">
+                              <div className="text-xs">Image not available</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <Image
+                            src={thumbnail || '' }
+                            alt={`Episode ${ep}`}
+                            fill
+                            className="object-cover transition duration-300 group-hover:brightness-75"
+                            onError={() => handleThumbnailError(id.toString())}
+                          />
+                        )}
                         <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60">
                           <span className="text-white/90 text-[13px] font-semibold">
                             Episode {ep}
@@ -1037,9 +1080,9 @@ export default function WatchPage() {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         className="lucide lucide-star h-7 w-7 fill-current"
                         aria-hidden="true">
                         <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
@@ -1058,7 +1101,9 @@ export default function WatchPage() {
                   <Image
                     itemProp="image"
                     src={currentAnime.poster}
-                    alt={(currentAnime && getTitle(currentAnime)) || "Anime Poster"}
+                    alt={
+                      (currentAnime && getTitle(currentAnime)) || "Anime Poster"
+                    }
                     width={160}
                     height={224}
                     className="rounded-lg shadow-lg w-55 h-70 object-cover"
@@ -1077,10 +1122,11 @@ export default function WatchPage() {
                     className="title text-2xl md:text-3xl font-bold text-white flex-grow"
                     data-jp="WIND BREAKER Season 2">
                     {infoType === "anime"
-                      ? (currentAnime && getTitle(currentAnime)) || "Anime Title"
-                      : `Episode ${currentEpisode?.episodeNumber || selectedEpisode}: ${
-                          currentEpisode?.title || "Episode Title"
-                        }`}
+                      ? (currentAnime && getTitle(currentAnime)) ||
+                        "Anime Title"
+                      : `Episode ${
+                          currentEpisode?.episodeNumber || selectedEpisode
+                        }: ${currentEpisode?.title || "Episode Title"}`}
                   </h1>
 
                   {/* Info Type Toggle Buttons */}
@@ -1108,7 +1154,12 @@ export default function WatchPage() {
                 <small className="al-title text-gray-300 block mb-2">
                   {infoType === "anime"
                     ? (currentAnime && getTitle(currentAnime)) || "Anime Title"
-                    : `Episode ${currentEpisode?.episodeNumber || selectedEpisode} of ${(currentAnime && getTitle(currentAnime)) || "Anime Title"}`}
+                    : `Episode ${
+                        currentEpisode?.episodeNumber || selectedEpisode
+                      } of ${
+                        (currentAnime && getTitle(currentAnime)) ||
+                        "Anime Title"
+                      }`}
                 </small>
                 <div className="info flex gap-4 mb-2 text-sm text-gray-300 items-center">
                   <span>
