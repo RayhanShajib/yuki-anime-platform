@@ -14,6 +14,7 @@ interface ApiSpotlightItem {
   description?: string;
   banner?: string;
   trailer?: string | null;
+  trailer_yt_id?: string | null;
   genre?: string[];
   released_date?: string;
   type?: string;
@@ -61,13 +62,15 @@ export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
         item.id != null
     )
     .map((item: ApiSpotlightItem & { id: number }) => {
-      const titleValue = typeof item.title === "object" && item.title !== null
-        ? item.title.romaji || item.title.english || "Unknown Title"
-        : item.title || "Unknown Title";
-      
-      const titleJapanese = typeof item.title === "object" && item.title !== null
-        ? item.title.japanese
-        : item.title_japanese;
+      const titleValue =
+        typeof item.title === "object" && item.title !== null
+          ? item.title.romaji || item.title.english || "Unknown Title"
+          : item.title || "Unknown Title";
+
+      const titleJapanese =
+        typeof item.title === "object" && item.title !== null
+          ? item.title.japanese
+          : item.title_japanese;
 
       return {
         id: item.id.toString(),
@@ -76,7 +79,7 @@ export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
         synopsis: item.description || "",
         poster: item.banner || "/placeholder-anime.jpg",
         banner: item.banner || "/placeholder-anime.jpg",
-        trailer: item.trailer && item.trailer !== null ? item.trailer : undefined, // YouTube video ID
+        trailer: item.trailer_yt_id || item.trailer || undefined, // Try trailer_yt_id first, then trailer
         genres: item.genre || [],
         studio: "Unknown Studio",
         releaseYear: item.released_date
@@ -84,15 +87,19 @@ export const transformSpotlightData = (spotlightData: ApiSpotlightItem[]) => {
           : new Date().getFullYear(),
         status: "ongoing" as const,
         type: item.type === "ANIME" ? ("series" as const) : ("series" as const),
-        totalEpisodes: typeof item.number_of_episodes === 'number' ? item.number_of_episodes : 0,
-        rating: typeof item.rating === 'number' ? item.rating : 0,
-        popularity: typeof item.popularity === 'number' ? item.popularity : 0,
+        totalEpisodes:
+          typeof item.number_of_episodes === "number"
+            ? item.number_of_episodes
+            : 0,
+        rating: typeof item.rating === "number" ? item.rating : 0,
+        popularity: typeof item.popularity === "number" ? item.popularity : 0,
         language: ["sub" as const],
         subEpisodes: item.sub_total || 0,
         dubEpisodes: item.dub_total || 0,
         // Preserve ep_id when provided by API (some endpoints include ep_id)
-        episodeId: (item as ApiAnimeItem & { ep_id?: string }).ep_id ? 
-          Number((item as ApiAnimeItem & { ep_id?: string }).ep_id) : undefined,
+        episodeId: (item as ApiAnimeItem & { ep_id?: string }).ep_id
+          ? Number((item as ApiAnimeItem & { ep_id?: string }).ep_id)
+          : undefined,
       };
     });
 };
@@ -128,15 +135,19 @@ export const transformAnimeListData = (animeList: ApiAnimeItem[]) => {
       status: item.airing ? ("ongoing" as const) : ("completed" as const),
       type:
         item.anime_type === "Movie" ? ("movie" as const) : ("series" as const),
-      totalEpisodes: typeof item.number_of_episodes === 'number' ? item.number_of_episodes : 0,
-      rating: typeof item.rating === 'number' ? item.rating : 0,
-      popularity: typeof item.popularity === 'number' ? item.popularity : 0,
+      totalEpisodes:
+        typeof item.number_of_episodes === "number"
+          ? item.number_of_episodes
+          : 0,
+      rating: typeof item.rating === "number" ? item.rating : 0,
+      popularity: typeof item.popularity === "number" ? item.popularity : 0,
       language: ["sub" as const],
       subEpisodes: item.sub_total || 0,
       dubEpisodes: item.dub_total || 0,
       // Preserve ep_id when available on list items
-      episodeId: (item as ApiAnimeItem & { ep_id?: string }).ep_id ? 
-        Number((item as ApiAnimeItem & { ep_id?: string }).ep_id) : undefined,
+      episodeId: (item as ApiAnimeItem & { ep_id?: string }).ep_id
+        ? Number((item as ApiAnimeItem & { ep_id?: string }).ep_id)
+        : undefined,
     }));
 };
 

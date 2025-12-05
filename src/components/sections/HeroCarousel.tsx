@@ -1,17 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
-import { formatRating, truncateText } from "@/lib/utils";
-import { useLanguage } from "@/lib/LanguageContext";
-import { Anime } from "@/types/anime";
 import { WatchlistDropdown } from "@/components/ui/WatchlistDropdown";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Play,
-} from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
+import { formatRating, truncateText } from "@/lib/utils";
+import { Anime } from "@/types/anime";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface HeroCarouselProps {
@@ -22,8 +17,58 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   const { getTitle } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying] = useState(true);
+  const [trailerError, setTrailerError] = useState<string | null>(null);
 
   const currentAnime = featuredAnime[currentIndex];
+
+  // Helper function to determine trailer type and format URL
+  const getTrailerConfig = (trailerUrl: string | undefined) => {
+    if (!trailerUrl) return null;
+
+    // Check if it's a YouTube URL or ID
+    const youtubeRegex =
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const youtubeMatch = trailerUrl.match(youtubeRegex);
+
+    if (youtubeMatch) {
+      const videoId = youtubeMatch[1];
+      return {
+        type: "youtube",
+        embedUrl: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&cc_load_policy=0`,
+        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      };
+    }
+
+    // Check if it's just a YouTube video ID (11 characters)
+    if (trailerUrl.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(trailerUrl)) {
+      return {
+        type: "youtube",
+        embedUrl: `https://www.youtube.com/embed/${trailerUrl}?autoplay=1&mute=1&loop=1&playlist=${trailerUrl}&controls=0&showinfo=0&rel=0&modestbranding=1&cc_load_policy=0`,
+        thumbnailUrl: `https://img.youtube.com/vi/${trailerUrl}/maxresdefault.jpg`,
+      };
+    }
+
+    // Assume it's a direct video file
+    if (
+      trailerUrl.includes(".mp4") ||
+      trailerUrl.includes(".webm") ||
+      trailerUrl.includes(".ogg")
+    ) {
+      return {
+        type: "video",
+        url: trailerUrl,
+      };
+    }
+
+    return null;
+  };
+
+  const trailerConfig = getTrailerConfig(currentAnime?.trailer);
+
+  // Reset trailer error when anime changes
+  useEffect(() => {
+    setTrailerError(null);
+  }, [currentAnime?.id]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -50,18 +95,67 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
   return (
     <div className="relative w-full h-[45vh] sm:h-[55vh] md:h-[65vh] lg:h-[75vh] xl:h-[750px] min-h-[350px] max-w-[1800px] mx-auto carousel overflow-hidden">
       <div className="absolute inset-0">
-        <Image
-          src={currentAnime.banner || currentAnime.poster}
-          alt={getTitle(currentAnime)}
-          fill
-          className="w-full h-full object-cover"
-          sizes="(max-width: 1800px) 100vw, 1800px"
-          priority
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = '/placeholder-anime.jpg';
-          }}
-        />
+        {trailerConfig && !trailerError ? (
+          trailerConfig.type === "youtube" ? (
+            <div className="w-full h-full relative overflow-hidden">
+              <iframe
+                key={currentAnime.id}
+                src={trailerConfig.embedUrl}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 carousel"
+                style={{
+                  pointerEvents: "none",
+                  width: "100vw",
+                  height: "56.25vw", // 16:9 aspect ratio
+                  minHeight: "100%",
+                  minWidth: "177.77vh", // 16:9 aspect ratio
+                }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen={false}
+                onError={() => {
+                  console.error("YouTube iframe failed to load");
+                  setTrailerError("Failed to load YouTube trailer");
+                }}
+              />
+            </div>
+          ) : (
+            <video
+              key={currentAnime.id}
+              autoPlay
+              loop
+              muted
+              className="w-full h-full carousel"
+              style={{
+                objectFit: "cover",
+                objectPosition: "center",
+                transform: "scale(1.1)", // Slight zoom to fill gaps
+              }}
+              poster={currentAnime.banner || currentAnime.poster}
+              playsInline
+              disablePictureInPicture
+              controls={false}
+              onTouchStart={(e) => e.preventDefault()}
+              onClick={(e) => e.preventDefault()}
+              onError={() => {
+                console.error("Video failed to load:", trailerConfig.url);
+                setTrailerError("Failed to load video trailer");
+              }}>
+              <source src={trailerConfig.url} type="video/mp4" />
+            </video>
+          )
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-800 to-gray-900">
+            <div className="text-center text-white">
+              <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-2">
+                No Video Available
+              </div>
+            </div>
+          </div>
+        )}
+        {trailerError && (
+          <div className="absolute top-4 left-4 text-white/60 text-sm bg-black/30 px-2 py-1 rounded">
+            {trailerError}
+          </div>
+        )}
       </div>
 
       {/* Main content */}
@@ -99,13 +193,14 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
             </p>
 
             <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 gap-2 sm:gap-3 md:gap-3.5 flex-wrap mb-4 sm:mb-6">
-              <Link href={`/watch/${currentAnime.id}`} className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 sm:px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-purple">
+              <Link
+                href={`/watch/${currentAnime.id}`}
+                className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 sm:px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-purple">
                 <Play className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Watch Now</span>
               </Link>
-              
 
-              <WatchlistDropdown 
+              <WatchlistDropdown
                 animeId={currentAnime.id || 0}
                 episodeId={currentAnime.id || 0}
               />
