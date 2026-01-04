@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { X, AlertCircle, Send, Loader2 } from "lucide-react";
 import { ReportType, REPORT_TYPE_LABELS, EpisodeReportPayload } from "@/types/anime";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { useCaptcha, validateCaptchaToken } from "@/lib/hooks/useCaptcha";
 
 interface EpisodeReportModalProps {
   isOpen: boolean;
   onCloseAction: () => void;
-  onSubmitAction: (data: EpisodeReportPayload) => Promise<void>;
+  onSubmitAction: (data: EpisodeReportPayload & { captchaToken: string }) => Promise<void>;
   episodeId: number;
   episodeTitle?: string;
   isLoading: boolean;
@@ -27,6 +29,7 @@ export default function EpisodeReportModal({
   const [otherDetails, setOtherDetails] = useState("");
   const [description, setDescription] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const captcha = useCaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,10 +46,18 @@ export default function EpisodeReportModal({
       return;
     }
 
+    // Validate CAPTCHA
+    const captchaError = validateCaptchaToken(captcha.token, captcha.isVerified);
+    if (captchaError) {
+      setValidationError(captchaError);
+      return;
+    }
+
     // Prepare submission data
-    const reportData: EpisodeReportPayload = {
+    const reportData = {
       report_type: selectedType,
       other_text: selectedType === "other" ? otherDetails.trim() : description.trim(),
+      captchaToken: captcha.token!,
     };
 
     try {
@@ -55,8 +66,10 @@ export default function EpisodeReportModal({
       setSelectedType("");
       setOtherDetails("");
       setDescription("");
+      captcha.reset();
     } catch (err) {
-      // Error is handled by parent component
+      // Reset captcha on error
+      captcha.reset();
       console.error("Report submission error:", err);
     }
   };
@@ -66,6 +79,7 @@ export default function EpisodeReportModal({
     setOtherDetails("");
     setDescription("");
     setValidationError(null);
+    captcha.reset();
     onCloseAction();
   };
 
@@ -188,6 +202,22 @@ export default function EpisodeReportModal({
               </div>
             )}
 
+            {/* CAPTCHA Verification */}
+            <div className="w-full">
+              {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                  onSuccess={captcha.onSuccess}
+                  onError={captcha.onError}
+                  onExpire={captcha.onExpire}
+                />
+              ) : (
+                <div className="bg-yellow-900/30 border border-yellow-700 rounded-md p-3 text-yellow-100 text-sm">
+                  CAPTCHA site key not configured. Please add NEXT_PUBLIC_TURNSTILE_SITE_KEY to .env.local
+                </div>
+              )}
+            </div>
+
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
               <button
@@ -201,7 +231,7 @@ export default function EpisodeReportModal({
               <button
                 type="submit"
                 className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
-                disabled={isLoading || !selectedType}
+                disabled={isLoading || !selectedType || !captcha.isVerified}
               >
                 {isLoading ? (
                   <>

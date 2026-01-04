@@ -5,6 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { AlertCircle, CheckCircle, X } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { useState } from "react";
+import { useCaptcha, validateCaptchaToken } from "@/lib/hooks/useCaptcha";
 
 interface RequestModalProps {
   open: boolean;
@@ -20,7 +21,7 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
     additionalDetails: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const captcha = useCaptcha();
   const [notification, setNotification] = useState<{
     type: NotificationType;
     message: string;
@@ -52,8 +53,10 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
       errors.animeName = "Anime name is required";
     }
 
-    if (!captchaVerified) {
-      errors.captcha = "Please complete the CAPTCHA verification";
+    // Validate CAPTCHA using the utility function
+    const captchaError = validateCaptchaToken(captcha.token, captcha.isVerified);
+    if (captchaError) {
+      errors.captcha = captchaError;
     }
 
     setFieldErrors(errors);
@@ -91,7 +94,8 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
         token,
         formData.animeName,
         formData.malLink,
-        formData.additionalDetails
+        formData.additionalDetails,
+        captcha.token!
       );
 
       // Reset form and close modal on success
@@ -100,7 +104,7 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
         malLink: "",
         additionalDetails: "",
       });
-      setCaptchaVerified(false);
+      captcha.reset();
       setFieldErrors({});
 
       setNotification({
@@ -115,6 +119,9 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
       }, 2000);
     } catch (error: unknown) {
       console.error("Error submitting request:", error);
+
+      // Reset captcha on error
+      captcha.reset();
 
       let errorMessage = "Failed to submit request. Please try again.";
 
@@ -294,9 +301,9 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
                 {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
                   <Turnstile
                     siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-                    onSuccess={() => setCaptchaVerified(true)}
-                    onError={() => setCaptchaVerified(false)}
-                    onExpire={() => setCaptchaVerified(false)}
+                    onSuccess={captcha.onSuccess}
+                    onError={captcha.onError}
+                    onExpire={captcha.onExpire}
                   />
                 ) : (
                   <div className="bg-yellow-900/30 border border-yellow-700 rounded-md p-3 text-yellow-100 text-sm">
@@ -317,7 +324,7 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={isSubmitting || !captchaVerified}
+                  disabled={isSubmitting || !captcha.isVerified}
                   className="w-full px-6 py-3 btn-purple disabled:btn-purple disabled:cursor-not-allowed text-white font-medium rounded-md transition-all text-base focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-gray-900">
                   {isSubmitting ? (
                     <div className="flex items-center justify-center space-x-2">

@@ -514,7 +514,7 @@ export default function WatchPage() {
   };
 
   // Submit report handler
-  const handleSubmitReport = async (reportData: EpisodeReportPayload) => {
+  const handleSubmitReport = async (reportData: EpisodeReportPayload & { captchaToken: string }) => {
     try {
       setReportSubmitLoading(true);
       setReportError(null);
@@ -529,7 +529,8 @@ export default function WatchPage() {
         token,
         currentEpisode.id,
         reportData.report_type,
-        reportData.other_text
+        reportData.other_text,
+        reportData.captchaToken
       );
 
       alert("Thank you! Your report has been submitted successfully.");

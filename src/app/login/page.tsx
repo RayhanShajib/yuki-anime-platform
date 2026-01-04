@@ -7,6 +7,7 @@ import { useState } from "react";
 import { pageApi } from "@/lib/api/pageApi";
 import { useRouter } from "next/navigation";
 import { Turnstile } from "@marsidev/react-turnstile";
+import { useCaptcha, validateCaptchaToken } from "@/lib/hooks/useCaptcha";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function LoginPage() {
     rememberMe: false,
   });
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const captcha = useCaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,17 +29,19 @@ export default function LoginPage() {
     setError("");
 
     // Validate CAPTCHA
-    if (!captchaVerified) {
-      setError("Please complete the CAPTCHA verification");
+    const captchaError = validateCaptchaToken(captcha.token, captcha.isVerified);
+    if (captchaError) {
+      setError(captchaError);
       setIsLoading(false);
       return;
     }
 
     try {
-      // Call the login API
+      // Call the login API with captcha token
       const response = await pageApi.getAuthToken(
         formData.username,
-        formData.password
+        formData.password,
+        captcha.token!
       );
 
       // Check if response has access and refresh tokens (successful login)
@@ -67,6 +70,9 @@ export default function LoginPage() {
     } catch (error: unknown) {
       console.error("Error during login:", error);
 
+      // Reset captcha on error
+      captcha.reset();
+
       // Handle specific error messages from API
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
@@ -77,6 +83,8 @@ export default function LoginPage() {
       } else if (errorMessage.includes("detail")) {
         // Try to extract the detail message from API response
         setError("Login failed. Please check your credentials.");
+      } else if (errorMessage.includes("captcha") || errorMessage.includes("turnstile")) {
+        setError("CAPTCHA verification failed. Please try again.");
       } else {
         setError("An error occurred during login. Please try again.");
       }
@@ -211,9 +219,9 @@ export default function LoginPage() {
                 {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
                   <Turnstile
                     siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-                    onSuccess={() => setCaptchaVerified(true)}
-                    onError={() => setCaptchaVerified(false)}
-                    onExpire={() => setCaptchaVerified(false)}
+                    onSuccess={captcha.onSuccess}
+                    onError={captcha.onError}
+                    onExpire={captcha.onExpire}
                   />
                 ) : (
                   <div className="bg-yellow-900/30 border border-yellow-700 rounded-md p-3 text-yellow-100 text-sm">
@@ -255,9 +263,9 @@ export default function LoginPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading || !captchaVerified}
+                disabled={isLoading || !captcha.isVerified}
                 className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
-                  isLoading || !captchaVerified
+                  isLoading || !captcha.isVerified
                     ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                     : "btn-purple hover:bg-blue-700"
                 }`}>

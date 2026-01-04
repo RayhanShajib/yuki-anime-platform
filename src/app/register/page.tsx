@@ -7,6 +7,7 @@ import { Eye, EyeOff, User, Lock, Mail, Check } from "lucide-react";
 import Image from "next/image";
 import { pageApi } from "@/lib/api/pageApi";
 import { Turnstile } from "@marsidev/react-turnstile";
+import { useCaptcha, validateCaptchaToken } from "@/lib/hooks/useCaptcha";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function RegisterPage() {
     confirmPassword: "",
     agreeToTerms: false,
   });
-  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const captcha = useCaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +41,10 @@ export default function RegisterPage() {
       return;
     }
 
-    if (!captchaVerified) {
-      setError("Please complete the CAPTCHA verification");
+    // Validate CAPTCHA
+    const captchaError = validateCaptchaToken(captcha.token, captcha.isVerified);
+    if (captchaError) {
+      setError(captchaError);
       return;
     }
 
@@ -52,7 +55,8 @@ export default function RegisterPage() {
         formData.username,
         formData.email,
         formData.password,
-        formData.confirmPassword
+        formData.confirmPassword,
+        captcha.token!
       );
 
       // Registration successful
@@ -62,6 +66,9 @@ export default function RegisterPage() {
       router.push("/login?registered=true");
     } catch (error: unknown) {
       console.error("Registration error:", error);
+
+      // Reset captcha on error
+      captcha.reset();
 
       // Handle different types of errors
       if (error && typeof error === "object" && "username" in error) {
@@ -290,9 +297,9 @@ export default function RegisterPage() {
               {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
                 <Turnstile
                   siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-                  onSuccess={() => setCaptchaVerified(true)}
-                  onError={() => setCaptchaVerified(false)}
-                  onExpire={() => setCaptchaVerified(false)}
+                  onSuccess={captcha.onSuccess}
+                  onError={captcha.onError}
+                  onExpire={captcha.onExpire}
                 />
               ) : (
                 <div className="bg-yellow-900/30 border border-yellow-700 rounded-md p-3 text-yellow-100 text-sm">
@@ -334,7 +341,7 @@ export default function RegisterPage() {
                 !formData.agreeToTerms ||
                 !passwordValid ||
                 !passwordsMatch ||
-                !captchaVerified ||
+                !captcha.isVerified ||
                 isLoading
               }
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium btn-purple focus:outline-none focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">

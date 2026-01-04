@@ -369,13 +369,14 @@ export const pageApi = {
   }),
 
   // Auth Token
-  getAuthToken: async (username: string, password: string) => {
+  getAuthToken: async (username: string, password: string, captchaToken: string) => {
     const endpoint = "/account/token/";
     return fetchFromApi(endpoint, {
       method: "POST",
       body: JSON.stringify({
         username,
         password,
+        "cf-turnstile-response": captchaToken,
       }),
       next: { revalidate: 0 }, // Don't cache auth requests
     });
@@ -387,6 +388,7 @@ export const pageApi = {
     email: string,
     password: string,
     password2: string,
+    captchaToken: string,
   ) => {
     const endpoint = "/account/register/";
     return fetchFromApi(endpoint, {
@@ -396,6 +398,7 @@ export const pageApi = {
         email,
         password,
         password2,
+        "cf-turnstile-response": captchaToken,
       }),
       next: { revalidate: 0 }, // Don't cache registration requests
     });
@@ -753,6 +756,7 @@ export const pageApi = {
      animeName: string,
      malLink: string,
      additionalDetails: string,
+     captchaToken: string,
    ) => {
      const endpoint = "/anime-requests/";
      return fetchFromApi(endpoint, {
@@ -764,6 +768,7 @@ export const pageApi = {
          anime_name: animeName,
          description: additionalDetails,
          reference_link: malLink,
+         "cf-turnstile-response": captchaToken,
        }),
        next: { revalidate: 0 },
      });
@@ -779,6 +784,7 @@ export const pageApi = {
       | "wron_skip_time"
       | "other",
     other_text: string,
+    captchaToken: string,
   ) => {
     const endpoint = `/episode/${ep_id}/report/`;
     return fetchFromApi(endpoint, {
@@ -789,6 +795,7 @@ export const pageApi = {
       body: JSON.stringify({
         report_type: report_type,
         other_text: other_text,
+        "cf-turnstile-response": captchaToken,
       }),
       next: { revalidate: 0 },
     });
