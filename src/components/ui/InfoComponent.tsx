@@ -174,7 +174,7 @@ export default function InfoComponent({ animeData }: InfoComponentProps) {
             </span>
             <div className="flex gap-4 mt-4 mb-4 flex-wrap info-buttons">
               <Link
-                href={`/watch/${animeData.id}`}
+                href={`/watch/${animeData.episodesData?.length > 0 ? animeData.episodesData[0].id : animeData.id}`}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg btn-purple text-white/90 font-semibold text-md shadow-lg transition">
                 <PlayCircle className="h-5 w-5" /> Watch Now
               </Link>
@@ -481,7 +481,7 @@ export default function InfoComponent({ animeData }: InfoComponentProps) {
                               ? "group size-full z-0 flex relative smoothie rounded-lg xl:rounded-2xl"
                               : "group size-full z-0 flex bg-[#1e1e24] xl:bg-[#1e1e24] shadow-xl gap-1 md:gap-2 relative smoothie rounded-lg xl:rounded-2xl overflow-hidden"
                           }
-                          href={`/watch/${animeData.id}/?ep=${episode.id}`}>
+                           href={`/watch/${episode.id}`}>
                           <div
                             className={
                               episodeLayout === "grid"

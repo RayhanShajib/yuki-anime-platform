@@ -194,7 +194,7 @@ export function HeroCarousel({ featuredAnime }: HeroCarouselProps) {
 
             <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 gap-2 sm:gap-3 md:gap-3.5 flex-wrap mb-4 sm:mb-6">
               <Link
-                href={`/watch/${currentAnime.episodeId}`}
+                href={`/watch/${currentAnime.episodeId || currentAnime.id}`}
                 className="flex items-center space-x-1 sm:space-x-2 bg-white text-black px-3 sm:px-4 py-2 rounded-lg hover:bg-white/90 transition-colors font-semibold cursor-pointer text-sm sm:text-base btn-purple">
                 <Play className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Watch Now</span>
