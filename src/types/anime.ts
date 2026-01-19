@@ -23,7 +23,6 @@ export interface Anime {
   episodes?: Episode[];
   characters?: Character[];
   relations?: AnimeRelation[];
-  // Optional episode id when this Anime object originates from a card/list API that provides an ep_id
   episodeId?: number;
 }
 
