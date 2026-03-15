@@ -11,7 +11,7 @@ interface UpdateWatchlistBody {
 // Base fetch function
 const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
   const baseUrl =
-    process.env.API_BASE_URL || "https://serverloader1.yukiwatch.fr/api/v1";
+    process.env.API_BASE_URL || "http://5.253.246.70:8003/api/v1";
   const url = `${baseUrl}${endpoint}`;
 
   const response = await fetch(url, {
@@ -53,7 +53,7 @@ const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
 // Helper to fetch text responses (CSV/Plain text). Similar error handling to fetchFromApi
 const fetchTextFromApi = async (endpoint: string, init?: RequestInit) => {
   const baseUrl =
-    process.env.API_BASE_URL || "https://serverloader1.yukiwatch.fr/api/v1";
+    process.env.API_BASE_URL || "http://5.253.246.70:8003/api/v1";
   const url = `${baseUrl}${endpoint}`;
 
   const response = await fetch(url, {
@@ -87,7 +87,7 @@ const fetchTextFromApi = async (endpoint: string, init?: RequestInit) => {
 // It preserves error parsing similar to other helpers.
 const fetchFormDataFromApi = async (endpoint: string, init?: RequestInit) => {
   const baseUrl =
-    process.env.API_BASE_URL || "https://serverloader1.yukiwatch.fr/api/v1";
+    process.env.API_BASE_URL || "http://5.253.246.70:8003/api/v1";
   const url = `${baseUrl}${endpoint}`;
 
   const response = await fetch(url, {
