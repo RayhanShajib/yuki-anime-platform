@@ -23,13 +23,13 @@ class ApiClient {
     // In server components, use server-side env
     if (typeof window === "undefined") {
       return (
-        process.env.API_BASE_URL || "https://serverloader1.yukiwatch.fr/api/v1"
+        process.env.API_BASE_URL || "http://api.yukiwatch.fr:8003/api/v1"
       );
     }
     // In client components, use public env
     return (
       process.env.NEXT_PUBLIC_API_BASE_URL ||
-      "https://serverloader1.yukiwatch.fr/api/v1"
+      "http://api.yukiwatch.fr:8003/api/v1"
     );
   }
 

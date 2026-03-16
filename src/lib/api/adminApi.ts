@@ -197,7 +197,7 @@ export interface BanResponse {
 
 // Base fetch function
 const fetchFromApi = cache(async (endpoint: string, init?: RequestInit) => {
-  const baseUrl = process.env.API_BASE_URL || 'https://serverloader1.yukiwatch.fr/api/v1';
+  const baseUrl = process.env.API_BASE_URL || 'http://api.yukiwatch.fr:8003/api/v1';
   const url = `${baseUrl}${endpoint}`;
   
   const response = await fetch(url, {
