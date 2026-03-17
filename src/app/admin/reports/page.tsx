@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import Link from 'next/link';
 import { adminApi } from '@/lib/api/adminApi';
 import { EpisodeReport, EpisodeReportListResponse, ReportSeverity } from '@/types/anime';
@@ -21,7 +22,7 @@ export default function AdminReportsPage() {
 
   const getAuthToken = useCallback(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
+      return safeLocalStorage.getItem('access_token');
     }
     return null;
   }, []);

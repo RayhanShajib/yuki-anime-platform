@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -31,7 +32,7 @@ export default function AdminReportDetailsPage({ params }: AdminReportDetailsPag
 
   const getAuthToken = useCallback(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
+      return safeLocalStorage.getItem('access_token');
     }
     return null;
   }, []);

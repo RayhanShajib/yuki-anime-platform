@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { pageApi } from "@/lib/api/pageApi";
 import {
@@ -51,7 +52,7 @@ export default function ProfileEditPage() {
     const loadProfileData = async () => {
       try {
         setIsLoading(true);
-        const token = localStorage.getItem("access_token");
+        const token = safeLocalStorage.getItem("access_token");
         
         if (!token) {
           setError("Please log in to edit your profile");
@@ -119,7 +120,7 @@ export default function ProfileEditPage() {
   setError(null);
   setValidationErrors(null);
     try {
-      const token = localStorage.getItem("access_token");
+      const token = safeLocalStorage.getItem("access_token");
       if (!token) {
         setError("Please log in to update your profile");
         setIsSaving(false);

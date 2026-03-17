@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 
 // Language type
 export type Language = "en" | "jp";
@@ -33,22 +34,23 @@ interface LanguageProviderProps {
 
 // Language Provider component
 export function LanguageProvider({ children }: LanguageProviderProps) {
+  // Server-side default: 'en' language (prevents hydration mismatch)
   const [language, setLanguageState] = useState<Language>("en");
 
   // Initialize language from localStorage on mount
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("yuki-language") as Language | null;
+    const savedLanguage = safeLocalStorage.getItem("yuki-language") as Language | null;
     if (savedLanguage && (savedLanguage === "en" || savedLanguage === "jp")) {
       setLanguageState(savedLanguage);
     } else {
-      localStorage.setItem("yuki-language", "en");
+      safeLocalStorage.setItem("yuki-language", "en");
     }
   }, []);
 
   // Update localStorage when language changes
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem("yuki-language", lang);
+    safeLocalStorage.setItem("yuki-language", lang);
   };
 
   // Core title selection logic

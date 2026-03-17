@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useState, useEffect, useCallback } from "react";
 import { pageApi } from "@/lib/api/pageApi";
 import type { Genre, GenreListResponse } from "@/types/api";
@@ -67,7 +68,7 @@ export default function AdminGenresPage() {
   // Authentication helper
   const getAuthToken = () => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
+      return safeLocalStorage.getItem('access_token');
     }
     return null;
   };

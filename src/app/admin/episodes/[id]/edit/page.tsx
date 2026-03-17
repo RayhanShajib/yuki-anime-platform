@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useParams, useRouter } from "next/navigation";
 import { adminApi, type EpisodeDetailData, type UpdateEpisodeData } from "@/lib/api/adminApi";
 import { type ApiVideoSources } from "@/types/api";
@@ -48,7 +49,7 @@ export default function AdminEditEpisodePage() {
         setLoading(true);
         setError(null);
         
-        const token = localStorage.getItem('access_token');
+        const token = safeLocalStorage.getItem('access_token');
         if (!token) {
           throw new Error('Authentication required. Please log in.');
         }
@@ -113,7 +114,7 @@ export default function AdminEditEpisodePage() {
     try {
       setSaving(true);
       
-      const token = localStorage.getItem('access_token');
+      const token = safeLocalStorage.getItem('access_token');
       if (!token) {
         throw new Error('Authentication required. Please log in.');
       }

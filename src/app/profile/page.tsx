@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { NotificationDropdown } from "@/components/ui/NotificationDropdown";
 import { StatusChangeDropdown } from "@/components/ui/StatusChangeDropdown";
@@ -105,7 +106,7 @@ export default function ProfilePage() {
         setError("");
 
         // Get token from localStorage (set during login)
-        const token = localStorage.getItem("access_token");
+        const token = safeLocalStorage.getItem("access_token");
         if (!token) {
           setError("Please log in to view your profile");
           router.push("/login");
@@ -134,8 +135,8 @@ export default function ProfilePage() {
           errorMessage.includes("401")
         ) {
           setError("Your session has expired. Please log in again.");
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
+          safeLocalStorage.removeItem("access_token");
+          safeLocalStorage.removeItem("refresh_token");
           router.push("/login");
         } else {
           setError("Failed to load profile data. Please try again.");
@@ -157,7 +158,7 @@ export default function ProfilePage() {
 
     const loadNotifications = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = safeLocalStorage.getItem("access_token");
         if (!token) return;
 
         const res = await pageApi.getNotifications(token);
@@ -234,7 +235,7 @@ export default function ProfilePage() {
     // Optimistic update
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
 
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
     if (!token) return;
 
     try {
@@ -300,7 +301,7 @@ export default function ProfilePage() {
 
   // Handle delete anime from watchlist
   const handleDeleteFromWatchlist = async (watchStatusId: number) => {
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
     if (!token) return;
 
     try {
@@ -383,7 +384,7 @@ export default function ProfilePage() {
                   animeTitle={getTitle(anime)}
                   currentStatus={status}
                   onStatusChanged={async () => {
-                    const token = localStorage.getItem("access_token");
+                    const token = safeLocalStorage.getItem("access_token");
                     if (token) {
                       const updatedWatchlist = await pageApi.getWatchlist(
                         token
@@ -830,7 +831,7 @@ export default function ProfilePage() {
                             setImportLoading(true);
 
                             try {
-                              const token = localStorage.getItem("access_token");
+                              const token = safeLocalStorage.getItem("access_token");
                               if (!token) {
                                 setImportError("Please log in to import your list");
                                 setImportLoading(false);
@@ -898,7 +899,7 @@ export default function ProfilePage() {
                               setImportLoading(false);
                               // Refresh watchlist if import was likely successful
                               try {
-                                const token = localStorage.getItem("access_token");
+                                const token = safeLocalStorage.getItem("access_token");
                                 if (token) {
                                   const updated = await pageApi.getWatchlist(token);
                                   setWatchlistData(updated);
@@ -964,7 +965,7 @@ export default function ProfilePage() {
                             setError("");
                             setExportLoading(true);
                             try {
-                              const token = localStorage.getItem("access_token");
+                              const token = safeLocalStorage.getItem("access_token");
                               if (!token) {
                                 setError("Please log in to export your list");
                                 setExportLoading(false);

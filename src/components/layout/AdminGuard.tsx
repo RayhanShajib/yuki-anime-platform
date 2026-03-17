@@ -1,6 +1,7 @@
 "use client";
 
 import { pageApi } from "@/lib/api/pageApi";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -25,7 +26,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
         setIsLoading(true);
 
         // Get token from localStorage
-        const token = localStorage.getItem("access_token");
+        const token = safeLocalStorage.getItem("access_token");
         if (!token) {
           console.log("No access token found - redirecting to home");
           router.push("/");
@@ -65,8 +66,8 @@ export function AdminGuard({ children }: AdminGuardProps) {
           errorMessage.includes("401")
         ) {
           console.log("Invalid token - redirecting to login");
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
+          safeLocalStorage.removeItem("access_token");
+          safeLocalStorage.removeItem("refresh_token");
           router.push("/login");
         } else {
           console.log("Error checking permissions - redirecting to home");

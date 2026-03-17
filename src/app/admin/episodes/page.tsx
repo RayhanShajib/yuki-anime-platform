@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { adminApi, type EpisodeApiResponse } from "@/lib/api/adminApi";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
@@ -25,7 +26,7 @@ export default function AdminEpisodesPage() {
         setError(null);
         
         // Get token from localStorage 
-        const token = localStorage.getItem('access_token');
+        const token = safeLocalStorage.getItem('access_token');
         if (!token) {
           throw new Error('Authentication required. Please log in.');
         }
@@ -74,7 +75,7 @@ export default function AdminEpisodesPage() {
       setDeletingId(episodeId);
       
       // Get token from localStorage 
-      const token = localStorage.getItem('access_token');
+      const token = safeLocalStorage.getItem('access_token');
       if (!token) {
         throw new Error('Authentication required. Please log in.');
       }

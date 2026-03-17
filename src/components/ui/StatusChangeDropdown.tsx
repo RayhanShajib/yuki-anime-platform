@@ -1,6 +1,7 @@
 "use client";
 
 import { pageApi } from "@/lib/api/pageApi";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useEffect, useRef, useState } from "react";
 import { Bookmark, CheckCircle, Clock, Play, X } from "lucide-react";
 import { createPortal } from "react-dom";
@@ -95,7 +96,7 @@ export function StatusChangeDropdown({
   }, [isOpen]);
 
   const handleStatusSelect = async (newStatus: WatchStatus) => {
-    const token = localStorage.getItem('access_token');
+    const token = safeLocalStorage.getItem('access_token');
 
     if (!token) {
       console.error('No token found');

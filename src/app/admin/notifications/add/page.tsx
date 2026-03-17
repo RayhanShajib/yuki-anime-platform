@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useRouter } from "next/navigation";
 import type { ChangeEvent, FormEvent } from "react";
 import { adminApi } from "@/lib/api/adminApi";
@@ -33,7 +34,7 @@ export default function AdminAddNotificationPage() {
       .filter(Boolean);
 
     // Get admin token from localStorage
-    const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+    const token = typeof window !== "undefined" ? safeLocalStorage.getItem("access_token") : null;
     if (!token) {
       setError("You must be logged in as an admin to send notifications.");
       return;

@@ -1,3 +1,5 @@
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
+
 export interface WatchHistoryItem {
   animeId: string;
   episodeId: string;
@@ -23,10 +25,7 @@ export function getWatchHistory(): WatchHistoryItem[] {
   if (typeof window === 'undefined') return [];
   
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return [];
-    
-    const items: WatchHistoryItem[] = JSON.parse(stored);
+    const items = safeLocalStorage.getItemJSON<WatchHistoryItem[]>(STORAGE_KEY, []);
     
     // Sort by lastWatched (most recent first) and limit to MAX_HISTORY_ITEMS
     return items
@@ -99,7 +98,7 @@ export function saveWatchProgress(data: {
       .slice(0, MAX_HISTORY_ITEMS);
     
     // Save back to localStorage
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmedHistory));
+    safeLocalStorage.setItemJSON(STORAGE_KEY, trimmedHistory);
     
     console.log('Watch progress saved:', {
       episodeId: data.episodeId,
@@ -125,7 +124,7 @@ export function removeFromHistory(episodeId: string, audioType: 'sub' | 'dub'): 
       !(item.episodeId === episodeId && item.audioType === audioType)
     );
     
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredHistory));
+    safeLocalStorage.setItemJSON(STORAGE_KEY, filteredHistory);
     
     console.log('Removed from watch history:', { episodeId, audioType });
   } catch (error) {
@@ -140,7 +139,7 @@ export function clearWatchHistory(): void {
   if (typeof window === 'undefined') return;
   
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    safeLocalStorage.removeItem(STORAGE_KEY);
     console.log('Watch history cleared');
   } catch (error) {
     console.error('Error clearing watch history:', error);

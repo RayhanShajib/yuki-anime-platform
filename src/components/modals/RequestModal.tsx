@@ -1,6 +1,7 @@
 "use client";
 
 import { pageApi } from "@/lib/api/pageApi";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AlertCircle, CheckCircle, X } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -76,7 +77,7 @@ export function RequestModal({ open, onOpenChangeAction }: RequestModalProps) {
     }
 
     // Check if user is authenticated
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
     if (!token) {
       setNotification({
         type: "error",

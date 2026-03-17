@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,7 +25,7 @@ export default function AdminViewEpisodePage() {
         setLoading(true);
         setError(null);
         
-        const token = localStorage.getItem('access_token');
+        const token = safeLocalStorage.getItem('access_token');
         if (!token) {
           throw new Error('Authentication required. Please log in.');
         }
@@ -63,7 +64,7 @@ export default function AdminViewEpisodePage() {
     try {
       setDeleting(true);
       
-      const token = localStorage.getItem('access_token');
+      const token = safeLocalStorage.getItem('access_token');
       if (!token) {
         throw new Error('Authentication required. Please log in.');
       }

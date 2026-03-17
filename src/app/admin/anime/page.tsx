@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { adminApi } from "@/lib/api/adminApi";
 import Image from "next/image";
 import Link from "next/link";
@@ -84,7 +85,7 @@ export default function AdminAnimePage() {
       setDeletingId(animeId);
       
       // Get token from localStorage 
-      const token = localStorage.getItem('access_token');
+      const token = safeLocalStorage.getItem('access_token');
       if (!token) {
         throw new Error('Authentication required. Please log in.');
       }

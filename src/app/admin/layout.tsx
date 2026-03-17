@@ -1,6 +1,7 @@
 "use client";
 
 import { AdminGuard } from "@/components/layout/AdminGuard";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import {
   BarChart2,
   Bell,
@@ -144,8 +145,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    safeLocalStorage.removeItem("access_token");
+    safeLocalStorage.removeItem("refresh_token");
     console.log("Admin logged out - redirecting to home");
     router.push("/");
   };

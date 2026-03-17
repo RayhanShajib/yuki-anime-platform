@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { adminApi } from "@/lib/api/adminApi";
@@ -61,7 +62,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
   // Authentication helper
   const getAuthToken = () => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
+      return safeLocalStorage.getItem('access_token');
     }
     return null;
   };

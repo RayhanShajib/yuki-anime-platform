@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import { adminApi } from "@/lib/api/adminApi";
@@ -324,7 +325,7 @@ export default function AdminUsersPage() {
   // Authentication helper
   const getAuthToken = () => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
+      return safeLocalStorage.getItem('access_token');
     }
     return null;
   };

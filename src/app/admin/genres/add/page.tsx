@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useRouter } from "next/navigation";
 import { pageApi } from "@/lib/api/pageApi";
 
@@ -15,7 +16,7 @@ export default function AdminAddGenrePage() {
   // Authentication helper
   const getAuthToken = () => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
+      return safeLocalStorage.getItem('access_token');
     }
     return null;
   };

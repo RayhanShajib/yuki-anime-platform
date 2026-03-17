@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { getWatchHistory, formatTime, type WatchHistoryItem } from "@/lib/watchHistory";
 import {
@@ -66,7 +67,7 @@ export default function ContinueWatchingPage() {
     
     // Update localStorage
     if (typeof window !== 'undefined') {
-      localStorage.setItem('yukiwatch_history', JSON.stringify(updatedHistory));
+      safeLocalStorage.setItem('yukiwatch_history', JSON.stringify(updatedHistory));
     }
     
     setWatchHistory(updatedHistory);

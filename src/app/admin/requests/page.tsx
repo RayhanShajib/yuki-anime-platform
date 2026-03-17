@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import Link from "next/link";
 import { adminApi } from "@/lib/api/adminApi";
 import { AnimeRequest } from "@/types/anime";
@@ -18,7 +19,7 @@ export default function AdminRequestsPage() {
   // Get token from localStorage (set during login)
   const getAuthToken = () => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
+      return safeLocalStorage.getItem('access_token');
     }
     return null;
   };

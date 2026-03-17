@@ -5,6 +5,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+// Fix for Next.js SSR localStorage polyfill issue
+if (typeof window === 'undefined' && typeof globalThis.localStorage !== 'undefined') {
+  // Delete any broken localStorage polyfill on the server
+  delete (globalThis as { localStorage?: unknown }).localStorage;
+}
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

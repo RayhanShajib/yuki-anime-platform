@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { pageApi } from "@/lib/api/pageApi";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { useRouter } from "next/navigation";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { useCaptcha, validateCaptchaToken } from "@/lib/hooks/useCaptcha";
@@ -47,8 +48,8 @@ export default function LoginPage() {
       // Check if response has access and refresh tokens (successful login)
       if (response.access && response.refresh) {
         // Store tokens in localStorage
-        localStorage.setItem("access_token", response.access);
-        localStorage.setItem("refresh_token", response.refresh);
+        safeLocalStorage.setItem("access_token", response.access);
+        safeLocalStorage.setItem("refresh_token", response.refresh);
 
         // If remember me is checked, you might want to store tokens in cookies as well
         if (formData.rememberMe) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/layout/Navigation";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import EpisodeReportModal from "@/components/modals/EpisodeReportModal";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AnimeCard } from "@/components/ui/AnimeCard";
@@ -497,7 +498,7 @@ export default function WatchPage() {
   // Helper to get authentication token
   const getAuthToken = () => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("access_token");
+      return safeLocalStorage.getItem("access_token");
     }
     return null;
   };

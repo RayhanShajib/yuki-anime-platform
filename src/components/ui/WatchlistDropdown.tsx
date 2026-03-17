@@ -1,6 +1,7 @@
 "use client";
 
 import { pageApi } from "@/lib/api/pageApi";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { Bookmark, CheckCircle, Clock, Play, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -119,7 +120,7 @@ export function WatchlistDropdown({
 
   const handleAddToList = () => {
     // Check for authentication token
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
 
     if (!token) {
       // Redirect to login if not authenticated
@@ -132,7 +133,7 @@ export function WatchlistDropdown({
   };
 
   const handleStatusSelect = async (status: WatchStatus) => {
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
 
     if (!token) {
       setFeedback({ type: "error", message: "Please login first" });

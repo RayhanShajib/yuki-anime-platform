@@ -3,6 +3,7 @@
 import { pageApi } from "@/lib/api/pageApi";
 import { usePopularGenreNames } from "@/lib/GenresContext";
 import { useLanguage } from "@/lib/LanguageContext";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import { ApiNotification } from "@/types/api";
 import {
   Bell,
@@ -47,7 +48,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
     // Fetch profile data on component mount
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = safeLocalStorage.getItem("access_token");
         if (!token) {
           console.log("Please log in to view your profile");
           return;
@@ -62,7 +63,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
         if (error instanceof Error && error.message.includes("Unauthorized")) {
           console.log("Token is invalid or expired. Redirecting to login...");
           // Remove the access token from localStorage
-          localStorage.removeItem("access_token");
+          safeLocalStorage.removeItem("access_token");
           // Redirect to login page
           router.push("/login");
         }
@@ -72,7 +73,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
     fetchProfile();
 
     // Check for access token and update login state
-    const accessToken = localStorage.getItem("access_token");
+    const accessToken = safeLocalStorage.getItem("access_token");
     console.log("Access Token:", accessToken);
 
     if (accessToken) {
@@ -86,7 +87,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
 
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
+    safeLocalStorage.removeItem("access_token");
     setIsLoggedIn(false);
     console.log("Access token removed - User logged out");
     // Optionally redirect to login page or home page
@@ -110,7 +111,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
     // Optimistic update
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
 
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
     if (!token) return;
 
     try {
@@ -127,7 +128,7 @@ export function Navigation({ isLandingPage = false }: NavigationProps) {
   useEffect(() => {
     const loadNotifications = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = safeLocalStorage.getItem("access_token");
         if (!token) return;
 
         const res = await pageApi.getNotifications(token);

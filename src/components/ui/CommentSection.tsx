@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { safeLocalStorage } from "@/lib/safeLocalStorage";
 import React, { useState, useEffect } from "react";
 import { pageApi } from "@/lib/api/pageApi";
 import { FaRegThumbsDown, FaRegThumbsUp, FaEdit, FaTrash } from "react-icons/fa";
@@ -94,7 +95,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = safeLocalStorage.getItem("access_token");
         if (!token) return;
         const profile = await pageApi.getProfilePageData(token);
         if (profile) {
@@ -436,7 +437,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         return;
       }
 
-      const token = localStorage.getItem("access_token");
+      const token = safeLocalStorage.getItem("access_token");
       if (!token) {
         setPostError("Please log in to post comments.");
         return;
@@ -523,7 +524,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         return;
       }
 
-      const token = localStorage.getItem("access_token");
+      const token = safeLocalStorage.getItem("access_token");
       if (!token) {
         setPostError("Please log in to reply.");
         return;
@@ -621,7 +622,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   }
 
   async function handleLike(id: number) {
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
     if (!token) {
       setPostError("Please log in to vote on comments.");
       return;
@@ -652,7 +653,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   }
 
   async function handleDislike(id: number) {
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
     if (!token) {
       setPostError("Please log in to vote on comments.");
       return;
@@ -710,7 +711,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       return;
     }
 
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
     if (!token) {
       setPostError("Please log in to edit comments.");
       return;
@@ -760,7 +761,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   }
 
   async function deleteComment(commentId: number) {
-    const token = localStorage.getItem("access_token");
+    const token = safeLocalStorage.getItem("access_token");
     if (!token) {
       setPostError("Please log in to delete comments.");
       return;
