@@ -51,7 +51,7 @@ function isLocalStorageAvailable(): boolean {
     const testValue = storage.getItem(testKey);
     storage.removeItem(testKey);
     return testValue === 'test';
-  } catch (e) {
+  } catch {
     return false;
   }
 }
