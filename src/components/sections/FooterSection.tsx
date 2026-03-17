@@ -6,7 +6,7 @@ import { RequestModal } from "../modals/RequestModal";
 
 export function FooterSection() {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-
+  
   const alphabetItems = [
     "All",
     "0-9",
