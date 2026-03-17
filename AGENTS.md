@@ -1,5 +1,6 @@
 # AGENTS.md
 
+
 ## Build, Lint, and Test Commands
 - **Development:** `npm run dev` (Next.js dev server on port 3000)
 - **Build:** `npm run build` (Next.js production build with TypeScript checking)
