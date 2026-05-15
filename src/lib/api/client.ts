@@ -1,4 +1,4 @@
-// import { ApiResponse } from '@/types/api';
+import { API_CONFIG } from '@/lib/config';
 
 class ApiError extends Error {
   constructor(message: string, public status?: number, public data?: unknown) {
@@ -20,17 +20,10 @@ class ApiClient {
   }
 
   private getBaseUrl(): string {
-    // In server components, use server-side env
     if (typeof window === "undefined") {
-      return (
-        process.env.API_BASE_URL || "http://api.yukiwatch.fr:8003/api/v1"
-      );
+      return API_CONFIG.BASE_URL;
     }
-    // In client components, use public env
-    return (
-      process.env.NEXT_PUBLIC_API_BASE_URL ||
-      "http://api.yukiwatch.fr:8003/api/v1"
-    );
+    return API_CONFIG.PUBLIC_BASE_URL;
   }
 
   private async request<T>(
